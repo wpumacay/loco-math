@@ -9,6 +9,6 @@ set( TINYMATH_INCS "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
 include_directories( "${TINYMATH_INCS}" )
 
-add_library( tinymath ${TINYMATH_SRCS} )
+add_library( tinymath SHARED ${TINYMATH_SRCS} )
 
 add_subdirectory( tests )

@@ -1,0 +1,11 @@
+build/
+dist/
+*.egg-info/
+
+*.so
+*.a
+*.lib
+*.dll
+*.dylib
+*.out
+*.exe

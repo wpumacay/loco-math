@@ -47,19 +47,19 @@ namespace tinymath
         return m_buff[indx];
     }
 
-    Vector2 Vector2::operator+ ( const Vector2& other )
+    Vector2 Vector2::operator+ ( const Vector2& other ) const
     {
         return { m_buff[0] + other.m_buff[0],
                  m_buff[1] + other.m_buff[1] };
     }
 
-    Vector2 Vector2::operator- ( const Vector2& other )
+    Vector2 Vector2::operator- ( const Vector2& other ) const
     {
         return { m_buff[0] - other.m_buff[0],
                  m_buff[1] - other.m_buff[1] };
     }
 
-    Vector2 Vector2::operator* ( const Vector2& other )
+    Vector2 Vector2::operator* ( const Vector2& other ) const
     {
         return { m_buff[0] * other.m_buff[0],
                  m_buff[1] * other.m_buff[1] };
@@ -127,21 +127,21 @@ namespace tinymath
         return m_buff[indx];
     }
 
-    Vector3 Vector3::operator+ ( const Vector3& other )
+    Vector3 Vector3::operator+ ( const Vector3& other ) const
     {
         return { m_buff[0] + other.m_buff[0],
                  m_buff[1] + other.m_buff[1],
                  m_buff[2] + other.m_buff[2] };
     }
 
-    Vector3 Vector3::operator- ( const Vector3& other )
+    Vector3 Vector3::operator- ( const Vector3& other ) const
     {
         return { m_buff[0] - other.m_buff[0],
                  m_buff[1] - other.m_buff[1],
                  m_buff[2] - other.m_buff[2] };
     }
 
-    Vector3 Vector3::operator* ( const Vector3& other )
+    Vector3 Vector3::operator* ( const Vector3& other ) const
     {
         return { m_buff[0] * other.m_buff[0],
                  m_buff[1] * other.m_buff[1],
@@ -214,7 +214,7 @@ namespace tinymath
         return m_buff[indx];
     }
 
-    Vector4 Vector4::operator+ ( const Vector4& other )
+    Vector4 Vector4::operator+ ( const Vector4& other ) const
     {
         return { m_buff[0] + other.m_buff[0],
                  m_buff[1] + other.m_buff[1],
@@ -222,7 +222,7 @@ namespace tinymath
                  m_buff[3] + other.m_buff[3] };
     }
 
-    Vector4 Vector4::operator- ( const Vector4& other )
+    Vector4 Vector4::operator- ( const Vector4& other ) const
     {
         return { m_buff[0] - other.m_buff[0],
                  m_buff[1] - other.m_buff[1],
@@ -230,7 +230,7 @@ namespace tinymath
                  m_buff[3] - other.m_buff[3] };
     }
 
-    Vector4 Vector4::operator* ( const Vector4& other )
+    Vector4 Vector4::operator* ( const Vector4& other ) const
     {
         return { m_buff[0] * other.m_buff[0],
                  m_buff[1] * other.m_buff[1],

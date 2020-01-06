@@ -16,7 +16,7 @@ set( TINYMATH_INCS "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
 include_directories( "${TINYMATH_INCS}" )
 
-add_library( tinymath_cpp SHARED ${TINYMATH_SRCS} )
+add_library( tinymath_cpp_lib SHARED ${TINYMATH_SRCS} )
 
 add_subdirectory( tests )
 add_subdirectory( ext/pybind11 )

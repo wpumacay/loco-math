@@ -34,9 +34,9 @@ namespace tinymath
         tfloat operator[] ( size_t indx ) const;
         tfloat& operator[] ( size_t indx );
 
-        Vector2 operator+ ( const Vector2& other );
-        Vector2 operator- ( const Vector2& other );
-        Vector2 operator* ( const Vector2& other );
+        Vector2 operator+ ( const Vector2& other ) const;
+        Vector2 operator- ( const Vector2& other ) const;
+        Vector2 operator* ( const Vector2& other ) const;
 
         tfloat* ptr() { return m_buff; }
 
@@ -84,9 +84,9 @@ namespace tinymath
         tfloat operator[] ( size_t indx ) const;
         tfloat& operator[] ( size_t indx );
 
-        Vector3 operator+ ( const Vector3& other );
-        Vector3 operator- ( const Vector3& other );
-        Vector3 operator* ( const Vector3& other );
+        Vector3 operator+ ( const Vector3& other ) const;
+        Vector3 operator- ( const Vector3& other ) const;
+        Vector3 operator* ( const Vector3& other ) const;
 
         tfloat* ptr() { return m_buff; }
     private :
@@ -137,9 +137,9 @@ namespace tinymath
         tfloat operator[] ( size_t indx ) const;
         tfloat& operator[] ( size_t indx );
 
-        Vector4 operator+ ( const Vector4& other );
-        Vector4 operator- ( const Vector4& other );
-        Vector4 operator* ( const Vector4& other );
+        Vector4 operator+ ( const Vector4& other ) const;
+        Vector4 operator- ( const Vector4& other ) const;
+        Vector4 operator* ( const Vector4& other ) const;
 
         tfloat* ptr() { return m_buff; }
     private :

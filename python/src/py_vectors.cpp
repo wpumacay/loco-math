@@ -12,9 +12,9 @@ namespace tinymath
             .def( py::init<>() )
             .def( py::init<tinymath::tfloat>() )
             .def( py::init<tinymath::tfloat, tinymath::tfloat>() )
-            .def( py::init( []( py::array_t<tinymath::tfloat>& pyarray )
+            .def( py::init( []( py::array_t<tinymath::tfloat>& vec2arr )
                 {
-                    auto bufferInfo = pyarray.request();
+                    auto bufferInfo = vec2arr.request();
                     if ( bufferInfo.size != 2 )
                         throw std::runtime_error( "tinymath::Vector2 >>> incompatible array size, expected 2 floats" );
 
@@ -34,6 +34,14 @@ namespace tinymath
                 } )
             .def_property( "x", &Vector2::getX, &Vector2::setX )
             .def_property( "y", &Vector2::getY, &Vector2::setY )
+            .def( "length", &Vector2::length )
+            .def( "dot", &Vector2::dot )
+            .def( "normalize", &Vector2::normalize )
+            .def( "normalized", &Vector2::normalized )
+            .def( "scale", (void (Vector2::*)(tfloat, tfloat)) &Vector2::scale )
+            .def( "scale", (void (Vector2::*)(const Vector2&)) &Vector2::scale )
+            .def( "scaled", (Vector2 (Vector2::*)(tfloat, tfloat) const) &Vector2::scaled )
+            .def( "scaled", (Vector2 (Vector2::*)(const Vector2&) const) &Vector2::scaled )
             .def( "__add__", []( const Vector2& v1, const Vector2& v2 ) -> Vector2 { return v1 + v2; } )
             .def( "__sub__", []( const Vector2& v1, const Vector2& v2 ) -> Vector2 { return v1 - v2; } )
             .def( "__mul__", []( const Vector2& v1, const Vector2& v2 ) -> Vector2 { return v1 * v2; } )
@@ -63,9 +71,18 @@ namespace tinymath
             .def( py::init<>() )
             .def( py::init<tinymath::tfloat>() )
             .def( py::init<tinymath::tfloat, tinymath::tfloat, tinymath::tfloat>() )
-            .def( py::init( []( py::array_t<tinymath::tfloat>& pyarray )
+            .def( py::init( []( py::array_t<tinymath::tfloat>& vec2arr, tinymath::tfloat zval )
                 {
-                    auto bufferInfo = pyarray.request();
+                    auto bufferInfo = vec2arr.request();
+                    if ( bufferInfo.size != 2 )
+                        throw std::runtime_error( "tinymath::Vector3 >>> incompatible array size, expected 2 floats for xy components" );
+
+                    auto bufferData = (tinymath::tfloat*) bufferInfo.ptr;
+                    return new Vector3( bufferData[0], bufferData[1], zval );
+                } ) )
+            .def( py::init( []( py::array_t<tinymath::tfloat>& vec3arr )
+                {
+                    auto bufferInfo = vec3arr.request();
                     if ( bufferInfo.size != 3 )
                         throw std::runtime_error( "tinymath::Vector3 >>> incompatible array size, expected 3 floats" );
 
@@ -86,6 +103,15 @@ namespace tinymath
             .def_property( "x", &Vector3::getX, &Vector3::setX )
             .def_property( "y", &Vector3::getY, &Vector3::setY )
             .def_property( "z", &Vector3::getZ, &Vector3::setZ )
+            .def( "length", &Vector3::length )
+            .def( "dot", &Vector3::dot )
+            .def( "cross", &Vector3::cross )
+            .def( "normalize", &Vector3::normalize )
+            .def( "normalized", &Vector3::normalized )
+            .def( "scale", (void (Vector3::*)(tfloat, tfloat, tfloat)) &Vector3::scale )
+            .def( "scale", (void (Vector3::*)(const Vector3&)) &Vector3::scale )
+            .def( "scaled", (Vector3 (Vector3::*)(tfloat, tfloat, tfloat) const) &Vector3::scaled )
+            .def( "scaled", (Vector3 (Vector3::*)(const Vector3&) const) &Vector3::scaled )
             .def( "__add__", []( const Vector3& v1, const Vector3& v2 ) -> Vector3 { return v1 + v2; } )
             .def( "__sub__", []( const Vector3& v1, const Vector3& v2 ) -> Vector3 { return v1 - v2; } )
             .def( "__mul__", []( const Vector3& v1, const Vector3& v2 ) -> Vector3 { return v1 * v2; } )
@@ -115,9 +141,18 @@ namespace tinymath
             .def( py::init<>() )
             .def( py::init<tinymath::tfloat>() )
             .def( py::init<tinymath::tfloat, tinymath::tfloat, tinymath::tfloat, tinymath::tfloat>() )
-            .def( py::init( []( py::array_t<tinymath::tfloat>& pyarray )
+            .def( py::init( []( py::array_t<tinymath::tfloat>& vec3arr, tinymath::tfloat wval )
                 {
-                    auto bufferInfo = pyarray.request();
+                    auto bufferInfo = vec3arr.request();
+                    if ( bufferInfo.size != 3 )
+                        throw std::runtime_error( "tinymath::Vector4 >>> incompatible array size, expected 3 floats for xyz components" );
+
+                    auto bufferData = (tinymath::tfloat*) bufferInfo.ptr;
+                    return new Vector4( bufferData[0], bufferData[1], bufferData[2], wval );
+                } ) )
+            .def( py::init( []( py::array_t<tinymath::tfloat>& vec4arr )
+                {
+                    auto bufferInfo = vec4arr.request();
                     if ( bufferInfo.size != 4 )
                         throw std::runtime_error( "tinymath::Vector4 >>> incompatible array size, expected 4 floats" );
 

@@ -19,6 +19,15 @@ namespace tinymath
         Vector2( tfloat xval, tfloat yval );
         ~Vector2();
 
+        tfloat length() const;
+        tfloat dot( const Vector2& other ) const;
+        void normalize();
+        Vector2 normalized() const;
+        void scale( tfloat xval, tfloat yval );
+        void scale( const Vector2& other );
+        Vector2 scaled( tfloat xval, tfloat yval ) const;
+        Vector2 scaled( const Vector2& other ) const;
+
         tfloat x() const { return m_buff[0]; }
         tfloat y() const { return m_buff[1]; }
 
@@ -33,6 +42,9 @@ namespace tinymath
 
         tfloat operator[] ( size_t indx ) const;
         tfloat& operator[] ( size_t indx );
+
+        tfloat operator() ( size_t indx ) const;
+        tfloat& operator() ( size_t indx );
 
         Vector2 operator+ ( const Vector2& other ) const;
         Vector2 operator- ( const Vector2& other ) const;
@@ -62,8 +74,19 @@ namespace tinymath
 
         Vector3();
         Vector3( tfloat val );
-        Vector3( tfloat x, tfloat y, tfloat z );
+        Vector3( tfloat xval, tfloat yval, tfloat zval );
+        Vector3( const Vector2& vec2, tfloat zval );
         ~Vector3();
+
+        tfloat length() const;
+        tfloat dot( const Vector3& other ) const;
+        Vector3 cross( const Vector3& other ) const;
+        void normalize();
+        Vector3 normalized() const;
+        void scale( tfloat xval, tfloat yval, tfloat zval );
+        void scale( const Vector3& other );
+        Vector3 scaled( tfloat xval, tfloat yval, tfloat zval ) const;
+        Vector3 scaled( const Vector3& other ) const;
 
         tfloat x() const { return m_buff[0]; }
         tfloat y() const { return m_buff[1]; }
@@ -83,6 +106,9 @@ namespace tinymath
 
         tfloat operator[] ( size_t indx ) const;
         tfloat& operator[] ( size_t indx );
+
+        tfloat operator() ( size_t indx ) const;
+        tfloat& operator() ( size_t indx );
 
         Vector3 operator+ ( const Vector3& other ) const;
         Vector3 operator- ( const Vector3& other ) const;
@@ -111,7 +137,8 @@ namespace tinymath
 
         Vector4();
         Vector4( tfloat val );
-        Vector4( tfloat x, tfloat y, tfloat z, tfloat w );
+        Vector4( tfloat xval, tfloat yval, tfloat zval, tfloat wval );
+        Vector4( const Vector3& vec3, tfloat wval );
         ~Vector4();
 
         tfloat x() const { return m_buff[0]; }
@@ -136,6 +163,9 @@ namespace tinymath
 
         tfloat operator[] ( size_t indx ) const;
         tfloat& operator[] ( size_t indx );
+
+        tfloat operator() ( size_t indx ) const;
+        tfloat& operator() ( size_t indx );
 
         Vector4 operator+ ( const Vector4& other ) const;
         Vector4 operator- ( const Vector4& other ) const;

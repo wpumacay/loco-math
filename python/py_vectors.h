@@ -10,5 +10,6 @@ namespace tinymath
 
     void bindings_vector2( py::module& m );
     void bindings_vector3( py::module& m );
+    void bindings_vector4( py::module& m );
 
 }

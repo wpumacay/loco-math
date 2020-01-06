@@ -3,21 +3,23 @@
 
 int main()
 {
-    tinymath::Vector3 _vec = { 1.0f, 2.0f, 3.0f };
+    tinymath::Vector4 _vec = { 1.0f, 2.0f, 3.0f, 4.0f };
     std::cout << tinymath::toString( _vec ) << std::endl;
 
     _vec[0] += 1.1f;
     _vec[1] += 0.6f;
     _vec[2] += 0.3f;
+    _vec[3] += 0.1f;
     std::cout << tinymath::toString( _vec ) << std::endl;
 
     _vec.x() += 10.0f;
     _vec.y() -= 10.0f;
     _vec.z() *= 2.0f;
+    _vec.w() /= 3.0f;
     std::cout << tinymath::toString( _vec ) << std::endl;
 
-    tinymath::Vector3 _vec1 = { 0.5f, 1.5f, 2.0f };
-    tinymath::Vector3 _vec2 = { 1.1f, 2.2f, 3.3f };
+    tinymath::Vector4 _vec1 = { 0.5f, 1.5f, 2.0f, 2.5f };
+    tinymath::Vector4 _vec2 = { 1.1f, 2.2f, 3.3f, 4.4f };
     std::cout << "v1 : " << tinymath::toString( _vec1 ) << std::endl;
     std::cout << "v2 : " << tinymath::toString( _vec2 ) << std::endl;
     std::cout << "v1 + v2 :" << tinymath::toString( _vec1 + _vec2 ) << std::endl;

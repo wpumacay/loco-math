@@ -12,34 +12,46 @@ namespace tinymath
             .def( py::init<>() )
             .def( py::init<tfloat>() )
             .def( py::init<tfloat,tfloat>() )
-            .def( "__init__", []( Vector2& self, py::buffer buf )
+            .def( py::init( []( py::array_t<tinymath::tfloat>& pyarray )
                 {
-                    auto bufferInfo = buf.request();
-                } )
+                    auto bufferInfo = pyarray.request();
+                    if ( bufferInfo.size != 2 )
+                        throw std::runtime_error( "tinymath::Vector2 >>> incompatible array size, expected 2 floats" );
+
+                    auto bufferData = (tfloat*) bufferInfo.ptr;
+                    return new Vector2( bufferData[0], bufferData[1] );
+                } ) )
             .def_buffer( []( Vector2& self ) -> py::buffer_info
                 {
                     return py::buffer_info(
                         self.ptr(),
                         sizeof(tfloat),
-                        py::format_descriptor<float>::format(),
+                        py::format_descriptor<tinymath::tfloat>::format(),
                         1,
                         { 2 },
                         { sizeof( tfloat ) }
                     );
                 } )
-            .def_property( "x", &Vector2::setX, &Vector2::getX )
-            .def_property( "y", &Vector2::setY, &Vector2::getY )
-            .def_property( "z", &Vector2::setZ, &Vector2::getZ )
-            .def( "__repr__", &Vector2::toString );
+            .def_property( "x", &Vector2::getX, &Vector2::setX )
+            .def_property( "y", &Vector2::getY, &Vector2::setY )
+            .def( "__repr__", []( const Vector2& self )
+                {
+                    return "vec2(" + tinymath::toString( self ) + ")";
+                } );
     }
 
     void bindings_vector3( py::module& m )
     {
-        py::class_< Vector3 >( m, "Vector3" )
-            .def( py::init<>() )
-            .def( py::init<tfloat>() )
-            .def( py::init<tfloat,tfloat,tfloat>() )
-            .def( "__repr__", &Vector2::toString );
+////         py::class_< Vector3 >( m, "Vector3" )
+////             .def( py::init<>() )
+////             .def( py::init<tfloat>() )
+////             .def( py::init<tfloat,tfloat,tfloat>() )
+////             .def( "__repr__", &Vector2::toString );
+    }
+
+    void bindings_vector4( py::module& m )
+    {
+
     }
 
 }

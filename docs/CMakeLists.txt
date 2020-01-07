@@ -1,5 +1,9 @@
 message( "TINYMATH::docs >>> trying to setup the build process for the docs" )
 
+################################################################################
+#                           Configuring Doxygen                                #
+################################################################################
+
 find_package( Doxygen )
 
 if ( DOXYGEN_FOUND )
@@ -21,9 +25,34 @@ if ( DOXYGEN_FOUND )
                         DEPENDS ${TINYMATH_PUBLIC_INCS_FILES}
                         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
                         MAIN_DEPENDENCY ${DOXYFILE_OUT} ${DOXYFILE_IN}
-                        COMMENT "TINYMATH::docs >>> Generating docs ..." )
+                        COMMENT "TINYMATH::docs >>> Generating docs (doxygen) ..." )
     add_custom_target( tinymath_cpp_docs ALL DEPENDS ${DOXYGEN_INDEX_FILE} )
     message( "TINYMATH::docs >>> successfully setup the build process for the docs!" )
 else()
     message( "TINYMATH::docs >>> couldn't find Doxygen; skipping docs" )
 endif()
+
+################################################################################
+#                           Configuring Sphinx                                 #
+################################################################################
+
+find_package( Sphinx REQUIRED )
+
+set( SPHINX_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}" )
+set( SPHINX_BUILD "${CMAKE_CURRENT_BINARY_DIR}/sphinx" )
+set( SPHINX_INDEX_FILE "${SPHINX_BUILD}/index.html" )
+
+add_custom_command( OUTPUT ${SPHINX_INDEX_FILE}
+                    COMMAND 
+                        ${SPHINX_EXECUTABLE} -b html
+                        # Tell breathe where to find the Doxygen output
+                        -Dbreathe_projects.TinyMath=${DOXYGEN_OUTPUT_DIR}/xml
+                    ${SPHINX_SOURCE} ${SPHINX_BUILD}
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                    DEPENDS
+                        ${CMAKE_CURRENT_SOURCE_DIR}/index.rst
+                        ${DOXYGEN_INDEX_FILE}
+                    MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
+                    COMMENT "TINYMATH::docs >>> Generating docs (sphinx) ..." )
+
+add_custom_target( Sphinx ALL DEPENDS ${SPHINX_INDEX_FILE} )

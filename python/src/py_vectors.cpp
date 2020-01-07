@@ -24,7 +24,7 @@ namespace tinymath
             .def_buffer( []( Vector2& self ) -> py::buffer_info
                 {
                     return py::buffer_info(
-                        self.ptr(),
+                        self.data(),
                         sizeof( tinymath::tfloat ),
                         py::format_descriptor< tinymath::tfloat >::format(),
                         1,
@@ -32,8 +32,24 @@ namespace tinymath
                         { sizeof( tinymath::tfloat ) }
                     );
                 } )
-            .def_property( "x", &Vector2::getX, &Vector2::setX )
-            .def_property( "y", &Vector2::getY, &Vector2::setY )
+            .def_property( "x",
+                []( const Vector2& self ) -> tinymath::tfloat
+                    {
+                        return self.x();
+                    }, 
+                []( Vector2& self, tinymath::tfloat xval )
+                    {
+                        self.x() = xval;
+                    } )
+            .def_property( "y", 
+                []( const Vector2& self ) -> tinymath::tfloat
+                    {
+                        return self.y();
+                    }, 
+                []( Vector2& self, tinymath::tfloat yval )
+                    {
+                        self.y() = yval;
+                    } )
             .def( "length", &Vector2::length )
             .def( "dot", &Vector2::dot )
             .def( "normalize", &Vector2::normalize )
@@ -92,7 +108,7 @@ namespace tinymath
             .def_buffer( []( Vector3& self ) -> py::buffer_info
                 {
                     return py::buffer_info(
-                        self.ptr(),
+                        self.data(),
                         sizeof( tinymath::tfloat ),
                         py::format_descriptor< tinymath::tfloat >::format(),
                         1,
@@ -100,9 +116,12 @@ namespace tinymath
                         { sizeof( tinymath::tfloat ) }
                     );
                 } )
-            .def_property( "x", &Vector3::getX, &Vector3::setX )
-            .def_property( "y", &Vector3::getY, &Vector3::setY )
-            .def_property( "z", &Vector3::getZ, &Vector3::setZ )
+            .def_property( "x", []( const Vector3& self ) -> tfloat { return self.x(); }, 
+                                []( Vector3& self, tfloat xval ) { self.x() = xval; } )
+            .def_property( "y", []( const Vector3& self ) -> tfloat { return self.y(); }, 
+                                []( Vector3& self, tfloat yval ) { self.y() = yval; } )
+            .def_property( "z",  []( const Vector3& self ) -> tfloat { return self.z(); }, 
+                                []( Vector3& self, tfloat zval ) { self.z() = zval; } )
             .def( "length", &Vector3::length )
             .def( "dot", &Vector3::dot )
             .def( "cross", &Vector3::cross )
@@ -162,7 +181,7 @@ namespace tinymath
             .def_buffer( []( Vector4& self ) -> py::buffer_info
                 {
                     return py::buffer_info(
-                        self.ptr(),
+                        self.data(),
                         sizeof( tinymath::tfloat ),
                         py::format_descriptor< tinymath::tfloat >::format(),
                         1,
@@ -170,10 +189,14 @@ namespace tinymath
                         { sizeof( tinymath::tfloat ) }
                     );
                 } )
-            .def_property( "x", &Vector4::getX, &Vector4::setX )
-            .def_property( "y", &Vector4::getY, &Vector4::setY )
-            .def_property( "z", &Vector4::getZ, &Vector4::setZ )
-            .def_property( "w", &Vector4::getW, &Vector4::setW )
+            .def_property( "x", []( const Vector4& self ) -> tfloat { return self.x(); }, 
+                                []( Vector4& self, tfloat xval ) { self.x() = xval; } )
+            .def_property( "y", []( const Vector4& self ) -> tfloat { return self.y(); }, 
+                                []( Vector4& self, tfloat yval ) { self.y() = yval; } )
+            .def_property( "z", []( const Vector4& self ) -> tfloat { return self.z(); }, 
+                                []( Vector4& self, tfloat zval ) { self.z() = zval; } )
+            .def_property( "w", []( const Vector4& self ) -> tfloat { return self.w(); }, 
+                                []( Vector4& self, tfloat wval ) { self.w() = wval; } )
             .def( "__add__", []( const Vector4& v1, const Vector4& v2 ) -> Vector4 { return v1 + v2; } )
             .def( "__sub__", []( const Vector4& v1, const Vector4& v2 ) -> Vector4 { return v1 - v2; } )
             .def( "__mul__", []( const Vector4& v1, const Vector4& v2 ) -> Vector4 { return v1 * v2; } )

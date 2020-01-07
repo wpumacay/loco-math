@@ -1,6 +1,6 @@
 message( "TINYMATH::python::tests >>> configuring python-bindings tests" )
 
-include_directories( "${TINYMATH_INCS}" )
+include_directories( "${TINYMATH_INCS_DIR}" )
 include_directories( "../include" )
 
 file( GLOB TestBindingFilesSources "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" )

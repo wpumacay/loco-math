@@ -5,18 +5,32 @@
 namespace tinymath
 {
 
-    //////////////////////////////////////////////////////////////////////////
-    //                              Vector2                                 //
-    //////////////////////////////////////////////////////////////////////////
-
+    /**
+    *   @brief Just a simple 2-dimensional vector implementation
+    */
     class Vector2
     {
 
     public :
 
+        /**
+        *   @brief Creates an empty vector with entries initialized to zeros 
+        */
         Vector2();
+
+        /**
+        *   @brief
+        */
         Vector2( tfloat val );
+
+        /**
+        *   @brief
+        */
         Vector2( tfloat xval, tfloat yval );
+
+        /**
+        *   @brief
+        */
         ~Vector2();
 
         tfloat length() const;
@@ -63,10 +77,9 @@ namespace tinymath
 
     std::string toString( const Vector2& vec );
 
-    //////////////////////////////////////////////////////////////////////////
-    //                              Vector3                                 //
-    //////////////////////////////////////////////////////////////////////////
-
+    /**
+    *   @brief Just a simple 3-dimensional vector implementation
+    */
     class Vector3
     {
 
@@ -126,10 +139,10 @@ namespace tinymath
 
     std::string toString( const Vector3& vec );
 
-    //////////////////////////////////////////////////////////////////////////
-    //                              Vector4                                 //
-    //////////////////////////////////////////////////////////////////////////
 
+    /**
+    *   @brief Just a simple 4-dimensional vector implementation
+    */
     class Vector4
     {
 

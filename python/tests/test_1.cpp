@@ -1,6 +1,6 @@
 
-#include <py_common.h>
-#include <py_vectors.h>
+#include <bindings_common.h>
+#include <bindings_vector_t.h>
 
 namespace py = pybind11;
 

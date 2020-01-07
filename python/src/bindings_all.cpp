@@ -1,5 +1,5 @@
 
-#include <py_bindings.h>
+#include <bindings_all.h>
 
 PYBIND11_MODULE( tinymath, m )
 {

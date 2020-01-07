@@ -1,7 +1,7 @@
 #pragma once
 
-#include <py_common.h>
-#include <vectors.h>
+#include <bindings_common.h>
+#include <vector_t.h>
 
 namespace py = pybind11;
 

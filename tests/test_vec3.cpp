@@ -4,7 +4,7 @@
 int main()
 {
     std::cout << "Vector3: Constructors and element-access **************************" << std::endl;
-    tinymath::Vector3 _vec = { 1.0f, 2.0f, 3.0f };
+    tinymath::Vector3f _vec = { 1.0f, 2.0f, 3.0f };
     std::cout << tinymath::toString( _vec ) << std::endl;
 
     _vec[0] += 1.1f;
@@ -18,8 +18,8 @@ int main()
     std::cout << tinymath::toString( _vec ) << std::endl;
 
     std::cout << "Vector3: math operators *******************************************" << std::endl;
-    tinymath::Vector3 _vec1 = { 0.5f, 1.5f, 2.0f };
-    tinymath::Vector3 _vec2 = { 1.1f, 2.2f, 3.3f };
+    tinymath::Vector3f _vec1 = { 0.5f, 1.5f, 2.0f };
+    tinymath::Vector3f _vec2 = { 1.1f, 2.2f, 3.3f };
     std::cout << "v1 : " << tinymath::toString( _vec1 ) << std::endl;
     std::cout << "v2 : " << tinymath::toString( _vec2 ) << std::endl;
     std::cout << "v1 + v2 :" << tinymath::toString( _vec1 + _vec2 ) << std::endl;
@@ -30,8 +30,8 @@ int main()
     std::cout << "2*v1 + 3*v2 : " << tinymath::toString( 2.0f * _vec1 + 3.0f * _vec2 ) << std::endl;
 
     std::cout << "Vector3: helper methods *******************************************" << std::endl;
-    tinymath::Vector3 _vec3 = { 0.3f, 0.4f, 0.5f };
-    tinymath::Vector3 _vec4 = { 1.0f, 2.0f, 3.0f };
+    tinymath::Vector3f _vec3 = { 0.3f, 0.4f, 0.5f };
+    tinymath::Vector3f _vec4 = { 1.0f, 2.0f, 3.0f };
     std::cout << "v3: " << tinymath::toString( _vec3 ) << std::endl;
     std::cout << "v4: " << tinymath::toString( _vec4 ) << std::endl;
     std::cout << "v3.length(): " << std::to_string( _vec3.length() ) << std::endl;

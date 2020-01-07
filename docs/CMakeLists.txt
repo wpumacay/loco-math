@@ -26,7 +26,7 @@ if ( DOXYGEN_FOUND )
                         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
                         MAIN_DEPENDENCY ${DOXYFILE_OUT} ${DOXYFILE_IN}
                         COMMENT "TINYMATH::docs >>> Generating docs (doxygen) ..." )
-    add_custom_target( tinymath_cpp_docs ALL DEPENDS ${DOXYGEN_INDEX_FILE} )
+    add_custom_target( tinymath_cpp_docs_doxygen ALL DEPENDS ${DOXYGEN_INDEX_FILE} )
     message( "TINYMATH::docs >>> successfully setup the build process for the docs!" )
 else()
     message( "TINYMATH::docs >>> couldn't find Doxygen; skipping docs" )
@@ -55,4 +55,4 @@ add_custom_command( OUTPUT ${SPHINX_INDEX_FILE}
                     MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
                     COMMENT "TINYMATH::docs >>> Generating docs (sphinx) ..." )
 
-add_custom_target( Sphinx ALL DEPENDS ${SPHINX_INDEX_FILE} )
+add_custom_target( tinymath_cpp_docs_sphinx ALL DEPENDS ${SPHINX_INDEX_FILE} )

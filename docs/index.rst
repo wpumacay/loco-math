@@ -17,6 +17,9 @@ C++ API Documentation
 .. doxygenclass:: tinymath::Vector2
     :members:
 
+.. doxygenclass:: tinymath::Matrix2
+    :members:
+
 Indices and tables
 ==================
 

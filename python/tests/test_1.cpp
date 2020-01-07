@@ -4,30 +4,30 @@
 
 namespace py = pybind11;
 
-// consumer of the Vector2 class in c++
+// consumer of the Vector2f class in c++
 class Particle
 {
 
 public :
 
-    Particle( const tinymath::Vector2& position )
+    Particle( const tinymath::Vector2f& position )
         : m_position( position ) {}
 
     ~Particle() {}
 
-    void setPosition( const tinymath::Vector2& pos ) { m_position = pos; }
-    tinymath::Vector2 getPosition() const { return m_position; }
+    void setPosition( const tinymath::Vector2f& pos ) { m_position = pos; }
+    tinymath::Vector2f getPosition() const { return m_position; }
 
 private :
 
-    tinymath::Vector2 m_position;
+    tinymath::Vector2f m_position;
 
 };
 
 PYBIND11_MODULE( test_1, m )
 {
     py::class_< Particle >( m, "Particle" )
-        .def( py::init< tinymath::Vector2 >() )
+        .def( py::init< tinymath::Vector2f >() )
         .def( py::init( []( py::array_t< tinymath::tfloat >& position )
             {
                 auto bufferInfo = position.request();

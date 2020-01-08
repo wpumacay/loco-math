@@ -3,59 +3,158 @@
 
 namespace tinymath
 {
-    template< typename Scalar_T >
-    Matrix2<Scalar_T>::Matrix2()
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN>::Matrix()
     {
         m_buff[0] = 1.0; m_buff[2] = 0.0;
         m_buff[1] = 0.0; m_buff[3] = 1.0;
     }
 
-    template< typename Scalar_T >
-    Matrix2<Scalar_T>::Matrix2( Scalar_T m00, Scalar_T m01,
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN>::Matrix( Scalar_T m00, Scalar_T m01,
                                 Scalar_T m10, Scalar_T m11 )
     {
         m_buff[0] = m00; m_buff[2] = m01;
         m_buff[1] = m10; m_buff[3] = m11;
     }
 
-    template< typename Scalar_T >
-    Matrix2<Scalar_T>::Matrix2( const Vector2<Scalar_T>& col1, const Vector2<Scalar_T>& col2 )
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN>::Matrix( const Vector<Scalar_T, SizeN>& col1, const Vector<Scalar_T, SizeN>& col2 )
     {
         m_buff[0] = col1.x(); m_buff[2] = col2.x();
         m_buff[1] = col1.y(); m_buff[3] = col2.y();
     }
 
-    template< typename Scalar_T >
-    Matrix2<Scalar_T>::~Matrix2()
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN>::~Matrix()
     {
         // nothing to release manually
     }
 
-    template< typename Scalar_T >
-    Scalar_T Matrix2<Scalar_T>::operator() ( size_t row, size_t col ) const
+    template< typename Scalar_T, size_t SizeN >
+    void Matrix<Scalar_T, SizeN>::setIdentity()
     {
-        assert( row < 2 && col < 2 );
-        return m_buff[ row + col * 2 ];
+        m_buff[0] = 1.0; m_buff[2] = 0.0;
+        m_buff[1] = 0.0; m_buff[3] = 1.0;
     }
 
-    template< typename Scalar_T >
-    Scalar_T& Matrix2<Scalar_T>::operator() ( size_t row, size_t col )
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN> Matrix<Scalar_T, SizeN>::transpose() const
     {
-        assert( row < 2 && col < 2 );
-        return m_buff[ row + col * 2 ];
+        return { m_buff[0], m_buff[1], 
+                 m_buff[2], m_buff[3] };
     }
 
-    template< typename Scalar_T >
-    std::string toString( const Matrix2<Scalar_T>& mat )
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN> Matrix<Scalar_T, SizeN>::inverse() const
+    {
+        auto m00 = m_buff[0]; auto m01 = m_buff[2];
+        auto m10 = m_buff[1]; auto m11 = m_buff[3];
+
+        auto det = m00 * m11 - m10 * m01;
+        return { m11 / det, -m01 / det,
+                 -m10 / det, m00 / det };
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T Matrix<Scalar_T, SizeN>::operator() ( size_t row, size_t col ) const
+    {
+        assert( row < SizeN && col < SizeN );
+        return m_buff[ row + col * SizeN ];
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T& Matrix<Scalar_T, SizeN>::operator() ( size_t row, size_t col )
+    {
+        assert( row < SizeN && col < SizeN );
+        return m_buff[ row + col * SizeN ];
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T, SizeN> Matrix<Scalar_T, SizeN>::row( size_t index ) const
+    {
+        assert( index < SizeN );
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T, SizeN> Matrix<Scalar_T, SizeN>::col( size_t index ) const
+    {
+        assert( index < SizeN );
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN> Matrix<Scalar_T, SizeN>::operator+ ( const Matrix<Scalar_T, SizeN>& other ) const
+    {
+        auto _res = Matrix<Scalar_T, SizeN>();
+        for ( size_t i = 0; i < SizeN; i++ )
+            for ( size_t j = 0; j < SizeN; j++ )
+                _res.m_buff[i + j * SizeN] = m_buff[i + j * SizeN] + other.m_buff[i + j * SizeN];
+        return _res;
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN> Matrix<Scalar_T, SizeN>::operator- ( const Matrix<Scalar_T, SizeN>& other ) const
+    {
+        auto _res = Matrix<Scalar_T, SizeN>();
+        for ( size_t i = 0; i < SizeN; i++ )
+            for ( size_t j = 0; j < SizeN; j++ )
+                _res.m_buff[i + j * SizeN] = m_buff[i + j * SizeN] - other.m_buff[i + j * SizeN];
+        return _res;
+    }
+
+
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN> Matrix<Scalar_T, SizeN>::operator* ( const Matrix<Scalar_T, SizeN>& other ) const
+    {
+        auto _res = Matrix<Scalar_T, SizeN>( 0.0, 0.0, 0.0, 0.0 );
+        for ( size_t i = 0; i < SizeN; i++ )
+            for ( size_t j = 0; j < SizeN; j++ )
+                for ( size_t k = 0; k < SizeN; k++ )
+                    _res.m_buff[i + j * SizeN] += m_buff[i + k * SizeN] * other.m_buff[k + j * SizeN];
+        return _res;
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T, SizeN> Matrix<Scalar_T, SizeN>::operator* ( const Vector<Scalar_T, SizeN>& vec ) const
+    {
+        auto _res = Vector<Scalar_T, SizeN>();
+        for ( size_t i = 0; i < SizeN; i++ )
+            for ( size_t k = 0; k < SizeN; k++ )
+                _res.m_buff[i] += m_buff[i + k * SizeN] * vec(k); // @todo: friend?
+        return _res;
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN> operator* ( const Matrix<Scalar_T, SizeN>& mat, Scalar_T val )
+    {
+        auto _res = Matrix<Scalar_T, SizeN>();
+        for ( size_t i = 0; i < SizeN; i++ )
+            for ( size_t j = 0; j < SizeN; j++ )
+                _res(i, j) = mat(i, j) * val;
+        return _res;
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN> operator* ( Scalar_T val, const Matrix<Scalar_T, SizeN>& mat )
+    {
+        auto _res = Matrix<Scalar_T, SizeN>();
+        for ( size_t i = 0; i < SizeN; i++ )
+            for ( size_t j = 0; j < SizeN; j++ )
+                _res(i, j) = mat(i, j) * val;
+        return _res;
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    std::string toString( const Matrix<Scalar_T, SizeN>& mat )
     {
         std::string _strrep = "[ ";
-        for ( size_t i = 0; i < 2; i++ )
+        for ( size_t i = 0; i < SizeN; i++ )
         {
             _strrep += ( i != 0 ) ? "  " : "";
-            for ( size_t j = 0; j < 2; j++ )
-                _strrep += std::to_string( mat( i, j ) ) + ( ( i == 1 && j == 1 ) ? "" : "\t" );
+            for ( size_t j = 0; j < SizeN; j++ )
+                _strrep += std::to_string( mat( i, j ) ) + ( ( i == (SizeN - 1) && j == (SizeN - 1) ) ? "" : "\t" );
 
-            if ( i != 1 )
+            if ( i != (SizeN - 1) )
                 _strrep += "\n";
         }
         _strrep += " ]";

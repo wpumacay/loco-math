@@ -38,8 +38,8 @@ if ( TINYMATH_IS_MASTER_PROJECT )
     add_subdirectory( ext ) # if child project, root project adds the dependencies
 endif()
 
-# Add bindings subdirectory
-add_subdirectory( python )
+## # Add bindings subdirectory
+## add_subdirectory( python )
 
 option( TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen)" ON )
 if ( TINYMATH_BUILD_DOCS AND TINYMATH_IS_MASTER_PROJECT )

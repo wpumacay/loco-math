@@ -38,8 +38,6 @@ int main()
     std::cout << "v4.length(): " << std::to_string( _vec4.length() ) << std::endl;
     std::cout << "v3.normalized(): " << tinymath::toString( _vec3.normalized() ) << std::endl;
     std::cout << "v4.normalized(): " << tinymath::toString( _vec4.normalized() ) << std::endl;
-    std::cout << "v3.scaled(2.0,3.0,4.0): " << tinymath::toString( _vec3.scaled( 2.0f, 3.0f, 4.0f ) ) << std::endl;
-    std::cout << "v4.scaled(0.5,0.25,0.125): " << tinymath::toString( _vec4.scaled( 0.5f, 0.25f, 0.125f ) ) << std::endl;
     std::cout << "v3.scaled({2.0,3.0,4.0}): " << tinymath::toString( _vec3.scaled( { 2.0f, 3.0f, 4.0f } ) ) << std::endl;
     std::cout << "v4.scaled({0.5,0.25,0.125}): " << tinymath::toString( _vec4.scaled( { 0.5f, 0.25f, 0.125f } ) ) << std::endl;
 

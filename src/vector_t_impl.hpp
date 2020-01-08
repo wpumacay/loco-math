@@ -5,480 +5,326 @@ namespace tinymath
 {
 
     //////////////////////////////////////////////////////////////////////////
-    //                              Vector2                                 //
+    //                              Vector                                  //
     //////////////////////////////////////////////////////////////////////////
 
-    template< typename Scalar_T >
-    Vector2<Scalar_T>::Vector2()
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN>::Vector()
     {
-        m_buff[0] = 0.0f;
-        m_buff[1] = 0.0f;
+        for ( size_t i = 0; i < SizeN; i++ )
+            m_buff[i] = 0.0;
     }
 
-    template< typename Scalar_T >
-    Vector2<Scalar_T>::Vector2( Scalar_T val )
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN>::Vector( Scalar_T val )
     {
-        m_buff[0] = val;
-        m_buff[1] = val;
+        for ( size_t i = 0; i < SizeN; i++ )
+            m_buff[i] = val;
     }
 
-    template< typename Scalar_T >
-    Vector2<Scalar_T>::Vector2( Scalar_T xval, Scalar_T yval )
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN>::Vector( std::initializer_list<Scalar_T> values )
     {
-        m_buff[0] = xval;
-        m_buff[1] = yval;
+        assert( values.size() == SizeN );
+        size_t i = 0;
+        for ( auto val : values )
+        {
+            m_buff[i] = val;
+            i++;
+        }
     }
 
-    template< typename Scalar_T >
-    Vector2<Scalar_T>::~Vector2()
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN>::~Vector()
     {
         // nothing to release manually
     }
 
-    template< typename Scalar_T >
-    Scalar_T Vector2<Scalar_T>::length() const
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T Vector<Scalar_T,SizeN>::length() const
     {
-        return std::sqrt( m_buff[0] * m_buff[0] + m_buff[1] * m_buff[1] );
+        Scalar_T len = 0.0;
+        for ( size_t i = 0; i < SizeN; i++ )
+            len += m_buff[i] * m_buff[i];
+        return std::sqrt( len );
     }
 
-    template< typename Scalar_T >
-    Scalar_T Vector2<Scalar_T>::dot( const Vector2<Scalar_T>& other ) const
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T Vector<Scalar_T,SizeN>::dot( const Vector<Scalar_T,SizeN>& other ) const
     {
-        return m_buff[0] * other.m_buff[0] + m_buff[1] * other.m_buff[1];
+        Scalar_T _sum = 0.0;
+        for ( size_t i = 0; i < SizeN; i++ )
+            _sum += m_buff[i] * other.m_buff[i];
+        return _sum;
     }
 
-    template< typename Scalar_T >
-    void Vector2<Scalar_T>::normalize()
-    {
-        auto len = length();
-        m_buff[0] /= len;
-        m_buff[1] /= len;
-        m_buff[2] /= len;
-    }
-
-    template< typename Scalar_T >
-    Vector2<Scalar_T> Vector2<Scalar_T>::normalized() const
+    template< typename Scalar_T, size_t SizeN >
+    void Vector<Scalar_T,SizeN>::normalize()
     {
         auto len = length();
-        return { m_buff[0] / len, m_buff[1] / len };
+        for ( size_t i = 0; i < SizeN; i++ )
+            m_buff[i] /= len;
     }
 
-    template< typename Scalar_T >
-    void Vector2<Scalar_T>::scale( Scalar_T xval, Scalar_T yval )
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> Vector<Scalar_T,SizeN>::normalized() const
     {
-        m_buff[0] *= xval;
-        m_buff[1] *= yval;
-    }
-
-    template< typename Scalar_T >
-    void Vector2<Scalar_T>::scale( const Vector2<Scalar_T>& other )
-    {
-        m_buff[0] *= other.m_buff[0];
-        m_buff[1] *= other.m_buff[1];
-    }
-
-    template< typename Scalar_T >
-    Vector2<Scalar_T> Vector2<Scalar_T>::scaled( Scalar_T xval, Scalar_T yval ) const
-    {
-        return { m_buff[0] * xval, m_buff[1] * yval };
-    }
-
-    template< typename Scalar_T >
-    Vector2<Scalar_T> Vector2<Scalar_T>::scaled( const Vector2<Scalar_T>& other ) const
-    {
-        return { m_buff[0] * other.m_buff[0], m_buff[1] * other.m_buff[1] };
-    }
-
-    template< typename Scalar_T >
-    Scalar_T Vector2<Scalar_T>::operator[] ( size_t indx ) const
-    {
-        assert( indx >= 0 );
-        assert( indx <= 1 );
-
-        return m_buff[indx];
-    }
-
-    template< typename Scalar_T >
-    Scalar_T& Vector2<Scalar_T>::operator[] ( size_t indx )
-    {
-        assert( indx >= 0 );
-        assert( indx <= 1 );
-
-        return m_buff[indx];
-    }
-
-    template< typename Scalar_T >
-    Scalar_T Vector2<Scalar_T>::operator() ( size_t indx ) const
-    {
-        assert( indx >= 0 );
-        assert( indx <= 1 );
-
-        return m_buff[indx];
-    }
-
-    template< typename Scalar_T >
-    Scalar_T& Vector2<Scalar_T>::operator() ( size_t indx )
-    {
-        assert( indx >= 0 );
-        assert( indx <= 1 );
-
-        return m_buff[indx];
-    }
-
-    template< typename Scalar_T >
-    Vector2<Scalar_T> Vector2<Scalar_T>::operator+ ( const Vector2<Scalar_T>& other ) const
-    {
-        return { m_buff[0] + other.m_buff[0],
-                 m_buff[1] + other.m_buff[1] };
-    }
-
-    template< typename Scalar_T >
-    Vector2<Scalar_T> Vector2<Scalar_T>::operator- ( const Vector2<Scalar_T>& other ) const
-    {
-        return { m_buff[0] - other.m_buff[0],
-                 m_buff[1] - other.m_buff[1] };
-    }
-
-    template< typename Scalar_T >
-    Vector2<Scalar_T> Vector2<Scalar_T>::operator* ( const Vector2<Scalar_T>& other ) const
-    {
-        return { m_buff[0] * other.m_buff[0],
-                 m_buff[1] * other.m_buff[1] };
-    }
-
-    template< typename Scalar_T >
-    Vector2<Scalar_T> operator* ( const Vector2<Scalar_T>& vec, Scalar_T val )
-    {
-        return { vec.x() * val, vec.y() * val };
-    }
-
-    template< typename Scalar_T >
-    Vector2<Scalar_T> operator* ( Scalar_T val, const Vector2<Scalar_T>& vec )
-    {
-        return { vec.x() * val, vec.y() * val };
-    }
-
-    template< typename Scalar_T >
-    std::string toString( const Vector2<Scalar_T>& vec )
-    {
-        return std::string( "[ " ) + std::to_string( vec.x() ) +
-               std::string( ", " ) + std::to_string( vec.y() ) + std::string( " ]" );
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    //                              Vector3                                 //
-    //////////////////////////////////////////////////////////////////////////
-
-    template< typename Scalar_T >
-    Vector3<Scalar_T>::Vector3()
-    {
-        m_buff[0] = 0.0f;
-        m_buff[1] = 0.0f;
-        m_buff[2] = 0.0f;
-    }
-
-    template< typename Scalar_T >
-    Vector3<Scalar_T>::Vector3( Scalar_T val )
-    {
-        m_buff[0] = val;
-        m_buff[1] = val;
-        m_buff[2] = val;
-    }
-
-    template< typename Scalar_T >
-    Vector3<Scalar_T>::Vector3( Scalar_T xval, Scalar_T yval, Scalar_T zval )
-    {
-        m_buff[0] = xval;
-        m_buff[1] = yval;
-        m_buff[2] = zval;
-    }
-
-    template< typename Scalar_T >
-    Vector3<Scalar_T>::Vector3( const Vector2<Scalar_T>& vec2, Scalar_T zval )
-    {
-        m_buff[0] = vec2.x();
-        m_buff[1] = vec2.y();
-        m_buff[2] = zval;
-    }
-
-    template< typename Scalar_T >
-    Vector3<Scalar_T>::~Vector3()
-    {
-        // nothing to release manually
-    }
-
-    template< typename Scalar_T >
-    Scalar_T Vector3<Scalar_T>::length() const
-    {
-        return std::sqrt( m_buff[0] * m_buff[0] + m_buff[1] * m_buff[1] + m_buff[2] * m_buff[2] );
-    }
-
-    template< typename Scalar_T >
-    Scalar_T Vector3<Scalar_T>::dot( const Vector3<Scalar_T>& other ) const
-    {
-        return m_buff[0] * other.m_buff[0] + m_buff[1] * other.m_buff[1] + m_buff[2] * other.m_buff[2];
-    }
-
-    template< typename Scalar_T >
-    Vector3<Scalar_T> Vector3<Scalar_T>::cross( const Vector3<Scalar_T>& other ) const
-    {
-        return { m_buff[1] * other.m_buff[2] - other.m_buff[1] * m_buff[2],
-                -m_buff[0] * other.m_buff[2] + other.m_buff[0] * m_buff[2],
-                 m_buff[0] * other.m_buff[1] - other.m_buff[0] * m_buff[1] };
-    }
-
-    template< typename Scalar_T >
-    void Vector3<Scalar_T>::normalize()
-    {
+        auto _res = Vector<Scalar_T,SizeN>();
         auto len = length();
-        m_buff[0] /= len;
-        m_buff[1] /= len;
-        m_buff[2] /= len;
+        for ( size_t i = 0; i < SizeN; i++ )
+            _res.m_buff[i] = m_buff[i] / len;
+        return _res;
     }
 
-    template< typename Scalar_T >
-    Vector3<Scalar_T> Vector3<Scalar_T>::normalized() const
+    template< typename Scalar_T, size_t SizeN >
+    void Vector<Scalar_T,SizeN>::scale( Scalar_T val )
     {
-        auto len = length();
-        return { m_buff[0] / len, m_buff[1] / len, m_buff[2] / len };
+        for ( size_t i = 0; i < SizeN; i++ )
+            m_buff[i] *= val;
     }
 
-    template< typename Scalar_T >
-    void Vector3<Scalar_T>::scale( Scalar_T xval, Scalar_T yval, Scalar_T zval )
+    template< typename Scalar_T, size_t SizeN >
+    void Vector<Scalar_T,SizeN>::scale( const Vector<Scalar_T,SizeN>& other )
     {
-        m_buff[0] *= xval;
-        m_buff[1] *= yval;
-        m_buff[2] *= zval;
+        for ( size_t i = 0; i < SizeN; i++ )
+            m_buff[i] *= other.m_buff[i];
     }
 
-    template< typename Scalar_T >
-    void Vector3<Scalar_T>::scale( const Vector3<Scalar_T>& other )
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> Vector<Scalar_T,SizeN>::scaled( Scalar_T val ) const
     {
-        m_buff[0] *= other.m_buff[0];
-        m_buff[1] *= other.m_buff[1];
-        m_buff[2] *= other.m_buff[2];
+        auto _res = Vector<Scalar_T,SizeN>();
+        for ( size_t i = 0; i < SizeN; i++ )
+            _res.m_buff[i] = m_buff[i] * val;
+        return _res;
     }
 
-    template< typename Scalar_T >
-    Vector3<Scalar_T> Vector3<Scalar_T>::scaled( Scalar_T xval, Scalar_T yval, Scalar_T zval ) const
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> Vector<Scalar_T,SizeN>::scaled( const Vector<Scalar_T,SizeN>& other ) const
     {
-        return { m_buff[0] * xval, m_buff[1] * yval, m_buff[2] * zval };
+        auto _res = Vector<Scalar_T,SizeN>();
+        for ( size_t i = 0; i < SizeN; i++ )
+            _res.m_buff[i] = m_buff[i] * other.m_buff[i];
+        return _res;
     }
 
-    template< typename Scalar_T >
-    Vector3<Scalar_T> Vector3<Scalar_T>::scaled( const Vector3<Scalar_T>& other ) const
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T Vector<Scalar_T,SizeN>::x() const
     {
-        return { m_buff[0] * other.m_buff[0], m_buff[1] * other.m_buff[1], m_buff[2] * other.m_buff[2] };
+        throw std::runtime_error( "tinymath::Vector::x() >>> x-component getter not supported" );
+        return m_buff[0];
     }
 
-    template< typename Scalar_T >
-    Scalar_T Vector3<Scalar_T>::operator[] ( size_t indx ) const
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T Vector<Scalar_T,SizeN>::y() const
     {
-        assert( indx >= 0 );
-        assert( indx <= 2 );
+        throw std::runtime_error( "tinymath::Vector::y() >>> y-component getter not supported" );
+        return m_buff[1];
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T Vector<Scalar_T,SizeN>::z() const
+    {
+        throw std::runtime_error( "tinymath::Vector::z() >>> z-component getter not supported" );
+        return m_buff[2];
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T Vector<Scalar_T,SizeN>::w() const
+    {
+        throw std::runtime_error( "tinymath::Vector::w() >>> w-component getter not supported" );
+        return m_buff[3];
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T& Vector<Scalar_T,SizeN>::x()
+    {
+        throw std::runtime_error( "tinymath::Vector::x() >>> x-component getter not supported" );
+        return m_buff[0];
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T& Vector<Scalar_T,SizeN>::y()
+    {
+        throw std::runtime_error( "tinymath::Vector::y() >>> y-component getter not supported" );
+        return m_buff[1];
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T& Vector<Scalar_T,SizeN>::z()
+    {
+        throw std::runtime_error( "tinymath::Vector::z() >>> z-component getter not supported" );
+        return m_buff[2];
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T& Vector<Scalar_T,SizeN>::w()
+    {
+        throw std::runtime_error( "tinymath::Vector::w() >>> w-component getter not supported" );
+        return m_buff[3];
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T Vector<Scalar_T,SizeN>::operator[] ( size_t indx ) const
+    {
+        assert( indx < SizeN );
 
         return m_buff[indx];
     }
 
-    template< typename Scalar_T >
-    Scalar_T& Vector3<Scalar_T>::operator[] ( size_t indx )
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T& Vector<Scalar_T,SizeN>::operator[] ( size_t indx )
     {
-        assert( indx >= 0 );
-        assert( indx <= 2 );
+        assert( indx < SizeN );
 
         return m_buff[indx];
     }
 
-    template< typename Scalar_T >
-    Scalar_T Vector3<Scalar_T>::operator() ( size_t indx ) const
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T Vector<Scalar_T,SizeN>::operator() ( size_t indx ) const
     {
-        assert( indx >= 0 );
-        assert( indx <= 2 );
+        assert( indx < SizeN );
 
         return m_buff[indx];
     }
 
-    template< typename Scalar_T >
-    Scalar_T& Vector3<Scalar_T>::operator() ( size_t indx )
+    template< typename Scalar_T, size_t SizeN >
+    Scalar_T& Vector<Scalar_T,SizeN>::operator() ( size_t indx )
     {
-        assert( indx >= 0 );
-        assert( indx <= 2 );
+        assert( indx < SizeN );
 
         return m_buff[indx];
     }
 
-    template< typename Scalar_T >
-    Vector3<Scalar_T> Vector3<Scalar_T>::operator+ ( const Vector3<Scalar_T>& other ) const
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> Vector<Scalar_T,SizeN>::operator+ ( const Vector<Scalar_T,SizeN>& other ) const
     {
-        return { m_buff[0] + other.m_buff[0],
-                 m_buff[1] + other.m_buff[1],
-                 m_buff[2] + other.m_buff[2] };
+        auto _res = Vector<Scalar_T,SizeN>();
+        for ( size_t i = 0; i < SizeN; i++ )
+            _res.m_buff[i] = m_buff[i] + other.m_buff[i];
+        return _res;
     }
 
-    template< typename Scalar_T >
-    Vector3<Scalar_T> Vector3<Scalar_T>::operator- ( const Vector3<Scalar_T>& other ) const
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> Vector<Scalar_T,SizeN>::operator- ( const Vector<Scalar_T,SizeN>& other ) const
     {
-        return { m_buff[0] - other.m_buff[0],
-                 m_buff[1] - other.m_buff[1],
-                 m_buff[2] - other.m_buff[2] };
+        auto _res = Vector<Scalar_T,SizeN>();
+        for ( size_t i = 0; i < SizeN; i++ )
+            _res.m_buff[i] = m_buff[i] - other.m_buff[i];
+        return _res;
     }
 
-    template< typename Scalar_T >
-    Vector3<Scalar_T> Vector3<Scalar_T>::operator* ( const Vector3<Scalar_T>& other ) const
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> Vector<Scalar_T,SizeN>::operator* ( const Vector<Scalar_T,SizeN>& other ) const
     {
-        return { m_buff[0] * other.m_buff[0],
-                 m_buff[1] * other.m_buff[1],
-                 m_buff[2] * other.m_buff[2] };
+        auto _res = Vector<Scalar_T,SizeN>();
+        for ( size_t i = 0; i < SizeN; i++ )
+            _res.m_buff[i] = m_buff[i] * other.m_buff[i];
+        return _res;
     }
 
-    template< typename Scalar_T >
-    Vector3<Scalar_T> operator* ( const Vector3<Scalar_T>& vec, Scalar_T val )
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> operator* ( const Vector<Scalar_T,SizeN>& vec, Scalar_T val )
     {
-        return { vec.x() * val, vec.y() * val, vec.z() * val };
+        return vec.scaled( val );
     }
 
-    template< typename Scalar_T >
-    Vector3<Scalar_T> operator* ( Scalar_T val, const Vector3<Scalar_T>& vec )
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> operator* ( Scalar_T val, const Vector<Scalar_T,SizeN>& vec )
     {
-        return { vec.x() * val, vec.y() * val, vec.z() * val };
+        return vec.scaled( val );
     }
 
-    template< typename Scalar_T >
-    std::string toString( const Vector3<Scalar_T>& vec )
+    template< typename Scalar_T, size_t SizeN >
+    std::string toString( const Vector<Scalar_T,SizeN>& vec )
     {
-        return std::string( "[ " ) + std::to_string( vec.x() ) +
-               std::string( ", " ) + std::to_string( vec.y() ) +
-               std::string( ", " ) + std::to_string( vec.z() ) + std::string( " ]" );
+        std::string _strrep = "[ ";
+        for ( size_t i = 0; i < SizeN; i++ )
+            _strrep += std::to_string( vec[i] ) + ( ( i < (SizeN - 1) ) ? ", " : " ]" );
+        return _strrep;
     }
 
-    //////////////////////////////////////////////////////////////////////////
-    //                              Vector4                                 //
-    //////////////////////////////////////////////////////////////////////////
+    /**********************************************************************************************/
+    /*                          Specializations for specific functions                            */
+    /**********************************************************************************************/
 
-    template< typename Scalar_T >
-    Vector4<Scalar_T>::Vector4()
-    {
-        m_buff[0] = 0.0f;
-        m_buff[1] = 0.0f;
-        m_buff[2] = 0.0f;
-        m_buff[3] = 0.0f;
-    }
+    // Value-getters for x,y,z,w
 
-    template< typename Scalar_T >
-    Vector4<Scalar_T>::Vector4( Scalar_T val )
-    {
-        m_buff[0] = val;
-        m_buff[1] = val;
-        m_buff[2] = val;
-        m_buff[3] = val;
-    }
+    template<>
+    float Vector<float, 2>::x() const { return m_buff[0]; }
+    template<>
+    float Vector<float, 2>::y() const { return m_buff[1]; }
+    template<>
+    float Vector<float, 3>::x() const { return m_buff[0]; }
+    template<>
+    float Vector<float, 3>::y() const { return m_buff[1]; }
+    template<>
+    float Vector<float, 3>::z() const { return m_buff[2]; }
+    template<>
+    float Vector<float, 4>::x() const { return m_buff[0]; }
+    template<>
+    float Vector<float, 4>::y() const { return m_buff[1]; }
+    template<>
+    float Vector<float, 4>::z() const { return m_buff[2]; }
+    template<>
+    float Vector<float, 4>::w() const { return m_buff[0]; }
 
-    template< typename Scalar_T >
-    Vector4<Scalar_T>::Vector4( Scalar_T xval, Scalar_T yval, Scalar_T zval, Scalar_T wval )
-    {
-        m_buff[0] = xval;
-        m_buff[1] = yval;
-        m_buff[2] = zval;
-        m_buff[3] = wval;
-    }
+    template<>
+    double Vector<double, 2>::x() const { return m_buff[0]; }
+    template<>
+    double Vector<double, 2>::y() const { return m_buff[1]; }
+    template<>
+    double Vector<double, 3>::x() const { return m_buff[0]; }
+    template<>
+    double Vector<double, 3>::y() const { return m_buff[1]; }
+    template<>
+    double Vector<double, 3>::z() const { return m_buff[2]; }
+    template<>
+    double Vector<double, 4>::x() const { return m_buff[0]; }
+    template<>
+    double Vector<double, 4>::y() const { return m_buff[1]; }
+    template<>
+    double Vector<double, 4>::z() const { return m_buff[2]; }
+    template<>
+    double Vector<double, 4>::w() const { return m_buff[0]; }
 
-    template< typename Scalar_T >
-    Vector4<Scalar_T>::Vector4( const Vector3<Scalar_T>& vec3, Scalar_T wval )
-    {
-        m_buff[0] = vec3.x();
-        m_buff[1] = vec3.y();
-        m_buff[2] = vec3.z();
-        m_buff[3] = wval;
-    }
+    // Reference-getters for x,y,z,w
 
-    template< typename Scalar_T >
-    Vector4<Scalar_T>::~Vector4()
-    {
-        // nothing to release manually
-    }
+    template<>
+    float& Vector<float, 2>::x() { return m_buff[0]; }
+    template<>
+    float& Vector<float, 2>::y() { return m_buff[1]; }
+    template<>
+    float& Vector<float, 3>::x() { return m_buff[0]; }
+    template<>
+    float& Vector<float, 3>::y() { return m_buff[1]; }
+    template<>
+    float& Vector<float, 3>::z() { return m_buff[2]; }
+    template<>
+    float& Vector<float, 4>::x() { return m_buff[0]; }
+    template<>
+    float& Vector<float, 4>::y() { return m_buff[1]; }
+    template<>
+    float& Vector<float, 4>::z() { return m_buff[2]; }
+    template<>
+    float& Vector<float, 4>::w() { return m_buff[0]; }
 
-    template< typename Scalar_T >
-    Scalar_T Vector4<Scalar_T>::operator[] ( size_t indx ) const
-    {
-        assert( indx >= 0 );
-        assert( indx <= 3 );
-
-        return m_buff[indx];
-    }
-
-    template< typename Scalar_T >
-    Scalar_T& Vector4<Scalar_T>::operator[] ( size_t indx )
-    {
-        assert( indx >= 0 );
-        assert( indx <= 3 );
-
-        return m_buff[indx];
-    }
-
-    template< typename Scalar_T >
-    Scalar_T Vector4<Scalar_T>::operator() ( size_t indx ) const
-    {
-        assert( indx >= 0 );
-        assert( indx <= 3 );
-
-        return m_buff[indx];
-    }
-
-    template< typename Scalar_T >
-    Scalar_T& Vector4<Scalar_T>::operator() ( size_t indx )
-    {
-        assert( indx >= 0 );
-        assert( indx <= 3 );
-
-        return m_buff[indx];
-    }
-
-    template< typename Scalar_T >
-    Vector4<Scalar_T> Vector4<Scalar_T>::operator+ ( const Vector4<Scalar_T>& other ) const
-    {
-        return { m_buff[0] + other.m_buff[0],
-                 m_buff[1] + other.m_buff[1],
-                 m_buff[2] + other.m_buff[2],
-                 m_buff[3] + other.m_buff[3] };
-    }
-
-    template< typename Scalar_T >
-    Vector4<Scalar_T> Vector4<Scalar_T>::operator- ( const Vector4<Scalar_T>& other ) const
-    {
-        return { m_buff[0] - other.m_buff[0],
-                 m_buff[1] - other.m_buff[1],
-                 m_buff[2] - other.m_buff[2],
-                 m_buff[3] - other.m_buff[3] };
-    }
-
-    template< typename Scalar_T >
-    Vector4<Scalar_T> Vector4<Scalar_T>::operator* ( const Vector4<Scalar_T>& other ) const
-    {
-        return { m_buff[0] * other.m_buff[0],
-                 m_buff[1] * other.m_buff[1],
-                 m_buff[2] * other.m_buff[2],
-                 m_buff[3] * other.m_buff[3] };
-    }
-
-    template< typename Scalar_T >
-    Vector4<Scalar_T> operator* ( const Vector4<Scalar_T>& vec, Scalar_T val )
-    {
-        return { vec.x() * val, vec.y() * val, vec.z() * val, vec.w() * val };
-    }
-
-    template< typename Scalar_T >
-    Vector4<Scalar_T> operator* ( Scalar_T val, const Vector4<Scalar_T>& vec )
-    {
-        return { vec.x() * val, vec.y() * val, vec.z() * val, vec.w() * val };
-    }
-
-    template< typename Scalar_T >
-    std::string toString( const Vector4<Scalar_T>& vec )
-    {
-        return std::string( "[ " ) + std::to_string( vec.x() ) +
-               std::string( ", " ) + std::to_string( vec.y() ) +
-               std::string( ", " ) + std::to_string( vec.z() ) +
-               std::string( ", " ) + std::to_string( vec.w() ) + std::string( " ]" );
-    }
-
+    template<>
+    double& Vector<double, 2>::x() { return m_buff[0]; }
+    template<>
+    double& Vector<double, 2>::y() { return m_buff[1]; }
+    template<>
+    double& Vector<double, 3>::x() { return m_buff[0]; }
+    template<>
+    double& Vector<double, 3>::y() { return m_buff[1]; }
+    template<>
+    double& Vector<double, 3>::z() { return m_buff[2]; }
+    template<>
+    double& Vector<double, 4>::x() { return m_buff[0]; }
+    template<>
+    double& Vector<double, 4>::y() { return m_buff[1]; }
+    template<>
+    double& Vector<double, 4>::z() { return m_buff[2]; }
+    template<>
+    double& Vector<double, 4>::w() { return m_buff[0]; }
 }

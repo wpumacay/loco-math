@@ -10,7 +10,7 @@ namespace tinymath
     *   @brief Matrix of 2x2 shape, stored in column major format
     */
     template< typename Scalar_T, size_t SizeN >
-    class Matrix
+    class Matrix2
     {
 
     public :
@@ -20,14 +20,14 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>();
+        *       auto mat = tinymath::Matrix2<float>();
         *       std::cout << tinymath::toString( mat ) << std::endl;
         *       // result:
         *       //  [ 1.0, 0.0
         *       //    0.0, 1.0 ]
         *   @endcode
         */
-        Matrix();
+        Matrix2();
 
         /**
         *   @brief Creates a 2x2 matrix initialized with given elements
@@ -39,7 +39,7 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0
+        *       auto mat = tinymath::Matrix2<float>( 1.0, 2.0
         *                                            3.0, 4.0 );
         *       std::cout << tinymath::toString( mat ) << std::endl;
         *       // result:
@@ -47,8 +47,8 @@ namespace tinymath
         *       //    3.0, 4.0 ]
         *   @endcode
         */
-        Matrix( Scalar_T m00, Scalar_T m01,
-                Scalar_T m10, Scalar_T m11 );
+        Matrix2( Scalar_T m00, Scalar_T m01,
+                 Scalar_T m10, Scalar_T m11 );
 
         /**
         *   @brief Creates a 2x2 matrix initialized with given columns
@@ -60,19 +60,19 @@ namespace tinymath
         *   @code
         *       auto col1 = tinymath::Vector2<float>( 1.0, 3.0 );
         *       auto col2 = tinymath::Vector2<float>( 2.0, 4.0 );
-        *       auto mat = tinymath::Matrix<float, 2>( col1, col2 );
+        *       auto mat = tinymath::Matrix2<float>( col1, col2 );
         *       std::cout << tinymath::toString( mat ) << std::endl;
         *       // result:
         *       //  [ 1.0, 2.0
         *       //    3.0, 4.0 ]
         *   @endcode
         */
-        Matrix( const Vector2<Scalar_T,SizeN>& col1, const Vector2<Scalar_T,SizeN>& col2 );
+        Matrix2( const Vector2<Scalar_T>& col1, const Vector2<Scalar_T>& col2 );
 
         /**
         *   @brief Releases resources used for this matrix
         */
-        ~Matrix();
+        ~Matrix2();
 
         /**
         *   @brief Sets the components of the matrix to the Identity matrix of dimensions (2x2)
@@ -86,7 +86,7 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
+        *       auto mat = tinymath::Matrix2<float>( 1.0, 2.0,
         *                                            3.0, 4.0 );
         *       std::cout << "matrix: " << std::endl;
         *       std::cout << tinymath::toString( mat ) << std::endl;
@@ -101,7 +101,7 @@ namespace tinymath
         *       //   2.0, 4.0 ]
         *   @endcode
         */
-        Matrix<Scalar_T,SizeN> transpose() const;
+        Matrix2<Scalar_T> transpose() const;
 
         /**
         *   @brief Returns the inverse of this matrix
@@ -110,7 +110,7 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
+        *       auto mat = tinymath::Matrix2<float>( 1.0, 2.0,
         *                                            3.0, 4.0 );
         *       std::cout << "matrix: " << std::endl;
         *       std::cout << tinymath::toString( mat ) << std::endl;
@@ -125,7 +125,7 @@ namespace tinymath
         *       //   1.5, -0.5 ]
         *   @endcode
         */
-        Matrix<Scalar_T,SizeN> inverse() const;
+        Matrix2<Scalar_T> inverse() const;
 
         /**
         *   @brief Returns the value at stored at requested index (row,col)
@@ -136,7 +136,7 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
+        *       auto mat = tinymath::Matrix2<float>( 1.0, 2.0,
         *                                            3.0, 4.0 );
         *       std::cout << "mat(0,0): " << std::to_string( mat(0,0) ) << std::endl;
         *       std::cout << "mat(0,1): " << std::to_string( mat(0,1) ) << std::endl;
@@ -160,7 +160,7 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
+        *       auto mat = tinymath::Matrix2<float>( 1.0, 2.0,
         *                                            3.0, 4.0 );
         *       std::cout << "matrix (1):" << std::endl;
         *       std::cout << tinymath::toString( mat ) << std::endl;
@@ -189,7 +189,7 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
+        *       auto mat = tinymath::Matrix2<float>( 1.0, 2.0,
         *                                            3.0, 4.0 );
         *       std::cout << "row(0): " << mat.row(0) << std::endl;
         *       std::cout << "row(1): " << mat.row(1) << std::endl;
@@ -198,7 +198,7 @@ namespace tinymath
         *       // row(1): [3.0, 4.0]
         *   @endcode
         */
-        Vector2<Scalar_T,SizeN> row( size_t index ) const;
+        Vector2<Scalar_T> row( size_t index ) const;
 
         /**
         *   @brief Return the column at the given index
@@ -208,7 +208,7 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
+        *       auto mat = tinymath::Matrix2<float>( 1.0, 2.0,
         *                                            3.0, 4.0 );
         *       std::cout << "col(0): " << mat.col(0) << std::endl;''
         *       std::cout << "col(1): " << mat.col(1) << std::endl;
@@ -217,7 +217,7 @@ namespace tinymath
         *       // col(1): [2.0, 4.0]
         *   @endcode
         */
-        Vector2<Scalar_T,SizeN> col( size_t index ) const;
+        Vector2<Scalar_T> col( size_t index ) const;
 
         /**
         *   @brief Returns the matrix-addition with a second matrix
@@ -225,7 +225,7 @@ namespace tinymath
         *   @param other    Second operand for the sum
         *   @return         Result of the matrix-addition
         */
-        Matrix<Scalar_T,SizeN> operator+ ( const Matrix<Scalar_T,SizeN>& other ) const;
+        Matrix2<Scalar_T> operator+ ( const Matrix2<Scalar_T>& other ) const;
 
         /**
         *   @brief Returns the matrix-subtraction with a second matrix
@@ -233,7 +233,7 @@ namespace tinymath
         *   @param other    Second operand for the subtraction
         *   @return         Result of the matrix-subtraction
         */
-        Matrix<Scalar_T,SizeN> operator- ( const Matrix<Scalar_T,SizeN>& other ) const;
+        Matrix2<Scalar_T> operator- ( const Matrix2<Scalar_T>& other ) const;
 
         /**
         *   @brief Returns the matrix-multiplication with a second matrix
@@ -241,7 +241,7 @@ namespace tinymath
         *   @param other    Second operand for the multiplication (to the right)
         *   @return         Result of the matrix-multiplication
         */
-        Matrix<Scalar_T,SizeN> operator* ( const Matrix<Scalar_T,SizeN>& other ) const;
+        Matrix2<Scalar_T> operator* ( const Matrix2<Scalar_T>& other ) const;
 
         /**
         *   @brief Returns the matrix-vector multiplication with a given vector (to the right)
@@ -249,7 +249,7 @@ namespace tinymath
         *   @param vec  Vector operand applied to the right
         *   @return     The resulting vector from the multiplication
         */
-        Vector2<Scalar_T,SizeN> operator* ( const Vector2<Scalar_T,SizeN>& vec ) const;
+        Vector2<Scalar_T> operator* ( const Vector2<Scalar_T>& vec ) const;
 
         /**
         *   @brief Returns a pointer to the internal data of the matrix
@@ -271,8 +271,8 @@ namespace tinymath
     *   @param val  Scalar factor applied elementwise to the matrix
     *   @return     The resulting elementwise matrix-scalar product
     */
-    template< typename Scalar_T, size_t SizeN >
-    Matrix<Scalar_T,SizeN> operator* ( const Matrix<Scalar_T,SizeN>& mat, Scalar_T val );
+    template< typename Scalar_T >
+    Matrix2<Scalar_T> operator* ( const Matrix2<Scalar_T>& mat, Scalar_T val );
 
     /**
     *   @brief Scalar-matrix product operator
@@ -281,8 +281,8 @@ namespace tinymath
     *   @param matr Matrix operand
     *   @return     The resulting elementwise scalar-matrix product
     */
-    template< typename Scalar_T, size_t SizeN >
-    Matrix<Scalar_T,SizeN> operator* ( Scalar_T val, const Matrix<Scalar_T,SizeN>& mat );
+    template< typename Scalar_T >
+    Matrix2<Scalar_T> operator* ( Scalar_T val, const Matrix2<Scalar_T>& mat );
 
     /**
     *   @brief Returns a string representation of the given 2x2 matrix
@@ -290,23 +290,40 @@ namespace tinymath
     *   @param mat  Matrix whose string representation we want
     *   @return     The string representation of the given matrix
     */
-    template< typename Scalar_T, size_t SizeN >
-    std::string toString( const Matrix<Scalar_T,SizeN>& mat );
+    template< typename Scalar_T >
+    std::string toString( const Matrix2<Scalar_T>& mat );
 
     /* @brief Matrix2 with float32 scalar-type */
-    typedef Matrix<float, 2> Matrix2f;
+    typedef Matrix2<float> Matrix2f;
+
     /* @brief Matrix2 with float64 (double) scalar type */
-    typedef Matrix<double, 2> Matrix2d;
+    typedef Matrix2<double> Matrix2d;
 
-    /* @brief Matrix3 with float32 scalar-type */
-    typedef Matrix<float, 3> Matrix3f;
-    /* @brief Matrix3 with float64 (double) scalar type */
-    typedef Matrix<double, 3> Matrix3d;
+    template< typename Scalar_T >
+    class Matrix3
+    {
 
-    /* @brief Matrix4 with float32 scalar-type */
-    typedef Matrix<float, 4> Matrix4f;
-    /* @brief Matrix4 with float64 (double) scalar type */
-    typedef Matrix<double, 4> Matrix4d;
+    public :
+
+
+    private :
+
+        Scalar_T m_buff[9];
+
+    };
+
+
+    template< typename Scalar_T >
+    class Matrix4
+    {
+
+    public :
+
+    private :
+
+        Scalar_T m_buff[16];
+    };
+
 }
 
 #include "../src/matrix_t_impl.hpp"

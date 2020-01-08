@@ -6,56 +6,58 @@ namespace tinymath
 {
 
     /**
-    *   @brief Just a simple 2-dimensional vector implementation
+    *   @brief Just a simple N-dimensional vector implementation
     *
     *   @details
-    *    Defines a 2d-vector with x-y entries, accessors for these entries, 
+    *    Defines an n-dim vector with x-y entries, accessors for these entries, 
     *    math operators to combine them, and helper methods that implement
     *    some basic operations like dot-product, etc.
+    *
+    *   @tparam Scalar_T    Type used for the values stored in the vector (float|double)
+    *   @tparam SizeN       Dimensionality of the vector
     */
-    template< typename Scalar_T >
-    class Vector2
+    template< typename Scalar_T, size_t SizeN >
+    class Vector
     {
 
     public :
 
         /**
-        *   @brief Creates an empty 2d-vector with all entries initialized to zeros
+        *   @brief Creates an empty n-dim vector with all entries initialized to zeros
         *
         *   Example:
         *   @code
-        *       auto vec = tinymath::Vector2();
+        *       auto vec = tinymath::Vector<float, 2>();
         *       std::cout << "vec: " << tinymath::toString( vec ) << std::endl;
         *       // result:
         *       // vec: [0.0,0.0]
         *   @endcode
         */
-        Vector2();
+        Vector();
 
         /**
-        *   @brief Creates a 2d-vector with all entries initialized to a given value
+        *   @brief Creates an n-dim vector with all entries initialized to a given value
         *
         *   @param val      Value for all entries in the vector
         */
-        Vector2( Scalar_T val );
+        Vector( Scalar_T val );
 
         /**
-        *   @brief Creates a 2d-vector with entries initialized to x and y given values
+        *   @brief Creaates an n-dim vector from a list of given values
         *
-        *   @param xval     Value for x component
-        *   @param yval     Value for y component
+        *   @param list     Initializer list with the values for the vector
         */
-        Vector2( Scalar_T xval, Scalar_T yval );
+        Vector( std::initializer_list<Scalar_T> values );
 
         /**
         *   @brief Releases resources used for this vector
         */
-        ~Vector2();
+        ~Vector();
 
         /** 
         *   @brief Returns the length (2-norm) of this vector 
         *
-        *   @return     The euclidean norm of the 2d-vector
+        *   @return     The euclidean norm of the n-dim vector
         */
         Scalar_T length() const;
 
@@ -65,7 +67,7 @@ namespace tinymath
         *   @param other    Vector with whom to take the dot product
         *   @return         The result of the dot product
         */
-        Scalar_T dot( const Vector2<Scalar_T>& other ) const;
+        Scalar_T dot( const Vector<Scalar_T,SizeN>& other ) const;
 
         /**
         *   @brief Converts this vector to a unit vector <b>in-place</b>
@@ -77,67 +79,94 @@ namespace tinymath
         *
         *   @return         The unit vector associated with this vector
         */
-        Vector2<Scalar_T> normalized() const;
+        Vector<Scalar_T,SizeN> normalized() const;
 
         /**
-        *   @brief Scales this vector <b>in-place</b>, given scale values for each entry
+        *   @brief Scales this vector <b>in-place</b>, given a scale value applied to each entry
         *
-        *   @param xScale   Scale-factor for the x-entry
-        *   @param yScale   Scale-factor for the y-entry
+        *   @param val    Scale factor applied to each entry
         */
-        void scale( Scalar_T xScale, Scalar_T yScale );
+        void scale( Scalar_T val );
 
         /**
-        *   @brief Scales this vector <b>in-place</b>, given a 2d-vector with the scales of each entry
+        *   @brief Scales this vector <b>in-place</b>, given an n-dim vector with the scales of each entry
         *
-        *   @param scale    2d-vector with the scale-factors for each entry
+        *   @param scale    n-dim vector with the scale-factors for each entry
         */
-        void scale( const Vector2<Scalar_T>& scale );
+        void scale( const Vector<Scalar_T,SizeN>& scale );
 
         /**
-        *   @brief Returns a scaled version of this vector, given scale values for each entry
+        *   @brief Returns a scaled-version of this vector, given a scale value applied to each entry
         *
-        *   @param xScale   Scale-factor for the x-entry
-        *   @param yScale   Scale-factor for the y-entry
+        *   @param scale    Scale factor applied to each entry
         *   @return         The scaled version of this vector
         */
-        Vector2<Scalar_T> scaled( Scalar_T xScale, Scalar_T yScale ) const;
+        Vector<Scalar_T,SizeN> scaled( Scalar_T val ) const;
 
         /**
-        *   @brief Returns a scaled-version of this vector, given a 2d-vector with the scales of each entry
+        *   @brief Returns a scaled-version of this vector, given an n-dim vector with the scales of each entry
         *
-        *   @param scale    2d-vector with the scale-factors for each entry
+        *   @param scale    n-dim vector with the scale-factors for each entry
         *   @return         The scaled version of this vector
         */
-        Vector2<Scalar_T> scaled( const Vector2<Scalar_T>& scale ) const;
+        Vector<Scalar_T,SizeN> scaled( const Vector<Scalar_T,SizeN>& scale ) const;
 
         /**
-        *   @brief Returns the X-component of this vector
+        *   @brief Returns the x-component of this vector
         *
         *   @return     The value of the x-component of this vector
         */
-        Scalar_T x() const { return m_buff[0]; }
+        Scalar_T x() const;
 
         /**
-        *   @brief Returns the X-component of this vector
+        *   @brief Returns the y-component of this vector
         *
-        *   @return     The value of the x-component of this vector
+        *   @return     The value of the y-component of this vector
         */
-        Scalar_T y() const { return m_buff[1]; }
+        Scalar_T y() const;
+
+        /**
+        *   @brief Returns the z-component of this vector
+        *
+        *   @return     The value of the z-component of this vector
+        */
+        Scalar_T z() const;
+
+
+        /**
+        *   @brief Returns the w-component of this vector
+        *
+        *   @return     The value of the w-component of this vector
+        */
+        Scalar_T w() const;
 
         /**
         *   @brief Returns a modifiable reference to x-component of this vector
         *
         *   @return     The modifiable reference to the x-component of this vector
         */
-        Scalar_T& x() { return m_buff[0]; }
+        Scalar_T& x();
 
         /**
-        *   @brief Returns a modifiable reference to x-component of this vector
+        *   @brief Returns a modifiable reference to y-component of this vector
         *
-        *   @return     The modifiable reference to the x-component of this vector
+        *   @return     The modifiable reference to the y-component of this vector
         */
-        Scalar_T& y() { return m_buff[1]; }
+        Scalar_T& y();
+
+        /**
+        *   @brief Returns a modifiable reference to z-component of this vector
+        *
+        *   @return     The modifiable reference to the z-component of this vector
+        */
+        Scalar_T& z();
+
+        /**
+        *   @brief Returns a modifiable reference to w-component of this vector
+        *
+        *   @return     The modifiable reference to the w-component of this vector
+        */
+        Scalar_T& w();
 
         /**
         *   @brief Returns the value of the entry given by an index (0:x, 1:y)
@@ -181,23 +210,23 @@ namespace tinymath
         *   @param other    Vector used for the sum (second operand)
         *   @return         The resulting vector sum of both vectors
         */
-        Vector2<Scalar_T> operator+ ( const Vector2<Scalar_T>& other ) const;
+        Vector<Scalar_T,SizeN> operator+ ( const Vector<Scalar_T,SizeN>& other ) const;
 
         /**
-        *   @brief Returns the vector-substraction with a second vector
+        *   @brief Returns the vector-subtraction with a second vector
         *
-        *   @param other    Vector used for the substraction (second operand)
-        *   @return         The resulting vector-substraction of both vectors
+        *   @param other    Vector used for the subtraction (second operand)
+        *   @return         The resulting vector-subtraction of both vectors
         */
-        Vector2<Scalar_T> operator- ( const Vector2<Scalar_T>& other ) const;
+        Vector<Scalar_T,SizeN> operator- ( const Vector<Scalar_T,SizeN>& other ) const;
 
         /**
-        *   @brief Returns the element-wise product with a second vector
+        *   @brief Returns the elementwise product with a second vector
         *
         *   @param other    Vector used for the product (second operand)
-        *   @return         The vector resulting from the element-wise product of both vectors
+        *   @return         The vector resulting from the elementwise product of both vectors
         */
-        Vector2<Scalar_T> operator* ( const Vector2<Scalar_T>& other ) const;
+        Vector<Scalar_T,SizeN> operator* ( const Vector<Scalar_T,SizeN>& other ) const;
 
         /**
         *   @brief Returns the pointer to the internal data of the vector
@@ -208,8 +237,8 @@ namespace tinymath
 
     private :
 
-        /* @brief Buffer of memory for the entries of the vector */
-        Scalar_T m_buff[2];
+        /** @brief Buffer of memory for the entries of the vector */
+        Scalar_T m_buff[SizeN];
 
     };
 
@@ -220,12 +249,14 @@ namespace tinymath
     *    Returns the vector-scalar product of a vector and a float value. This effectively
     *    scales the vector by the given value (all entries) and returns a new vector.
     *
-    *   @see tinymath::Vector2::scaled
+    *   @see tinymath::Vector::scaled
     *
+    *   @param vec  Vector operand to be scaled
+    *   @param val  Scalar factor applied to each element
     *   @return     The resulting vector-scalar product
     */
-    template< typename Scalar_T >
-    Vector2<Scalar_T> operator* ( const Vector2<Scalar_T>& vec, Scalar_T val );
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> operator* ( const Vector<Scalar_T,SizeN>& vec, Scalar_T val );
 
     /**
     *   @brief Scalar-vector product operator
@@ -234,167 +265,123 @@ namespace tinymath
     *    Essentially the same as the vector-scalar product, but with the order reversed to
     *    allow easier usage.
     *
-    *   @see tinymath::Vector2::scaled
+    *   @see tinymath::Vector::scaled
     *
+    *   @param vec  Vector operand to be scaled
+    *   @param val  Scalar factor applied to each element
     *   @return     The resulting vector-scalar product
     */
-    template< typename Scalar_T >
-    Vector2<Scalar_T> operator* ( Scalar_T val, const Vector2<Scalar_T>& vec );
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> operator* ( Scalar_T val, const Vector<Scalar_T,SizeN>& vec );
 
     /**
-    *   @brief Returns a string representation of a given 2d-vector
+    *   @brief Returns a string representation of a given n-dim vector
     *
     *   @param vec  Vector whose string representation we want
     *   @return     The string representation of the given vector
     */
-    template< typename Scalar_T>
-    std::string toString( const Vector2<Scalar_T>& vec );
+    template< typename Scalar_T, size_t SizeN>
+    std::string toString( const Vector<Scalar_T,SizeN>& vec );
 
     /* @brief Vector2 with float32 scalar-type */
-    typedef Vector2<float> Vector2f;
-
+    typedef Vector<float, 2> Vector2f;
     /* @brief Vector2 with float64 (double) scalar type */
-    typedef Vector2<double> Vector2d;
-
-    /**
-    *   @brief Just a simple 3-dimensional vector implementation
-    */
-    template< typename Scalar_T >
-    class Vector3
-    {
-
-    public :
-
-        Vector3();
-        Vector3( Scalar_T val );
-        Vector3( Scalar_T xval, Scalar_T yval, Scalar_T zval );
-        Vector3( const Vector2<Scalar_T>& vec2, Scalar_T zval );
-        ~Vector3();
-
-        Scalar_T length() const;
-        Scalar_T dot( const Vector3<Scalar_T>& other ) const;
-        Vector3<Scalar_T> cross( const Vector3<Scalar_T>& other ) const;
-        void normalize();
-        Vector3<Scalar_T> normalized() const;
-        void scale( Scalar_T xval, Scalar_T yval, Scalar_T zval );
-        void scale( const Vector3<Scalar_T>& other );
-        Vector3<Scalar_T> scaled( Scalar_T xval, Scalar_T yval, Scalar_T zval ) const;
-        Vector3<Scalar_T> scaled( const Vector3<Scalar_T>& other ) const;
-
-        Scalar_T x() const { return m_buff[0]; }
-        Scalar_T y() const { return m_buff[1]; }
-        Scalar_T z() const { return m_buff[2]; }
-
-        Scalar_T& x() { return m_buff[0]; }
-        Scalar_T& y() { return m_buff[1]; }
-        Scalar_T& z() { return m_buff[2]; }
-
-        void setX( Scalar_T xval ) { m_buff[0] = xval; }
-        void setY( Scalar_T yval ) { m_buff[1] = yval; }
-        void setZ( Scalar_T zval ) { m_buff[2] = zval; }
-
-        Scalar_T getX() const { return m_buff[0]; }
-        Scalar_T getY() const { return m_buff[1]; }
-        Scalar_T getZ() const { return m_buff[2]; }
-
-        Scalar_T operator[] ( size_t indx ) const;
-        Scalar_T& operator[] ( size_t indx );
-
-        Scalar_T operator() ( size_t indx ) const;
-        Scalar_T& operator() ( size_t indx );
-
-        Vector3<Scalar_T> operator+ ( const Vector3<Scalar_T>& other ) const;
-        Vector3<Scalar_T> operator- ( const Vector3<Scalar_T>& other ) const;
-        Vector3<Scalar_T> operator* ( const Vector3<Scalar_T>& other ) const;
-
-        Scalar_T* data() { return m_buff; }
-    private :
-
-        Scalar_T m_buff[3];
-
-    };
-
-    template< typename Scalar_T >
-    Vector3<Scalar_T> operator* ( const Vector3<Scalar_T>& vec, Scalar_T val );
-
-    template< typename Scalar_T >
-    Vector3<Scalar_T> operator* ( Scalar_T val, const Vector3<Scalar_T>& vec );
-
-    template< typename Scalar_T >
-    std::string toString( const Vector3<Scalar_T>& vec );
+    typedef Vector<double, 2> Vector2d;
 
     /* @brief Vector3 with float32 scalar-type */
-    typedef Vector3<float> Vector3f;
-
+    typedef Vector<float, 3> Vector3f;
     /* @brief Vector3 with float64 (double) scalar type */
-    typedef Vector3<double> Vector3d;
-
-    /**
-    *   @brief Just a simple 4-dimensional vector implementation
-    */
-    template< typename Scalar_T >
-    class Vector4
-    {
-
-    public :
-
-        Vector4();
-        Vector4( Scalar_T val );
-        Vector4( Scalar_T xval, Scalar_T yval, Scalar_T zval, Scalar_T wval );
-        Vector4( const Vector3<Scalar_T>& vec3, Scalar_T wval );
-        ~Vector4();
-
-        Scalar_T x() const { return m_buff[0]; }
-        Scalar_T y() const { return m_buff[1]; }
-        Scalar_T z() const { return m_buff[2]; }
-        Scalar_T w() const { return m_buff[3]; }
-
-        Scalar_T& x() { return m_buff[0]; }
-        Scalar_T& y() { return m_buff[1]; }
-        Scalar_T& z() { return m_buff[2]; }
-        Scalar_T& w() { return m_buff[3]; }
-
-        void setX( Scalar_T xval ) { m_buff[0] = xval; }
-        void setY( Scalar_T yval ) { m_buff[1] = yval; }
-        void setZ( Scalar_T zval ) { m_buff[2] = zval; }
-        void setW( Scalar_T wval ) { m_buff[3] = wval; }
-
-        Scalar_T getX() const { return m_buff[0]; }
-        Scalar_T getY() const { return m_buff[1]; }
-        Scalar_T getZ() const { return m_buff[2]; }
-        Scalar_T getW() const { return m_buff[3]; }
-
-        Scalar_T operator[] ( size_t indx ) const;
-        Scalar_T& operator[] ( size_t indx );
-
-        Scalar_T operator() ( size_t indx ) const;
-        Scalar_T& operator() ( size_t indx );
-
-        Vector4<Scalar_T> operator+ ( const Vector4<Scalar_T>& other ) const;
-        Vector4<Scalar_T> operator- ( const Vector4<Scalar_T>& other ) const;
-        Vector4<Scalar_T> operator* ( const Vector4<Scalar_T>& other ) const;
-
-        Scalar_T* data() { return m_buff; }
-    private :
-
-        Scalar_T m_buff[4];
-
-    };
-
-    template< typename Scalar_T >
-    Vector4<Scalar_T> operator* ( const Vector4<Scalar_T>& vec, Scalar_T val );
-
-    template< typename Scalar_T >
-    Vector4<Scalar_T> operator* ( Scalar_T val, const Vector4<Scalar_T>& vec );
-
-    template< typename Scalar_T >
-    std::string toString( const Vector4<Scalar_T>& vec );
+    typedef Vector<double, 3> Vector3d;
 
     /* @brief Vector4 with float32 scalar-type */
-    typedef Vector4<float> Vector4f;
-
+    typedef Vector<float, 4> Vector4f;
     /* @brief Vector4 with float64 (double) scalar type */
-    typedef Vector4<double> Vector4d;
+    typedef Vector<double, 4> Vector4d;
+
+
+    /**********************************************************************************************/
+    /*                          Specializations for specific functions                            */
+    /**********************************************************************************************/
+
+    // Value-getters for x,y,z,w
+
+    template<>
+    float Vector<float, 2>::x() const;
+    template<>
+    float Vector<float, 2>::y() const;
+    template<>
+    float Vector<float, 3>::x() const;
+    template<>
+    float Vector<float, 3>::y() const;
+    template<>
+    float Vector<float, 3>::z() const;
+    template<>
+    float Vector<float, 4>::x() const;
+    template<>
+    float Vector<float, 4>::y() const;
+    template<>
+    float Vector<float, 4>::z() const;
+    template<>
+    float Vector<float, 4>::w() const;
+
+    template<>
+    double Vector<double, 2>::x() const;
+    template<>
+    double Vector<double, 2>::y() const;
+    template<>
+    double Vector<double, 3>::x() const;
+    template<>
+    double Vector<double, 3>::y() const;
+    template<>
+    double Vector<double, 3>::z() const;
+    template<>
+    double Vector<double, 4>::x() const;
+    template<>
+    double Vector<double, 4>::y() const;
+    template<>
+    double Vector<double, 4>::z() const;
+    template<>
+    double Vector<double, 4>::w() const;
+
+    // Reference-getters for x,y,z,w
+
+    template<>
+    float& Vector<float, 2>::x();
+    template<>
+    float& Vector<float, 2>::y();
+    template<>
+    float& Vector<float, 3>::x();
+    template<>
+    float& Vector<float, 3>::y();
+    template<>
+    float& Vector<float, 3>::z();
+    template<>
+    float& Vector<float, 4>::x();
+    template<>
+    float& Vector<float, 4>::y();
+    template<>
+    float& Vector<float, 4>::z();
+    template<>
+    float& Vector<float, 4>::w();
+
+    template<>
+    double& Vector<double, 2>::x();
+    template<>
+    double& Vector<double, 2>::y();
+    template<>
+    double& Vector<double, 3>::x();
+    template<>
+    double& Vector<double, 3>::y();
+    template<>
+    double& Vector<double, 3>::z();
+    template<>
+    double& Vector<double, 4>::x();
+    template<>
+    double& Vector<double, 4>::y();
+    template<>
+    double& Vector<double, 4>::z();
+    template<>
+    double& Vector<double, 4>::w();
 }
 
 #include "../src/vector_t_impl.hpp"

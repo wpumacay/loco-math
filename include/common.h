@@ -6,6 +6,8 @@
 #include <string>
 #include <cassert>
 #include <cmath>
+#include <stdexcept>
+#include <initializer_list>
 
 namespace tinymath
 {

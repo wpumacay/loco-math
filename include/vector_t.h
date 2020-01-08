@@ -298,7 +298,6 @@ namespace tinymath
     /* @brief Vector4 with float64 (double) scalar type */
     typedef Vector<double, 4> Vector4d;
 
-
     /**********************************************************************************************/
     /*                          Specializations for specific functions                            */
     /**********************************************************************************************/

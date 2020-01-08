@@ -30,44 +30,26 @@ namespace tinymath
         Matrix();
 
         /**
-        *   @brief Creates a 2x2 matrix initialized with given elements
+        *   @brief Creates a 2x2 matrix initialized with given elements in row-major order
         *
-        *   @param m00  Element at index (0,0) in the matrix
-        *   @param m01  Element at index (0,1) in the matrix
-        *   @param m10  Element at index (1,0) in the matrix
-        *   @param m11  Element at index (1,1) in the matrix
+        *   @details
+        *   Elements are given in row-major order to allow the user to initialize the matrix
+        *   in a more familiar way, but the elements are placed to their appropriate position
+        *   in the column-major memory buffer during initialization.
+        *
+        *   @param elements Elements of the matrix (in row-major order)
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0
-        *                                            3.0, 4.0 );
+        *       auto mat = tinymath::Matrix<float, 2>( { 1.0, 2.0,
+        *                                                3.0, 4.0 } );
         *       std::cout << tinymath::toString( mat ) << std::endl;
         *       // result:
         *       //  [ 1.0, 2.0
         *       //    3.0, 4.0 ]
         *   @endcode
         */
-        Matrix( Scalar_T m00, Scalar_T m01,
-                Scalar_T m10, Scalar_T m11 );
-
-        /**
-        *   @brief Creates a 2x2 matrix initialized with given columns
-        *
-        *   @param col1 First column of the matrix
-        *   @param col2 Second column of the matrix
-        *
-        *   Example:
-        *   @code
-        *       auto col1 = tinymath::Vector2<float>( 1.0, 3.0 );
-        *       auto col2 = tinymath::Vector2<float>( 2.0, 4.0 );
-        *       auto mat = tinymath::Matrix<float, 2>( col1, col2 );
-        *       std::cout << tinymath::toString( mat ) << std::endl;
-        *       // result:
-        *       //  [ 1.0, 2.0
-        *       //    3.0, 4.0 ]
-        *   @endcode
-        */
-        Matrix( const Vector2<Scalar_T,SizeN>& col1, const Vector2<Scalar_T,SizeN>& col2 );
+        Matrix( const std::vector<Scalar_T>& elements );
 
         /**
         *   @brief Releases resources used for this matrix
@@ -75,9 +57,14 @@ namespace tinymath
         ~Matrix();
 
         /**
-        *   @brief Sets the components of the matrix to the Identity matrix of dimensions (2x2)
+        *   @brief Sets the components of the matrix to the Identity matrix with same dimensions
         */
         void setIdentity();
+
+        /**
+        *   @brief Sets the components of the matrix to the Zero matrix with same dimensions
+        */
+        void setZero();
 
         /**
         *   @brief Returns the transpose of this matrix
@@ -185,7 +172,7 @@ namespace tinymath
         *   @brief Returns the row at the given index
         *
         *   @param index    Index of the requested row
-        *   @return         A Vector2 representing the requested row
+        *   @return         A Vector representing the requested row
         *
         *   Example:
         *   @code
@@ -198,13 +185,13 @@ namespace tinymath
         *       // row(1): [3.0, 4.0]
         *   @endcode
         */
-        Vector2<Scalar_T,SizeN> row( size_t index ) const;
+        Vector<Scalar_T,SizeN> row( size_t index ) const;
 
         /**
         *   @brief Return the column at the given index
         *
         *   @param index    Index of the requested column
-        *   @return         A Vector2 representing the requested column
+        *   @return         A Vector representing the requested column
         *
         *   Example:
         *   @code
@@ -217,7 +204,7 @@ namespace tinymath
         *       // col(1): [2.0, 4.0]
         *   @endcode
         */
-        Vector2<Scalar_T,SizeN> col( size_t index ) const;
+        Vector<Scalar_T,SizeN> col( size_t index ) const;
 
         /**
         *   @brief Returns the matrix-addition with a second matrix
@@ -249,7 +236,7 @@ namespace tinymath
         *   @param vec  Vector operand applied to the right
         *   @return     The resulting vector from the multiplication
         */
-        Vector2<Scalar_T,SizeN> operator* ( const Vector2<Scalar_T,SizeN>& vec ) const;
+        Vector<Scalar_T,SizeN> operator* ( const Vector<Scalar_T,SizeN>& vec ) const;
 
         /**
         *   @brief Returns a pointer to the internal data of the matrix
@@ -259,6 +246,12 @@ namespace tinymath
         Scalar_T* data() { return m_buff; }
 
     private :
+
+        /** @brief Helper value-getter (for internal usage) of a given element */
+        Scalar_T _get( size_t row, size_t col ) const;
+
+        /** @brief Helper value-setter (for internal usage) of a given element */
+        void _set( size_t row, size_t col, Scalar_T val );
 
         /** @brief Buffer of memory for the entries of the matrix */
         Scalar_T m_buff[SizeN * SizeN];
@@ -307,6 +300,28 @@ namespace tinymath
     typedef Matrix<float, 4> Matrix4f;
     /* @brief Matrix4 with float64 (double) scalar type */
     typedef Matrix<double, 4> Matrix4d;
+
+    /**********************************************************************************************/
+    /*                          Specializations for specific methods                              */
+    /**********************************************************************************************/
+
+    // inverse method for dimensions 2, 3 and 4 (float32)
+
+    template<>
+    Matrix<float, 2> Matrix<float, 2>::inverse() const;
+    template<>
+    Matrix<float, 3> Matrix<float, 3>::inverse() const;
+    template<>
+    Matrix<float, 4> Matrix<float, 4>::inverse() const;
+
+    // inverse method for dimensions 2, 3 and 4 (float64)
+
+    template<>
+    Matrix<double, 2> Matrix<double, 2>::inverse() const;
+    template<>
+    Matrix<double, 3> Matrix<double, 3>::inverse() const;
+    template<>
+    Matrix<double, 4> Matrix<double, 4>::inverse() const;
 }
 
 #include "../src/matrix_t_impl.hpp"

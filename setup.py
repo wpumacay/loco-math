@@ -58,29 +58,34 @@ class BuildCommand( BaseBuildExtCommand ) :
 
         buildBindings( _sourceDir, _buildDir, _cmakeArgs, _buildArgs, _env )
 
+with open( "README.md", "r" ) as fh :
+    longDescription = fh.read()
+
 setup(
-    name                    = 'tinymath',
-    version                 = "0.0.1",
-    description             = 'A basic math library for vectors and matrices',
-    author                  = 'Wilbert Santos Pumacay Huallpa',
-    license                 = 'MIT License',
-    author_email            = 'wpumacay@gmail.com',
-    url                     = 'https://github.com/wpumacay/tiny_math',
-    keywords                = 'math',
-    classifiers             = [
-                                "License :: OSI Approved :: MIT License",
-                                "Operating System :: POSIX :: Linux"],
-    packages                = find_packages(),
-    zip_safe                = False,
-    install_requires        = [
-                                'numpy',
-                                'setuptools'
-                              ],
-    package_data            = {},
-    ext_modules             = [
-                                CMakeExtension( 'tinymath', '.' )
-                              ],
-    cmdclass                = {
-                                'build_ext': BuildCommand
-                              }
+    name                            = 'tinymath',
+    version                         = "0.0.1",
+    description                     = 'A basic math library for vectors and matrices',
+    long_description                = longDescription,
+    long_description_content_type   = "text/markdown",
+    author                          = 'Wilbert Santos Pumacay Huallpa',
+    license                         = 'MIT License',
+    author_email                    = 'wpumacay@gmail.com',
+    url                             = 'https://github.com/wpumacay/tiny_math',
+    keywords                        = 'math',
+    classifiers                     = [
+                                        "License :: OSI Approved :: MIT License",
+                                        "Operating System :: POSIX :: Linux"],
+    packages                        = find_packages(),
+    zip_safe                        = False,
+    install_requires                = [
+                                        'numpy',
+                                        'setuptools'
+                                      ],
+    package_data                    = {},
+    ext_modules                     = [
+                                        CMakeExtension( 'tinymath', '.' )
+                                      ],
+    cmdclass                        = {
+                                        'build_ext': BuildCommand
+                                      }
 )

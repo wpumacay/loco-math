@@ -1,0 +1,19 @@
+include *.txt
+recursive-include cmake *.cmake
+recursive-include docs *.bat
+recursive-include docs *.in
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs *.txt
+recursive-include docs Makefile
+recursive-include ext *.txt
+recursive-include include *.h
+recursive-include python *.cpp
+recursive-include python *.h
+recursive-include python *.hpp
+recursive-include python *.txt
+recursive-include scripts *.sh
+recursive-include src *.cpp
+recursive-include src *.hpp
+recursive-include tests *.cpp
+recursive-include tests *.txt

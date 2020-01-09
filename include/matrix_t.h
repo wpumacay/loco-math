@@ -271,7 +271,7 @@ namespace tinymath
     *   @brief Scalar-matrix product operator
     *
     *   @param val  Scalar factor applied elementwise to the matrix
-    *   @param matr Matrix operand
+    *   @param mat  Matrix operand
     *   @return     The resulting elementwise scalar-matrix product
     */
     template< typename Scalar_T, size_t SizeN >
@@ -301,6 +301,8 @@ namespace tinymath
     /* @brief Matrix4 with float64 (double) scalar type */
     typedef Matrix<double, 4> Matrix4d;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
     /**********************************************************************************************/
     /*                          Specializations for specific methods                              */
     /**********************************************************************************************/
@@ -322,6 +324,8 @@ namespace tinymath
     Matrix<double, 3> Matrix<double, 3>::inverse() const;
     template<>
     Matrix<double, 4> Matrix<double, 4>::inverse() const;
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 }
 
 #include "../src/matrix_t_impl.hpp"

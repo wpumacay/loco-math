@@ -14,10 +14,10 @@ Welcome to TinyMath's documentation!
 C++ API Documentation
 =====================
 
-.. doxygenclass:: tinymath::Vector2
+.. doxygenclass:: tinymath::Vector
     :members:
 
-.. doxygenclass:: tinymath::Matrix2
+.. doxygenclass:: tinymath::Matrix
     :members:
 
 Indices and tables

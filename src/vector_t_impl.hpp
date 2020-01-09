@@ -35,6 +35,14 @@ namespace tinymath
     }
 
     template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN>::Vector( const std::vector<Scalar_T>& values )
+    {
+        assert( values.size() == SizeN );
+        for ( size_t i = 0; i < SizeN; i++ )
+            m_buff[i] = values[i];
+    }
+
+    template< typename Scalar_T, size_t SizeN >
     Vector<Scalar_T,SizeN>::~Vector()
     {
         // nothing to release manually

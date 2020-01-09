@@ -10,4 +10,6 @@ target_link_libraries( tinymath PRIVATE tinymath_cpp_lib )
 pybind11_add_module( tinymath_python_lib SHARED "${BindingsFilesSources}" )
 target_link_libraries( tinymath_python_lib PRIVATE tinymath_cpp_lib )
 
-add_subdirectory( tests )
+if ( TINYMATH_BUILD_TESTS )
+    add_subdirectory( tests )
+endif()

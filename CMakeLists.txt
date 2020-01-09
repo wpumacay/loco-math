@@ -13,6 +13,10 @@ else()
     message( "TINYMATH >>> configuring as CHILD project" )
 endif()
 
+option( TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen)" ON )
+option( TINYMATH_BUILD_EXAMPLES "Build c/c++ examples" ON )
+option( TINYMATH_BUILD_TESTS "Build c/c++ tests" ON )
+
 # Add cmake find-modules helpers (for sphinx)
 if( TINYMATH_IS_MASTER_PROJECT )
     set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} )
@@ -34,14 +38,20 @@ target_include_directories( tinymath_cpp_lib PUBLIC "${TINYMATH_INCS_DIR}" )
 
 # Add subdirectories only if master-project
 if ( TINYMATH_IS_MASTER_PROJECT )
-    add_subdirectory( tests ) # if child project, no tests are required
+    if ( TINYMATH_BUILD_TESTS )
+        add_subdirectory( tests ) # if child project, no tests are required
+    endif()
     add_subdirectory( ext ) # if child project, root project adds the dependencies
 endif()
 
-## # Add bindings subdirectory
-## add_subdirectory( python )
+# Add bindings subdirectory
+add_subdirectory( python )
 
-option( TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen)" ON )
 if ( TINYMATH_BUILD_DOCS AND TINYMATH_IS_MASTER_PROJECT )
     add_subdirectory( docs )
 endif()
+
+message( "BUILD-OPTIONS SUMMARY" )
+message( "TINYMATH_BUILD_DOCS: ${TINYMATH_BUILD_DOCS}" )
+message( "TINYMATH_BUILD_TESTS: ${TINYMATH_BUILD_TESTS}" )
+message( "TINYMATH_BUILD_EXAMPLES: ${TINYMATH_BUILD_EXAMPLES}" )

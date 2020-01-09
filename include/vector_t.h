@@ -29,9 +29,12 @@ namespace tinymath
         *   @code
         *       auto vec = tinymath::Vector<float, 2>();
         *       std::cout << "vec: " << tinymath::toString( vec ) << std::endl;
-        *       // result:
-        *       // vec: [0.0,0.0]
         *   @endcode
+        *
+        *   Output:
+        *   ```
+        *   vec: [0.0, 0.0]
+        *   ```
         */
         Vector();
 
@@ -39,15 +42,60 @@ namespace tinymath
         *   @brief Creates an n-dim vector with all entries initialized to a given value
         *
         *   @param val      Value for all entries in the vector
+        *
+        *   Example:
+        *   @code
+        *       auto vec = tinymath::Vector<float, 3>( 1.0f );
+        *       std::cout << "vec: " << tinymath::toString( vec ) << std::endl;
+        *   @endcode
+        *
+        *   Output:
+        *   ```
+        *   vec: [1.0, 1.0, 1.0]
+        *   ```
         */
         Vector( Scalar_T val );
 
         /**
-        *   @brief Creaates an n-dim vector from a list of given values
+        *   @brief Creates an n-dim vector from a list of given values
         *
-        *   @param list     Initializer list with the values for the vector
+        *   @param values   Initializer list with the values for the vector
+        *
+        *   Example:
+        *   @code
+        *       tinymath::Vector<float, 3> vec = { 1.0f, 2.0f, 3.0f };
+        *       std::cout << "vec: " << tinymath::toString( vec ) << std::endl;
+        *   @endcode
+        *
+        *   Output:
+        *   ```
+        *   vec: [1.0, 2.0, 3.0]
+        *   ```
         */
         Vector( std::initializer_list<Scalar_T> values );
+
+        /**
+        *   @brief Creates an n-dim vector from a std::vector of given values
+        *
+        *   @param values   std::vector with the values for the vector
+        *
+        *   Example:
+        *   @code
+        *       std::vector<float> vec_values = { 1.0f, 2.0f, 3.0f };
+        *       auto vec = tinymath::Vector<float, 3>( vec_values );
+        *       std::cout << "vec: " << tinymath::toString( vec ) << std::endl;
+        *   @endcode
+        *
+        *   Output:
+        *   ```
+        *   vec: [1.0, 2.0, 3.0]
+        *   ```
+        */
+        Vector( const std::vector<Scalar_T>& values );
+
+        /**
+        *   @brief Creates
+        */
 
         /**
         *   @brief Releases resources used for this vector
@@ -98,7 +146,7 @@ namespace tinymath
         /**
         *   @brief Returns a scaled-version of this vector, given a scale value applied to each entry
         *
-        *   @param scale    Scale factor applied to each entry
+        *   @param val      Scale factor applied to each entry
         *   @return         The scaled version of this vector
         */
         Vector<Scalar_T,SizeN> scaled( Scalar_T val ) const;
@@ -267,8 +315,8 @@ namespace tinymath
     *
     *   @see tinymath::Vector::scaled
     *
-    *   @param vec  Vector operand to be scaled
     *   @param val  Scalar factor applied to each element
+    *   @param vec  Vector operand to be scaled
     *   @return     The resulting vector-scalar product
     */
     template< typename Scalar_T, size_t SizeN >
@@ -297,6 +345,8 @@ namespace tinymath
     typedef Vector<float, 4> Vector4f;
     /* @brief Vector4 with float64 (double) scalar type */
     typedef Vector<double, 4> Vector4d;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
     /**********************************************************************************************/
     /*                          Specializations for specific functions                            */
@@ -381,6 +431,8 @@ namespace tinymath
     double& Vector<double, 4>::z();
     template<>
     double& Vector<double, 4>::w();
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 }
 
 #include "../src/vector_t_impl.hpp"

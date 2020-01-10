@@ -55,6 +55,20 @@ namespace tinymath
     }
 
     template< typename Scalar_T, size_t SizeN >
+    void Matrix<Scalar_T,SizeN>::transpose_()
+    {
+        for ( size_t i = 0; i < SizeN - 1; i++ )
+        {
+            for ( size_t j = i + 1; j < SizeN; j++ )
+            {
+                Scalar_T _tmp = m_buff[i + j * SizeN];
+                m_buff[i + j * SizeN] = m_buff[j + i * SizeN];
+                m_buff[j + i * SizeN] = _tmp;
+            }
+        }
+    }
+
+    template< typename Scalar_T, size_t SizeN >
     Matrix<Scalar_T, SizeN> Matrix<Scalar_T, SizeN>::inverse() const
     {
         throw std::runtime_error( std::string( "tinymath::Matrix::inverse() >>> method not implemented for this dimensions: (" ) + 
@@ -120,7 +134,8 @@ namespace tinymath
     template< typename Scalar_T, size_t SizeN >
     Matrix<Scalar_T, SizeN> Matrix<Scalar_T, SizeN>::operator* ( const Matrix<Scalar_T, SizeN>& other ) const
     {
-        auto _res = Matrix<Scalar_T, SizeN>( 0.0, 0.0, 0.0, 0.0 );
+        auto _res = Matrix<Scalar_T, SizeN>();
+        _res.setZero();
         for ( size_t i = 0; i < SizeN; i++ )
             for ( size_t j = 0; j < SizeN; j++ )
                 for ( size_t k = 0; k < SizeN; k++ )
@@ -134,7 +149,7 @@ namespace tinymath
         auto _res = Vector<Scalar_T, SizeN>();
         for ( size_t i = 0; i < SizeN; i++ )
             for ( size_t k = 0; k < SizeN; k++ )
-                _res.m_buff[i] += m_buff[i + k * SizeN] * vec(k); // @todo: friend?
+                _res(i) += m_buff[i + k * SizeN] * vec(k); // @todo: friend?
         return _res;
     }
 

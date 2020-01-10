@@ -30,7 +30,7 @@ namespace tinymath
         Matrix();
 
         /**
-        *   @brief Creates a 2x2 matrix initialized with given elements in row-major order
+        *   @brief Creates a 2x2 matrix initialized with elements from an std::vector in row-major order
         *
         *   @details
         *   Elements are given in row-major order to allow the user to initialize the matrix
@@ -65,6 +65,29 @@ namespace tinymath
         *   @brief Sets the components of the matrix to the Zero matrix with same dimensions
         */
         void setZero();
+
+        /**
+        *   @brief Transposes this matrix in-place
+        *
+        *   Example:
+        *   @code
+        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
+        *                                              3.0, 4.0 );
+        *       std::cout << "matrix: " << std::endl;
+        *       std::cout << tinymath::toString( mat ) << std::endl;
+        *       mat.transpose_();
+        *       std::cout << "matrix: " << std::endl;
+        *       std::cout << tinymath::toString( mat ) << std::endl;
+        *       // result:
+        *       // matrix:
+        *       // [ 1.0, 2.0
+        *       //   3.0, 4.0 ]
+        *       // matrix:
+        *       // [ 1.0, 3.0
+        *       //   2.0, 4.0 ]
+        *   @endcode
+        */
+        void transpose_();
 
         /**
         *   @brief Returns the transpose of this matrix

@@ -88,13 +88,13 @@ namespace tinymath
             .def( "__rmul__", []( const Vector<Scalar_T,SizeN>& vec, Scalar_T val ) -> Vector<Scalar_T,SizeN> { return val * vec; } )
             .def( "__getitem__", []( const Vector<Scalar_T,SizeN>& self, ssize_t index )
                 {
-                    if ( index > 1 ) 
+                    if ( index > SizeN ) 
                         throw py::index_error();
                     return self[index];
                 } )
             .def( "__setitem__", []( Vector<Scalar_T,SizeN>& self, ssize_t index, Scalar_T v )
                 {
-                    if ( index > 1 )
+                    if ( index > SizeN )
                         throw py::index_error();
                     self[index] = v;
                 } )

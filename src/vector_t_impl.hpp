@@ -290,7 +290,7 @@ namespace tinymath
     template<>
     float Vector<float, 4>::z() const { return m_buff[2]; }
     template<>
-    float Vector<float, 4>::w() const { return m_buff[0]; }
+    float Vector<float, 4>::w() const { return m_buff[3]; }
 
     template<>
     double Vector<double, 2>::x() const { return m_buff[0]; }
@@ -309,7 +309,7 @@ namespace tinymath
     template<>
     double Vector<double, 4>::z() const { return m_buff[2]; }
     template<>
-    double Vector<double, 4>::w() const { return m_buff[0]; }
+    double Vector<double, 4>::w() const { return m_buff[3]; }
 
     // Reference-getters for x,y,z,w
 
@@ -330,7 +330,7 @@ namespace tinymath
     template<>
     float& Vector<float, 4>::z() { return m_buff[2]; }
     template<>
-    float& Vector<float, 4>::w() { return m_buff[0]; }
+    float& Vector<float, 4>::w() { return m_buff[3]; }
 
     template<>
     double& Vector<double, 2>::x() { return m_buff[0]; }
@@ -349,5 +349,5 @@ namespace tinymath
     template<>
     double& Vector<double, 4>::z() { return m_buff[2]; }
     template<>
-    double& Vector<double, 4>::w() { return m_buff[0]; }
+    double& Vector<double, 4>::w() { return m_buff[3]; }
 }

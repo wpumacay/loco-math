@@ -1,6 +1,7 @@
 build/
 dist/
 *.egg-info/
+*.ipynb_checkpoints/
 
 *.so
 *.a
@@ -9,3 +10,5 @@ dist/
 *.dylib
 *.out
 *.exe
+
+TODO*

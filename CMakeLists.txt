@@ -3,6 +3,7 @@ cmake_minimum_required( VERSION 3.0.0 FATAL_ERROR )
 project( TinyMath )
 
 set( CMAKE_CXX_STANDARD 11 )
+set( CMAKE_CXX_FLAGS "-g ${CMAKE_CXX_FLAGS}" )
 
 # Check if we're currently working as the main project
 set( TINYMATH_IS_MASTER_PROJECT OFF )
@@ -16,6 +17,7 @@ endif()
 option( TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen)" ON )
 option( TINYMATH_BUILD_EXAMPLES "Build c/c++ examples" ON )
 option( TINYMATH_BUILD_TESTS "Build c/c++ tests" ON )
+option( TINYMATH_BUILD_PYTHON_BINDINGS "Build python bindings" ON )
 
 # Add cmake find-modules helpers (for sphinx)
 if( TINYMATH_IS_MASTER_PROJECT )
@@ -44,14 +46,17 @@ if ( TINYMATH_IS_MASTER_PROJECT )
     add_subdirectory( ext ) # if child project, root project adds the dependencies
 endif()
 
-# Add bindings subdirectory
-add_subdirectory( python )
+if ( TINYMATH_BUILD_PYTHON_BINDINGS )
+    # Add bindings subdirectory
+    add_subdirectory( python )
+endif()
 
 if ( TINYMATH_BUILD_DOCS AND TINYMATH_IS_MASTER_PROJECT )
     add_subdirectory( docs )
 endif()
 
 message( "BUILD-OPTIONS SUMMARY" )
-message( "TINYMATH_BUILD_DOCS: ${TINYMATH_BUILD_DOCS}" )
-message( "TINYMATH_BUILD_TESTS: ${TINYMATH_BUILD_TESTS}" )
-message( "TINYMATH_BUILD_EXAMPLES: ${TINYMATH_BUILD_EXAMPLES}" )
+message( "TINYMATH_BUILD_DOCS               : ${TINYMATH_BUILD_DOCS}" )
+message( "TINYMATH_BUILD_TESTS              : ${TINYMATH_BUILD_TESTS}" )
+message( "TINYMATH_BUILD_EXAMPLES           : ${TINYMATH_BUILD_EXAMPLES}" )
+message( "TINYMATH_BUILD_PYTHON_BINDINGS    : ${TINYMATH_BUILD_PYTHON_BINDINGS}" )

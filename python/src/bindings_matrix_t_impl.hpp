@@ -18,19 +18,56 @@ namespace tinymath
                         throw std::runtime_error( "tinymath::Matrix >>> incompatible array dimensions, expected \
                                                    2 dimensions, but got " + std::to_string( bufferInfo.ndim ) + "|." );
                     }
-                    if ( bufferInfo.shape[0] != SizeN || bufferInfo.shape[1] != SizeN )
+                    if ( bufferInfo.shape[0] < SizeN || bufferInfo.shape[1] < SizeN )
                     {
-                        throw std::runtime_error( "tinymath::Matrix >>> incompatible array size, expected \
+                        throw std::runtime_error( "tinymath::Matrix >>> incompatible array size, expected at least \
                                                    ( " + std::to_string( SizeN ) + "," + std::to_string( SizeN ) + "), but got \
                                                    ( " + std::to_string( bufferInfo.shape[0] ) + "," + std::to_string( bufferInfo.shape[1] ) + ") instead." );
                     }
 
                     auto bufferData = (Scalar_T*) bufferInfo.ptr;
                     auto matData = std::vector<Scalar_T>( SizeN * SizeN, 0.0 );
-                    for ( size_t i = 0; i < bufferInfo.size; i++ )
-                        matData[i] = ((Scalar_T) bufferData[i]);
+                    for ( size_t i = 0; i < SizeN; i++ )
+                        for ( size_t j = 0; j < SizeN; j++ )
+                            matData[j + i * SizeN] = ((Scalar_T) bufferData[j + i * bufferInfo.shape[1]]);
                     auto matrix = new Matrix<Scalar_T,SizeN>( matData );
                     return matrix;
+                } ) )
+            .def( py::init( []( py::array_t<Scalar_T>& matarr, py::array_t<Scalar_T>& vecarr )
+                {
+                    auto matBufferInfo = matarr.request();
+                    if ( matBufferInfo.ndim != 2 )
+                    {
+                        throw std::runtime_error( "tinymath::Matrix >>> incompatible array dimensions, expected \
+                                                   2 dimensions, but got " + std::to_string( matBufferInfo.ndim ) + "|." );
+                    }
+                    if ( matBufferInfo.shape[0] != (SizeN-1) || matBufferInfo.shape[1] != (SizeN-1) )
+                    {
+                        throw std::runtime_error( "tinymath::Matrix >>> incompatible array size, expected exactly \
+                                                   ( " + std::to_string( SizeN - 1 ) + "," + std::to_string( SizeN - 1 ) + "), but got \
+                                                   ( " + std::to_string( matBufferInfo.shape[0] ) + "," + std::to_string( matBufferInfo.shape[1] ) + ") instead for \
+                                                   (n-1)x(n-1) upper-left section of the matrix." );
+                    }
+                    auto vecBufferInfo = vecarr.request();
+                    if ( vecBufferInfo.size != (SizeN-1) )
+                    {
+                        throw std::runtime_error( "tinymath::Vector >>> incompatible array size, expected exactly " +
+                                                  std::to_string( SizeN - 1 ) + " elements for top (n-1) portion of the last column." );
+                    }
+
+                    auto matBufferData = (Scalar_T*) matBufferInfo.ptr;
+                    auto matData = std::vector<Scalar_T>( (SizeN-1) * (SizeN-1), 0.0 );
+                    for ( size_t i = 0; i < (SizeN-1) * (SizeN-1); i++ ) // @todo: change for memcpy
+                            matData[i] = matBufferData[i];
+                    auto matrixPart = Matrix<Scalar_T,SizeN-1>( matData );
+
+                    auto vecBufferData = (Scalar_T*) vecBufferInfo.ptr;
+                    auto vecData = std::vector<Scalar_T>( (SizeN-1), 0.0 );
+                    for ( size_t i = 0; i < (SizeN-1); i++ ) // @todo: change for memcpy
+                        vecData[i] = vecBufferData[i];
+                    auto vecPart = Vector<Scalar_T,SizeN-1>( vecData );
+
+                    return new Matrix<Scalar_T,SizeN>( matrixPart, vecPart );
                 } ) )
             .def_buffer( []( Matrix<Scalar_T,SizeN>& self ) -> py::buffer_info
                 {
@@ -50,8 +87,15 @@ namespace tinymath
             .def( "inverse", &Matrix<Scalar_T,SizeN>::inverse )
             .def( "row", &Matrix<Scalar_T,SizeN>::row )
             .def( "col", &Matrix<Scalar_T,SizeN>::col )
+            .def( "set", ( void ( Matrix<Scalar_T,SizeN>::* )( const Matrix<Scalar_T,SizeN-1>& ) ) &Matrix<Scalar_T,SizeN>::set )
+            .def( "set", ( void ( Matrix<Scalar_T,SizeN>::* )( const Vector<Scalar_T,SizeN-1>&, size_t ) ) &Matrix<Scalar_T,SizeN>::set )
+            .def( "set", ( void ( Matrix<Scalar_T,SizeN>::* )( const Vector<Scalar_T,SizeN>&, size_t ) ) &Matrix<Scalar_T,SizeN>::set )
+            .def_property_readonly( "nrows", []( const Matrix<Scalar_T,SizeN>& m ) -> size_t { return SizeN; } )
+            .def_property_readonly( "ncols", []( const Matrix<Scalar_T,SizeN>& m ) -> size_t { return SizeN; } )
+            .def_property_readonly( "ndims", []( const Matrix<Scalar_T,SizeN>& m ) -> size_t { return 2; } )
+            .def_property_readonly( "shape", []( const Matrix<Scalar_T,SizeN>& m ) -> std::pair<size_t,size_t> { return { SizeN, SizeN }; } )
             .def( "__add__", []( const Matrix<Scalar_T,SizeN>& m1, const Matrix<Scalar_T,SizeN>& m2 ) -> Matrix<Scalar_T,SizeN> { return m1 + m2; } )
-            .def( "__sub__", []( const Matrix<Scalar_T,SizeN>& m1, const Matrix<Scalar_T,SizeN>& m2 ) -> Matrix<Scalar_T,SizeN> { return m1 + m2; } )
+            .def( "__sub__", []( const Matrix<Scalar_T,SizeN>& m1, const Matrix<Scalar_T,SizeN>& m2 ) -> Matrix<Scalar_T,SizeN> { return m1 - m2; } )
             .def( "__mul__", []( const Matrix<Scalar_T,SizeN>& m1, const Matrix<Scalar_T,SizeN>& m2 ) -> Matrix<Scalar_T,SizeN> { return m1 * m2; } )
             .def( "__mul__", []( const Matrix<Scalar_T,SizeN>& m, const Vector<Scalar_T,SizeN>& vec ) -> Vector<Scalar_T,SizeN> { return m * vec; } )
             .def( "__rmul__", []( const Vector<Scalar_T,SizeN>& vec, const Matrix<Scalar_T,SizeN>& m ) { throw std::runtime_error( "tinymath::Matrix::__mul__(vec,mat) invalid column vector - matrix operation" ); } )

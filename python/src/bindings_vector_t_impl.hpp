@@ -14,10 +14,10 @@ namespace tinymath
             .def( py::init( []( py::array_t<Scalar_T>& vecarr )
                 {
                     auto bufferInfo = vecarr.request();
-                    if ( bufferInfo.size != SizeN )
+                    if ( bufferInfo.size < SizeN )
                     {
-                        throw std::runtime_error( std::string( "tinymath::Vector >>> incompatible array size, expected " ) +
-                                                  std::to_string( SizeN ) + " floats" );
+                        throw std::runtime_error( "tinymath::Vector >>> incompatible array size, expected at least " +
+                                                  std::to_string( SizeN ) + " elements." );
                     }
 
                     auto bufferData = (Scalar_T*) bufferInfo.ptr;
@@ -25,6 +25,22 @@ namespace tinymath
                     for ( size_t i = 0; i < SizeN; i++ )
                         vecData[i] = bufferData[i];
                     return new Vector<Scalar_T,SizeN>( vecData );
+                } ) )
+            .def( py::init( []( py::array_t<Scalar_T>& vecarr, Scalar_T lastValue )
+                {
+                    auto bufferInfo = vecarr.request();
+                    if ( bufferInfo.size != ( SizeN - 1 ) )
+                    {
+                        throw std::runtime_error( "tinymath::Vector >>> incompatible array size, expected exactly " +
+                                                  std::to_string( SizeN - 1 ) + " elements for (n-1) portion of the vector." );
+                    }
+
+                    auto bufferData = (Scalar_T*) bufferInfo.ptr;
+                    auto vecData = std::vector<Scalar_T>( SizeN, 0.0 );
+                    for ( size_t i = 0; i < (SizeN-1); i++ )
+                        vecData[i] = bufferData[i];
+                    auto vecPart = Vector<Scalar_T,SizeN-1>( vecData );
+                    return new Vector<Scalar_T,SizeN>( vecPart, lastValue );
                 } ) )
             .def_buffer( []( Vector<Scalar_T,SizeN>& self ) -> py::buffer_info
                 {

@@ -1,6 +1,9 @@
 
 #include <matrix_t.h>
 
+// @todo: check matrix traversal, as a column-major traversal might give better 
+//        performance than a row-major traversal
+
 namespace tinymath
 {
     template< typename Scalar_T, size_t SizeN >
@@ -20,6 +23,24 @@ namespace tinymath
         for ( size_t i = 0; i < SizeN; i++ )
             for ( size_t j = 0; j < SizeN; j++ )
                 m_buff[i + j * SizeN] = elements[j + i * SizeN];
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN>::Matrix( const Matrix<Scalar_T,SizeN+1>& mat )
+    {
+        for ( size_t i = 0; i < SizeN; i++ )
+            for ( size_t j = 0; j < SizeN; j++ )
+                m_buff[i + j * SizeN] = mat(i,j);
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T, SizeN >::Matrix( const Matrix<Scalar_T,SizeN-1>& mat, const Vector<Scalar_T,SizeN-1>& vec )
+        : Matrix()
+    {
+        // set upper-left section
+        set( mat );
+        // set last column first n-1 elements
+        set( vec, SizeN - 1 );
     }
 
     template< typename Scalar_T, size_t SizeN >
@@ -91,6 +112,13 @@ namespace tinymath
     }
 
     template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> Matrix<Scalar_T,SizeN>::operator() ( size_t index )
+    {
+        assert( index < SizeN );
+        return col( index );
+    }
+
+    template< typename Scalar_T, size_t SizeN >
     Vector<Scalar_T, SizeN> Matrix<Scalar_T, SizeN>::row( size_t index ) const
     {
         assert( index < SizeN );
@@ -108,6 +136,30 @@ namespace tinymath
         for ( size_t i = 0; i < SizeN; i++ )
             _resvec[i] = m_buff[i + index * SizeN];
         return _resvec;
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    void Matrix<Scalar_T,SizeN>::set( const Vector<Scalar_T,SizeN>& vec, size_t index )
+    {
+        assert( index < SizeN );
+        for ( size_t i = 0; i < SizeN; i++ )
+            _set( i, index, vec( i ) );
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    void Matrix<Scalar_T,SizeN>::set( const Vector<Scalar_T,SizeN-1>& vec, size_t index )
+    {
+        assert( index < SizeN );
+        for ( size_t i = 0; i < (SizeN-1); i++ )
+            _set( i, index, vec( i ) );
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    void Matrix<Scalar_T,SizeN>::set( const Matrix<Scalar_T,SizeN-1>& mat )
+    {
+        for ( size_t i = 0; i < (SizeN-1); i++ )
+            for ( size_t j = 0; j < (SizeN-1); j++ )
+                _set( i, j, mat(i, j) );
     }
 
     template< typename Scalar_T, size_t SizeN >

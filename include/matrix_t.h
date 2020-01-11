@@ -16,7 +16,7 @@ namespace tinymath
     public :
 
         /**
-        *   @brief Creates a 2x2 matrix initialized to an Identity matrix
+        *   @brief Creates an N x N matrix initialized to an Identity matrix
         *
         *   Example:
         *   @code
@@ -30,7 +30,7 @@ namespace tinymath
         Matrix();
 
         /**
-        *   @brief Creates a 2x2 matrix initialized with elements from an std::vector in row-major order
+        *   @brief Creates an N x N matrix initialized with elements from an std::vector in row-major order
         *
         *   @details
         *   Elements are given in row-major order to allow the user to initialize the matrix
@@ -52,6 +52,28 @@ namespace tinymath
         Matrix( const std::vector<Scalar_T>& elements );
 
         /**
+        *   @brief Creates an N x N matrix from an (N+1)x(N+1) matrix by grabbing its upper left section
+        *
+        *   @param mat  (N+1)x(N+1) matrix whose upper left section we want
+        *
+        *   Example:
+        *   @code
+        *
+        *   @endcode
+        */
+        Matrix( const Matrix<Scalar_T,SizeN+1>& mat );
+
+        /**
+        *   @brief Creates an N x N matrix from an (N-1)x(N-1) matrix (upper-left section) and an (N-1) vector (last-column)
+        *
+        *   @details
+        *   This constructor is mainly used to create transformation matrices (4x4) from 3x3 rotation
+        *   matrices and 3x1 position vectors. It will work for other matrix sizes, but the main usage
+        *   is for 4x4 transformation matrices.
+        */
+        Matrix( const Matrix<Scalar_T,SizeN-1>& mat, const Vector<Scalar_T,SizeN-1>& vec );
+
+        /**
         *   @brief Releases resources used for this matrix
         */
         ~Matrix();
@@ -71,8 +93,8 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
-        *                                              3.0, 4.0 );
+        *       auto mat = tinymath::Matrix<float, 2>( { 1.0, 2.0,
+        *                                                3.0, 4.0 } );
         *       std::cout << "matrix: " << std::endl;
         *       std::cout << tinymath::toString( mat ) << std::endl;
         *       mat.transpose_();
@@ -96,8 +118,8 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
-        *                                            3.0, 4.0 );
+        *       auto mat = tinymath::Matrix<float, 2>( { 1.0, 2.0,
+        *                                                3.0, 4.0 } );
         *       std::cout << "matrix: " << std::endl;
         *       std::cout << tinymath::toString( mat ) << std::endl;
         *       std::cout << "matrix.transpose(): " << std::endl;
@@ -120,8 +142,8 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
-        *                                            3.0, 4.0 );
+        *       auto mat = tinymath::Matrix<float, 2>( { 1.0, 2.0,
+        *                                                3.0, 4.0 } );
         *       std::cout << "matrix: " << std::endl;
         *       std::cout << tinymath::toString( mat ) << std::endl;
         *       std::cout << "matrix.inverse(): " << std::endl;
@@ -146,8 +168,8 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
-        *                                            3.0, 4.0 );
+        *       auto mat = tinymath::Matrix<float, 2>( { 1.0, 2.0,
+        *                                                3.0, 4.0 } );
         *       std::cout << "mat(0,0): " << std::to_string( mat(0,0) ) << std::endl;
         *       std::cout << "mat(0,1): " << std::to_string( mat(0,1) ) << std::endl;
         *       std::cout << "mat(1,0): " << std::to_string( mat(1,0) ) << std::endl;
@@ -170,8 +192,8 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
-        *                                            3.0, 4.0 );
+        *       auto mat = tinymath::Matrix<float, 2>( { 1.0, 2.0,
+        *                                                3.0, 4.0 } );
         *       std::cout << "matrix (1):" << std::endl;
         *       std::cout << tinymath::toString( mat ) << std::endl;
         *       mat(0,0) = -1.0f;
@@ -192,6 +214,26 @@ namespace tinymath
         Scalar_T& operator() ( size_t row, size_t col );
 
         /**
+        *   @brief Returns the column at the given index
+        *
+        *   @param index    Index of the requested column
+        *   @return         A Vector representing the requested column
+        *
+        *   Example:
+        *   @code
+        *       auto mat = tinymath::Matrix<float, 3>( { 1.0, 2.0, 3.0,
+        *                                                4.0, 5.0, 6.0,
+        *                                                7.0, 8.0, 9.0 } );
+        *       auto col0 = mat(0);
+        *       std::cout << "matrix:" << std::endl;
+        *       std::cout << tinymath::toString( mat ) << std::endl;
+        *       std::cout << "column(0):" << std::endl;
+        *       std::cout << tinymath::toString( col0 ) << std::endl;
+        *   @endcode
+        */
+        Vector<Scalar_T,SizeN> operator() ( size_t index );
+
+        /**
         *   @brief Returns the row at the given index
         *
         *   @param index    Index of the requested row
@@ -199,8 +241,8 @@ namespace tinymath
         *
         *   Example:
         *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( 1.0, 2.0,
-        *                                            3.0, 4.0 );
+        *       auto mat = tinymath::Matrix<float, 2>( { 1.0, 2.0,
+        *                                                3.0, 4.0 } );
         *       std::cout << "row(0): " << mat.row(0) << std::endl;
         *       std::cout << "row(1): " << mat.row(1) << std::endl;
         *       // result:
@@ -228,6 +270,29 @@ namespace tinymath
         *   @endcode
         */
         Vector<Scalar_T,SizeN> col( size_t index ) const;
+
+        /**
+        *   @brief Sets the values of the column of a matrix from a column vector of same size
+        *
+        *   @param vec      Vector representing the column values to be set
+        *   @param index    Index of the column to be set
+        */
+        void set( const Vector<Scalar_T,SizeN>& vec, size_t index );
+
+        /**
+        *   @brief Sets part of the column of a matrix from a column vector of size (N-1)
+        *
+        *   @param vec      Vector representing the (n-1) column values to be set
+        *   @param index    Index of the column to be set
+        */
+        void set( const Vector<Scalar_T,SizeN-1>& vec, size_t index );
+
+        /**
+        *   @brief Sets the upper-left section of a matrix from a (N-1)x(N-1) matrix
+        *
+        *   @param mat      Matrix representing the (n-1)x(n-1) upper-left section to be set
+        */
+        void set( const Matrix<Scalar_T,SizeN-1>& mat );
 
         /**
         *   @brief Returns the matrix-addition with a second matrix

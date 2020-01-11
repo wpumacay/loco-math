@@ -7,9 +7,9 @@ include_directories( "${TINYMATH_INCS_DIR}" )
 pybind11_add_module( tinymath MODULE "${BindingsFilesSources}" )
 target_link_libraries( tinymath PRIVATE tinymath_cpp_lib )
 
-pybind11_add_module( tinymath_python_lib SHARED "${BindingsFilesSources}" )
-target_link_libraries( tinymath_python_lib PRIVATE tinymath_cpp_lib )
-
+# shared library is only used for tests
 if ( TINYMATH_BUILD_TESTS )
+    pybind11_add_module( tinymath_python_lib SHARED "${BindingsFilesSources}" )
+    target_link_libraries( tinymath_python_lib PRIVATE tinymath_cpp_lib )
     add_subdirectory( tests )
 endif()

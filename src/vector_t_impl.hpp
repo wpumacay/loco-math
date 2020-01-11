@@ -43,6 +43,21 @@ namespace tinymath
     }
 
     template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN>::Vector( const Vector<Scalar_T,SizeN+1>& vec )
+    {
+        for ( size_t i = 0; i < SizeN; i++ )
+            m_buff[i] = vec(i);
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN>::Vector( const Vector<Scalar_T,SizeN-1>& vec, Scalar_T last )
+    {
+        for ( size_t i = 0; i < (SizeN-1); i++ )
+            m_buff[i] = vec(i);
+        m_buff[SizeN-1] = last;
+    }
+
+    template< typename Scalar_T, size_t SizeN >
     Vector<Scalar_T,SizeN>::~Vector()
     {
         // nothing to release manually

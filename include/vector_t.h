@@ -94,8 +94,32 @@ namespace tinymath
         Vector( const std::vector<Scalar_T>& values );
 
         /**
-        *   @brief Creates
+        *   @brief Creates an n-dim vector from an (n+1)-dim vector
+        *
+        *   @param vec  (n+1) dimensional vector whose first n components we want
+        *
+        *   Example:
+        *   @code
+        *       tinymath::Vector<float, 4> vec4 = { 4.0f, 3.0f, 2.0f, 1.0f };
+        *       auto vec3 = tinymath::Vector<float, 3>( vec4 );
+        *       std::cout << "vec4: " << tinymath::toString( vec4 ) << std::endl;
+        *       std::cout << "vec3: " << tinymath::toString( vec3 ) << std::endl;
+        *   @endcode
         */
+        Vector( const Vector<Scalar_T,SizeN+1>& vec );
+
+        /**
+        *   @brief Creates an n-dim vector from an (n-1) dim vector and a given value for the last component
+        *
+        *   @param vec  (n-1) dimensional vector with the first (n-1) components we want
+        *   @param last Value of the last component of the vector
+        *
+        *   Example:
+        *   @code
+        *
+        *   @endcode
+        */
+        Vector( const Vector<Scalar_T,SizeN-1>& vec, Scalar_T last );
 
         /**
         *   @brief Releases resources used for this vector
@@ -349,10 +373,10 @@ namespace tinymath
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
     /**********************************************************************************************/
-    /*                          Specializations for specific functions                            */
+    /*                                    Custom functions                                        */
     /**********************************************************************************************/
 
-    // Value-getters for x,y,z,w
+    // Template-specializations of value-getters for x,y,z,w
 
     template<>
     float Vector<float, 2>::x() const;
@@ -392,7 +416,7 @@ namespace tinymath
     template<>
     double Vector<double, 4>::w() const;
 
-    // Reference-getters for x,y,z,w
+    // Template-specializations of reference-getters for x,y,z,w
 
     template<>
     float& Vector<float, 2>::x();

@@ -13,6 +13,12 @@ int main()
     std::cout << tinymath::toString( mat ) << std::endl;
     std::cout << "mat.inverse():" << std::endl;
     std::cout << tinymath::toString( mat.inverse() ) << std::endl;
+    std::cout << "col0: " << std::endl;
+    std::cout << tinymath::toString( mat(0) ) << std::endl;
+    std::cout << "vec3(col0): " << std::endl;
+    std::cout << tinymath::toString( tinymath::Vector3f( mat( 0 ) ) ) << std::endl;
+    std::cout << "mat3(mat): " << std::endl;
+    std::cout << tinymath::toString( tinymath::Matrix3f( mat ) ) << std::endl;
 
     return 0;
 }

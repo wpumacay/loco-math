@@ -19,6 +19,11 @@ int main()
     _vec.w() /= 3.0f;
     std::cout << tinymath::toString( _vec ) << std::endl;
 
+    auto _vector_3 = tinymath::Vector3f( _vec );
+    auto _vector_4 = tinymath::Vector4f( _vector_3, _vec[3] );
+    std::cout << "extracted vec3: " << tinymath::toString( _vector_3 ) << std::endl;
+    std::cout << "reconstructed vec4: " << tinymath::toString( _vector_4 ) << std::endl;
+
     std::cout << "Vector4: math operators *******************************************" << std::endl;
     tinymath::Vector4f _vec1 = { 0.5f, 1.5f, 2.0f, 2.5f };
     tinymath::Vector4f _vec2 = { 1.1f, 2.2f, 3.3f, 4.4f };

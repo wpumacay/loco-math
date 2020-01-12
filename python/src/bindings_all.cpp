@@ -19,4 +19,7 @@ PYBIND11_MODULE( tinymath, m )
     tinymath::bindings_matrix<double, 3>( m, "Matrix3d" );
     tinymath::bindings_matrix<float, 4>( m, "Matrix4f" );
     tinymath::bindings_matrix<double, 4>( m, "Matrix4d" );
+    // transforms bindings
+    tinymath::bindings_transforms<float>( m );
+    tinymath::bindings_transforms<double>( m );
 }

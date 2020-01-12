@@ -8,7 +8,7 @@ namespace py = pybind11;
 namespace tinymath
 {
     template< typename Scalar_T, size_t SizeN >
-    void bindings_matrix( py::module& m, const std::string& modName );
+    void bindings_matrix( py::module& m, const std::string& className );
 }
 
 #include "../src/bindings_matrix_t_impl.hpp"

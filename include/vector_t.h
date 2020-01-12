@@ -54,7 +54,7 @@ namespace tinymath
         *   vec: [1.0, 1.0, 1.0]
         *   ```
         */
-        Vector( Scalar_T val );
+        Vector( tfloat val );
 
         /**
         *   @brief Creates an n-dim vector from a list of given values
@@ -119,7 +119,7 @@ namespace tinymath
         *
         *   @endcode
         */
-        Vector( const Vector<Scalar_T,SizeN-1>& vec, Scalar_T last );
+        Vector( const Vector<Scalar_T,SizeN-1>& vec, tfloat last );
 
         /**
         *   @brief Releases resources used for this vector
@@ -158,7 +158,7 @@ namespace tinymath
         *
         *   @param val    Scale factor applied to each entry
         */
-        void scale( Scalar_T val );
+        void scale( tfloat val );
 
         /**
         *   @brief Scales this vector <b>in-place</b>, given an n-dim vector with the scales of each entry
@@ -173,7 +173,7 @@ namespace tinymath
         *   @param val      Scale factor applied to each entry
         *   @return         The scaled version of this vector
         */
-        Vector<Scalar_T,SizeN> scaled( Scalar_T val ) const;
+        Vector<Scalar_T,SizeN> scaled( tfloat val ) const;
 
         /**
         *   @brief Returns a scaled-version of this vector, given an n-dim vector with the scales of each entry
@@ -328,7 +328,7 @@ namespace tinymath
     *   @return     The resulting vector-scalar product
     */
     template< typename Scalar_T, size_t SizeN >
-    Vector<Scalar_T,SizeN> operator* ( const Vector<Scalar_T,SizeN>& vec, Scalar_T val );
+    Vector<Scalar_T,SizeN> operator* ( const Vector<Scalar_T,SizeN>& vec, tfloat val );
 
     /**
     *   @brief Scalar-vector product operator
@@ -344,7 +344,7 @@ namespace tinymath
     *   @return     The resulting vector-scalar product
     */
     template< typename Scalar_T, size_t SizeN >
-    Vector<Scalar_T,SizeN> operator* ( Scalar_T val, const Vector<Scalar_T,SizeN>& vec );
+    Vector<Scalar_T,SizeN> operator* ( tfloat val, const Vector<Scalar_T,SizeN>& vec );
 
     /**
     *   @brief Returns a string representation of a given n-dim vector

@@ -9,6 +9,8 @@
 #include <stdexcept>
 #include <initializer_list>
 
+#define TINYMATH_PI 3.141592653589793f
+
 namespace tinymath
 {
 
@@ -16,9 +18,8 @@ namespace tinymath
     typedef double tf64;
     typedef tf32 tfloat;
 
-    template< typename Scalar_T >
-    Scalar_T clamp( Scalar_T x, Scalar_T xMin, Scalar_T xMax );
+    tfloat clamp( tfloat x, tfloat xMin, tfloat xMax );
+    tfloat rad2degrees( tfloat rads );
+    tfloat deg2radians( tfloat degs );
 
 }
-
-#include "../src/common_impl.hpp"

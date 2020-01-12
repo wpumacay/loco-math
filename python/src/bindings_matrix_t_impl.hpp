@@ -6,9 +6,9 @@ namespace py = pybind11;
 namespace tinymath
 {
     template< typename Scalar_T, size_t SizeN >
-    void bindings_matrix( py::module& m, const std::string& modName )
+    void bindings_matrix( py::module& m, const std::string& className )
     {
-        py::class_< Matrix<Scalar_T,SizeN> >( m, modName.c_str(), py::buffer_protocol() )
+        py::class_< Matrix<Scalar_T,SizeN> >( m, className.c_str(), py::buffer_protocol() )
             .def( py::init<>() )
             .def( py::init( []( py::array_t<Scalar_T>& matarr )
                 {

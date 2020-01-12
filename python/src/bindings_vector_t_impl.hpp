@@ -6,9 +6,9 @@ namespace py = pybind11;
 namespace tinymath
 {
     template< typename Scalar_T, size_t SizeN >
-    void bindings_vector( py::module& m, const std::string& modName )
+    void bindings_vector( py::module& m, const std::string& className )
     {
-        py::class_< Vector<Scalar_T,SizeN> >( m, modName.c_str(), py::buffer_protocol() )
+        py::class_< Vector<Scalar_T,SizeN> >( m, className.c_str(), py::buffer_protocol() )
             .def( py::init<>() )
             .def( py::init<Scalar_T>() )
             .def( py::init( []( py::array_t<Scalar_T>& vecarr )
@@ -93,10 +93,12 @@ namespace tinymath
             .def( "dot", &Vector<Scalar_T,SizeN>::dot )
             .def( "normalize", &Vector<Scalar_T,SizeN>::normalize )
             .def( "normalized", &Vector<Scalar_T,SizeN>::normalized )
-            .def( "scale", (void (Vector<Scalar_T,SizeN>::*)(Scalar_T)) &Vector<Scalar_T,SizeN>::scale )
+            .def( "scale", (void (Vector<Scalar_T,SizeN>::*)(tfloat)) &Vector<Scalar_T,SizeN>::scale )
             .def( "scale", (void (Vector<Scalar_T,SizeN>::*)(const Vector<Scalar_T,SizeN>&)) &Vector<Scalar_T,SizeN>::scale )
-            .def( "scaled", (Vector<Scalar_T,SizeN> (Vector<Scalar_T,SizeN>::*)(Scalar_T) const) &Vector<Scalar_T,SizeN>::scaled )
+            .def( "scaled", (Vector<Scalar_T,SizeN> (Vector<Scalar_T,SizeN>::*)(tfloat) const) &Vector<Scalar_T,SizeN>::scaled )
             .def( "scaled", (Vector<Scalar_T,SizeN> (Vector<Scalar_T,SizeN>::*)(const Vector<Scalar_T,SizeN>&) const) &Vector<Scalar_T,SizeN>::scaled )
+            .def_property_readonly( "ndims", []( const Vector<Scalar_T,SizeN>& self ) -> size_t { return 1; } )
+            .def_property_readonly( "shape", []( const Vector<Scalar_T,SizeN>& self ) -> std::pair<size_t,size_t> { return { SizeN, 1 }; } )
             .def( "__add__", []( const Vector<Scalar_T,SizeN>& v1, const Vector<Scalar_T,SizeN>& v2 ) -> Vector<Scalar_T,SizeN> { return v1 + v2; } )
             .def( "__sub__", []( const Vector<Scalar_T,SizeN>& v1, const Vector<Scalar_T,SizeN>& v2 ) -> Vector<Scalar_T,SizeN> { return v1 - v2; } )
             .def( "__mul__", []( const Vector<Scalar_T,SizeN>& v1, const Vector<Scalar_T,SizeN>& v2 ) -> Vector<Scalar_T,SizeN> { return v1 * v2; } )

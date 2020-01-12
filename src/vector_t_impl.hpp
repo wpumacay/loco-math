@@ -16,7 +16,7 @@ namespace tinymath
     }
 
     template< typename Scalar_T, size_t SizeN >
-    Vector<Scalar_T,SizeN>::Vector( Scalar_T val )
+    Vector<Scalar_T,SizeN>::Vector( tfloat val )
     {
         for ( size_t i = 0; i < SizeN; i++ )
             m_buff[i] = val;
@@ -50,7 +50,7 @@ namespace tinymath
     }
 
     template< typename Scalar_T, size_t SizeN >
-    Vector<Scalar_T,SizeN>::Vector( const Vector<Scalar_T,SizeN-1>& vec, Scalar_T last )
+    Vector<Scalar_T,SizeN>::Vector( const Vector<Scalar_T,SizeN-1>& vec, tfloat last )
     {
         for ( size_t i = 0; i < (SizeN-1); i++ )
             m_buff[i] = vec(i);
@@ -100,7 +100,7 @@ namespace tinymath
     }
 
     template< typename Scalar_T, size_t SizeN >
-    void Vector<Scalar_T,SizeN>::scale( Scalar_T val )
+    void Vector<Scalar_T,SizeN>::scale( tfloat val )
     {
         for ( size_t i = 0; i < SizeN; i++ )
             m_buff[i] *= val;
@@ -114,7 +114,7 @@ namespace tinymath
     }
 
     template< typename Scalar_T, size_t SizeN >
-    Vector<Scalar_T,SizeN> Vector<Scalar_T,SizeN>::scaled( Scalar_T val ) const
+    Vector<Scalar_T,SizeN> Vector<Scalar_T,SizeN>::scaled( tfloat val ) const
     {
         auto _res = Vector<Scalar_T,SizeN>();
         for ( size_t i = 0; i < SizeN; i++ )
@@ -247,13 +247,13 @@ namespace tinymath
     }
 
     template< typename Scalar_T, size_t SizeN >
-    Vector<Scalar_T,SizeN> operator* ( const Vector<Scalar_T,SizeN>& vec, Scalar_T val )
+    Vector<Scalar_T,SizeN> operator* ( const Vector<Scalar_T,SizeN>& vec, tfloat val )
     {
         return vec.scaled( val );
     }
 
     template< typename Scalar_T, size_t SizeN >
-    Vector<Scalar_T,SizeN> operator* ( Scalar_T val, const Vector<Scalar_T,SizeN>& vec )
+    Vector<Scalar_T,SizeN> operator* ( tfloat val, const Vector<Scalar_T,SizeN>& vec )
     {
         return vec.scaled( val );
     }

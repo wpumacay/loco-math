@@ -16,13 +16,22 @@ namespace tinymath
     Vector<Scalar_T, 4> quaternion( const Matrix<Scalar_T, 3>& rotmat );
 
     /**
-    *   @brief Converts a given 3x3 rotation matrix to its euler-angle representation (zyx)
+    *   @brief Converts a given 3x3 rotation matrix to its euler angle (zyx intrinsic) representation
     *
     *   @param rotmat   3x3 rotation matrix
     *   @return         3-d vector representing the zyx euler angles
     */
     template< typename Scalar_T >
     Vector<Scalar_T, 3> euler( const Matrix<Scalar_T, 3>& rotmat );
+
+    /**
+    *   @brief Converts a given 3x3 rotation matrix to its axis-angle representation
+    *
+    *   @param rotmat   3x3 rotation matrix
+    *   @return         Axis and angle as an std::pair
+    */
+    template< typename Scalar_T >
+    std::pair< Vector<Scalar_T, 3>, Scalar_T > axisAngle( const Matrix<Scalar_T, 3>& rotmat );
 
     /**
     *   @brief Converts from euler angles to a 3x3 rotation matrix
@@ -50,7 +59,7 @@ namespace tinymath
     *   @¶eturn         3x3 rotation matrix
     */
     template< typename Scalar_T >
-    Matrix<Scalar_T, 3> rotation( const Vector<Scalar_T, 3>& axis, Scalar_T angle );
+    Matrix<Scalar_T, 3> rotation( const Vector<Scalar_T, 3>& axis, tfloat angle );
 
 }
 

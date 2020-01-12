@@ -77,6 +77,25 @@ namespace tinymath
         return _resEuler;
     }
 
+    // @todo: handle singularities (angle = 0° or 180°)
+    // @source: https://en.wikipedia.org/wiki/Rotation_matrix#Conversion_from_and_to_axis%E2%80%93angle
+    template< typename Scalar_T >
+    std::pair< Vector<Scalar_T, 3>, Scalar_T > axisAngle( const Matrix<Scalar_T, 3>& rotmat )
+    {
+        Vector<Scalar_T, 3> _axis; 
+        Scalar_T _angle;
+
+        auto _trace = rotmat( 0, 0 ) + rotmat( 1, 1 ) + rotmat( 2, 2 );
+        _angle = std::acos( ( _trace - 1 ) / 2 );
+
+        _axis.x() = rotmat( 2, 1 ) - rotmat( 1, 2 );
+        _axis.y() = rotmat( 0, 2 ) - rotmat( 2, 0 );
+        _axis.z() = rotmat( 1, 0 ) - rotmat( 0, 1 );
+        _axis.normalize();
+
+        return { _axis, _angle };
+    }
+
     template< typename Scalar_T >
     Matrix<Scalar_T, 3> rotation( const Vector<Scalar_T, 3>& ezyx )
     {
@@ -136,7 +155,7 @@ namespace tinymath
 
     // @source: https://github.com/mrdoob/three.js/blob/master/src/math/Quaternion.js
     template< typename Scalar_T >
-    Matrix<Scalar_T, 3> rotation( const Vector<Scalar_T, 3>& axis, Scalar_T angle )
+    Matrix<Scalar_T, 3> rotation( const Vector<Scalar_T, 3>& axis, tfloat angle )
     {
         auto s = std::sin( angle / 2.0 );
         auto quat = Vector<Scalar_T, 4>();

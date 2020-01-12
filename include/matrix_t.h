@@ -353,7 +353,7 @@ namespace tinymath
     *   @return     The resulting elementwise matrix-scalar product
     */
     template< typename Scalar_T, size_t SizeN >
-    Matrix<Scalar_T,SizeN> operator* ( const Matrix<Scalar_T,SizeN>& mat, Scalar_T val );
+    Matrix<Scalar_T,SizeN> operator* ( const Matrix<Scalar_T,SizeN>& mat, tfloat val );
 
     /**
     *   @brief Scalar-matrix product operator
@@ -363,7 +363,7 @@ namespace tinymath
     *   @return     The resulting elementwise scalar-matrix product
     */
     template< typename Scalar_T, size_t SizeN >
-    Matrix<Scalar_T,SizeN> operator* ( Scalar_T val, const Matrix<Scalar_T,SizeN>& mat );
+    Matrix<Scalar_T,SizeN> operator* ( tfloat val, const Matrix<Scalar_T,SizeN>& mat );
 
     /**
     *   @brief Returns a string representation of the given 2x2 matrix

@@ -27,7 +27,7 @@ int main()
     std::cout << "v1 * v2 :" << tinymath::toString( _vec1 * _vec2 ) << std::endl;
     std::cout << "2*v1 : " << tinymath::toString( 2.0f * _vec1 ) << std::endl;
     std::cout << "v2*3 : " << tinymath::toString( 3.0f * _vec2 ) << std::endl;
-    std::cout << "2*v1 + 3*v2 : " << tinymath::toString( 2.0f * _vec1 + 3.0f * _vec2 ) << std::endl;
+    std::cout << "2*v1 + 3*v2 : " << tinymath::toString( 2.0f * _vec1 + 3.0 * _vec2 ) << std::endl;
 
     std::cout << "Vector3: helper methods *******************************************" << std::endl;
     tinymath::Vector3f _vec3 = { 0.3f, 0.4f, 0.5f };

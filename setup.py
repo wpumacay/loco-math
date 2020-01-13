@@ -47,7 +47,6 @@ class BuildCommand( BaseBuildExtCommand ) :
                       '-DCMAKE_BUILD_TYPE=' + _cfg,
                       '-DTINYMATH_BUILD_DOCS=OFF',
                       '-DTINYMATH_BUILD_EXAMPLES=OFF',
-                      '-DTINYMATH_BUILD_TESTS=OFF',
                       '-DTINYMATH_BUILD_PYTHON_BINDINGS=ON']
 
         _env = os.environ.copy()

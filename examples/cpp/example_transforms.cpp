@@ -33,5 +33,7 @@ int main()
     std::cout << "rot-x: " << std::endl;
     std::cout << tinymath::toString( _rotx ) << std::endl;
 
+    std::cout << "cross(ihat,jhat): " << tinymath::toString( tinymath::cross<float>( { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f } ) ) << std::endl;
+
     return 0;
 }

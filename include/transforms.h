@@ -70,7 +70,6 @@ namespace tinymath
     template< typename Scalar_T >
     Matrix<Scalar_T, 3> rotationX( tfloat angle );
 
-
     /**
     *   @brief Creates a 3x3 rotation matrix for a rotation around the y-axis
     *
@@ -80,7 +79,6 @@ namespace tinymath
     template< typename Scalar_T >
     Matrix<Scalar_T, 3> rotationY( tfloat angle );
 
-
     /**
     *   @brief Creates a 3x3 rotation matrix for a rotation around the z-axis
     *
@@ -89,6 +87,16 @@ namespace tinymath
     */
     template< typename Scalar_T >
     Matrix<Scalar_T, 3> rotationZ( tfloat angle );
+
+    /**
+    *   @brief Computes the cross product of two 3-dim vectors
+    *
+    *   @param vec1     First 3-dim vector operand
+    *   @param vec2     Second 3-dim vector operand
+    *   @return         The resulting cross product as a 3-dim vector
+    */
+    template< typename Scalar_T >
+    Vector<Scalar_T, 3> cross( const Vector<Scalar_T, 3>& vec1, const Vector<Scalar_T, 3>& vec2 );
 
 }
 

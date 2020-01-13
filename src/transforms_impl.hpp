@@ -210,4 +210,16 @@ namespace tinymath
         return _resRotMatrix;
     }
 
+    template< typename Scalar_T >
+    Vector<Scalar_T, 3> cross( const Vector<Scalar_T, 3>& vec1, const Vector<Scalar_T, 3>& vec2 )
+    {
+        Vector<Scalar_T, 3> _resCross;
+
+        _resCross.x() =  vec1.y() * vec2.z() - vec2.y() * vec1.z();
+        _resCross.y() = -vec1.x() * vec2.z() + vec2.x() * vec1.z();
+        _resCross.z() =  vec1.x() * vec2.y() - vec2.x() * vec1.y();
+
+        return _resCross;
+    }
+
 }

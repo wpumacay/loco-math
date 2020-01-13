@@ -7,6 +7,8 @@ recursive-include docs *.rst
 recursive-include docs *.txt
 recursive-include docs Makefile
 recursive-include ext *.txt
+recursive-include ext/pybind11/include/pybind11/ *.h
+recursive-include ext/pybind11/tools/ *.cmake
 recursive-include include *.h
 recursive-include python *.cpp
 recursive-include python *.h
@@ -15,5 +17,5 @@ recursive-include python *.txt
 recursive-include scripts *.sh
 recursive-include src *.cpp
 recursive-include src *.hpp
-recursive-include tests *.cpp
-recursive-include tests *.txt
+recursive-include examples/cpp *.cpp
+recursive-include examples/cpp *.txt

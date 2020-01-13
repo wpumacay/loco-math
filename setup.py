@@ -64,7 +64,7 @@ with open( "README.md", "r" ) as fh :
 
 setup(
     name                            = 'wp-tinymath',
-    version                         = "0.0.2",
+    version                         = "0.0.3",
     description                     = 'A basic math library for vectors and matrices',
     long_description                = longDescription,
     long_description_content_type   = "text/markdown",
@@ -80,7 +80,8 @@ setup(
     zip_safe                        = False,
     install_requires                = [
                                         'numpy',
-                                        'setuptools'
+                                        'setuptools',
+                                        'matplotlib'
                                       ],
     package_data                    = {},
     ext_modules                     = [

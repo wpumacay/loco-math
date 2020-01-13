@@ -18,8 +18,4 @@ namespace tinymath
     typedef double tf64;
     typedef tf32 tfloat;
 
-    tfloat clamp( tfloat x, tfloat xMin, tfloat xMax );
-    tfloat rad2degrees( tfloat rads );
-    tfloat deg2radians( tfloat degs );
-
 }

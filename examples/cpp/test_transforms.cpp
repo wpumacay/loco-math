@@ -29,5 +29,9 @@ int main()
     tinymath::Vector3f axis = { 0.3574067, 0.8628562, 0.3574067 };
     std::cout << tinymath::toString( tinymath::rotation( axis, 1.1298708 ) ) << std::endl;
 
+    tinymath::Matrix3f _rotx = tinymath::rotationX<float>( TINYMATH_PI / 4.0 );
+    std::cout << "rot-x: " << std::endl;
+    std::cout << tinymath::toString( _rotx ) << std::endl;
+
     return 0;
 }

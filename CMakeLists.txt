@@ -16,7 +16,6 @@ endif()
 
 option( TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen)" ON )
 option( TINYMATH_BUILD_EXAMPLES "Build c/c++ examples" ON )
-option( TINYMATH_BUILD_TESTS "Build c/c++ tests" ON )
 option( TINYMATH_BUILD_PYTHON_BINDINGS "Build python bindings" ON )
 
 # Add cmake find-modules helpers (for sphinx)
@@ -35,20 +34,21 @@ file( GLOB_RECURSE TINYMATH_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" )
 set( TINYMATH_INCS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 include_directories( "${TINYMATH_INCS_DIR}" )
 
-add_library( tinymath_cpp_lib SHARED ${TINYMATH_SRCS} )
-target_include_directories( tinymath_cpp_lib PUBLIC "${TINYMATH_INCS_DIR}" )
+add_library( tinymath_cpp_lib INTERFACE )
+target_include_directories( tinymath_cpp_lib INTERFACE "${TINYMATH_INCS_DIR}" )
 
-# Add subdirectories only if master-project
+# Add third_party dependencies only if master-project (if child project, root project adds the dependencies)
 if ( TINYMATH_IS_MASTER_PROJECT )
-    if ( TINYMATH_BUILD_TESTS )
-        add_subdirectory( tests ) # if child project, no tests are required
-    endif()
-    add_subdirectory( ext ) # if child project, root project adds the dependencies
+    add_subdirectory( ext )
 endif()
 
+# Add bindings subdirectory
 if ( TINYMATH_BUILD_PYTHON_BINDINGS )
-    # Add bindings subdirectory
     add_subdirectory( python )
+endif()
+
+if ( TINYMATH_IS_MASTER_PROJECT AND TINYMATH_BUILD_EXAMPLES )
+    add_subdirectory( examples/cpp )
 endif()
 
 if ( TINYMATH_BUILD_DOCS AND TINYMATH_IS_MASTER_PROJECT )

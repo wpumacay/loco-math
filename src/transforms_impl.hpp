@@ -168,4 +168,46 @@ namespace tinymath
         return rotation( quat );
     }
 
+    template< typename Scalar_T >
+    Matrix<Scalar_T, 3> rotationX( tfloat angle )
+    {
+        Matrix<Scalar_T, 3> _resRotMatrix;
+
+        auto cs = std::cos( angle );
+        auto sn = std::sin( angle );
+
+        _resRotMatrix( 1, 1 ) = cs; _resRotMatrix( 1, 2 ) = -sn;
+        _resRotMatrix( 2, 1 ) = sn; _resRotMatrix( 2, 2 ) = cs;
+
+        return _resRotMatrix;
+    }
+
+    template< typename Scalar_T >
+    Matrix<Scalar_T, 3> rotationY( tfloat angle )
+    {
+        Matrix<Scalar_T, 3> _resRotMatrix;
+
+        auto cs = std::cos( angle );
+        auto sn = std::sin( angle );
+
+        _resRotMatrix( 0, 0 ) = cs; _resRotMatrix( 0, 2 ) = sn;
+        _resRotMatrix( 2, 0 ) = -sn; _resRotMatrix( 2, 2 ) = cs;
+
+        return _resRotMatrix;
+    }
+
+    template< typename Scalar_T >
+    Matrix<Scalar_T, 3> rotationZ( tfloat angle )
+    {
+        Matrix<Scalar_T, 3> _resRotMatrix;
+
+        auto cs = std::cos( angle );
+        auto sn = std::sin( angle );
+
+        _resRotMatrix( 0, 0 ) = cs; _resRotMatrix( 0, 1 ) = -sn;
+        _resRotMatrix( 1, 0 ) = sn; _resRotMatrix( 1, 1 ) = cs;
+
+        return _resRotMatrix;
+    }
+
 }

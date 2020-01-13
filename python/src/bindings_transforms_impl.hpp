@@ -13,6 +13,12 @@ namespace tinymath
         m.def( "rotation", static_cast< Matrix<Scalar_T,3> (*)( const Vector<Scalar_T,3>& ) >( &tinymath::rotation<Scalar_T> ) );
         m.def( "rotation", static_cast< Matrix<Scalar_T,3> (*)( const Vector<Scalar_T,4>& ) >( &tinymath::rotation<Scalar_T> ) );
         m.def( "rotation", static_cast< Matrix<Scalar_T,3> (*)( const Vector<Scalar_T,3>&, tfloat ) >( &tinymath::rotation<Scalar_T> ) );
+        m.def( "rotationXf", &tinymath::rotationX<float> );
+        m.def( "rotationYf", &tinymath::rotationY<float> );
+        m.def( "rotationZf", &tinymath::rotationZ<float> );
+        m.def( "rotationXd", &tinymath::rotationX<double> );
+        m.def( "rotationYd", &tinymath::rotationY<double> );
+        m.def( "rotationZd", &tinymath::rotationZ<double> );
     }
 
 }

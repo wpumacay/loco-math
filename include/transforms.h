@@ -61,6 +61,35 @@ namespace tinymath
     template< typename Scalar_T >
     Matrix<Scalar_T, 3> rotation( const Vector<Scalar_T, 3>& axis, tfloat angle );
 
+    /**
+    *   @brief Creates a 3x3 rotation matrix for a rotation around the x-axis
+    *
+    *   @param angle    Angle of rotation along the x-axis
+    *   @return         3x3 rotation matrix
+    */
+    template< typename Scalar_T >
+    Matrix<Scalar_T, 3> rotationX( tfloat angle );
+
+
+    /**
+    *   @brief Creates a 3x3 rotation matrix for a rotation around the y-axis
+    *
+    *   @param angle    Angle of rotation along the y-axis
+    *   @return         3x3 rotation matrix
+    */
+    template< typename Scalar_T >
+    Matrix<Scalar_T, 3> rotationY( tfloat angle );
+
+
+    /**
+    *   @brief Creates a 3x3 rotation matrix for a rotation around the z-axis
+    *
+    *   @param angle    Angle of rotation along the z-axis
+    *   @return         3x3 rotation matrix
+    */
+    template< typename Scalar_T >
+    Matrix<Scalar_T, 3> rotationZ( tfloat angle );
+
 }
 
 #include "../src/transforms_impl.hpp"

@@ -84,7 +84,6 @@ namespace tinymath
             .def( "setZero", &Matrix<Scalar_T,SizeN>::setZero )
             .def( "transpose_", &Matrix<Scalar_T,SizeN>::transpose_ )
             .def( "transpose", &Matrix<Scalar_T,SizeN>::transpose )
-            .def( "inverse", &Matrix<Scalar_T,SizeN>::inverse )
             .def( "row", &Matrix<Scalar_T,SizeN>::row )
             .def( "col", &Matrix<Scalar_T,SizeN>::col )
             .def( "set", ( void ( Matrix<Scalar_T,SizeN>::* )( const Matrix<Scalar_T,SizeN-1>& ) ) &Matrix<Scalar_T,SizeN>::set )

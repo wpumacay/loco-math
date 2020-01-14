@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <matrix_t.h>
+#include <transforms.h>
 
 int main()
 {
@@ -12,8 +13,8 @@ int main()
                                       3.0f, 4.0f } );
     std::cout << "mat2:" << std::endl;
     std::cout << tinymath::toString( mat2 ) << std::endl;
-    std::cout << "mat2.inverse():" << std::endl;
-    std::cout << tinymath::toString( mat2.inverse() ) << std::endl;
+    std::cout << "inverse( mat2 ):" << std::endl;
+    std::cout << tinymath::toString( tinymath::inverse( mat2 ) ) << std::endl;
 
     return 0;
 }

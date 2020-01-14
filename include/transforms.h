@@ -98,6 +98,33 @@ namespace tinymath
     template< typename Scalar_T >
     Vector<Scalar_T, 3> cross( const Vector<Scalar_T, 3>& vec1, const Vector<Scalar_T, 3>& vec2 );
 
+    /**
+    *   @brief Computes the inverse of a given 2x2 matrix
+    *
+    *   @param mat      Matrix to be inverted
+    *   @return         Inverse of the given 2x2 matrix
+    */
+    template< typename Scalar_T >
+    Matrix<Scalar_T, 2 > inverse( const Matrix<Scalar_T, 2>& mat );
+
+    /**
+    *   @brief Computes the inverse of a given 3x3 matrix
+    *
+    *   @param mat      Matrix to be inverted
+    *   @return         Inverse of the given 3x3 matrix
+    */
+    template< typename Scalar_T >
+    Matrix<Scalar_T, 3 > inverse( const Matrix<Scalar_T, 3>& mat );
+
+    /**
+    *   @brief Computes the inverse of a given 4x4 matrix
+    *
+    *   @param mat      Matrix to be inverted
+    *   @return         Inverse of the given 4x4 matrix
+    */
+    template< typename Scalar_T >
+    Matrix<Scalar_T, 4 > inverse( const Matrix<Scalar_T, 4>& mat );
+
 }
 
 #include "../src/transforms_impl.hpp"

@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <matrix_t.h>
+#include <transforms.h>
 
 int main()
 {
@@ -11,8 +12,8 @@ int main()
 
     std::cout << "mat:" << std::endl;
     std::cout << tinymath::toString( mat ) << std::endl;
-    std::cout << "mat.inverse():" << std::endl;
-    std::cout << tinymath::toString( mat.inverse() ) << std::endl;
+    std::cout << "inverse( mat ):" << std::endl;
+    std::cout << tinymath::toString( tinymath::inverse( mat ) ) << std::endl;
     std::cout << "col0: " << std::endl;
     std::cout << tinymath::toString( mat(0) ) << std::endl;
     std::cout << "vec3(col0): " << std::endl;

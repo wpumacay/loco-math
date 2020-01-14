@@ -136,30 +136,6 @@ namespace tinymath
         Matrix<Scalar_T,SizeN> transpose() const;
 
         /**
-        *   @brief Returns the inverse of this matrix
-        *
-        *   @return     Inverse of this matrix
-        *
-        *   Example:
-        *   @code
-        *       auto mat = tinymath::Matrix<float, 2>( { 1.0, 2.0,
-        *                                                3.0, 4.0 } );
-        *       std::cout << "matrix: " << std::endl;
-        *       std::cout << tinymath::toString( mat ) << std::endl;
-        *       std::cout << "matrix.inverse(): " << std::endl;
-        *       std::cout << tinymath::toString( mat.inverse() ) << std::endl;
-        *       // result:
-        *       // matrix:
-        *       // [ 1.0, 2.0
-        *       //   3.0, 4.0 ]
-        *       // matrix.inverse():
-        *       // [ -2.0, 1.0
-        *       //   1.5, -0.5 ]
-        *   @endcode
-        */
-        Matrix<Scalar_T,SizeN> inverse() const;
-
-        /**
         *   @brief Returns the value at stored at requested index (row,col)
         *
         *   @param row  Requested row index
@@ -389,31 +365,6 @@ namespace tinymath
     /* @brief Matrix4 with float64 (double) scalar type */
     typedef Matrix<double, 4> Matrix4d;
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-    /**********************************************************************************************/
-    /*                          Specializations for specific methods                              */
-    /**********************************************************************************************/
-
-    // inverse method for dimensions 2, 3 and 4 (float32)
-
-    template<>
-    Matrix<float, 2> Matrix<float, 2>::inverse() const;
-    template<>
-    Matrix<float, 3> Matrix<float, 3>::inverse() const;
-    template<>
-    Matrix<float, 4> Matrix<float, 4>::inverse() const;
-
-    // inverse method for dimensions 2, 3 and 4 (float64)
-
-    template<>
-    Matrix<double, 2> Matrix<double, 2>::inverse() const;
-    template<>
-    Matrix<double, 3> Matrix<double, 3>::inverse() const;
-    template<>
-    Matrix<double, 4> Matrix<double, 4>::inverse() const;
-
-#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 }
 
 #include "../src/matrix_t_impl.hpp"

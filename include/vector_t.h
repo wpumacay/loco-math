@@ -56,6 +56,37 @@ namespace tinymath
         */
         Vector( tfloat val );
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+        // @hacks: custom constructors for special 2d, 3d and 4d cases (avoid for-loops)
+
+        /**
+        *   @brief Tries to create an n-dim vector with the given entries
+        *
+        *   @param x    x-component of the n-dim vector
+        *   @param y    y-component (if applicable) of the n-dim vector
+        */
+        Vector( tfloat x, tfloat y );
+
+        /**
+        *   @brief Tries to create an n-dim vector with the given entries
+        *
+        *   @param x    x-component of the n-dim vector
+        *   @param y    y-component of the n-dim vector
+        *   @param z    z-component (if applicable) of the n-dim vector
+        */
+        Vector( tfloat x, tfloat y, tfloat z );
+
+        /**
+        *   @brief Tries to create an n-dim vector with the given entries
+        *
+        *   @param x    x-component of the n-dim vector
+        *   @param y    y-component of the n-dim vector
+        *   @param z    z-component (if applicable) of the n-dim vector
+        *   @param w    w-component (if applicable) of the n-dim vector
+        */
+        Vector( tfloat x, tfloat y, tfloat z, tfloat w );
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
         /**
         *   @brief Creates an n-dim vector from a list of given values
         *
@@ -375,6 +406,32 @@ namespace tinymath
     /**********************************************************************************************/
     /*                                    Custom functions                                        */
     /**********************************************************************************************/
+
+    // Specializations for custom constructors (float32)
+    template<>
+    Vector<float, 2>::Vector( tfloat x, tfloat y ) 
+    { m_buff[0] = x; m_buff[1] = y; }
+
+    template<>
+    Vector<float, 3>::Vector( tfloat x, tfloat y, tfloat z ) 
+    { m_buff[0] = x; m_buff[1] = y; m_buff[2] = z; }
+
+    template<>
+    Vector<float, 4>::Vector( tfloat x, tfloat y, tfloat z, tfloat w ) 
+    { m_buff[0] = x; m_buff[1] = y; m_buff[2] = z; m_buff[3] = w; }
+
+    // Specializations for custom constructors (float64)
+    template<>
+    Vector<double, 2>::Vector( tfloat x, tfloat y ) 
+    { m_buff[0] = x; m_buff[1] = y; }
+
+    template<>
+    Vector<double, 3>::Vector( tfloat x, tfloat y, tfloat z ) 
+    { m_buff[0] = x; m_buff[1] = y; m_buff[2] = z; }
+
+    template<>
+    Vector<double, 4>::Vector( tfloat x, tfloat y, tfloat z, tfloat w ) 
+    { m_buff[0] = x; m_buff[1] = y; m_buff[2] = z; m_buff[3] = w; }
 
     // Template-specializations of value-getters for x,y,z,w
 

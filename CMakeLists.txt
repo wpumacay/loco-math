@@ -34,8 +34,8 @@ file( GLOB_RECURSE TINYMATH_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" )
 set( TINYMATH_INCS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 include_directories( "${TINYMATH_INCS_DIR}" )
 
-add_library( tinymath_cpp_lib INTERFACE )
-target_include_directories( tinymath_cpp_lib INTERFACE "${TINYMATH_INCS_DIR}" )
+add_library( tinymath_cpp_lib SHARED ${TINYMATH_SRCS} )
+target_include_directories( tinymath_cpp_lib PUBLIC "${TINYMATH_INCS_DIR}" )
 
 # Add third_party dependencies only if master-project (if child project, root project adds the dependencies)
 if ( TINYMATH_IS_MASTER_PROJECT )

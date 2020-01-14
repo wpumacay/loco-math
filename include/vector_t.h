@@ -409,29 +409,19 @@ namespace tinymath
 
     // Specializations for custom constructors (float32)
     template<>
-    Vector<float, 2>::Vector( tfloat x, tfloat y ) 
-    { m_buff[0] = x; m_buff[1] = y; }
-
+    Vector<float, 2>::Vector( tfloat x, tfloat y );
     template<>
-    Vector<float, 3>::Vector( tfloat x, tfloat y, tfloat z ) 
-    { m_buff[0] = x; m_buff[1] = y; m_buff[2] = z; }
-
+    Vector<float, 3>::Vector( tfloat x, tfloat y, tfloat z );
     template<>
-    Vector<float, 4>::Vector( tfloat x, tfloat y, tfloat z, tfloat w ) 
-    { m_buff[0] = x; m_buff[1] = y; m_buff[2] = z; m_buff[3] = w; }
+    Vector<float, 4>::Vector( tfloat x, tfloat y, tfloat z, tfloat w );
 
     // Specializations for custom constructors (float64)
     template<>
-    Vector<double, 2>::Vector( tfloat x, tfloat y ) 
-    { m_buff[0] = x; m_buff[1] = y; }
-
+    Vector<double, 2>::Vector( tfloat x, tfloat y );
     template<>
-    Vector<double, 3>::Vector( tfloat x, tfloat y, tfloat z ) 
-    { m_buff[0] = x; m_buff[1] = y; m_buff[2] = z; }
-
+    Vector<double, 3>::Vector( tfloat x, tfloat y, tfloat z );
     template<>
-    Vector<double, 4>::Vector( tfloat x, tfloat y, tfloat z, tfloat w ) 
-    { m_buff[0] = x; m_buff[1] = y; m_buff[2] = z; m_buff[3] = w; }
+    Vector<double, 4>::Vector( tfloat x, tfloat y, tfloat z, tfloat w );
 
     // Template-specializations of value-getters for x,y,z,w
 

@@ -52,9 +52,9 @@ namespace tinymath
         Matrix( const std::vector<Scalar_T>& elements );
 
         /**
-        *   @brief Creates an N x N matrix from an (N+1)x(N+1) matrix by grabbing its upper left section
+        *   @brief Creates an N x N matrix from an (N+1)x(N+1) matrix by grabbing its upper-left section
         *
-        *   @param mat  (N+1)x(N+1) matrix whose upper left section we want
+        *   @param mat  (N+1)x(N+1) matrix whose upper-left section we want
         *
         *   Example:
         *   @code
@@ -62,6 +62,13 @@ namespace tinymath
         *   @endcode
         */
         Matrix( const Matrix<Scalar_T,SizeN+1>& mat );
+
+        /**
+        *   @brief Creates an N x N matrix from an  (N-1)x(N-1) matrix (upper-left section)
+        *
+        *   @param mat  (N-1)x(N-1) matrix whose upper-left section we want
+        */
+        Matrix( const Matrix<Scalar_T,SizeN-1>& mat );
 
         /**
         *   @brief Creates an N x N matrix from an (N-1)x(N-1) matrix (upper-left section) and an (N-1) vector (last-column)
@@ -134,6 +141,30 @@ namespace tinymath
         *   @endcode
         */
         Matrix<Scalar_T,SizeN> transpose() const;
+
+        /**
+        *   @brief Returns the inverse of this matrix
+        *
+        *   @return     Inverse of this matrix
+        *
+        *   Example:
+        *   @code
+        *       auto mat = tinymath::Matrix<float, 2>( { 1.0, 2.0,
+        *                                                3.0, 4.0 } );
+        *       std::cout << "matrix: " << std::endl;
+        *       std::cout << tinymath::toString( mat ) << std::endl;
+        *       std::cout << "matrix.inverse(): " << std::endl;
+        *       std::cout << tinymath::toString( mat.inverse() ) << std::endl;
+        *       // result:
+        *       // matrix:
+        *       // [ 1.0, 2.0
+        *       //   3.0, 4.0 ]
+        *       // matrix.inverse():
+        *       // [ -2.0, 1.0
+        *       //   1.5, -0.5 ]
+        *   @endcode
+        */
+        Matrix<Scalar_T,SizeN> inverse() const;
 
         /**
         *   @brief Returns the value at stored at requested index (row,col)
@@ -350,6 +381,33 @@ namespace tinymath
     template< typename Scalar_T, size_t SizeN >
     std::string toString( const Matrix<Scalar_T,SizeN>& mat );
 
+    /**
+    *   @brief Computes the inverse of a given 2x2 matrix
+    *
+    *   @param mat      Matrix to be inverted
+    *   @return         Inverse of the given 2x2 matrix
+    */
+    template< typename Scalar_T >
+    Matrix<Scalar_T, 2 > inverse( const Matrix<Scalar_T, 2>& mat );
+
+    /**
+    *   @brief Computes the inverse of a given 3x3 matrix
+    *
+    *   @param mat      Matrix to be inverted
+    *   @return         Inverse of the given 3x3 matrix
+    */
+    template< typename Scalar_T >
+    Matrix<Scalar_T, 3 > inverse( const Matrix<Scalar_T, 3>& mat );
+
+    /**
+    *   @brief Computes the inverse of a given 4x4 matrix
+    *
+    *   @param mat      Matrix to be inverted
+    *   @return         Inverse of the given 4x4 matrix
+    */
+    template< typename Scalar_T >
+    Matrix<Scalar_T, 4 > inverse( const Matrix<Scalar_T, 4>& mat );
+
     /* @brief Matrix2 with float32 scalar-type */
     typedef Matrix<float, 2> Matrix2f;
     /* @brief Matrix2 with float64 (double) scalar type */
@@ -365,6 +423,29 @@ namespace tinymath
     /* @brief Matrix4 with float64 (double) scalar type */
     typedef Matrix<double, 4> Matrix4d;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+    /**********************************************************************************************/
+    /*                                    Custom functions                                        */
+    /**********************************************************************************************/
+
+    // Inverse function specializations for mat2s,mat3s and mat4s
+
+    template<>
+    Matrix<float,2> Matrix<float,2>::inverse() const;
+    template<>
+    Matrix<float,3> Matrix<float,3>::inverse() const;
+    template<>
+    Matrix<float,4> Matrix<float,4>::inverse() const;
+
+    template<>
+    Matrix<double,2> Matrix<double,2>::inverse() const;
+    template<>
+    Matrix<double,3> Matrix<double,3>::inverse() const;
+    template<>
+    Matrix<double,4> Matrix<double,4>::inverse() const;
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 }
 
 #include "../src/matrix_t_impl.hpp"

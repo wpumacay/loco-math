@@ -378,6 +378,15 @@ namespace tinymath
     Vector<Scalar_T,SizeN> operator* ( tfloat val, const Vector<Scalar_T,SizeN>& vec );
 
     /**
+    *   @brief Returns the negative of the given vector
+    *
+    *   @param vec  Vector whose negative we want
+    *   @return     The resulting negative of the vector
+    */
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> operator- ( const Vector<Scalar_T,SizeN>& vec );
+
+    /**
     *   @brief Returns a string representation of a given n-dim vector
     *
     *   @param vec  Vector whose string representation we want

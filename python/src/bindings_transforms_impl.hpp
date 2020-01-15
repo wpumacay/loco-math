@@ -19,9 +19,6 @@ namespace tinymath
         m.def( "rotationXd", &tinymath::rotationX<double> );
         m.def( "rotationYd", &tinymath::rotationY<double> );
         m.def( "rotationZd", &tinymath::rotationZ<double> );
-        m.def( "inverse", static_cast< Matrix<Scalar_T,2> (*)( const Matrix<Scalar_T,2>& ) >( &tinymath::inverse<Scalar_T> ) );
-        m.def( "inverse", static_cast< Matrix<Scalar_T,3> (*)( const Matrix<Scalar_T,3>& ) >( &tinymath::inverse<Scalar_T> ) );
-        m.def( "inverse", static_cast< Matrix<Scalar_T,4> (*)( const Matrix<Scalar_T,4>& ) >( &tinymath::inverse<Scalar_T> ) );
     }
 
 }

@@ -259,6 +259,15 @@ namespace tinymath
     }
 
     template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> operator- ( const Vector<Scalar_T,SizeN>& vec )
+    {
+        auto _res = Vector<Scalar_T,SizeN>();
+        for ( size_t i = 0; i < SizeN; i++ )
+            _res( i ) = -vec( i );
+        return _res;
+    }
+
+    template< typename Scalar_T, size_t SizeN >
     std::string toString( const Vector<Scalar_T,SizeN>& vec )
     {
         std::string _strrep = "[ ";

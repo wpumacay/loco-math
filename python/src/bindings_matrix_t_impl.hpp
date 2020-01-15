@@ -84,6 +84,7 @@ namespace tinymath
             .def( "setZero", &Matrix<Scalar_T,SizeN>::setZero )
             .def( "transpose_", &Matrix<Scalar_T,SizeN>::transpose_ )
             .def( "transpose", &Matrix<Scalar_T,SizeN>::transpose )
+            .def( "inverse", &Matrix<Scalar_T,SizeN>::inverse )
             .def( "row", &Matrix<Scalar_T,SizeN>::row )
             .def( "col", &Matrix<Scalar_T,SizeN>::col )
             .def( "set", ( void ( Matrix<Scalar_T,SizeN>::* )( const Matrix<Scalar_T,SizeN-1>& ) ) &Matrix<Scalar_T,SizeN>::set )
@@ -116,6 +117,9 @@ namespace tinymath
                 {
                     return "matrix(\n\r" + tinymath::toString( self ) + ")";
                 } );
+        m.def( "inverse", static_cast< Matrix<Scalar_T,2> (*)( const Matrix<Scalar_T,2>& ) >( &tinymath::inverse<Scalar_T> ) );
+        m.def( "inverse", static_cast< Matrix<Scalar_T,3> (*)( const Matrix<Scalar_T,3>& ) >( &tinymath::inverse<Scalar_T> ) );
+        m.def( "inverse", static_cast< Matrix<Scalar_T,4> (*)( const Matrix<Scalar_T,4>& ) >( &tinymath::inverse<Scalar_T> ) );
     }
 
 }

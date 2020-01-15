@@ -11,8 +11,8 @@ int main()
 
     std::cout << "mat:" << std::endl;
     std::cout << tinymath::toString( mat ) << std::endl;
-    std::cout << "inverse( mat ):" << std::endl;
-    std::cout << tinymath::toString( tinymath::inverse( mat ) ) << std::endl;
+    std::cout << "mat.inverse():" << std::endl;
+    std::cout << tinymath::toString( mat.inverse() ) << std::endl;
 
     return 0;
 }

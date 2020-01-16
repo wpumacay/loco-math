@@ -387,6 +387,26 @@ namespace tinymath
     Vector<Scalar_T,SizeN> operator- ( const Vector<Scalar_T,SizeN>& vec );
 
     /**
+    *   @brief Returns whether or not both given vector are "equal" (distance close at most by eps=1e-6)
+    *
+    *   @param v1   First vector operand for the comparison
+    *   @param v2   Second vector operatod for the comparison
+    *   @return     True if both vector are close up to eps=1e-6, False otherwise
+    */
+    template< typename Scalar_T, size_t SizeN >
+    bool operator== ( const Vector<Scalar_T,SizeN>& v1, const Vector<Scalar_T,SizeN>& v2 );
+
+    /**
+    *   @brief Returns whether or not both given vector are "different" (distance apart at least by eps=1e-6)
+    *
+    *   @param v1   First vector operand for the comparison
+    *   @param v2   Second vector operatod for the comparison
+    *   @return     True if both vector are apart at least by eps=1e-6, False otherwise
+    */
+    template< typename Scalar_T, size_t SizeN >
+    bool operator!= ( const Vector<Scalar_T,SizeN>& v1, const Vector<Scalar_T,SizeN>& v2 );
+
+    /**
     *   @brief Returns a string representation of a given n-dim vector
     *
     *   @param vec  Vector whose string representation we want

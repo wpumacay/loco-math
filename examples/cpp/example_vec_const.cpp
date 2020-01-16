@@ -3,19 +3,7 @@
 #include <matrix_t.h>
 #include <transforms.h>
 
-#include <array>
-
 typedef tinymath::Vector3f Vec3;
-
-bool operator== ( const Vec3& v1, const Vec3& v2 )
-{
-    return ( v1 - v2 ).length() < 0.000001f;
-}
-
-bool operator!= ( const Vec3& v1, const Vec3& v2 )
-{
-    return !( v1 == v2 );
-}
 
 int main()
 {

@@ -104,6 +104,8 @@ namespace tinymath
             .def( "__mul__", []( const Vector<Scalar_T,SizeN>& v1, const Vector<Scalar_T,SizeN>& v2 ) -> Vector<Scalar_T,SizeN> { return v1 * v2; } )
             .def( "__mul__", []( const Vector<Scalar_T,SizeN>& vec, Scalar_T val ) -> Vector<Scalar_T,SizeN> { return val * vec; } )
             .def( "__rmul__", []( const Vector<Scalar_T,SizeN>& vec, Scalar_T val ) -> Vector<Scalar_T,SizeN> { return val * vec; } )
+            .def( "__eq__", []( const Vector<Scalar_T,SizeN>& vec, const Vector<Scalar_T,SizeN>& other ) -> bool { return vec == other; } )
+            .def( "__neq__", []( const Vector<Scalar_T,SizeN>& vec, const Vector<Scalar_T,SizeN>& other ) -> bool { return vec != other; } )
             .def( "__getitem__", []( const Vector<Scalar_T,SizeN>& self, ssize_t index )
                 {
                     if ( index > SizeN ) 

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <array>
 #include <string>
 #include <cassert>
 #include <cmath>
@@ -10,6 +11,7 @@
 #include <initializer_list>
 
 #define TINYMATH_PI 3.141592653589793f
+#define TINYMATH_EPS 0.000001f
 
 namespace tinymath
 {

@@ -268,6 +268,18 @@ namespace tinymath
     }
 
     template< typename Scalar_T, size_t SizeN >
+    bool operator== ( const Vector<Scalar_T,SizeN>& v1, const Vector<Scalar_T,SizeN>& v2 )
+    {
+        return ( v1 - v2 ).length() < TINYMATH_EPS;
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    bool operator!= ( const Vector<Scalar_T,SizeN>& v1, const Vector<Scalar_T,SizeN>& v2 )
+    {
+        return !( v1 == v2 );
+    }
+
+    template< typename Scalar_T, size_t SizeN >
     std::string toString( const Vector<Scalar_T,SizeN>& vec )
     {
         std::string _strrep = "[ ";

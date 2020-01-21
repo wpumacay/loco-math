@@ -6,6 +6,34 @@ namespace py = pybind11;
 namespace tinymath
 {
     template< typename Scalar_T, size_t SizeN >
+    py::array_t<Scalar_T> vector_to_nparray( Vector<Scalar_T,SizeN>& vec )
+    {
+        auto nparray = py::array_t<Scalar_T>( SizeN );
+        auto bufferInfo = nparray.request();
+        auto bufferData = (Scalar_T*) bufferInfo.ptr;
+        memcpy( bufferData, vec.data(), sizeof( Vector<Scalar_T,SizeN> ) );
+
+        return nparray;
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Vector<Scalar_T,SizeN> nparray_to_vector( py::array_t<Scalar_T>& vecarr )
+    {
+        auto vec = Vector<Scalar_T,SizeN>();
+        auto bufferInfo = vecarr.request();
+        if ( bufferInfo.size != SizeN )
+        {
+            throw std::runtime_error( "tinymath::nparray_to_vector >>> incompatible array size, expected " +
+                                      std::to_string( SizeN ) + " elements." );
+        }
+
+        auto bufferData = (Scalar_T*) bufferInfo.ptr;
+        memcpy( vec.data(), bufferData, sizeof( Vector<Scalar_T,SizeN> ) );
+
+        return vec;
+    }
+
+    template< typename Scalar_T, size_t SizeN >
     void bindings_vector( py::module& m, const std::string& className )
     {
         py::class_< Vector<Scalar_T,SizeN> >( m, className.c_str(), py::buffer_protocol() )

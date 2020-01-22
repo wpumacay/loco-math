@@ -334,11 +334,18 @@ namespace tinymath
         Vector<Scalar_T,SizeN> operator* ( const Vector<Scalar_T,SizeN>& vec ) const;
 
         /**
-        *   @brief Returns a pointer to the internal data of the matrix
+        *   @brief Returns a mutable reference to the internal data of the matrix
         *
         *   @return     Pointer to the internal memory buffer used to store the elements of the matrix
         */
         Scalar_T* data() { return m_buff; }
+
+        /**
+        *   @brief Returns a const-reference to the internal data of the matrix
+        *
+        *   @return     Const-Pointer to the internal memory buffer used to store the elements of the matrix
+        */
+        const Scalar_T* data() const { return m_buff; }
 
     private :
 

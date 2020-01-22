@@ -6,18 +6,18 @@ namespace py = pybind11;
 namespace tinymath
 {
     template< typename Scalar_T, size_t SizeN >
-    py::array_t<Scalar_T> vector_to_nparray( Vector<Scalar_T,SizeN>& vec )
+    py::array_t<Scalar_T> vector_to_nparray( const Vector<Scalar_T,SizeN>& vec )
     {
         auto nparray = py::array_t<Scalar_T>( SizeN );
         auto bufferInfo = nparray.request();
-        auto bufferData = (Scalar_T*) bufferInfo.ptr;
+        auto bufferData = bufferInfo.ptr;
         memcpy( bufferData, vec.data(), sizeof( Vector<Scalar_T,SizeN> ) );
 
         return nparray;
     }
 
     template< typename Scalar_T, size_t SizeN >
-    Vector<Scalar_T,SizeN> nparray_to_vector( py::array_t<Scalar_T>& vecarr )
+    Vector<Scalar_T,SizeN> nparray_to_vector( const py::array_t<Scalar_T>& vecarr )
     {
         auto vec = Vector<Scalar_T,SizeN>();
         auto bufferInfo = vecarr.request();
@@ -27,7 +27,7 @@ namespace tinymath
                                       std::to_string( SizeN ) + " elements." );
         }
 
-        auto bufferData = (Scalar_T*) bufferInfo.ptr;
+        auto bufferData = bufferInfo.ptr;
         memcpy( vec.data(), bufferData, sizeof( Vector<Scalar_T,SizeN> ) );
 
         return vec;
@@ -150,6 +150,8 @@ namespace tinymath
                 {
                     return "vec(" + tinymath::toString( self ) + ")";
                 } );
+        m.def( ( className + "_to_nparray" ).c_str(), &tinymath::vector_to_nparray<Scalar_T,SizeN> );
+        m.def( ( "nparray_to_" + className ).c_str(), &tinymath::nparray_to_vector<Scalar_T,SizeN> );
     }
 
 }

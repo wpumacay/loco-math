@@ -6,6 +6,40 @@ namespace py = pybind11;
 namespace tinymath
 {
     template< typename Scalar_T, size_t SizeN >
+    py::array_t<Scalar_T> matrix_to_nparray( const Matrix<Scalar_T,SizeN>& mat )
+    {
+        return py::array( py::buffer_info( const_cast<Scalar_T*>( mat.data() ), // const is safe, as array will just copy data
+                                           sizeof( Scalar_T ),
+                                           py::format_descriptor<Scalar_T>::format(),
+                                           2,
+                                           { SizeN, SizeN },
+                                           { sizeof( Scalar_T ), sizeof( Scalar_T ) * SizeN } ) );
+    }
+
+    template< typename Scalar_T, size_t SizeN >
+    Matrix<Scalar_T,SizeN> nparray_to_matrix( const py::array_t<Scalar_T>& matarr )
+    {
+        auto bufferInfo = matarr.request();
+        if ( bufferInfo.ndim != 2 )
+        {
+            throw std::runtime_error( "tinymath::nparray_to_matrix >>> incompatible array dimensions, expected \
+                                       2 dimensions, but got " + std::to_string( bufferInfo.ndim ) + "." );
+        }
+        if ( bufferInfo.shape[0] != SizeN || bufferInfo.shape[1] != SizeN )
+        {
+            throw std::runtime_error( "tinymath::nparray_to_matrix >>> incompatible array size, expected \
+                                       ( " + std::to_string( SizeN ) + "," + std::to_string( SizeN ) + "), but got \
+                                       ( " + std::to_string( bufferInfo.shape[0] ) + "," + std::to_string( bufferInfo.shape[1] ) + ") instead." );
+        }
+
+        auto bufferData = bufferInfo.ptr;
+        auto matData = std::vector<Scalar_T>( SizeN * SizeN, 0.0 );
+        memcpy( matData.data(), bufferData, SizeN * SizeN * sizeof( Scalar_T ) );
+        auto matrix = Matrix<Scalar_T,SizeN>( matData );
+        return matrix;
+    }
+
+    template< typename Scalar_T, size_t SizeN >
     void bindings_matrix( py::module& m, const std::string& className )
     {
         py::class_< Matrix<Scalar_T,SizeN> >( m, className.c_str(), py::buffer_protocol() )
@@ -16,7 +50,7 @@ namespace tinymath
                     if ( bufferInfo.ndim != 2 )
                     {
                         throw std::runtime_error( "tinymath::Matrix >>> incompatible array dimensions, expected \
-                                                   2 dimensions, but got " + std::to_string( bufferInfo.ndim ) + "|." );
+                                                   2 dimensions, but got " + std::to_string( bufferInfo.ndim ) + "." );
                     }
                     if ( bufferInfo.shape[0] < SizeN || bufferInfo.shape[1] < SizeN )
                     {
@@ -120,6 +154,8 @@ namespace tinymath
         m.def( "inverse", static_cast< Matrix<Scalar_T,2> (*)( const Matrix<Scalar_T,2>& ) >( &tinymath::inverse<Scalar_T> ) );
         m.def( "inverse", static_cast< Matrix<Scalar_T,3> (*)( const Matrix<Scalar_T,3>& ) >( &tinymath::inverse<Scalar_T> ) );
         m.def( "inverse", static_cast< Matrix<Scalar_T,4> (*)( const Matrix<Scalar_T,4>& ) >( &tinymath::inverse<Scalar_T> ) );
+        m.def( ( className + "_to_nparray" ).c_str(), &tinymath::matrix_to_nparray<Scalar_T,SizeN> );
+        m.def( ( "nparray_to_" + className ).c_str(), &tinymath::nparray_to_matrix<Scalar_T,SizeN> );
     }
 
 }

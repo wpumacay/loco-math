@@ -7,13 +7,13 @@ namespace py = pybind11;
 
 namespace tinymath
 {
-    // conversion to numpy array
+    // conversion from vector to numpy array
     template< typename Scalar_T, size_t SizeN >
-    py::array_t<Scalar_T> vector_to_nparray( Vector<Scalar_T,SizeN>& vec );
+    py::array_t<Scalar_T> vector_to_nparray( const Vector<Scalar_T,SizeN>& vec );
 
-    // conversion from numpy array
+    // conversion from numpy array to vector
     template< typename Scalar_T, size_t SizeN >
-    Vector<Scalar_T,SizeN> nparray_to_vector( py::array_t<Scalar_T>& vecarr );
+    Vector<Scalar_T,SizeN> nparray_to_vector( const py::array_t<Scalar_T>& vecarr );
 
     template< typename Scalar_T, size_t SizeN >
     void bindings_vector( py::module& m, const std::string& className );

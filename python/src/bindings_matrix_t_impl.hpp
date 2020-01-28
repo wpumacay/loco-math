@@ -36,6 +36,9 @@ namespace tinymath
         auto matData = std::vector<Scalar_T>( SizeN * SizeN, 0.0 );
         memcpy( matData.data(), bufferData, SizeN * SizeN * sizeof( Scalar_T ) );
         auto matrix = Matrix<Scalar_T,SizeN>( matData );
+        // check if column major (must transpose as vecdata is expected row-like for constructor)
+        if ( bufferInfo.strides[0] < bufferInfo.strides[1] )
+            matrix.transpose_();
         return matrix;
     }
 
@@ -49,21 +52,35 @@ namespace tinymath
                     auto bufferInfo = matarr.request();
                     if ( bufferInfo.ndim != 2 )
                     {
-                        throw std::runtime_error( "tinymath::Matrix >>> incompatible array dimensions, expected \
+                        throw std::runtime_error( "tinymath::Matrix(matarr) >>> incompatible array dimensions, expected \
                                                    2 dimensions, but got " + std::to_string( bufferInfo.ndim ) + "." );
                     }
                     if ( bufferInfo.shape[0] < SizeN || bufferInfo.shape[1] < SizeN )
                     {
-                        throw std::runtime_error( "tinymath::Matrix >>> incompatible array size, expected at least \
+                        throw std::runtime_error( "tinymath::Matrix(matarr) >>> incompatible array size, expected at least \
                                                    ( " + std::to_string( SizeN ) + "," + std::to_string( SizeN ) + "), but got \
                                                    ( " + std::to_string( bufferInfo.shape[0] ) + "," + std::to_string( bufferInfo.shape[1] ) + ") instead." );
                     }
 
                     auto bufferData = (Scalar_T*) bufferInfo.ptr;
                     auto matData = std::vector<Scalar_T>( SizeN * SizeN, 0.0 );
+                    // grab top-left NxN section (according to the stride <> row vs. column major)
                     for ( size_t i = 0; i < SizeN; i++ )
+                    {
                         for ( size_t j = 0; j < SizeN; j++ )
-                            matData[j + i * SizeN] = ((Scalar_T) bufferData[j + i * bufferInfo.shape[1]]);
+                        {
+                            if ( bufferInfo.strides[0] < bufferInfo.strides[1] )
+                            {
+                                // column-major (grab data in row-major order, as required by constructor)
+                                matData[j + i * SizeN] = ((Scalar_T) bufferData[i + j * bufferInfo.shape[0]]);
+                            }
+                            else
+                            {
+                                // row-major (grab data normally, as already in the layout required for constructor)
+                                matData[j + i * SizeN] = ((Scalar_T) bufferData[j + i * bufferInfo.shape[1]]);
+                            }
+                        }
+                    }
                     auto matrix = new Matrix<Scalar_T,SizeN>( matData );
                     return matrix;
                 } ) )
@@ -72,12 +89,12 @@ namespace tinymath
                     auto matBufferInfo = matarr.request();
                     if ( matBufferInfo.ndim != 2 )
                     {
-                        throw std::runtime_error( "tinymath::Matrix >>> incompatible array dimensions, expected \
+                        throw std::runtime_error( "tinymath::Matrix(matarr,vecarr) >>> incompatible array dimensions, expected \
                                                    2 dimensions, but got " + std::to_string( matBufferInfo.ndim ) + "|." );
                     }
                     if ( matBufferInfo.shape[0] != (SizeN-1) || matBufferInfo.shape[1] != (SizeN-1) )
                     {
-                        throw std::runtime_error( "tinymath::Matrix >>> incompatible array size, expected exactly \
+                        throw std::runtime_error( "tinymath::Matrix(matarr,vecarr) >>> incompatible array size, expected exactly \
                                                    ( " + std::to_string( SizeN - 1 ) + "," + std::to_string( SizeN - 1 ) + "), but got \
                                                    ( " + std::to_string( matBufferInfo.shape[0] ) + "," + std::to_string( matBufferInfo.shape[1] ) + ") instead for \
                                                    (n-1)x(n-1) upper-left section of the matrix." );
@@ -85,21 +102,20 @@ namespace tinymath
                     auto vecBufferInfo = vecarr.request();
                     if ( vecBufferInfo.size != (SizeN-1) )
                     {
-                        throw std::runtime_error( "tinymath::Vector >>> incompatible array size, expected exactly " +
+                        throw std::runtime_error( "tinymath::Matrix(matarr,vecarr) >>> incompatible array size, expected exactly " +
                                                   std::to_string( SizeN - 1 ) + " elements for top (n-1) portion of the last column." );
                     }
 
                     auto matBufferData = (Scalar_T*) matBufferInfo.ptr;
                     auto matData = std::vector<Scalar_T>( (SizeN-1) * (SizeN-1), 0.0 );
-                    for ( size_t i = 0; i < (SizeN-1) * (SizeN-1); i++ ) // @todo: change for memcpy
-                            matData[i] = matBufferData[i];
+                    memcpy( matData.data(), matBufferData, (SizeN-1) * (SizeN-1) * sizeof( Scalar_T ) );
                     auto matrixPart = Matrix<Scalar_T,SizeN-1>( matData );
+                    if ( matBufferInfo.strides[0] < matBufferInfo.strides[1] )
+                        matrixPart.transpose_();
 
                     auto vecBufferData = (Scalar_T*) vecBufferInfo.ptr;
-                    auto vecData = std::vector<Scalar_T>( (SizeN-1), 0.0 );
-                    for ( size_t i = 0; i < (SizeN-1); i++ ) // @todo: change for memcpy
-                        vecData[i] = vecBufferData[i];
-                    auto vecPart = Vector<Scalar_T,SizeN-1>( vecData );
+                    auto vecPart = Vector<Scalar_T,SizeN-1>();
+                    memcpy( vecPart.data(), vecBufferData, (SizeN-1) * sizeof( Scalar_T ) );
 
                     return new Matrix<Scalar_T,SizeN>( matrixPart, vecPart );
                 } ) )

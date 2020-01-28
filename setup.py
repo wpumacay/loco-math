@@ -61,6 +61,9 @@ class BuildCommand( BaseBuildExtCommand ) :
 with open( "README.md", "r" ) as fh :
     longDescription = fh.read()
 
+with open( 'requirements.txt', 'r' ) as fh :
+    requiredPackages = [ line.replace( '\n', '' ) for line in fh.readlines() ]
+
 setup(
     name                            = 'wp-tinymath',
     version                         = "0.0.3",
@@ -77,11 +80,7 @@ setup(
                                         "Operating System :: POSIX :: Linux"],
     packages                        = find_packages(),
     zip_safe                        = False,
-    install_requires                = [
-                                        'numpy',
-                                        'setuptools',
-                                        'matplotlib'
-                                      ],
+    install_requires                = requiredPackages,
     package_data                    = {},
     ext_modules                     = [
                                         CMakeExtension( 'tinymath', '.' )

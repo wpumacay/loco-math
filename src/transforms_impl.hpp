@@ -54,6 +54,55 @@ namespace tinymath
 
         return _resQuat;
     }
+    template< typename Scalar_T >
+    Vector<Scalar_T, 4> quaternion( const Matrix<Scalar_T, 4>& transform )
+    {
+        Vector<Scalar_T, 4> _resQuat;
+
+        auto m00 = transform( 0, 0 );
+        auto m11 = transform( 1, 1 );
+        auto m22 = transform( 2, 2 );
+        auto trace = m00 + m11 + m22;
+
+        if ( trace > 0 )
+        {
+            auto t = std::sqrt( trace + 1 ) * 2.0;
+
+            _resQuat.x() = ( transform( 2, 1 ) - transform( 1, 2 ) ) / t;
+            _resQuat.y() = ( transform( 0, 2 ) - transform( 2, 0 ) ) / t;
+            _resQuat.z() = ( transform( 1, 0 ) - transform( 0, 1 ) ) / t;
+            _resQuat.w() = 0.25 * t;
+        }
+        else if ( ( m00 > m11 ) && ( m00 > m22 ) )
+        {
+            auto t = std::sqrt( 1 + m00 - m11 - m22 ) * 2;
+
+            _resQuat.x() = 0.25 * t;
+            _resQuat.y() = ( transform( 0, 1 ) + transform( 1, 0 ) ) / t;
+            _resQuat.z() = ( transform( 0, 2 ) + transform( 2, 0 ) ) / t;
+            _resQuat.w() = ( transform( 2, 1 ) - transform( 1, 2 ) ) / t;
+        }
+        else if ( m11 > m22 )
+        {
+            auto t = std::sqrt( 1 + m11 - m00 - m22 ) * 2;
+
+            _resQuat.x() = ( transform( 0, 1 ) + transform( 1, 0 ) ) / t;
+            _resQuat.y() = 0.25 * t;
+            _resQuat.z() = ( transform( 1, 2 ) + transform( 2, 1 ) ) / t;
+            _resQuat.w() = ( transform( 0, 2 ) - transform( 2, 0 ) ) / t;
+        }
+        else
+        {
+            auto t = std::sqrt( 1 + m22 - m00 - m11 ) * 2;
+
+            _resQuat.x() = ( transform( 0, 2 ) + transform( 2, 0 ) ) / t;
+            _resQuat.y() = ( transform( 1, 2 ) + transform( 2, 1 ) ) / t;
+            _resQuat.z() = 0.25 * t;
+            _resQuat.w() = ( transform( 1, 0 ) - transform( 0, 1 ) ) / t;
+        }
+
+        return _resQuat;
+    }
 
     // @todo: deal with special cases (-cosB instead of +cosB, ...)
     // @source: https://github.com/mrdoob/three.js/blob/master/src/math/Euler.js
@@ -76,6 +125,25 @@ namespace tinymath
 
         return _resEuler;
     }
+    template< typename Scalar_T >
+    Vector<Scalar_T, 3> euler( const Matrix<Scalar_T, 4>& transform )
+    {
+        // euler zyx intrinsic :
+        // Rot = Rz * Ry * Rx
+        Vector<Scalar_T, 3> _resEuler;
+
+        auto m00 = transform( 0, 0 );
+        auto m10 = transform( 1, 0 );
+        auto m20 = transform( 2, 0 );
+        auto m21 = transform( 2, 1 );
+        auto m22 = transform( 2, 2 );
+
+        _resEuler.x() = std::atan2( m21, m22 );
+        _resEuler.y() = std::atan2( -m20, std::sqrt( m00 * m00 + m10 * m10 ) );
+        _resEuler.z() = std::atan2( m10, m00 );
+
+        return _resEuler;
+    }
 
     // @todo: handle singularities (angle = 0° or 180°)
     // @source: https://en.wikipedia.org/wiki/Rotation_matrix#Conversion_from_and_to_axis%E2%80%93angle
@@ -91,6 +159,22 @@ namespace tinymath
         _axis.x() = rotmat( 2, 1 ) - rotmat( 1, 2 );
         _axis.y() = rotmat( 0, 2 ) - rotmat( 2, 0 );
         _axis.z() = rotmat( 1, 0 ) - rotmat( 0, 1 );
+        _axis.normalize();
+
+        return { _axis, _angle };
+    }
+    template< typename Scalar_T >
+    std::pair< Vector<Scalar_T, 3>, Scalar_T > axisAngle( const Matrix<Scalar_T, 4>& transform )
+    {
+        Vector<Scalar_T, 3> _axis; 
+        Scalar_T _angle;
+
+        auto _trace = transform( 0, 0 ) + transform( 1, 1 ) + transform( 2, 2 );
+        _angle = std::acos( ( _trace - 1 ) / 2 );
+
+        _axis.x() = transform( 2, 1 ) - transform( 1, 2 );
+        _axis.y() = transform( 0, 2 ) - transform( 2, 0 );
+        _axis.z() = transform( 1, 0 ) - transform( 0, 1 );
         _axis.normalize();
 
         return { _axis, _angle };

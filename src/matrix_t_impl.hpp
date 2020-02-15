@@ -265,6 +265,21 @@ namespace tinymath
         return _strrep;
     }
 
+    template< typename Scalar_T, size_t SizeN >
+    bool allclose( const Matrix<Scalar_T,SizeN >& mat1, const Matrix<Scalar_T,SizeN>& mat2, Scalar_T tolerance )
+    {
+        for ( size_t i = 0; i < SizeN; i++ )
+        {
+            for ( size_t j = 0; j < SizeN; j++ )
+            {
+                if ( std::abs( mat1( i, j ) - mat2( i, j ) ) >= tolerance )
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
     template< typename Scalar_T >
     Matrix<Scalar_T, 2 > inverse( const Matrix<Scalar_T, 2>& mat )
     {

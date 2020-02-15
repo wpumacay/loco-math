@@ -389,6 +389,17 @@ namespace tinymath
     std::string toString( const Matrix<Scalar_T,SizeN>& mat );
 
     /**
+    *   @brief Checks if all matrix elements are close up to a certain margin
+    *
+    *   @param mat1     First matrix operand to compare
+    *   @param mat2     Second matrix operand to compare
+    *   @param margin   Margin for comparison of the elements
+    *   @return         Whether or not the matrices have all elements close
+    */
+    template< typename Scalar_T, size_t SizeN >
+    bool allclose( const Matrix<Scalar_T,SizeN >& mat1, const Matrix<Scalar_T,SizeN>& mat2, Scalar_T tolerance = TINYMATH_EPS );
+
+    /**
     *   @brief Computes the inverse of a given 2x2 matrix
     *
     *   @param mat      Matrix to be inverted

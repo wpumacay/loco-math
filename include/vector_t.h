@@ -419,8 +419,19 @@ namespace tinymath
     *   @param vec  Vector whose string representation we want
     *   @return     The string representation of the given vector
     */
-    template< typename Scalar_T, size_t SizeN>
+    template< typename Scalar_T, size_t SizeN >
     std::string toString( const Vector<Scalar_T,SizeN>& vec );
+
+    /**
+    *   @brief Checks if all vector elements are close up to a certain margin
+    *
+    *   @param vec1     First vector operand to compare
+    *   @param vec2     Second vector operand to compare
+    *   @param margin   Margin for comparison of the elements
+    *   @return         Whether or not the vectors have all elements close
+    */
+    template< typename Scalar_T, size_t SizeN >
+    bool allclose( const Vector<Scalar_T,SizeN>& vec1, const Vector<Scalar_T,SizeN>& vec2, Scalar_T tolerance = TINYMATH_EPS );
 
     /* @brief Vector2 with float32 scalar-type */
     typedef Vector<float, 2> Vector2f;

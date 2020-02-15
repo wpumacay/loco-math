@@ -3,7 +3,6 @@
 
 namespace tinymath
 {
-
     //////////////////////////////////////////////////////////////////////////
     //                              Vector                                  //
     //////////////////////////////////////////////////////////////////////////
@@ -288,4 +287,15 @@ namespace tinymath
         return _strrep;
     }
 
+    template< typename Scalar_T, size_t SizeN >
+    bool allclose( const Vector<Scalar_T,SizeN>& vec1, const Vector<Scalar_T,SizeN>& vec2, Scalar_T tolerance )
+    {
+        for ( size_t i = 0; i < SizeN; i++ )
+        {
+            if ( std::abs( vec1(i) - vec2(i) ) >= tolerance )
+                return false;
+        }
+
+        return true;
+    }
 }

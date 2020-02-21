@@ -345,7 +345,7 @@ namespace tinymath
         */
         const Scalar_T* data() const { return m_buff; }
 
-    private :
+    protected :
 
         /** @brief Buffer of memory for the entries of the vector */
         Scalar_T m_buff[SizeN];

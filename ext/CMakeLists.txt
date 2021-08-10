@@ -1,3 +1,3 @@
-message( "TINYMATH::ext >>> configuring external dependencies" )
+message("TINYMATH::ext >>> configuring external dependencies")
 
-add_subdirectory( pybind11 )
+add_subdirectory(pybind11)

@@ -95,6 +95,13 @@ function(tmPrintSummary)
     message("CMAKE_LIBRARY_OUTPUT_DIRECTORY             : ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
     message("CMAKE_C_FLAGS                              : ${CMAKE_C_FLAGS}")
     message("CMAKE_CXX_FLAGS                            : ${CMAKE_CXX_FLAGS}")
+    message("CMAKE_INSTALL_PREFIX                       : ${CMAKE_INSTALL_PREFIX}")
+    message("CMAKE_INSTALL_INCLUDEDIR                   : ${CMAKE_INSTALL_INCLUDEDIR}")
+    message("CMAKE_INSTALL_LIBDIR                       : ${CMAKE_INSTALL_LIBDIR}")
+    message("CMAKE_INSTALL_DOCDIR                       : ${CMAKE_INSTALL_DOCDIR}")
+    message("CMAKE_INSTALL_BINDIR                       : ${CMAKE_INSTALL_BINDIR}")
+    message("CMAKE_PREFIX_PATH                          : ${CMAKE_PREFIX_PATH}")
+
     # Project-specific settings
     message("${PROJECT_IS_ROOT_VARNAME} > ${${PROJECT_IS_ROOT_VARNAME}}")
     foreach(varOption IN LISTS optionsArgs)

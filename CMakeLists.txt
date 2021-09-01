@@ -7,37 +7,46 @@ project(
     HOMEPAGE_URL "https://github.com/wpumacay/tiny_math"
     LANGUAGES C CXX)
 
-# Include some helper functions that we might need
+# Include some helper functions that we will need later
 include(${PROJECT_SOURCE_DIR}/cmake/Common.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/Utils.cmake)
+
+# Include some internal tools we might need to use
+include(ExternalProject)
+include(FetchContent)
+include(GNUInstallDirs)
 
 # Check if we're currently working as the root project. If so, configure some
 # common settings that we might need later during configuration
 tmInitializeProject()
 
-# @todo: building docs requires doxygen, so check if found on the system
+# @todo(wilbert): For development builds, the installation directory will be
+# pointing just to a sub-directory of the build directory
+if(TINYMATH_IS_ROOT_PROJECT)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
+    set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include")
+    set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/lib")
+    set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/bin")
+    set(CMAKE_INSTALL_DOCDIR "${CMAKE_INSTALL_PREFIX}/doc")
+endif()
+
+# @todo(wilbert): building docs requires doxygen, so check if found on the
+# system
 option(TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen)" ON)
 option(TINYMATH_BUILD_EXAMPLES "Build C++ examples" ON)
 option(TINYMATH_BUILD_PYTHON_BINDINGS "Build python bindings" ON)
 
+add_library(
+    TinyMathCpp SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/vector_t_spec.cpp
+                       ${CMAKE_CURRENT_SOURCE_DIR}/src/matrix_t_spec.cpp)
+# Set features and other settings for this target
+target_compile_features(TinyMathCpp PUBLIC cxx_std_11)
+target_include_directories(TinyMathCpp
+                           PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+tmConfigureDependencies()
+
 # ~~~
-# # @todo: use of GLOB and GLOB_RECURSE is discouraged, and should be replaced
-# # by listing the sources
-# file(GLOB_RECURSE TINYMATH_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-# # @todo: this might be better configured as part of the target
-# # (include_directories) and propagated through PUBLIC
-# set(TINYMATH_INCS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
-# # @todo: move this one to target-include-directories instead
-# include_directories("${TINYMATH_INCS_DIR}")
-#
-# add_library(tinymath_cpp_lib SHARED ${TINYMATH_SRCS})
-# target_compile_features(tinymath_cpp_lib PUBLIC cxx_std_11)
-# target_include_directories(tinymath_cpp_lib PUBLIC "${TINYMATH_INCS_DIR}")
-#
-# # @todo: change this part to follow the super-build modern pattern
-# if(TINYMATH_IS_ROOT_PROJECT)
-#     add_subdirectory(ext)
-# endif()
-#
 # # Add bindings subdirectory
 # if(TINYMATH_BUILD_PYTHON_BINDINGS)
 #     add_subdirectory(python)

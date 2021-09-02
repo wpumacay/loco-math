@@ -3,13 +3,17 @@
 # ~~~
 
 # Helper macro that sets up a required git dependency for this project
+#
+# Based on the superbuild script by jeffamstutz for ospray
+# https://github.com/jeffamstutz/superbuild_ospray/blob/main/macros.cmake
 macro(tmConfigureGitDependency)
-    set(oneValueArgs TARGET REPO TAG)
-    set(multiValueArgs BUILD_ARGS DEPENDS_ON)
+    set(oneValueArgs TARGET REPO TAG BUILD_MODE)
+    set(multiValueArgs BUILD_ARGS)
     cmake_parse_arguments(GIT_DEP "" "${oneValueArgs}" "${multiValueArgs}"
                           ${ARGN})
 
-    ExternalProject_Add(
+    # cmake-format: off
+    FetchContent_Declare(
         ${GIT_DEP_TARGET}
         GIT_REPOSITORY ${GIT_DEP_REPO}
         GIT_TAG ${GIT_DEP_TAG}
@@ -20,7 +24,7 @@ macro(tmConfigureGitDependency)
         BINARY_DIR "${CMAKE_BINARY_DIR}/third_party/${GIT_DEP_TARGET}/build"
         STAMP_DIR "${CMAKE_BINARY_DIR}/third_party/${GIT_DEP_TARGET}/stamp"
         TMP_DIR "${CMAKE_BINARY_DIR}/third_party/${GIT_DEP_TARGET}/tmp"
-        CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+        CMAKE_ARGS -DCMAKE_BUILD_TYPE=${GIT_DEP_BUILD_MODE}
                    -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
@@ -31,9 +35,6 @@ macro(tmConfigureGitDependency)
                    -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
                    ${GIT_DEP_BUILD_ARGS}
         BUILD_ALWAYS OFF)
-
-    if(GIT_DEP_DEPENDS_ON)
-        ExternalProject_Add_StepDependencies(${GIT_DEP_TARGET} configure
-                                             ${GIT_DEP_DEPENDS_ON})
-    endif()
+    # cmake-format: on
+    FetchContent_MakeAvailable(${GIT_DEP_TARGET})
 endmacro()

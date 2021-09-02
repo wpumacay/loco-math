@@ -12,7 +12,6 @@ include(${PROJECT_SOURCE_DIR}/cmake/Common.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/Utils.cmake)
 
 # Include some internal tools we might need to use
-include(ExternalProject)
 include(FetchContent)
 include(GNUInstallDirs)
 
@@ -20,18 +19,19 @@ include(GNUInstallDirs)
 # common settings that we might need later during configuration
 tmInitializeProject()
 
-# @todo(wilbert): For development builds, the installation directory will be
-# pointing just to a sub-directory of the build directory
+# Make sure that if the user doesn't provide CMAKE_INSTALL_PREFIX, we then use a
+# default path for installation (relative to build). We only make sure in the
+# case we're the main project. If not, then the main project should handle this
 if(TINYMATH_IS_ROOT_PROJECT)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
-    set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include")
-    set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/lib")
-    set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/bin")
-    set(CMAKE_INSTALL_DOCDIR "${CMAKE_INSTALL_PREFIX}/doc")
+    if(NOT CMAKE_INSTALL_PREFIX)
+        set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
+        set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include")
+        set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/lib")
+        set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/bin")
+        set(CMAKE_INSTALL_DOCDIR "${CMAKE_INSTALL_PREFIX}/doc")
+    endif()
 endif()
 
-# @todo(wilbert): building docs requires doxygen, so check if found on the
-# system
 option(TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen)" ON)
 option(TINYMATH_BUILD_EXAMPLES "Build C++ examples" ON)
 option(TINYMATH_BUILD_PYTHON_BINDINGS "Build python bindings" ON)
@@ -45,7 +45,7 @@ target_include_directories(TinyMathCpp
                            PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_subdirectory(third_party)
-# add_subdirectory(python)
+add_subdirectory(python)
 
 # ~~~
 # if(TINYMATH_IS_ROOT_PROJECT AND TINYMATH_BUILD_EXAMPLES)

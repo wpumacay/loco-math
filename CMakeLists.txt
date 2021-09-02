@@ -48,14 +48,9 @@ add_subdirectory(third_party)
 add_subdirectory(python)
 
 # ~~~
-# if(TINYMATH_IS_ROOT_PROJECT AND TINYMATH_BUILD_EXAMPLES)
-#     add_subdirectory(examples/cpp)
-# endif()
-#
 # if(TINYMATH_BUILD_DOCS AND TINYMATH_IS_ROOT_PROJECT)
 #     add_subdirectory(docs)
 # endif()
-#
 # ~~~
 
 tmPrintSummary()

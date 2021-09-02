@@ -24,13 +24,18 @@ function(tmConfigureDependencies)
     endif()
 
     # Grab pybind11 from github and expose its targets
-    tmGetProjectPaths(PYBIND11)
+    tmGetProjectPaths(pybind11)
     ExternalProject_Add(
         pybind11
-        PREFIX ${CMAKE_SOURCE_DIR}/ext/pybind11
         GIT_REPOSITORY https://github.com/pybind/pybind11.git
         GIT_TAG v2.7.1
         GIT_PROGRESS ON
+        PREFIX ${CMAKE_SOURCE_DIR}/third_party/pybind11
+        DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/third_party/pybind11
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/third_party/pybind11/source
+        BINARY_DIR ${CMAKE_BINARY_DIR}/third_party/pybind11/build
+        STAMP_DIR ${CMAKE_BINARY_DIR}/third_party/pybind11/stamp
+        TMP_DIR ${CMAKE_BINARY_DIR}/third_party/pybind11/tmp
         CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                    -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}

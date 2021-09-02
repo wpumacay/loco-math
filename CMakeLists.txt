@@ -44,14 +44,10 @@ target_compile_features(TinyMathCpp PUBLIC cxx_std_11)
 target_include_directories(TinyMathCpp
                            PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-tmConfigureDependencies()
+add_subdirectory(third_party)
+# add_subdirectory(python)
 
 # ~~~
-# # Add bindings subdirectory
-# if(TINYMATH_BUILD_PYTHON_BINDINGS)
-#     add_subdirectory(python)
-# endif()
-#
 # if(TINYMATH_IS_ROOT_PROJECT AND TINYMATH_BUILD_EXAMPLES)
 #     add_subdirectory(examples/cpp)
 # endif()

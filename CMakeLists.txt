@@ -19,6 +19,11 @@ include(GNUInstallDirs)
 # common settings that we might need later during configuration
 tmInitializeProject()
 
+# Include some find-helpers for CMake
+if(TINYMATH_IS_ROOT_PROJECT)
+    set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+endif()
+
 # Make sure that if the user doesn't provide CMAKE_INSTALL_PREFIX, we then use a
 # default path for installation (relative to build). We only make sure in the
 # case we're the main project. If not, then the main project should handle this
@@ -32,9 +37,9 @@ if(TINYMATH_IS_ROOT_PROJECT)
     endif()
 endif()
 
+option(TINYMATH_BUILD_PYTHON_BINDINGS "Build bindings (requires Pybind11)" ON)
+option(TINYMATH_BUILD_TESTS "Build C++ unit-tests (requires google-test" ON)
 option(TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen)" ON)
-option(TINYMATH_BUILD_EXAMPLES "Build C++ examples" ON)
-option(TINYMATH_BUILD_PYTHON_BINDINGS "Build python bindings" ON)
 
 add_library(
     TinyMathCpp SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/vector_t_spec.cpp
@@ -46,11 +51,6 @@ target_include_directories(TinyMathCpp
 
 add_subdirectory(third_party)
 add_subdirectory(python)
-
-# ~~~
-# if(TINYMATH_BUILD_DOCS AND TINYMATH_IS_ROOT_PROJECT)
-#     add_subdirectory(docs)
-# endif()
-# ~~~
+add_subdirectory(docs)
 
 tmPrintSummary()

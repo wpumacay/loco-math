@@ -6,7 +6,10 @@
 # ~~~
 
 if(NOT TINYMATH_IS_ROOT_PROJECT)
-    tmMessage("Main|Root project would be in charge of setup" LOG_LEVEL TRACE)
+    tmMessage(
+        "Main|Root project would be in charge of configuring python-bindings build rules"
+        LOG_LEVEL
+        TRACE)
     return()
 endif()
 

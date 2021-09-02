@@ -13,11 +13,13 @@ macro(tmConfigureGitDependency)
                           ${ARGN})
 
     # cmake-format: off
+    set(FETCHCONTENT_QUIET FALSE CACHE INTERNAL "Show git-progress" FORCE)
     FetchContent_Declare(
         ${GIT_DEP_TARGET}
         GIT_REPOSITORY ${GIT_DEP_REPO}
         GIT_TAG ${GIT_DEP_TAG}
-        GIT_PROGRESS ON
+        GIT_PROGRESS TRUE
+        USES_TERMINAL_DOWNLOAD TRUE
         PREFIX "${CMAKE_SOURCE_DIR}/third_party/${GIT_DEP_TARGET}"
         DOWNLOAD_DIR "${CMAKE_SOURCE_DIR}/third_party/${GIT_DEP_TARGET}"
         SOURCE_DIR "${CMAKE_SOURCE_DIR}/third_party/${GIT_DEP_TARGET}/source"

@@ -48,7 +48,9 @@ function(tmInitializeProject)
     # Configure some project settings according to whether or not we are root
     if(${ProjectIsRootVarname})
         if(EXISTS "${PROJECT_SOURCE_DIR}/cmake")
-            list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+            set(CMAKE_MODULE_PATH
+                "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH}
+                PARENT_SCOPE)
             tmMessage("Added .cmake files for project ${PROJECT_NAME}")
         endif()
         # Configure the output-directory (where libs/binaries go) accordingly
@@ -63,6 +65,27 @@ function(tmInitializeProject)
             # directory. This might be required for installation by the user
             tmMessage(
                 "Sending generated libs/binaries to USER-DEFINED directory")
+        endif()
+        # Make sure that if the user doesn't provide CMAKE_INSTALL_PREFIX, we
+        # then use a default path for installation (relative to build). We only
+        # make sure in the case we're the main project. If not, then the main
+        # project should handle this
+        if(NOT CMAKE_INSTALL_PREFIX)
+            set(CMAKE_INSTALL_PREFIX
+                "${CMAKE_BINARY_DIR}/install"
+                PARENT_SCOPE)
+            set(CMAKE_INSTALL_INCLUDEDIR
+                "${CMAKE_INSTALL_PREFIX}/include"
+                PARENT_SCOPE)
+            set(CMAKE_INSTALL_LIBDIR
+                "${CMAKE_INSTALL_PREFIX}/lib"
+                PARENT_SCOPE)
+            set(CMAKE_INSTALL_BINDIR
+                "${CMAKE_INSTALL_PREFIX}/bin"
+                PARENT_SCOPE)
+            set(CMAKE_INSTALL_DOCDIR
+                "${CMAKE_INSTALL_PREFIX}/doc"
+                PARENT_SCOPE)
         endif()
     endif()
 
@@ -89,6 +112,7 @@ function(tmPrintSummary)
     message("Build options summary for project ${PROJECT_NAME}")
     # General settings from cmake
     message("CMAKE_GENERATOR                            : ${CMAKE_GENERATOR}")
+    message("CMAKE_MODULE_PATH                          : ${CMAKE_MODULE_PATH}")
     message("CMAKE_C_COMPILER                           : ${CMAKE_C_COMPILER}")
     message("CMAKE_CXX_COMPILER                         : ${CMAKE_CXX_COMPILER}")
     message("CMAKE_BUILD_TYPE                           : ${CMAKE_BUILD_TYPE}")

@@ -7,14 +7,15 @@
 # Based on the superbuild script by jeffamstutz for ospray
 # https://github.com/jeffamstutz/superbuild_ospray/blob/main/macros.cmake
 macro(tmConfigureGitDependency)
-    set(oneValueArgs TARGET REPO TAG BUILD_MODE)
-    set(multiValueArgs BUILD_ARGS)
-    cmake_parse_arguments(GIT_DEP "" "${oneValueArgs}" "${multiValueArgs}"
-                          ${ARGN})
+  set(oneValueArgs TARGET REPO TAG BUILD_MODE)
+  set(multiValueArgs BUILD_ARGS)
+  cmake_parse_arguments(GIT_DEP "" "${oneValueArgs}" "${multiValueArgs}"
+                        ${ARGN})
 
-    # cmake-format: off
-    set(FETCHCONTENT_QUIET FALSE CACHE INTERNAL "Show git-progress" FORCE)
-    FetchContent_Declare(
+  # cmake-format: off
+  # cmake-lint: disable=C0103
+  set(FETCHCONTENT_QUIET FALSE CACHE INTERNAL "Show git-progress" FORCE)
+  FetchContent_Declare(
         ${GIT_DEP_TARGET}
         GIT_REPOSITORY ${GIT_DEP_REPO}
         GIT_TAG ${GIT_DEP_TAG}
@@ -37,6 +38,6 @@ macro(tmConfigureGitDependency)
                    -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
                    ${GIT_DEP_BUILD_ARGS}
         BUILD_ALWAYS OFF)
-    # cmake-format: on
-    FetchContent_MakeAvailable(${GIT_DEP_TARGET})
+  # cmake-format: on
+  FetchContent_MakeAvailable(${GIT_DEP_TARGET})
 endmacro()

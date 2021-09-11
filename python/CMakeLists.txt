@@ -5,18 +5,14 @@
 # https://github.com/pybind/pybind11
 # ~~~
 
-if(NOT TINYMATH_IS_ROOT_PROJECT)
-    tmMessage(
-        "Main|Root project would be in charge of configuring python-bindings build rules"
-        LOG_LEVEL
-        TRACE)
-    return()
+if(NOT TINYMATH_BUILD_PYTHON_BINDINGS)
+  tmMessage("Bindings are not required for the current build" LOG_LEVEL TRACE)
+  return()
 endif()
 
 # Create target for our python bindings (standalone MODULE)
 pybind11_add_module(
-    TinyMathPython MODULE ${CMAKE_CURRENT_SOURCE_DIR}/src/bindings_all.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/bindings_common.cpp)
-target_include_directories(TinyMathPython
-                           PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(TinyMathPython PRIVATE TinyMathCpp)
+  tinymath MODULE "${CMAKE_CURRENT_SOURCE_DIR}/src/bindings_all.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/bindings_common.cpp")
+target_include_directories(tinymath PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(tinymath PRIVATE TinyMathCpp)

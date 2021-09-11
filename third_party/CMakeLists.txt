@@ -21,7 +21,8 @@ if(TINYMATH_BUILD_PYTHON_BINDINGS)
   # cmake-format: on
 
   if(NOT pybind11_FOUND)
-    tmMessage("Requested Python bindings, but couldn't find Pybind11 :(")
+    tmMessage("Requested Python bindings, but couldn't find Pybind11 :("
+              LOG_LEVEL WARNING)
     set(TINYMATH_BUILD_PYTHON_BINDINGS
         OFF
         PARENT_SCOPE)

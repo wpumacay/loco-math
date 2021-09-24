@@ -10,6 +10,7 @@
 # Folder-exclusions
 build/
 dist/
+.cache/
 
 # Exclude settings from editors|IDEs
 .vscode

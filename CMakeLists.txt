@@ -28,7 +28,9 @@ option(TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen)" OFF)
 add_library(
   TinyMathCpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/vec3_t.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/impl/vec3_t_scalar_impl.cpp)
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/impl/vec3_t_scalar_impl.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/impl/vec3_t_sse_impl.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/impl/vec3_t_avx_impl.cpp)
 # Set features and other settings for this target
 target_compile_features(TinyMathCpp PUBLIC cxx_std_11)
 target_include_directories(TinyMathCpp
@@ -36,6 +38,38 @@ target_include_directories(TinyMathCpp
 # Make sure that we don't re-define the make_unique if it's already exposed
 if(MSVC)
   target_compile_options(TinyUtilsCpp PUBLIC "/Zc:__cplusplus")
+endif()
+
+if(TINYMATH_BUILD_SSE)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    target_compile_options(TinyMathCpp PUBLIC -msse)
+    target_compile_definitions(TinyMathCpp PUBLIC -DTINYMATH_SSE_ENABLED)
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(TinyMathCpp PUBLIC -msse)
+    target_compile_definitions(TinyMathCpp PUBLIC -DTINYMATH_SSE_ENABLED)
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    target_compile_options(TinyMathCpp PUBLIC /arch:SSE)
+    target_compile_definitions(TinyMathCpp PUBLIC -DTINYMATH_SSE_ENABLED)
+  else()
+    tmMessage("We don't yet support SSE for compiler '${CMAKE_CXX_COMPILER_ID}'"
+              LOG_LEVEL WARNING)
+  endif()
+endif()
+
+if(TINYMATH_BUILD_AVX)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    target_compile_options(TinyMathCpp PUBLIC -mavx)
+    target_compile_definitions(TinyMathCpp PUBLIC -DTINYMATH_AVX_ENABLED)
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(TinyMathCpp PUBLIC -mavx)
+    target_compile_definitions(TinyMathCpp PUBLIC -DTINYMATH_AVX_ENABLED)
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    target_compile_options(TinyMathCpp PUBLIC /arch:AVX)
+    target_compile_definitions(TinyMathCpp PUBLIC -DTINYMATH_AVX_ENABLED)
+  else()
+    tmMessage("We don't yet support AVX for compiler '${CMAKE_CXX_COMPILER_ID}'"
+              LOG_LEVEL WARNING)
+  endif()
 endif()
 
 # Expose an alias for the library (CMake namespace convention)

@@ -136,7 +136,7 @@ function(tmPrintSummary)
   # The list of all valid options exposed by the project TinyMath. Notice that
   # this part is project specific, so we have to rewrite this macro on every
   # project we use (we could generalize it further, but for now this works ok)
-  set(optionsArgs PYTHON_BINDINGS DOCS TESTS SSE AVX)
+  set(optionsArgs PYTHON_BINDINGS DOCS TESTS EXAMPLES SSE AVX)
   # cmake-format: off
   message("****************************************************")
   message("Build options summary for project ${PROJECT_NAME}")

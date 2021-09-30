@@ -41,3 +41,18 @@ macro(tmConfigureGitDependency)
   # cmake-format: on
   FetchContent_MakeAvailable(${GIT_DEP_TARGET})
 endmacro()
+
+# Helper macro that configures the target for a given example path
+macro(tmConfigureExample example_filepath)
+  # Make sure that the main library was built
+  if(NOT TARGET tinymath::tinymath)
+    tmMessage("Tried configuring examples without configuring TinyMathCpp first"
+              LOG_LEVEL WARNING)
+    return()
+  endif()
+  # Get the name of the target for the given example
+  get_filename_component(ex_target_name ${example_filepath} NAME_WLE)
+  # Create the target for this example
+  add_executable(${ex_target_name} ${example_filepath})
+  target_link_libraries(${ex_target_name} PRIVATE tinymath::tinymath)
+endmacro()

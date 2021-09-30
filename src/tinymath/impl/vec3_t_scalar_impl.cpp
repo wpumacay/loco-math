@@ -9,20 +9,18 @@ namespace scalar {
 // ***************************************************************************//
 
 // NOLINTNEXTLINE(runtime/references)
-TINYMATH_INLINE_EXPR auto kernel_add(Vector3<float32_t>::BufferType& dst,
-                                     const Vector3<float32_t>::BufferType& lhs,
-                                     const Vector3<float32_t>::BufferType& rhs)
-    -> void {
+auto kernel_add(Vector3<float32_t>::BufferType& dst,
+                const Vector3<float32_t>::BufferType& lhs,
+                const Vector3<float32_t>::BufferType& rhs) -> void {  // NOLINT
     for (uint32_t i = 0; i < Vector3<float32_t>::VECTOR_NDIM; ++i) {
         dst[i] = lhs[i] + rhs[i];
     }
 }
 
 // NOLINTNEXTLINE(runtime/references)
-TINYMATH_INLINE_EXPR auto kernel_sub(Vector3<float32_t>::BufferType& dst,
-                                     const Vector3<float32_t>::BufferType& lhs,
-                                     const Vector3<float32_t>::BufferType& rhs)
-    -> void {
+auto kernel_sub(Vector3<float32_t>::BufferType& dst,
+                const Vector3<float32_t>::BufferType& lhs,
+                const Vector3<float32_t>::BufferType& rhs) -> void {  // NOLINT
     for (uint32_t i = 0; i < Vector3<float32_t>::VECTOR_NDIM; ++i) {
         dst[i] = lhs[i] - rhs[i];
     }
@@ -33,20 +31,18 @@ TINYMATH_INLINE_EXPR auto kernel_sub(Vector3<float32_t>::BufferType& dst,
 // ***************************************************************************//
 
 // NOLINTNEXTLINE(runtime/references)
-TINYMATH_INLINE_EXPR auto kernel_add(Vector3<float64_t>::BufferType& dst,
-                                     const Vector3<float64_t>::BufferType& lhs,
-                                     const Vector3<float64_t>::BufferType& rhs)
-    -> void {
+auto kernel_add(Vector3<float64_t>::BufferType& dst,
+                const Vector3<float64_t>::BufferType& lhs,
+                const Vector3<float64_t>::BufferType& rhs) -> void {  // NOLINT
     for (uint32_t i = 0; i < Vector3<float64_t>::VECTOR_NDIM; ++i) {
         dst[i] = lhs[i] + rhs[i];
     }
 }
 
 // NOLINTNEXTLINE(runtime/references)
-TINYMATH_INLINE_EXPR auto kernel_sub(Vector3<float64_t>::BufferType& dst,
-                                     const Vector3<float64_t>::BufferType& lhs,
-                                     const Vector3<float64_t>::BufferType& rhs)
-    -> void {
+auto kernel_sub(Vector3<float64_t>::BufferType& dst,
+                const Vector3<float64_t>::BufferType& lhs,
+                const Vector3<float64_t>::BufferType& rhs) -> void {  // NOLINT
     for (uint32_t i = 0; i < Vector3<float64_t>::VECTOR_NDIM; ++i) {
         dst[i] = lhs[i] - rhs[i];
     }

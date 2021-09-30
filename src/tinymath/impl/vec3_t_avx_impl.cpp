@@ -13,10 +13,9 @@ namespace avx {
 // ***************************************************************************//
 
 // NOLINTNEXTLINE(runtime/references)
-TINYMATH_INLINE_EXPR auto kernel_add(Vector3<float64_t>::BufferType& dst,
-                                     const Vector3<float64_t>::BufferType& lhs,
-                                     const Vector3<float64_t>::BufferType& rhs)
-    -> void {
+auto kernel_add(Vector3<float64_t>::BufferType& dst,
+                const Vector3<float64_t>::BufferType& lhs,
+                const Vector3<float64_t>::BufferType& rhs) -> void {  // NOLINT
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
     auto ymm_result = _mm256_add_pd(ymm_lhs, ymm_rhs);
@@ -24,10 +23,9 @@ TINYMATH_INLINE_EXPR auto kernel_add(Vector3<float64_t>::BufferType& dst,
 }
 
 // NOLINTNEXTLINE(runtime/references)
-TINYMATH_INLINE_EXPR auto kernel_sub(Vector3<float64_t>::BufferType& dst,
-                                     const Vector3<float64_t>::BufferType& lhs,
-                                     const Vector3<float64_t>::BufferType& rhs)
-    -> void {
+auto kernel_sub(Vector3<float64_t>::BufferType& dst,
+                const Vector3<float64_t>::BufferType& lhs,
+                const Vector3<float64_t>::BufferType& rhs) -> void {  // NOLINT
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
     auto ymm_result = _mm256_sub_pd(ymm_lhs, ymm_rhs);

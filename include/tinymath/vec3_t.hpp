@@ -24,37 +24,26 @@ class Vector3 {
 
     explicit Vector3(Scalar_T x, Scalar_T y, Scalar_T z);
 
-    TINYMATH_INLINE_EXPR auto x() -> Scalar_T& { return m_Elements[0]; }
+    auto x() -> Scalar_T& { return m_Elements[0]; }
 
-    TINYMATH_INLINE_EXPR auto y() -> Scalar_T& { return m_Elements[1]; }
+    auto y() -> Scalar_T& { return m_Elements[1]; }
 
-    TINYMATH_INLINE_EXPR auto z() -> Scalar_T& { return m_Elements[2]; }
+    auto z() -> Scalar_T& { return m_Elements[2]; }
 
-    TINYMATH_INLINE_EXPR auto x() const -> const Scalar_T& {
-        return m_Elements[0];
-    }
+    auto x() const -> const Scalar_T& { return m_Elements[0]; }
 
-    TINYMATH_INLINE_EXPR auto y() const -> const Scalar_T& {
-        return m_Elements[1];
-    }
+    auto y() const -> const Scalar_T& { return m_Elements[1]; }
 
-    TINYMATH_INLINE_EXPR auto z() const -> const Scalar_T& {
-        return m_Elements[2];
-    }
+    auto z() const -> const Scalar_T& { return m_Elements[2]; }
 
-    TINYMATH_INLINE_EXPR auto elements() -> BufferType& { return m_Elements; }
+    auto elements() -> BufferType& { return m_Elements; }
 
-    TINYMATH_INLINE_EXPR auto elements() const -> const BufferType& {
-        return m_Elements;
-    }
+    auto elements() const -> const BufferType& { return m_Elements; }
 
-    TINYMATH_INLINE_EXPR auto operator[](uint32_t index) -> Scalar_T& {
-        return &m_Elements[index];
-    }
+    auto operator[](uint32_t index) -> Scalar_T& { return m_Elements[index]; }
 
-    TINYMATH_INLINE_EXPR auto operator[](uint32_t index) const
-        -> const Scalar_T& {
-        return &m_Elements[index];
+    auto operator[](uint32_t index) const -> const Scalar_T& {
+        return m_Elements[index];
     }
 
     constexpr auto ndim() const -> uint32_t { return VECTOR_NDIM; }
@@ -68,13 +57,11 @@ class Vector3 {
 };
 
 template <typename Scalar_T>
-TINYMATH_INLINE_EXPR auto operator+(const Vector3<Scalar_T>& lhs,
-                                    const Vector3<Scalar_T>& rhs)
+auto operator+(const Vector3<Scalar_T>& lhs, const Vector3<Scalar_T>& rhs)
     -> Vector3<Scalar_T>;
 
 template <typename Scalar_T>
-TINYMATH_INLINE_EXPR auto operator-(const Vector3<Scalar_T>& lhs,
-                                    const Vector3<Scalar_T>& rhs)
+auto operator-(const Vector3<Scalar_T>& lhs, const Vector3<Scalar_T>& rhs)
     -> Vector3<Scalar_T>;
 
 template <typename Scalar_T>

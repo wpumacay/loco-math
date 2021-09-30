@@ -14,8 +14,7 @@ namespace tiny {
 namespace math {
 
 template <>
-TINYMATH_INLINE_EXPR auto operator+(const Vector3<float32_t>& lhs,
-                                    const Vector3<float32_t>& rhs)
+auto operator+(const Vector3<float32_t>& lhs, const Vector3<float32_t>& rhs)
     -> Vector3<float32_t> {
     Vector3<float32_t> result;
 #if defined(TINYMATH_SSE_ENABLED)
@@ -29,8 +28,7 @@ TINYMATH_INLINE_EXPR auto operator+(const Vector3<float32_t>& lhs,
 }
 
 template <>
-TINYMATH_INLINE_EXPR auto operator-(const Vector3<float32_t>& lhs,
-                                    const Vector3<float32_t>& rhs)
+auto operator-(const Vector3<float32_t>& lhs, const Vector3<float32_t>& rhs)
     -> Vector3<float32_t> {
     Vector3<float32_t> result;
 #if defined(TINYMATH_SSE_ENABLED)
@@ -44,8 +42,7 @@ TINYMATH_INLINE_EXPR auto operator-(const Vector3<float32_t>& lhs,
 }
 
 template <>
-TINYMATH_INLINE_EXPR auto operator+(const Vector3<float64_t>& lhs,
-                                    const Vector3<float64_t>& rhs)
+auto operator+(const Vector3<float64_t>& lhs, const Vector3<float64_t>& rhs)
     -> Vector3<float64_t> {
     Vector3<float64_t> result;
 #if defined(TINYMATH_AVX_ENABLED)
@@ -59,8 +56,7 @@ TINYMATH_INLINE_EXPR auto operator+(const Vector3<float64_t>& lhs,
 }
 
 template <>
-TINYMATH_INLINE_EXPR auto operator-(const Vector3<float64_t>& lhs,
-                                    const Vector3<float64_t>& rhs)
+auto operator-(const Vector3<float64_t>& lhs, const Vector3<float64_t>& rhs)
     -> Vector3<float64_t> {
     Vector3<float64_t> result;
 #if defined(TINYMATH_AVX_ENABLED)

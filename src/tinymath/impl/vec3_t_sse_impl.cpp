@@ -13,10 +13,9 @@ namespace sse {
 // ***************************************************************************//
 
 // NOLINTNEXTLINE(runtime/references)
-TINYMATH_INLINE_EXPR auto kernel_add(Vector3<float32_t>::BufferType& dst,
-                                     const Vector3<float32_t>::BufferType& lhs,
-                                     const Vector3<float32_t>::BufferType& rhs)
-    -> void {
+auto kernel_add(Vector3<float32_t>::BufferType& dst,
+                const Vector3<float32_t>::BufferType& lhs,
+                const Vector3<float32_t>::BufferType& rhs) -> void {  // NOLINT
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_result = _mm_add_ps(xmm_lhs, xmm_rhs);
@@ -24,10 +23,9 @@ TINYMATH_INLINE_EXPR auto kernel_add(Vector3<float32_t>::BufferType& dst,
 }
 
 // NOLINTNEXTLINE(runtime/references)
-TINYMATH_INLINE_EXPR auto kernel_sub(Vector3<float32_t>::BufferType& dst,
-                                     const Vector3<float32_t>::BufferType& lhs,
-                                     const Vector3<float32_t>::BufferType& rhs)
-    -> void {
+auto kernel_sub(Vector3<float32_t>::BufferType& dst,
+                const Vector3<float32_t>::BufferType& lhs,
+                const Vector3<float32_t>::BufferType& rhs) -> void {  // NOLINT
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_result = _mm_sub_ps(xmm_lhs, xmm_rhs);

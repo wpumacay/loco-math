@@ -20,6 +20,7 @@ macro(tmConfigureGitDependency)
         GIT_REPOSITORY ${GIT_DEP_REPO}
         GIT_TAG ${GIT_DEP_TAG}
         GIT_PROGRESS TRUE
+        GIT_SHALLOW TRUE
         USES_TERMINAL_DOWNLOAD TRUE
         PREFIX "${CMAKE_SOURCE_DIR}/third_party/${GIT_DEP_TARGET}"
         DOWNLOAD_DIR "${CMAKE_SOURCE_DIR}/third_party/${GIT_DEP_TARGET}"
@@ -46,7 +47,7 @@ endmacro()
 macro(tmConfigureExample example_filepath)
   # Make sure that the main library was built
   if(NOT TARGET tinymath::tinymath)
-    tmMessage("Tried configuring examples without configuring TinyMathCpp first"
+    tmMessage("Must have target tinymath::tinymath for configuring an example"
               LOG_LEVEL WARNING)
     return()
   endif()

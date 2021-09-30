@@ -17,7 +17,8 @@ if(TINYMATH_BUILD_PYTHON_BINDINGS)
       REPO https://github.com/pybind/pybind11.git
       TAG v2.7.1
       BUILD_MODE Release
-      BUILD_ARGS -DPYBIND11_TEST=OFF)
+      BUILD_ARGS
+        -DPYBIND11_TEST=OFF)
   # cmake-format: on
 
   if(NOT pybind11_FOUND)
@@ -32,10 +33,21 @@ endif()
 if(TINYMATH_BUILD_TESTS)
   # cmake-format: off
   tmConfigureGitDependency(
-      TARGET googletest
-      REPO https://github.com/google/googletest.git
-      TAG release-1.11.0
+      TARGET catch2
+      REPO https://github.com/catchorg/Catch2.git
+      TAG v2.13.7
       BUILD_MODE Release
-      BUILD_ARGS -DBUILD_GMOCK=OFF)
+      BUILD_ARGS
+        -DCATCH_INSTALL_DOCS=OFF
+        -DCATCH_INSTALL_EXTRAS=OFF
+        -DCATCH_DEVELOPMENT_BUILD=OFF)
   # cmake-format: on
+
+  if(NOT TARGET Catch2::Catch2)
+    tmMessage("Requested Catch2 support, but couldn't find Catch2 :(" LOG_LEVEL
+              WARNING)
+    set(TINYMATH_BUILD_TESTS
+        OFF
+        PARENT_SCOPE)
+  endif()
 endif()

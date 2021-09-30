@@ -19,9 +19,9 @@ include(GNUInstallDirs)
 # common settings that we might need later during configuration
 tmInitializeProject()
 
-option(TINYMATH_BUILD_SSE "Build using SSE support (requires cpu support)" ON)
+option(TINYMATH_BUILD_SSE "Build using SSE support (requires cpu support)" OFF)
 option(TINYMATH_BUILD_AVX "Build using AVX support (requires cpu support)" OFF)
-option(TINYMATH_BUILD_PYTHON_BINDINGS "Build bindings (requires Pybind11)" ON)
+option(TINYMATH_BUILD_PYTHON_BINDINGS "Build bindings (requires Pybind11)" OFF)
 option(TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen+Breathe)" OFF)
 option(TINYMATH_BUILD_TESTS "Build C++ unit-tests (requires google-test)" ON)
 option(TINYMATH_BUILD_EXAMPLES "Build C++ examples" ON)
@@ -76,11 +76,16 @@ endif()
 # Expose an alias for the library (CMake namespace convention)
 add_library(tinymath::tinymath ALIAS TinyMathCpp)
 
+# Add dependencies to the build process
+add_subdirectory(third_party)
+
 # Add C++ examples to the build process
 add_subdirectory(examples/cpp)
 
+# Add C++ tests to the build process
+add_subdirectory(tests/cpp)
+
 # ~~~
-# add_subdirectory(third_party)
 # add_subdirectory(python)
 # add_subdirectory(docs)
 # ~~~

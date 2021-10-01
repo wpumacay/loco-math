@@ -31,27 +31,3 @@ jobs:
 
     - name: Build C++ Project
       run: cmake --build ${{github.workspace}}/build --config ${{matrix.build-type}}
-
-  build-clang:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest]
-        build-type: [Release, Debug]
-
-    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • Clang"
-    runs-on: ${{matrix.os}}
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Update CMake
-      uses: jwlawson/actions-setup-cmake@v1.10
-
-    - name: Configure CMake
-      env:
-        CMAKE_GENERATOR: Ninja
-      run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
-
-    - name: Build C++ Project
-      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build-type}}

@@ -50,8 +50,6 @@ jobs:
 
     - name: Configure CMake
       env:
-        CC: clang
-        CXX: clang++
         CMAKE_GENERATOR: Ninja
       run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
 

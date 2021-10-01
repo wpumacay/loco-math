@@ -31,3 +31,6 @@ jobs:
 
     - name: Build C++ Project
       run: cmake --build ${{github.workspace}}/build --config ${{matrix.build-type}}
+
+    - name: Running C++ Tests
+      run: ctest --test-dir ${{github.workspace}}/build/tests/cpp

@@ -81,28 +81,30 @@ auto operator*(const Vector3<Scalar_T>& vec, Scalar_T scale)
     -> Vector3<Scalar_T>;
 
 template <typename Scalar_T>
-auto operator<<(std::ostream& stdout, const Vector3<Scalar_T>& src)
+auto operator<<(std::ostream& output_stream, const Vector3<Scalar_T>& src)
     -> std::ostream& {
-    stdout << "(" << src.x() << ", " << src.y() << ", " << src.z() << ")";
-    return stdout;
+    output_stream << "(" << src.x() << ", " << src.y() << ", " << src.z()
+                  << ")";
+    return output_stream;
 }
 
 template <typename Scalar_T>
-auto operator>>(std::istream& stdin, Vector3<Scalar_T>& dst) -> std::istream& {
+auto operator>>(std::istream& input_stream, Vector3<Scalar_T>& dst)
+    -> std::istream& {
     // Based on ignition-math implementation https://bit.ly/3iqAVgS
     Scalar_T x{};
     Scalar_T y{};
     Scalar_T z{};
 
-    stdin.setf(std::ios_base::skipws);
-    stdin >> x >> y >> z;
-    if (!stdin.fail()) {
+    input_stream.setf(std::ios_base::skipws);
+    input_stream >> x >> y >> z;
+    if (!input_stream.fail()) {
         dst.x() = x;
         dst.y() = y;
         dst.z() = z;
     }
 
-    return stdin;
+    return input_stream;
 }
 
 template <typename Scalar_T>

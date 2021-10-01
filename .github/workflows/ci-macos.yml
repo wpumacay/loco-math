@@ -1,0 +1,34 @@
+name: ci-macos
+
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+      - dev
+
+jobs:
+  build-gcc:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest]
+        build-type: [Release, Debug]
+
+    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • Apple Clang"
+    runs-on: ${{matrix.os}}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Update CMake
+      uses: jwlawson/actions-setup-cmake@v1.10
+
+    - name: Configure CMake
+      run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
+
+    - name: Build C++ Project
+      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build-type}}
+
+    - name: Running C++ Tests
+      run: ctest --test-dir ${{github.workspace}}/build/tests/cpp

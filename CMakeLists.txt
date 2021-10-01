@@ -38,7 +38,8 @@ target_include_directories(TinyMathCpp
                            PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 # Make sure that we don't re-define the make_unique if it's already exposed
 if(MSVC)
-  target_compile_options(TinyUtilsCpp PUBLIC "/Zc:__cplusplus")
+  target_compile_options(TinyMathCpp PUBLIC "/Zc:__cplusplus")
+  target_compile_options(TinyMathCpp PUBLIC "/permissive-")
 endif()
 
 if(TINYMATH_BUILD_SSE)

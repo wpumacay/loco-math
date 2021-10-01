@@ -73,6 +73,14 @@ auto operator-(const Vector3<Scalar_T>& lhs, const Vector3<Scalar_T>& rhs)
     -> Vector3<Scalar_T>;
 
 template <typename Scalar_T>
+auto operator*(Scalar_T scale, const Vector3<Scalar_T>& vec)
+    -> Vector3<Scalar_T>;
+
+template <typename Scalar_T>
+auto operator*(const Vector3<Scalar_T>& vec, Scalar_T scale)
+    -> Vector3<Scalar_T>;
+
+template <typename Scalar_T>
 auto operator<<(std::ostream& stdout, const Vector3<Scalar_T>& src)
     -> std::ostream& {
     stdout << "(" << src.x() << ", " << src.y() << ", " << src.z() << ")";

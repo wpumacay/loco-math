@@ -8,15 +8,14 @@ on:
       - dev
 
 jobs:
-  build:
+  build-gcc:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-18.04, ubuntu-latest]
         build-type: [Release, Debug]
-        compiler: [g++, clang++]
 
-    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • ${{matrix.compiler}}"
+    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • GCC"
     runs-on: ${{matrix.os}}
 
     steps:
@@ -27,8 +26,33 @@ jobs:
 
     - name: Configure CMake
       env:
-        CC: ${{matrix.compiler}}
-        CXX: ${{matrix.compiler}}
+        CC: gcc
+        CXX: g++
+      run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
+
+    - name: Build C++ Project
+      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build-type}}
+
+  build-clang:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-18.04, ubuntu-latest]
+        build-type: [Release, Debug]
+
+    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • Clang"
+    runs-on: ${{matrix.os}}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Update CMake
+      uses: jwlawson/actions-setup-cmake@v1.10
+
+    - name: Configure CMake
+      env:
+        CC: clang
+        CXX: clang++
       run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
 
     - name: Build C++ Project

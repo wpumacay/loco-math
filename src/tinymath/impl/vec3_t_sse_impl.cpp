@@ -11,11 +11,11 @@ namespace sse {
 // ***************************************************************************//
 //   Implementations for single-precision floating point numbers (float32_t)  //
 // ***************************************************************************//
+using Vec3f = Vector3<float32_t>;
+using Array3f = Vec3f::BufferType;
 
 // NOLINTNEXTLINE(runtime/references)
-auto kernel_add(Vector3<float32_t>::BufferType& dst,
-                const Vector3<float32_t>::BufferType& lhs,
-                const Vector3<float32_t>::BufferType& rhs) -> void {  // NOLINT
+auto kernel_add(Array3f& dst, const Array3f& lhs, const Array3f& rhs) -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_result = _mm_add_ps(xmm_lhs, xmm_rhs);
@@ -23,12 +23,18 @@ auto kernel_add(Vector3<float32_t>::BufferType& dst,
 }
 
 // NOLINTNEXTLINE(runtime/references)
-auto kernel_sub(Vector3<float32_t>::BufferType& dst,
-                const Vector3<float32_t>::BufferType& lhs,
-                const Vector3<float32_t>::BufferType& rhs) -> void {  // NOLINT
+auto kernel_sub(Array3f& dst, const Array3f& lhs, const Array3f& rhs) -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_result = _mm_sub_ps(xmm_lhs, xmm_rhs);
+    _mm_storeu_ps(dst.data(), xmm_result);
+}
+
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_scale(Array3f& dst, float32_t scale, const Array3f& vec) -> void {
+    auto xmm_scale = _mm_set1_ps(scale);
+    auto xmm_vector = _mm_loadu_ps(vec.data());
+    auto xmm_result = _mm_mul_ps(xmm_scale, xmm_vector);
     _mm_storeu_ps(dst.data(), xmm_result);
 }
 

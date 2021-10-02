@@ -8,15 +8,20 @@ namespace tiny {
 namespace math {
 namespace sse {
 
-// NOLINTNEXTLINE(runtime/references)
-auto kernel_add(Vector3<float32_t>::BufferType& dst,
-                const Vector3<float32_t>::BufferType& lhs,
-                const Vector3<float32_t>::BufferType& rhs) -> void;  // NOLINT
+// ***************************************************************************//
+//    Declarations for single-precision floating point numbers (float32_t)    //
+// ***************************************************************************//
+using Vec3f = Vector3<float32_t>;
+using Array3f = Vec3f::BufferType;
 
 // NOLINTNEXTLINE(runtime/references)
-auto kernel_sub(Vector3<float32_t>::BufferType& dst,
-                const Vector3<float32_t>::BufferType& lhs,
-                const Vector3<float32_t>::BufferType& rhs) -> void;  // NOLINT
+auto kernel_add(Array3f& dst, const Array3f& lhs, const Array3f& rhs) -> void;
+
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_sub(Array3f& dst, const Array3f& lhs, const Array3f& rhs) -> void;
+
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_scale(Array3f& dst, float32_t scale, const Array3f& vec) -> void;
 
 }  // namespace sse
 }  // namespace math

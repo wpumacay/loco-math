@@ -48,9 +48,20 @@ template <>
 auto operator*(float32_t scale, const Vec3f& vec) -> Vec3f {
     Vec3f result;
 #if defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert): implement sse-float32 scale kernel
+    sse::kernel_scale(result.elements(), scale, vec.elements());
 #else
-    // @todo(wilbert): implement scalar scale kernel
+    scalar::kernel_scale(result.elements(), scale, vec.elements());
+#endif
+    return result;
+}
+
+template <>
+auto operator*(const Vec3f& vec, float32_t scale) -> Vec3f {
+    Vec3f result;
+#if defined(TINYMATH_SSE_ENABLED)
+    sse::kernel_scale(result.elements(), scale, vec.elements());
+#else
+    scalar::kernel_scale(result.elements(), scale, vec.elements());
 #endif
     return result;
 }
@@ -88,9 +99,20 @@ template <>
 auto operator*(float64_t scale, const Vec3d& vec) -> Vec3d {
     Vec3d result;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): implement sse-float64 scale kernel
+    avx::kernel_scale(result.elements(), scale, vec.elements());
 #else
-    // @todo(wilbert): implement scalar scale kernel
+    scalar::kernel_scale(result.elements(), scale, vec.elements());
+#endif
+    return result;
+}
+
+template <>
+auto operator*(const Vec3d& vec, float64_t scale) -> Vec3d {
+    Vec3d result;
+#if defined(TINYMATH_AVX_ENABLED)
+    avx::kernel_scale(result.elements(), scale, vec.elements());
+#else
+    scalar::kernel_scale(result.elements(), scale, vec.elements());
 #endif
     return result;
 }

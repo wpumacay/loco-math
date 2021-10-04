@@ -31,6 +31,10 @@ auto kernel_scale(Array3f& dst, float32_t scale, const Array3f& vec) -> void {
     }
 }
 
+auto kernel_length_square(const Array3f& vec) -> float32_t {
+    return vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2];
+}
+
 // ***************************************************************************//
 //   Implementations for double-precision floating point numbers (float64_t)  //
 // ***************************************************************************//
@@ -56,6 +60,10 @@ auto kernel_scale(Array3d& dst, float64_t scale, const Array3d& vec) -> void {
     for (uint32_t i = 0; i < Vec3d::VECTOR_NDIM; ++i) {
         dst[i] = scale * vec[i];
     }
+}
+
+auto kernel_length_square(const Array3d& vec) -> float64_t {
+    return vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2];
 }
 
 }  // namespace scalar

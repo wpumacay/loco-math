@@ -51,6 +51,18 @@ class Vector3 {
         return m_Elements[index];
     }
 
+    // @todo(wilbert): implement square_length (PR: #3)
+    auto length_square() const -> Scalar_T;
+
+    // @todo(wilbert): implement length (PR: #3)
+    auto length() const -> Scalar_T;
+
+    // @todo(wilbert): implement inner product (PR: #3)
+    auto dot() const -> Scalar_T;
+
+    // @todo(wilbert): implement cross product (PR: #3)
+    auto cross() const -> Vector3<Scalar_T>;
+
     auto toString() const -> std::string;
 
     constexpr auto ndim() const -> uint32_t { return VECTOR_NDIM; }
@@ -78,6 +90,11 @@ auto operator*(Scalar_T scale, const Vector3<Scalar_T>& vec)
 
 template <typename Scalar_T>
 auto operator*(const Vector3<Scalar_T>& vec, Scalar_T scale)
+    -> Vector3<Scalar_T>;
+
+// @todo(wilbert): implement Hadamard-Schur product (PR: #3)
+template <typename Scalar_T>
+auto operator*(const Vector3<Scalar_T>& v1, const Vector3<Scalar_T>& v2)
     -> Vector3<Scalar_T>;
 
 template <typename Scalar_T>

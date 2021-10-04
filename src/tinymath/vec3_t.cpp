@@ -1,7 +1,5 @@
 #include <tinymath/impl/vec3_t_scalar_impl.hpp>
 
-#include "tinymath/common.hpp"
-
 #if defined(TINYMATH_SSE_ENABLED)
 #include <tinymath/impl/vec3_t_sse_impl.hpp>
 #endif
@@ -10,6 +8,7 @@
 #include <tinymath/impl/vec3_t_avx_impl.hpp>
 #endif
 
+#include <cmath>
 #include <tinymath/vec3_t.hpp>
 
 namespace tiny {
@@ -17,6 +16,26 @@ namespace math {
 
 // Specializations of operators for single-precision types (float32_t)
 using Vec3f = Vector3<float32_t>;
+
+template <>
+auto Vec3f::length_square() const -> float32_t {
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    return scalar::kernel_length_square(elements());
+#endif
+}
+
+template <>
+auto Vec3f::length() const -> float32_t {
+#if defined(TINYMATH_SSE_ENABLED)
+
+#elif defined(TINYMATH_AVX_ENABLED)
+
+#else
+    return std::sqrt(scalar::kernel_length_square(elements()));
+#endif
+}
 
 template <>
 auto operator+(const Vec3f& lhs, const Vec3f& rhs) -> Vec3f {
@@ -68,6 +87,26 @@ auto operator*(const Vec3f& vec, float32_t scale) -> Vec3f {
 
 // Specializations of operators for double-precision types (float64_t)
 using Vec3d = Vector3<float64_t>;
+
+template <>
+auto Vec3d::length_square() const -> float64_t {
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    return scalar::kernel_length_square(elements());
+#endif
+}
+
+template <>
+auto Vec3d::length() const -> float64_t {
+#if defined(TINYMATH_SSE_ENABLED)
+
+#elif defined(TINYMATH_AVX_ENABLED)
+
+#else
+    return std::sqrt(scalar::kernel_length_square(elements()));
+#endif
+}
 
 template <>
 auto operator+(const Vec3d& lhs, const Vec3d& rhs) -> Vec3d {

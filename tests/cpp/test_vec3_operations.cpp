@@ -68,4 +68,20 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
         REQUIRE(std::abs(v_2.y() - (val_y * scale)) < EPSILON);
         REQUIRE(std::abs(v_2.z() - (val_z * scale)) < EPSILON);
     }
+
+    SECTION("Vector length") {
+        auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
+        auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
+        auto val_z = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);  // NOLINT
+        Vector3 v(val_x, val_y, val_z);
+
+        auto length_square = val_x * val_x + val_y * val_y + val_z * val_z;
+        auto length = std::sqrt(length_square);
+
+        auto v_length_square = v.length_square();
+        auto v_length = v.length();
+
+        REQUIRE(std::abs(v_length_square - length_square) < EPSILON);
+        REQUIRE(std::abs(v_length - length) < EPSILON);
+    }
 }

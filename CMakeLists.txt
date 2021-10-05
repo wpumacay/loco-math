@@ -31,7 +31,11 @@ add_library(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/vec3_t.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/impl/vec3_t_scalar_impl.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/impl/vec3_t_sse_impl.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/impl/vec3_t_avx_impl.cpp)
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/impl/vec3_t_avx_impl.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/vec4_t.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/impl/vec4_t_scalar_impl.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/impl/vec4_t_sse_impl.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/impl/vec4_t_avx_impl.cpp)
 # Set features and other settings for this target
 target_compile_features(TinyMathCpp PUBLIC cxx_std_11)
 target_include_directories(TinyMathCpp

@@ -2,7 +2,7 @@
 
 #include <xmmintrin.h>
 
-#include <tinymath/impl/vec3_t_sse_impl.hpp>
+#include <tinymath/impl/vec4_t_sse_impl.hpp>
 
 namespace tiny {
 namespace math {
@@ -11,20 +11,21 @@ namespace sse {
 // ***************************************************************************//
 //   Implementations for single-precision floating point numbers (float32_t)  //
 // ***************************************************************************//
-using Vec3f = Vector3<float32_t>;
-using Array3f = Vec3f::BufferType;
+using Vec4f = Vector4<float32_t>;
+using Array4f = Vec4f::BufferType;
 
 // NOLINTNEXTLINE(runtime/references)
-auto kernel_add_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
+auto kernel_add_v4f(Array4f& dst, const Array4f& lhs, const Array4f& rhs)
     -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_result = _mm_add_ps(xmm_lhs, xmm_rhs);
+    // @todo(wilbert): check alignment (I thought it was already aligned :O)
     _mm_storeu_ps(dst.data(), xmm_result);
 }
 
 // NOLINTNEXTLINE(runtime/references)
-auto kernel_sub_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
+auto kernel_sub_v4f(Array4f& dst, const Array4f& lhs, const Array4f& rhs)
     -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
@@ -33,7 +34,7 @@ auto kernel_sub_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
 }
 
 // NOLINTNEXTLINE(runtime/references)
-auto kernel_scale_v3f(Array3f& dst, float32_t scale, const Array3f& vec)
+auto kernel_scale_v4f(Array4f& dst, float32_t scale, const Array4f& vec)
     -> void {
     auto xmm_scale = _mm_set1_ps(scale);
     auto xmm_vector = _mm_loadu_ps(vec.data());

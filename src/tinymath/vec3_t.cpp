@@ -1,7 +1,5 @@
 #include <tinymath/impl/vec3_t_scalar_impl.hpp>
 
-#include "tinymath/common.hpp"
-
 #if defined(TINYMATH_SSE_ENABLED)
 #include <tinymath/impl/vec3_t_sse_impl.hpp>
 #endif
@@ -10,6 +8,7 @@
 #include <tinymath/impl/vec3_t_avx_impl.hpp>
 #endif
 
+#include <cmath>
 #include <tinymath/vec3_t.hpp>
 
 namespace tiny {
@@ -19,14 +18,34 @@ namespace math {
 using Vec3f = Vector3<float32_t>;
 
 template <>
+auto Vec3f::length_square() const -> float32_t {
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    return scalar::kernel_length_square_v3f(elements());
+#endif
+}
+
+template <>
+auto Vec3f::length() const -> float32_t {
+#if defined(TINYMATH_SSE_ENABLED)
+
+#elif defined(TINYMATH_AVX_ENABLED)
+
+#else
+    return std::sqrt(scalar::kernel_length_square_v3f(elements()));
+#endif
+}
+
+template <>
 auto operator+(const Vec3f& lhs, const Vec3f& rhs) -> Vec3f {
     Vec3f result;
 #if defined(TINYMATH_SSE_ENABLED)
     // SSE allows SIMD addition of 4-float packed vectors, so we use it here
-    sse::kernel_add(result.elements(), lhs.elements(), rhs.elements());
+    sse::kernel_add_v3f(result.elements(), lhs.elements(), rhs.elements());
 #else
     // Use scalar version for all other cases (AVX registers require 8-floats)
-    scalar::kernel_add(result.elements(), lhs.elements(), rhs.elements());
+    scalar::kernel_add_v3f(result.elements(), lhs.elements(), rhs.elements());
 #endif
     return result;
 }
@@ -36,10 +55,10 @@ auto operator-(const Vec3f& lhs, const Vec3f& rhs) -> Vec3f {
     Vec3f result;
 #if defined(TINYMATH_SSE_ENABLED)
     // SSE allows SIMD substraction of 4-float packed vectors, so we use it here
-    sse::kernel_sub(result.elements(), lhs.elements(), rhs.elements());
+    sse::kernel_sub_v3f(result.elements(), lhs.elements(), rhs.elements());
 #else
     // Use scalar version for all other cases (AVX registers require 8-floats)
-    scalar::kernel_sub(result.elements(), lhs.elements(), rhs.elements());
+    scalar::kernel_sub_v3f(result.elements(), lhs.elements(), rhs.elements());
 #endif
     return result;
 }
@@ -48,9 +67,20 @@ template <>
 auto operator*(float32_t scale, const Vec3f& vec) -> Vec3f {
     Vec3f result;
 #if defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert): implement sse-float32 scale kernel
+    sse::kernel_scale_v3f(result.elements(), scale, vec.elements());
 #else
-    // @todo(wilbert): implement scalar scale kernel
+    scalar::kernel_scale_v3f(result.elements(), scale, vec.elements());
+#endif
+    return result;
+}
+
+template <>
+auto operator*(const Vec3f& vec, float32_t scale) -> Vec3f {
+    Vec3f result;
+#if defined(TINYMATH_SSE_ENABLED)
+    sse::kernel_scale_v3f(result.elements(), scale, vec.elements());
+#else
+    scalar::kernel_scale_v3f(result.elements(), scale, vec.elements());
 #endif
     return result;
 }
@@ -59,14 +89,34 @@ auto operator*(float32_t scale, const Vec3f& vec) -> Vec3f {
 using Vec3d = Vector3<float64_t>;
 
 template <>
+auto Vec3d::length_square() const -> float64_t {
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    return scalar::kernel_length_square_v3d(elements());
+#endif
+}
+
+template <>
+auto Vec3d::length() const -> float64_t {
+#if defined(TINYMATH_SSE_ENABLED)
+
+#elif defined(TINYMATH_AVX_ENABLED)
+
+#else
+    return std::sqrt(scalar::kernel_length_square_v3d(elements()));
+#endif
+}
+
+template <>
 auto operator+(const Vec3d& lhs, const Vec3d& rhs) -> Vec3d {
     Vec3d result;
 #if defined(TINYMATH_AVX_ENABLED)
     // AVX allows SIMD addition of 4-double packed vectors, so we use it
-    avx::kernel_add(result.elements(), lhs.elements(), rhs.elements());
+    avx::kernel_add_v3d(result.elements(), lhs.elements(), rhs.elements());
 #else
     // Use scalar version for all other cases, SSE register width is not enough
-    scalar::kernel_add(result.elements(), lhs.elements(), rhs.elements());
+    scalar::kernel_add_v3d(result.elements(), lhs.elements(), rhs.elements());
 #endif
     return result;
 }
@@ -76,10 +126,10 @@ auto operator-(const Vec3d& lhs, const Vec3d& rhs) -> Vec3d {
     Vec3d result;
 #if defined(TINYMATH_AVX_ENABLED)
     // AVX allows SIMD substraction of 4-double packed vectors, so we use it
-    avx::kernel_sub(result.elements(), lhs.elements(), rhs.elements());
+    avx::kernel_sub_v3d(result.elements(), lhs.elements(), rhs.elements());
 #else
     // Use scalar version for all other cases, SSE register width is not enough
-    scalar::kernel_sub(result.elements(), lhs.elements(), rhs.elements());
+    scalar::kernel_sub_v3d(result.elements(), lhs.elements(), rhs.elements());
 #endif
     return result;
 }
@@ -88,9 +138,20 @@ template <>
 auto operator*(float64_t scale, const Vec3d& vec) -> Vec3d {
     Vec3d result;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): implement sse-float64 scale kernel
+    avx::kernel_scale_v3d(result.elements(), scale, vec.elements());
 #else
-    // @todo(wilbert): implement scalar scale kernel
+    scalar::kernel_scale_v3d(result.elements(), scale, vec.elements());
+#endif
+    return result;
+}
+
+template <>
+auto operator*(const Vec3d& vec, float64_t scale) -> Vec3d {
+    Vec3d result;
+#if defined(TINYMATH_AVX_ENABLED)
+    avx::kernel_scale_v3d(result.elements(), scale, vec.elements());
+#else
+    scalar::kernel_scale_v3d(result.elements(), scale, vec.elements());
 #endif
     return result;
 }

@@ -15,7 +15,8 @@ using Vec4f = Vector4<float32_t>;
 using Array4f = Vec4f::BufferType;
 
 // NOLINTNEXTLINE(runtime/references)
-auto kernel_add(Array4f& dst, const Array4f& lhs, const Array4f& rhs) -> void {
+auto kernel_add_v4f(Array4f& dst, const Array4f& lhs, const Array4f& rhs)
+    -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_result = _mm_add_ps(xmm_lhs, xmm_rhs);
@@ -24,7 +25,8 @@ auto kernel_add(Array4f& dst, const Array4f& lhs, const Array4f& rhs) -> void {
 }
 
 // NOLINTNEXTLINE(runtime/references)
-auto kernel_sub(Array4f& dst, const Array4f& lhs, const Array4f& rhs) -> void {
+auto kernel_sub_v4f(Array4f& dst, const Array4f& lhs, const Array4f& rhs)
+    -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_result = _mm_sub_ps(xmm_lhs, xmm_rhs);
@@ -32,7 +34,8 @@ auto kernel_sub(Array4f& dst, const Array4f& lhs, const Array4f& rhs) -> void {
 }
 
 // NOLINTNEXTLINE(runtime/references)
-auto kernel_scale(Array4f& dst, float32_t scale, const Array4f& vec) -> void {
+auto kernel_scale_v4f(Array4f& dst, float32_t scale, const Array4f& vec)
+    -> void {
     auto xmm_scale = _mm_set1_ps(scale);
     auto xmm_vector = _mm_loadu_ps(vec.data());
     auto xmm_result = _mm_mul_ps(xmm_scale, xmm_vector);

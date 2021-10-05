@@ -15,13 +15,16 @@ using Vec4d = Vector4<float64_t>;
 using Array4d = Vec4d::BufferType;
 
 // NOLINTNEXTLINE(runtime/references)
-auto kernel_add(Array4d& dst, const Array4d& lhs, const Array4d& rhs) -> void;
+auto kernel_add_v4d(Array4d& dst, const Array4d& lhs, const Array4d& rhs)
+    -> void;
 
 // NOLINTNEXTLINE(runtime/references)
-auto kernel_sub(Array4d& dst, const Array4d& lhs, const Array4d& rhs) -> void;
+auto kernel_sub_v4d(Array4d& dst, const Array4d& lhs, const Array4d& rhs)
+    -> void;
 
 // NOLINTNEXTLINE(runtime/references)
-auto kernel_scale(Array4d& dst, float64_t scale, const Array4d& vec) -> void;
+auto kernel_scale_v4d(Array4d& dst, float64_t scale, const Array4d& vec)
+    -> void;
 
 }  // namespace avx
 }  // namespace math

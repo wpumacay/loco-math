@@ -56,7 +56,7 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core API", "[vec4_t][template]",
         REQUIRE(std::abs(v.x() - val_x) < EPSILON);
         REQUIRE(std::abs(v.y() - val_y) < EPSILON);
         REQUIRE(std::abs(v.z() - val_z) < EPSILON);
-        REQUIRE(std::abs(v.w() - val_w) < EPSILON);
+        REQUIRE(std::abs(v.w() - val_z) < EPSILON);
     }
 
     SECTION("Constructor Vector4(T x, T y, T z, T w)") {

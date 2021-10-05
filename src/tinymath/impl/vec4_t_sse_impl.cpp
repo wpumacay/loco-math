@@ -11,7 +11,7 @@ namespace sse {
 // ***************************************************************************//
 //   Implementations for single-precision floating point numbers (float32_t)  //
 // ***************************************************************************//
-using Vec4f = Vector3<float32_t>;
+using Vec4f = Vector4<float32_t>;
 using Array4f = Vec4f::BufferType;
 
 // NOLINTNEXTLINE(runtime/references)

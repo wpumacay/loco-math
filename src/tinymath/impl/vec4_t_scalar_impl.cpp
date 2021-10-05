@@ -7,7 +7,7 @@ namespace scalar {
 // ***************************************************************************//
 //   Implementations for single-precision floating point numbers (float32_t)  //
 // ***************************************************************************//
-using Vec4f = Vector3<float32_t>;
+using Vec4f = Vector4<float32_t>;
 using Array4f = Vec4f::BufferType;
 
 // NOLINTNEXTLINE(runtime/references)
@@ -38,7 +38,7 @@ auto kernel_length_square(const Array4f& vec) -> float32_t {
 // ***************************************************************************//
 //   Implementations for double-precision floating point numbers (float64_t)  //
 // ***************************************************************************//
-using Vec4d = Vector3<float64_t>;
+using Vec4d = Vector4<float64_t>;
 using Array4d = Vec4d::BufferType;
 
 // NOLINTNEXTLINE(runtime/references)

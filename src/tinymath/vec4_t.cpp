@@ -1,3 +1,12 @@
+#include <tinymath/impl/vec4_t_scalar_impl.hpp>
+
+#if defined(TINYMATH_SSE_ENABLED)
+#include <tinymath/impl/vec4_t_sse_impl.hpp>
+#endif
+
+#if defined(TINYMATH_AVX_ENABLED)
+#include <tinymath/impl/vec4_t_avx_impl.hpp>
+#endif
 
 #include <cmath>
 #include <tinymath/vec4_t.hpp>
@@ -57,7 +66,7 @@ auto operator*(const Vec4f& vec, float32_t scale) -> Vec4f {
 }
 
 // Specializations of operators for double-precision types (float64_t)
-using Vec4d = Vector3<float64_t>;
+using Vec4d = Vector4<float64_t>;
 
 template <>
 auto operator+(const Vec4d& lhs, const Vec4d& rhs) -> Vec4d {

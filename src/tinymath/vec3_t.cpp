@@ -36,6 +36,15 @@ auto Vec3f::length() const -> float32_t {
 }
 
 template <>
+auto Vec3f::dot(const Vec3f& other) const -> float32_t {
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    return scalar::kernel_dot_v3f(elements(), other.elements());
+#endif
+}
+
+template <>
 auto operator+(const Vec3f& lhs, const Vec3f& rhs) -> Vec3f {
     Vec3f result;
 #if defined(TINYMATH_SSE_ENABLED)
@@ -101,6 +110,15 @@ auto Vec3d::length() const -> float64_t {
     return avx::kernel_length_v3d(elements());
 #else
     return std::sqrt(scalar::kernel_length_square_v3d(elements()));
+#endif
+}
+
+template <>
+auto Vec3d::dot(const Vec3d& other) const -> float64_t {
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    return scalar::kernel_dot_v3d(elements(), other.elements());
 #endif
 }
 

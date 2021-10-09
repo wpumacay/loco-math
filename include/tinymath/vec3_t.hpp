@@ -51,17 +51,15 @@ class Vector3 {
         return m_Elements[index];
     }
 
-    // @todo(wilbert): implement square_length (PR: #3)
     auto length_square() const -> Scalar_T;
 
-    // @todo(wilbert): implement length (PR: #3)
     auto length() const -> Scalar_T;
 
     // @todo(wilbert): implement inner product (PR: #3)
-    auto dot() const -> Scalar_T;
+    auto dot(const Vector3<Scalar_T>& other) const -> Scalar_T;
 
     // @todo(wilbert): implement cross product (PR: #3)
-    auto cross() const -> Vector3<Scalar_T>;
+    auto cross(const Vector3<Scalar_T>& other) const -> Vector3<Scalar_T>;
 
     auto toString() const -> std::string;
 

@@ -84,4 +84,22 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
         REQUIRE(std::abs(v_length_square - length_square) < EPSILON);
         REQUIRE(std::abs(v_length - length) < EPSILON);
     }
+
+    SECTION("Vector dot-product") {
+        auto val_x_a = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
+        auto val_y_a = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
+        auto val_z_a = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);  // NOLINT
+
+        auto val_x_b = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
+        auto val_y_b = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
+        auto val_z_b = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);  // NOLINT
+
+        Vector3 v_a(val_x_a, val_y_a, val_z_a);
+        Vector3 v_b(val_x_b, val_y_b, val_z_b);
+
+        auto dot = val_x_a * val_x_b + val_y_a * val_y_b + val_z_a * val_z_b;
+        auto v_dot = v_a.dot(v_b);
+
+        REQUIRE(std::abs(v_dot - dot) < EPSILON);
+    }
 }

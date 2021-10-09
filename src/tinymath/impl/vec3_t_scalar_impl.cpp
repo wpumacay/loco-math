@@ -1,3 +1,4 @@
+#include <cmath>
 #include <tinymath/impl/vec3_t_scalar_impl.hpp>
 
 namespace tiny {

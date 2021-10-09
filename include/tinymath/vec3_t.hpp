@@ -70,10 +70,9 @@ class Vector3 {
     constexpr auto buffer_size() const -> uint32_t { return BUFFER_SIZE; }
 
  private:
-    // @todo(wilbert): add union trick to handle xmm and ymm registers on
-    // SIMD
+    // @todo(wilbert): add union trick to handle xmm and ymm registers on SIMD
 
-    BufferType m_Elements = {0, 0, 0, 1};
+    BufferType m_Elements = {0, 0, 0, 0};
 };
 
 template <typename Scalar_T>

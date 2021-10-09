@@ -26,6 +26,10 @@ auto kernel_sub_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
 auto kernel_scale_v3d(Array3d& dst, float64_t scale, const Array3d& vec)
     -> void;
 
+auto kernel_length_square_v3d(const Array3d& vec) -> float64_t;
+
+auto kernel_length_v3d(const Array3d& vec) -> float64_t;
+
 }  // namespace avx
 }  // namespace math
 }  // namespace tiny

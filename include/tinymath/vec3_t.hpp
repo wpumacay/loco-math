@@ -128,7 +128,7 @@ Vector3<Scalar_T>::Vector3(Scalar_T x) {
     m_Elements[0] = x;
     m_Elements[1] = x;
     m_Elements[2] = x;
-    m_Elements[3] = 1;
+    m_Elements[3] = 0;
 }
 
 template <typename Scalar_T>
@@ -136,7 +136,7 @@ Vector3<Scalar_T>::Vector3(Scalar_T x, Scalar_T y) {
     m_Elements[0] = x;
     m_Elements[1] = y;
     m_Elements[2] = y;
-    m_Elements[3] = 1;
+    m_Elements[3] = 0;
 }
 
 template <typename Scalar_T>
@@ -144,7 +144,7 @@ Vector3<Scalar_T>::Vector3(Scalar_T x, Scalar_T y, Scalar_T z) {
     m_Elements[0] = x;
     m_Elements[1] = y;
     m_Elements[2] = z;
-    m_Elements[3] = 1;
+    m_Elements[3] = 0;
 }
 
 template <typename Scalar_T>

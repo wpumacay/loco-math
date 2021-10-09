@@ -20,6 +20,11 @@ auto main() -> int {
         auto vec_d = vec_a - vec_b;
         printVector(vec_c);
         printVector(vec_d);
+
+        std::cout << "len^2-vec3f(a): " << vec_a.length_square() << "\n";
+        std::cout << "len^2-vec3f(b): " << vec_b.length_square() << "\n";
+        std::cout << "len-vec3f(a): " << vec_a.length() << "\n";
+        std::cout << "len-vec3f(b): " << vec_b.length() << "\n";
     }
 
     {
@@ -31,6 +36,11 @@ auto main() -> int {
         auto vec_d = vec_a - vec_b;
         printVector(vec_c);
         printVector(vec_d);
+
+        std::cout << "len^2-vec3d(a): " << vec_a.length_square() << "\n";
+        std::cout << "len^2-vec3d(b): " << vec_b.length_square() << "\n";
+        std::cout << "len-vec3d(a): " << vec_a.length() << "\n";
+        std::cout << "len-vec3d(b): " << vec_b.length() << "\n";
     }
 
     return 0;

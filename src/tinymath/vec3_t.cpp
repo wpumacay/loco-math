@@ -89,7 +89,7 @@ using Vec3d = Vector3<float64_t>;
 template <>
 auto Vec3d::length_square() const -> float64_t {
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): define length-square with avx instructions (PR #3)
+    return avx::kernel_length_square_v3d(elements());
 #else
     return scalar::kernel_length_square_v3d(elements());
 #endif
@@ -98,7 +98,7 @@ auto Vec3d::length_square() const -> float64_t {
 template <>
 auto Vec3d::length() const -> float64_t {
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): define length with avx instructions (PR #3)
+    return avx::kernel_length_v3d(elements());
 #else
     return std::sqrt(scalar::kernel_length_square_v3d(elements()));
 #endif

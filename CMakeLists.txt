@@ -46,15 +46,14 @@ if(MSVC)
   target_compile_options(TinyMathCpp PUBLIC "/permissive-")
 endif()
 
+# @todo(wilbert): must check for the highest instruction-set supported
 if(TINYMATH_BUILD_SSE)
-  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    target_compile_options(TinyMathCpp PUBLIC -msse -msse4.1)
-    target_compile_definitions(TinyMathCpp PUBLIC -DTINYMATH_SSE_ENABLED)
-  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(TinyMathCpp PUBLIC -msse -msse4.1)
+  if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES
+                                               "Clang"))
+    target_compile_options(TinyMathCpp PUBLIC -msse -msse2 -msse4.1)
     target_compile_definitions(TinyMathCpp PUBLIC -DTINYMATH_SSE_ENABLED)
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_compile_options(TinyMathCpp PUBLIC /arch:SSE /arch:SSE4.1)
+    target_compile_options(TinyMathCpp PUBLIC /arch:SSE /arch:SSE2 /arch:SSE4.1)
     target_compile_definitions(TinyMathCpp PUBLIC -DTINYMATH_SSE_ENABLED)
   else()
     tmMessage("We don't yet support SSE for compiler '${CMAKE_CXX_COMPILER_ID}'"
@@ -62,11 +61,10 @@ if(TINYMATH_BUILD_SSE)
   endif()
 endif()
 
+# @todo(wilbert): must check for the highest instruction-set supported
 if(TINYMATH_BUILD_AVX)
-  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    target_compile_options(TinyMathCpp PUBLIC -mavx)
-    target_compile_definitions(TinyMathCpp PUBLIC -DTINYMATH_AVX_ENABLED)
-  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES
+                                               "Clang"))
     target_compile_options(TinyMathCpp PUBLIC -mavx)
     target_compile_definitions(TinyMathCpp PUBLIC -DTINYMATH_AVX_ENABLED)
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")

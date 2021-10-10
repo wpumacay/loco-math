@@ -44,17 +44,25 @@ auto kernel_scale_v3f(Array3f& dst, float32_t scale, const Array3f& vec)
 
 auto kernel_length_square_v3f(const Array3f& vec) -> float32_t {
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    constexpr int32_t PROD_MASK = 0x71;
+    constexpr int32_t COND_PROD_MASK = 0x71;
     auto xmm_v = _mm_loadu_ps(vec.data());
-    return _mm_cvtss_f32(_mm_dp_ps(xmm_v, xmm_v, PROD_MASK));
+    return _mm_cvtss_f32(_mm_dp_ps(xmm_v, xmm_v, COND_PROD_MASK));
 }
 
 auto kernel_length_v3f(const Array3f& vec) -> float32_t {
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    constexpr int32_t PROD_MASK = 0x71;
+    constexpr int32_t COND_PROD_MASK = 0x71;
     auto xmm_v = _mm_loadu_ps(vec.data());
-    return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm_v, xmm_v, PROD_MASK)));
+    return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm_v, xmm_v, COND_PROD_MASK)));
 }
+
+auto kernel_dot_v3f(const Array3f& lhs, const Array3f& rhs) -> float32_t {
+    constexpr int32_t COND_PROD_MASK = 0x71;
+    auto xmm_lhs = _mm_loadu_ps(lhs.data());
+    auto xmm_rhs = _mm_loadu_ps(rhs.data());
+    auto xmm_cond_prod = _mm_dp_ps(xmm_lhs, xmm_rhs, COND_PROD_MASK);
+    return _mm_cvtss_f32(xmm_cond_prod);
+};
 
 }  // namespace sse
 }  // namespace math

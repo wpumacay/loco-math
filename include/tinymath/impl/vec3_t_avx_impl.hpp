@@ -30,6 +30,8 @@ auto kernel_length_square_v3d(const Array3d& vec) -> float64_t;
 
 auto kernel_length_v3d(const Array3d& vec) -> float64_t;
 
+auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs) -> float64_t;
+
 }  // namespace avx
 }  // namespace math
 }  // namespace tiny

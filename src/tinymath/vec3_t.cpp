@@ -116,7 +116,7 @@ auto Vec3d::length() const -> float64_t {
 template <>
 auto Vec3d::dot(const Vec3d& other) const -> float64_t {
 #if defined(TINYMATH_AVX_ENABLED)
-
+    return avx::kernel_dot_v3d(elements(), other.elements());
 #else
     return scalar::kernel_dot_v3d(elements(), other.elements());
 #endif

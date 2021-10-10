@@ -55,7 +55,6 @@ class Vector3 {
 
     auto length() const -> Scalar_T;
 
-    // @todo(wilbert): implement inner product (PR: #3)
     auto dot(const Vector3<Scalar_T>& other) const -> Scalar_T;
 
     // @todo(wilbert): implement cross product (PR: #3)

@@ -21,6 +21,7 @@ auto main() -> int {
         printVector(vec_c);
         printVector(vec_d);
 
+        std::cout << "dot-vec3f(a,b): " << vec_a.dot(vec_b) << "\n";
         std::cout << "len^2-vec3f(a): " << vec_a.length_square() << "\n";
         std::cout << "len^2-vec3f(b): " << vec_b.length_square() << "\n";
         std::cout << "len-vec3f(a): " << vec_a.length() << "\n";
@@ -37,6 +38,7 @@ auto main() -> int {
         printVector(vec_c);
         printVector(vec_d);
 
+        std::cout << "dot-vec3d(a,b): " << vec_a.dot(vec_b) << "\n";
         std::cout << "len^2-vec3d(a): " << vec_a.length_square() << "\n";
         std::cout << "len^2-vec3d(b): " << vec_b.length_square() << "\n";
         std::cout << "len-vec3d(a): " << vec_a.length() << "\n";

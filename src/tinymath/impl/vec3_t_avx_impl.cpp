@@ -71,6 +71,17 @@ auto kernel_length_v3d(const Array3d& vec) -> float64_t {
     return _mm_cvtsd_f64(xmm_result);
 }
 
+auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs) -> float64_t {
+    auto ymm_lhs = _mm256_loadu_pd(lhs.data());
+    auto ymm_rhs = _mm256_loadu_pd(rhs.data());
+    auto ymm_prod = _mm256_mul_pd(ymm_lhs, ymm_rhs);
+    auto ymm_hsum = _mm256_hadd_pd(ymm_prod, ymm_prod);
+    auto xmm_lo_sum = _mm256_extractf128_pd(ymm_hsum, 0);
+    auto xmm_hi_sum = _mm256_extractf128_pd(ymm_hsum, 1);
+    auto xmm_result = _mm_add_pd(xmm_lo_sum, xmm_hi_sum);
+    return _mm_cvtsd_f64(xmm_result);
+}
+
 }  // namespace avx
 }  // namespace math
 }  // namespace tiny

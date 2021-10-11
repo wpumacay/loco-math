@@ -50,7 +50,7 @@ template <>
 auto Vec3f::cross(const Vec3f& other) const -> Vec3f {
     Vec3f result;
 #if defined(TINYMATH_SSE_ENABLED)
-
+    sse::kernel_cross_v3f(result.elements(), elements(), other.elements());
 #else
     scalar::kernel_cross_v3f(result.elements(), elements(), other.elements());
 #endif
@@ -140,7 +140,7 @@ auto Vec3d::dot(const Vec3d& other) const -> float64_t {
 template <>
 auto Vec3d::cross(const Vec3d& other) const -> Vec3d {
     Vec3d result;
-#if defined(TINYMATH_SSE_ENABLED)
+#if defined(TINYMATH_AVX_ENABLED)
 
 #else
     scalar::kernel_cross_v3d(result.elements(), elements(), other.elements());

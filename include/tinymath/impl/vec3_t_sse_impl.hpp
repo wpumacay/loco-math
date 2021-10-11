@@ -32,6 +32,10 @@ auto kernel_length_v3f(const Array3f& vec) -> float32_t;
 
 auto kernel_dot_v3f(const Array3f& lhs, const Array3f& rhs) -> float32_t;
 
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_cross_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
+    -> void;
+
 }  // namespace sse
 }  // namespace math
 }  // namespace tiny

@@ -64,6 +64,33 @@ auto kernel_dot_v3f(const Array3f& lhs, const Array3f& rhs) -> float32_t {
     return _mm_cvtss_f32(xmm_cond_prod);
 };
 
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_cross_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
+    -> void {
+    // Implementation adapted from @ian_mallett (https://bit.ly/3lu6pVe)
+    constexpr auto MASK_A = tiny::math::ShuffleMask<3, 0, 2, 1>::value;
+    constexpr auto MASK_B = tiny::math::ShuffleMask<3, 1, 0, 2>::value;
+    // Recall that the dot product of two 3d-vectors a and b given by:
+    // a = {a[0], a[1], a[2], a[3]=0}, b = {b[0], b[1], b[2], b[3]=0}
+    // has as resulting expression:
+    // a (x) b = [a[1] * b[2] - a[2] * b[1],
+    //            a[2] * b[0] - a[0] * b[2],
+    //            a[0] * b[1] - a[1] * b[0],
+    //                        0            ]
+    auto vec_0 = _mm_loadu_ps(lhs.data());  // a = {a[0], a[1], a[2], a[3]=0}
+    auto vec_1 = _mm_loadu_ps(rhs.data());  // b = {b[0], b[1], b[2], b[3]=0}
+    // tmp_0 = {a[1], a[2], a[0], 0}
+    auto tmp_0 = _mm_shuffle_ps(vec_0, vec_0, MASK_A);
+    // tmp_1 = {b[2], b[0], b[1], 0}
+    auto tmp_1 = _mm_shuffle_ps(vec_1, vec_1, MASK_B);
+    // tmp_2 = {a[2], a[0], a[1], 0}
+    auto tmp_2 = _mm_shuffle_ps(vec_0, vec_0, MASK_B);
+    // tmp_3 = {b[1], b[2], b[0], 0}
+    auto tmp_3 = _mm_shuffle_ps(vec_1, vec_1, MASK_A);
+    _mm_storeu_ps(dst.data(), _mm_sub_ps(_mm_mul_ps(tmp_0, tmp_1),
+                                         _mm_mul_ps(tmp_2, tmp_3)));
+}
+
 }  // namespace sse
 }  // namespace math
 }  // namespace tiny

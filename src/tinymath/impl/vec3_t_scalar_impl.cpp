@@ -43,6 +43,17 @@ auto kernel_dot_v3f(const Array3f& lhs, const Array3f& rhs) -> float32_t {
     return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2];
 }
 
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_cross_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
+    -> void {
+    // v.x =  v1.y  *  v2.z  -  v1.z  *  v2.y
+    dst[0] = lhs[1] * rhs[2] - lhs[2] * rhs[1];
+    // v.y =  v1.z  *  v2.x  -  v1.x  *  v2.z
+    dst[1] = lhs[2] * rhs[0] - lhs[0] * rhs[2];
+    // v.z =  v1.x  *  v2.y  -  v1.y  *  v2.x
+    dst[2] = lhs[0] * rhs[1] - lhs[1] * rhs[0];
+}
+
 // ***************************************************************************//
 //   Implementations for double-precision floating point numbers (float64_t)  //
 // ***************************************************************************//
@@ -79,6 +90,17 @@ auto kernel_length_square_v3d(const Array3d& vec) -> float64_t {
 
 auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs) -> float64_t {
     return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2];
+}
+
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_cross_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
+    -> void {
+    // v.x =  v1.y  *  v2.z  -  v1.z  *  v2.y
+    dst[0] = lhs[1] * rhs[2] - lhs[2] * rhs[1];
+    // v.y =  v1.z  *  v2.x  -  v1.x  *  v2.z
+    dst[1] = lhs[2] * rhs[0] - lhs[0] * rhs[2];
+    // v.z =  v1.x  *  v2.y  -  v1.y  *  v2.x
+    dst[2] = lhs[0] * rhs[1] - lhs[1] * rhs[0];
 }
 
 }  // namespace scalar

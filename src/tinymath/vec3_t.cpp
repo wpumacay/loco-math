@@ -14,7 +14,9 @@
 namespace tiny {
 namespace math {
 
-// Specializations of operators for single-precision types (float32_t)
+// ***************************************************************************//
+//     Specializations for single-precision floating numbers (float32_t)      //
+// ***************************************************************************//
 using Vec3f = Vector3<float32_t>;
 
 template <>
@@ -42,6 +44,17 @@ auto Vec3f::dot(const Vec3f& other) const -> float32_t {
 #else
     return scalar::kernel_dot_v3f(elements(), other.elements());
 #endif
+}
+
+template <>
+auto Vec3f::cross(const Vec3f& other) const -> Vec3f {
+    Vec3f result;
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    scalar::kernel_cross_v3f(result.elements(), elements(), other.elements());
+#endif
+    return result;
 }
 
 template <>
@@ -92,7 +105,9 @@ auto operator*(const Vec3f& vec, float32_t scale) -> Vec3f {
     return result;
 }
 
-// Specializations of operators for double-precision types (float64_t)
+// ***************************************************************************//
+//     Specializations for double-precision floating numbers (float64_t)      //
+// ***************************************************************************//
 using Vec3d = Vector3<float64_t>;
 
 template <>
@@ -120,6 +135,17 @@ auto Vec3d::dot(const Vec3d& other) const -> float64_t {
 #else
     return scalar::kernel_dot_v3d(elements(), other.elements());
 #endif
+}
+
+template <>
+auto Vec3d::cross(const Vec3d& other) const -> Vec3d {
+    Vec3d result;
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    scalar::kernel_cross_v3d(result.elements(), elements(), other.elements());
+#endif
+    return result;
 }
 
 template <>

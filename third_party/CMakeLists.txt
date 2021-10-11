@@ -16,7 +16,7 @@ if(TINYMATH_BUILD_PYTHON_BINDINGS)
       TARGET pybind11
       REPO https://github.com/pybind/pybind11.git
       TAG v2.7.1
-      BUILD_MODE Release
+      BUILD_MODE ${CMAKE_BUILD_TYPE}
       BUILD_ARGS
         -DPYBIND11_TEST=OFF)
   # cmake-format: on
@@ -36,7 +36,7 @@ if(TINYMATH_BUILD_TESTS)
       TARGET catch2
       REPO https://github.com/catchorg/Catch2.git
       TAG v2.13.7
-      BUILD_MODE Release
+      BUILD_MODE ${CMAKE_BUILD_TYPE}
       BUILD_ARGS
         -DCATCH_INSTALL_DOCS=OFF
         -DCATCH_INSTALL_EXTRAS=OFF

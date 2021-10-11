@@ -12,7 +12,7 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
     using T = TestType;
     using Vector3 = tiny::math::Vector3<T>;
 
-    constexpr TestType EPSILON = tiny::math::EPS<T>;
+    constexpr T EPSILON = tiny::math::EPS<T>;
 
     SECTION("Vector addition") {
         auto val_x_a = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
@@ -101,5 +101,33 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
         auto v_dot = v_a.dot(v_b);
 
         REQUIRE(std::abs(v_dot - dot) < EPSILON);
+    }
+
+    SECTION("Vector cross-product") {
+        // Checking Standard basis vectors: i, j, k
+        {
+            Vector3 v_i(1.0, 0.0, 0.0);
+            Vector3 v_j(0.0, 1.0, 0.0);
+            Vector3 v_k(0.0, 0.0, 1.0);
+
+            auto v_ij = v_i.cross(v_j);
+            auto v_jk = v_j.cross(v_k);
+            auto v_ki = v_k.cross(v_i);
+
+            // i x j = k
+            REQUIRE(std::abs(v_ij.x() - 0.0) < EPSILON);
+            REQUIRE(std::abs(v_ij.y() - 0.0) < EPSILON);
+            REQUIRE(std::abs(v_ij.z() - 1.0) < EPSILON);
+
+            // j x k = i
+            REQUIRE(std::abs(v_jk.x() - 1.0) < EPSILON);
+            REQUIRE(std::abs(v_jk.y() - 0.0) < EPSILON);
+            REQUIRE(std::abs(v_jk.z() - 0.0) < EPSILON);
+
+            // k x i = j
+            REQUIRE(std::abs(v_ki.x() - 0.0) < EPSILON);
+            REQUIRE(std::abs(v_ki.y() - 1.0) < EPSILON);
+            REQUIRE(std::abs(v_ki.z() - 0.0) < EPSILON);
+        }
     }
 }

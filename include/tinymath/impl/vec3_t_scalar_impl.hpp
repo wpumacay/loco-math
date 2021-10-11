@@ -28,6 +28,10 @@ auto kernel_length_square_v3f(const Array3f& vec) -> float32_t;
 
 auto kernel_dot_v3f(const Array3f& lhs, const Array3f& rhs) -> float32_t;
 
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_cross_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
+    -> void;
+
 // ***************************************************************************//
 //    Declarations for double-precision floating point numbers (float64_t)    //
 // ***************************************************************************//
@@ -49,6 +53,10 @@ auto kernel_scale_v3d(Array3d& dst, float64_t scale, const Array3d& vec)
 auto kernel_length_square_v3d(const Array3d& vec) -> float64_t;
 
 auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs) -> float64_t;
+
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_cross_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
+    -> void;
 
 }  // namespace scalar
 }  // namespace math

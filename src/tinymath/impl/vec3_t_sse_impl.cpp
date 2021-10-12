@@ -5,6 +5,19 @@
 
 #include <tinymath/impl/vec3_t_sse_impl.hpp>
 
+/**
+ * SSE instruction sets required for each kernel:
+ *
+ * - kernel_add_v3f                 : SSE
+ * - kernel_sub_v3f                 : SSE
+ * - kernel_scale_v3f               : SSE
+ * - kernel_length_square_v3f       : SSE4.1 (_mm_dp_ps)
+ * - kernel_length_v3f              : SSE4.1 (_mm_dp_ps)
+ * - kernel_normalize_in_place_v3f  : SSE4.1 (_mm_dp_ps)
+ * - kernel_dot_v3f                 : SSE4.1 (_mm_dp_ps)
+ * - kernel_cross_v3f               : SSE
+ */
+
 namespace tiny {
 namespace math {
 namespace sse {
@@ -54,6 +67,17 @@ auto kernel_length_v3f(const Array3f& vec) -> float32_t {
     constexpr int32_t COND_PROD_MASK = 0x71;
     auto xmm_v = _mm_loadu_ps(vec.data());
     return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm_v, xmm_v, COND_PROD_MASK)));
+}
+
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_normalize_in_place_v3f(Array3f& vec) -> void {
+    // Implementation based on this post: https://bit.ly/3FyZF0n
+    constexpr int32_t COND_PROD_MASK = 0x7f;
+    auto xmm_v = _mm_loadu_ps(vec.data());
+    auto xmm_sums = _mm_dp_ps(xmm_v, xmm_v, COND_PROD_MASK);
+    auto xmm_r_sqrt_sums = _mm_sqrt_ps(xmm_sums);
+    auto xmm_v_norm = _mm_div_ps(xmm_v, xmm_r_sqrt_sums);
+    _mm_storeu_ps(vec.data(), xmm_v_norm);
 }
 
 auto kernel_dot_v3f(const Array3f& lhs, const Array3f& rhs) -> float32_t {

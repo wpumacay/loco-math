@@ -40,7 +40,7 @@ auto Vec3f::norm() const -> float32_t {
 template <>
 auto Vec3f::normalize() -> void {
 #if defined(TINYMATH_SSE_ENABLED)
-
+    sse::kernel_normalize_in_place_v3f(elements());
 #else
     scalar::kernel_normalize_in_place_v3f(elements());
 #endif
@@ -50,7 +50,7 @@ template <>
 auto Vec3f::normalized() const -> Vec3f {
     auto result = *this;
 #if defined(TINYMATH_SSE_ENABLED)
-
+    sse::kernel_normalize_in_place_v3f(result.elements());
 #else
     scalar::kernel_normalize_in_place_v3f(result.elements());
 #endif
@@ -160,7 +160,7 @@ auto Vec3d::normalize() -> void {
 template <>
 auto Vec3d::normalized() const -> Vec3d {
     auto result = *this;
-#if defined(TINYMATH_SSE_ENABLED)
+#if defined(TINYMATH_AVX_ENABLED)
 
 #else
     scalar::kernel_normalize_in_place_v3d(result.elements());

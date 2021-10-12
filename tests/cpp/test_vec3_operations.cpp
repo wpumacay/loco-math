@@ -104,7 +104,7 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
     }
 
     SECTION("Vector cross-product") {
-        // Checking Standard basis vectors: i, j, k
+        // Checking standard basis vectors: i, j, k
         {
             Vector3 v_i(1.0, 0.0, 0.0);
             Vector3 v_j(0.0, 1.0, 0.0);
@@ -128,6 +128,18 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
             REQUIRE(std::abs(v_ki.x() - 0.0) < EPSILON);
             REQUIRE(std::abs(v_ki.y() - 1.0) < EPSILON);
             REQUIRE(std::abs(v_ki.z() - 0.0) < EPSILON);
+        }
+
+        // Checking a fixed case (a.cross(b) + c)
+        {
+            Vector3 v_a(1.0, 2.0, 3.0);  // NOLINT
+            Vector3 v_b(4.0, 5.0, 6.0);  // NOLINT
+            Vector3 v_c(7.0, 8.0, 9.0);  // NOLINT
+
+            auto result = v_a.cross(v_b) + v_c;
+            REQUIRE(std::abs(result.x() - 4.0) < EPSILON);   // NOLINT
+            REQUIRE(std::abs(result.y() - 14.0) < EPSILON);  // NOLINT
+            REQUIRE(std::abs(result.z() - 6.0) < EPSILON);   // NOLINT
         }
     }
 }

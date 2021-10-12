@@ -57,7 +57,6 @@ class Vector3 {
 
     auto dot(const Vector3<Scalar_T>& other) const -> Scalar_T;
 
-    // @todo(wilbert): implement cross product (PR: #3)
     auto cross(const Vector3<Scalar_T>& other) const -> Vector3<Scalar_T>;
 
     auto toString() const -> std::string;

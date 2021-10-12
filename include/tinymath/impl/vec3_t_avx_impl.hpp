@@ -32,6 +32,10 @@ auto kernel_length_v3d(const Array3d& vec) -> float64_t;
 
 auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs) -> float64_t;
 
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_cross_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
+    -> void;
+
 }  // namespace avx
 }  // namespace math
 }  // namespace tiny

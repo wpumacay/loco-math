@@ -141,7 +141,7 @@ template <>
 auto Vec3d::cross(const Vec3d& other) const -> Vec3d {
     Vec3d result;
 #if defined(TINYMATH_AVX_ENABLED)
-
+    avx::kernel_cross_v3d(result.elements(), elements(), other.elements());
 #else
     scalar::kernel_cross_v3d(result.elements(), elements(), other.elements());
 #endif

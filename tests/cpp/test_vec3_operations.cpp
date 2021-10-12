@@ -78,8 +78,8 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
         auto length_square = val_x * val_x + val_y * val_y + val_z * val_z;
         auto length = std::sqrt(length_square);
 
-        auto v_length_square = v.length_square();
-        auto v_length = v.length();
+        auto v_length_square = v.squaredNorm();
+        auto v_length = v.norm();
 
         REQUIRE(std::abs(v_length_square - length_square) < EPSILON);
         REQUIRE(std::abs(v_length - length) < EPSILON);

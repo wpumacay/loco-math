@@ -20,7 +20,7 @@ namespace math {
 using Vec3f = Vector3<float32_t>;
 
 template <>
-auto Vec3f::length_square() const -> float32_t {
+auto Vec3f::squaredNorm() const -> float32_t {
 #if defined(TINYMATH_SSE_ENABLED)
     return sse::kernel_length_square_v3f(elements());
 #else
@@ -29,7 +29,7 @@ auto Vec3f::length_square() const -> float32_t {
 }
 
 template <>
-auto Vec3f::length() const -> float32_t {
+auto Vec3f::norm() const -> float32_t {
 #if defined(TINYMATH_SSE_ENABLED)
     return sse::kernel_length_v3f(elements());
 #else
@@ -111,7 +111,7 @@ auto operator*(const Vec3f& vec, float32_t scale) -> Vec3f {
 using Vec3d = Vector3<float64_t>;
 
 template <>
-auto Vec3d::length_square() const -> float64_t {
+auto Vec3d::squaredNorm() const -> float64_t {
 #if defined(TINYMATH_AVX_ENABLED)
     return avx::kernel_length_square_v3d(elements());
 #else
@@ -120,7 +120,7 @@ auto Vec3d::length_square() const -> float64_t {
 }
 
 template <>
-auto Vec3d::length() const -> float64_t {
+auto Vec3d::norm() const -> float64_t {
 #if defined(TINYMATH_AVX_ENABLED)
     return avx::kernel_length_v3d(elements());
 #else

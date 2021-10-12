@@ -51,9 +51,13 @@ class Vector3 {
         return m_Elements[index];
     }
 
-    auto length_square() const -> Scalar_T;
+    auto squaredNorm() const -> Scalar_T;
 
-    auto length() const -> Scalar_T;
+    auto norm() const -> Scalar_T;
+
+    auto normalize() -> void;
+
+    auto normalized() const -> Vector3<Scalar_T>;
 
     auto dot(const Vector3<Scalar_T>& other) const -> Scalar_T;
 

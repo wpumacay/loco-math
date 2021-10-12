@@ -30,6 +30,9 @@ auto kernel_length_square_v3d(const Array3d& vec) -> float64_t;
 
 auto kernel_length_v3d(const Array3d& vec) -> float64_t;
 
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_normalize_in_place_v3d(Array3d& vec) -> void;
+
 auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs) -> float64_t;
 
 // NOLINTNEXTLINE(runtime/references)

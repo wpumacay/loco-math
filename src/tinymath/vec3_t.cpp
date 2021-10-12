@@ -151,7 +151,7 @@ auto Vec3d::norm() const -> float64_t {
 template <>
 auto Vec3d::normalize() -> void {
 #if defined(TINYMATH_AVX_ENABLED)
-
+    avx::kernel_normalize_in_place_v3d(elements());
 #else
     scalar::kernel_normalize_in_place_v3d(elements());
 #endif
@@ -161,7 +161,7 @@ template <>
 auto Vec3d::normalized() const -> Vec3d {
     auto result = *this;
 #if defined(TINYMATH_AVX_ENABLED)
-
+    avx::kernel_normalize_in_place_v3d(result.elements());
 #else
     scalar::kernel_normalize_in_place_v3d(result.elements());
 #endif

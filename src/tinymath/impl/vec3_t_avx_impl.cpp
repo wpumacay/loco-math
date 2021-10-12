@@ -4,6 +4,19 @@
 
 #include <tinymath/impl/vec3_t_avx_impl.hpp>
 
+/**
+ * AVX instruction sets required for each kernel:
+ *
+ * - kernel_add_v3d                 : AVX
+ * - kernel_sub_v3d                 : AVX
+ * - kernel_scale_v3d               : AVX
+ * - kernel_length_square_v3d       : AVX + SSE2
+ * - kernel_length_v3d              : AVX + SSE2
+ * - kernel_normalize_in_place_v3d  : AVX
+ * - kernel_dot_v3d                 : AVX + SSE2
+ * - kernel_cross_v3d               : AVX
+ */
+
 namespace tiny {
 namespace math {
 namespace avx {
@@ -69,6 +82,21 @@ auto kernel_length_v3d(const Array3d& vec) -> float64_t {
     auto xmm_hi_sum = _mm256_extractf128_pd(ymm_hsum, 1);
     auto xmm_result = _mm_sqrt_pd(_mm_add_pd(xmm_lo_sum, xmm_hi_sum));
     return _mm_cvtsd_f64(xmm_result);
+}
+
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_normalize_in_place_v3d(Array3d& vec) -> void {
+    auto ymm_v = _mm256_loadu_pd(vec.data());
+    auto ymm_prod = _mm256_mul_pd(ymm_v, ymm_v);
+    // Construct the sum of squares into each double of a 256-bit register
+    auto tmp_0 = _mm256_permute2f128_pd(ymm_prod, ymm_prod, 0x21);
+    auto tmp_1 = _mm256_hadd_pd(ymm_prod, tmp_0);
+    auto tmp_2 = _mm256_hadd_pd(tmp_1, tmp_1);  // here we have the {norm^2}
+    // Construct a register with the norm in each entry (rsqrt quite imprecise)
+    auto tmp_3 = _mm256_sqrt_pd(tmp_2);
+    // Normalize the vector and store the result back
+    auto ymm_normalized = _mm256_div_pd(ymm_v, tmp_3);
+    _mm256_storeu_pd(vec.data(), ymm_normalized);
 }
 
 auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs) -> float64_t {

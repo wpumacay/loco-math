@@ -38,6 +38,26 @@ auto Vec3f::norm() const -> float32_t {
 }
 
 template <>
+auto Vec3f::normalize() -> void {
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    scalar::kernel_normalize_in_place_v3f(elements());
+#endif
+}
+
+template <>
+auto Vec3f::normalized() const -> Vec3f {
+    auto result = *this;
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    scalar::kernel_normalize_in_place_v3f(result.elements());
+#endif
+    return result;
+}
+
+template <>
 auto Vec3f::dot(const Vec3f& other) const -> float32_t {
 #if defined(TINYMATH_SSE_ENABLED)
     return sse::kernel_dot_v3f(elements(), other.elements());
@@ -126,6 +146,26 @@ auto Vec3d::norm() const -> float64_t {
 #else
     return std::sqrt(scalar::kernel_length_square_v3d(elements()));
 #endif
+}
+
+template <>
+auto Vec3d::normalize() -> void {
+#if defined(TINYMATH_AVX_ENABLED)
+
+#else
+    scalar::kernel_normalize_in_place_v3d(elements());
+#endif
+}
+
+template <>
+auto Vec3d::normalized() const -> Vec3d {
+    auto result = *this;
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    scalar::kernel_normalize_in_place_v3d(result.elements());
+#endif
+    return result;
 }
 
 template <>

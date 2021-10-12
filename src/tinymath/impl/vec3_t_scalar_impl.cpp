@@ -39,6 +39,14 @@ auto kernel_length_square_v3f(const Array3f& vec) -> float32_t {
     return vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2];
 }
 
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_normalize_in_place_v3f(Array3f& vec) -> void {
+    auto norm = std::sqrt(kernel_length_square_v3f(vec));
+    vec[0] = vec[0] / norm;
+    vec[1] = vec[1] / norm;
+    vec[2] = vec[2] / norm;
+}
+
 auto kernel_dot_v3f(const Array3f& lhs, const Array3f& rhs) -> float32_t {
     return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2];
 }
@@ -86,6 +94,14 @@ auto kernel_scale_v3d(Array3d& dst, float64_t scale, const Array3d& vec)
 
 auto kernel_length_square_v3d(const Array3d& vec) -> float64_t {
     return vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2];
+}
+
+// NOLINTNEXTLINE(runtime/references)
+auto kernel_normalize_in_place_v3d(Array3d& vec) -> void {
+    auto norm = std::sqrt(kernel_length_square_v3d(vec));
+    vec[0] = vec[0] / norm;
+    vec[1] = vec[1] / norm;
+    vec[2] = vec[2] / norm;
 }
 
 auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs) -> float64_t {

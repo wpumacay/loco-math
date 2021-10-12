@@ -85,6 +85,46 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
         REQUIRE(std::abs(v_length - length) < EPSILON);
     }
 
+    SECTION("Vector normalization (in place)") {
+        auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
+        auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
+        auto val_z = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);  // NOLINT
+        Vector3 v(val_x, val_y, val_z);
+        v.normalize();
+
+        auto norm = std::sqrt(val_x * val_x + val_y * val_y + val_z * val_z);
+        auto val_xnorm = val_x / norm;
+        auto val_ynorm = val_y / norm;
+        auto val_znorm = val_z / norm;
+
+        auto v_norm = v.norm();
+
+        REQUIRE(std::abs(v_norm - 1.0) < EPSILON);
+        REQUIRE(std::abs(v.x() - val_xnorm) < EPSILON);
+        REQUIRE(std::abs(v.y() - val_ynorm) < EPSILON);
+        REQUIRE(std::abs(v.z() - val_znorm) < EPSILON);
+    }
+
+    SECTION("Vector normalization (out-of place)") {
+        auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
+        auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
+        auto val_z = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);  // NOLINT
+        Vector3 v(val_x, val_y, val_z);
+        auto vn = v.normalized();
+
+        auto norm = std::sqrt(val_x * val_x + val_y * val_y + val_z * val_z);
+        auto val_xnorm = val_x / norm;
+        auto val_ynorm = val_y / norm;
+        auto val_znorm = val_z / norm;
+
+        auto vn_norm = vn.norm();
+
+        REQUIRE(std::abs(vn_norm - 1.0) < EPSILON);
+        REQUIRE(std::abs(vn.x() - val_xnorm) < EPSILON);
+        REQUIRE(std::abs(vn.y() - val_ynorm) < EPSILON);
+        REQUIRE(std::abs(vn.z() - val_znorm) < EPSILON);
+    }
+
     SECTION("Vector dot-product") {
         auto val_x_a = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
         auto val_y_a = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT

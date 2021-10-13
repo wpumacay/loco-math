@@ -84,7 +84,7 @@ using Vec4d = Vector4<float64_t>;
 template <>
 auto Vec4d::dot(const Vec4d& other) const -> float64_t {
 #if defined(TINYMATH_AVX_ENABLED)
-
+    return avx::kernel_dot_v4d(elements(), other.elements());
 #else
     return scalar::kernel_dot_v4d(elements(), other.elements());
 #endif

@@ -141,6 +141,7 @@ function(tmPrintSummary)
   message("****************************************************")
   message("Build options summary for project ${PROJECT_NAME}")
   # General settings from cmake
+  message("PROJECT_VERSION                : ${PROJECT_VERSION}")
   message("CMAKE_GENERATOR                : ${CMAKE_GENERATOR}")
   message("CMAKE_MODULE_PATH              : ${CMAKE_MODULE_PATH}")
   message("CMAKE_EXPORT_COMPILE_COMMANDS  : ${CMAKE_EXPORT_COMPILE_COMMANDS}")

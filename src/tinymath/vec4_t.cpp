@@ -22,7 +22,7 @@ using Vec4f = Vector4<float32_t>;
 template <>
 auto Vec4f::dot(const Vec4f& other) const -> float32_t {
 #if defined(TINYMATH_SSE_ENABLED)
-
+    return sse::kernel_dot_v4f(elements(), other.elements());
 #else
     return scalar::kernel_dot_v4f(elements(), other.elements());
 #endif

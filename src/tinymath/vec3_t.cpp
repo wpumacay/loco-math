@@ -125,6 +125,18 @@ auto operator*(const Vec3f& vec, float32_t scale) -> Vec3f {
     return result;
 }
 
+template <>
+auto operator*(const Vec3f& lhs, const Vec3f& rhs) -> Vec3f {
+    Vec3f result;
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    scalar::kernel_hadamard_v3f(result.elements(), lhs.elements(),
+                                rhs.elements());
+#endif
+    return result;
+}
+
 // ***************************************************************************//
 //     Specializations for double-precision floating numbers (float64_t)      //
 // ***************************************************************************//
@@ -232,6 +244,18 @@ auto operator*(const Vec3d& vec, float64_t scale) -> Vec3d {
     avx::kernel_scale_v3d(result.elements(), scale, vec.elements());
 #else
     scalar::kernel_scale_v3d(result.elements(), scale, vec.elements());
+#endif
+    return result;
+}
+
+template <>
+auto operator*(const Vec3d& lhs, const Vec3d& rhs) -> Vec3d {
+    Vec3d result;
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    scalar::kernel_hadamard_v3d(result.elements(), lhs.elements(),
+                                rhs.elements());
 #endif
     return result;
 }

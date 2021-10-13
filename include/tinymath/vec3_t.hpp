@@ -91,9 +91,8 @@ template <typename Scalar_T>
 auto operator*(const Vector3<Scalar_T>& vec, Scalar_T scale)
     -> Vector3<Scalar_T>;
 
-// @todo(wilbert): implement Hadamard-Schur product (PR: #3)
 template <typename Scalar_T>
-auto operator*(const Vector3<Scalar_T>& v1, const Vector3<Scalar_T>& v2)
+auto operator*(const Vector3<Scalar_T>& lhs, const Vector3<Scalar_T>& rhs)
     -> Vector3<Scalar_T>;
 
 template <typename Scalar_T>

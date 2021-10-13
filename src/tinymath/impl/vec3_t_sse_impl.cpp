@@ -28,7 +28,6 @@ namespace sse {
 using Vec3f = Vector3<float32_t>;
 using Array3f = Vec3f::BufferType;
 
-// NOLINTNEXTLINE(runtime/references)
 auto kernel_add_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
     -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
@@ -37,7 +36,6 @@ auto kernel_add_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
     _mm_storeu_ps(dst.data(), xmm_result);
 }
 
-// NOLINTNEXTLINE(runtime/references)
 auto kernel_sub_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
     -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
@@ -46,13 +44,19 @@ auto kernel_sub_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
     _mm_storeu_ps(dst.data(), xmm_result);
 }
 
-// NOLINTNEXTLINE(runtime/references)
 auto kernel_scale_v3f(Array3f& dst, float32_t scale, const Array3f& vec)
     -> void {
     auto xmm_scale = _mm_set1_ps(scale);
     auto xmm_vector = _mm_loadu_ps(vec.data());
     auto xmm_result = _mm_mul_ps(xmm_scale, xmm_vector);
     _mm_storeu_ps(dst.data(), xmm_result);
+}
+
+auto kernel_hadamard_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
+    -> void {
+    auto xmm_lhs = _mm_loadu_ps(lhs.data());
+    auto xmm_rhs = _mm_loadu_ps(rhs.data());
+    _mm_storeu_ps(dst.data(), _mm_mul_ps(xmm_lhs, xmm_rhs));
 }
 
 auto kernel_length_square_v3f(const Array3f& vec) -> float32_t {
@@ -69,7 +73,6 @@ auto kernel_length_v3f(const Array3f& vec) -> float32_t {
     return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm_v, xmm_v, COND_PROD_MASK)));
 }
 
-// NOLINTNEXTLINE(runtime/references)
 auto kernel_normalize_in_place_v3f(Array3f& vec) -> void {
     // Implementation based on this post: https://bit.ly/3FyZF0n
     constexpr int32_t COND_PROD_MASK = 0x7f;
@@ -88,7 +91,6 @@ auto kernel_dot_v3f(const Array3f& lhs, const Array3f& rhs) -> float32_t {
     return _mm_cvtss_f32(xmm_cond_prod);
 };
 
-// NOLINTNEXTLINE(runtime/references)
 auto kernel_cross_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
     -> void {
     // Implementation adapted from @ian_mallett (https://bit.ly/3lu6pVe)

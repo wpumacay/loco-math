@@ -6,6 +6,18 @@
  * @todo(wilbert): replace GENERATE of fixed values with random values + seed
  */
 
+template <typename T>
+constexpr auto FuncClose(T a, T b, T eps) -> bool {
+    return ((a - b) < eps) && ((a - b) > -eps);
+}
+
+template <typename T>
+constexpr auto FuncCompareEqual(T xa, T ya, T za, T xb, T yb, T zb, T eps)
+    -> bool {
+    return FuncClose<T>(xa, xb, eps) && FuncClose<T>(ya, yb, eps) &&
+           FuncClose<T>(za, zb, eps);
+}
+
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
                    tiny::math::float32_t, tiny::math::float64_t) {
@@ -13,6 +25,37 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
     using Vector3 = tiny::math::Vector3<T>;
 
     constexpr T EPSILON = tiny::math::EPS<T>;
+
+    SECTION("Vector comparison ==, !=") {
+        Vector3 v_1(1.0, 2.0, 3.0);  // NOLINT
+        Vector3 v_2(1.0, 2.0, 3.0);  // NOLINT
+        Vector3 v_3(1.1, 2.1, 3.1);  // NOLINT
+
+        REQUIRE(v_1 == v_2);
+        REQUIRE(v_2 != v_3);
+        REQUIRE(v_3 != v_1);
+
+        auto val_x_a = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
+        auto val_y_a = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
+        auto val_z_a = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);  // NOLINT
+
+        auto val_x_b = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
+        auto val_y_b = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
+        auto val_z_b = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);  // NOLINT
+
+        Vector3 v_a(val_x_a, val_y_a, val_z_a);
+        Vector3 v_b(val_x_b, val_y_b, val_z_b);
+
+        auto equal_a_b_lib = (v_a == v_b);
+        auto equal_a_b_man = FuncCompareEqual<T>(
+            val_x_a, val_y_a, val_z_a, val_x_b, val_y_b, val_z_b, EPSILON);
+
+        auto diff_a_b_lib = (v_a != v_b);
+        auto diff_a_b_man = !equal_a_b_man;
+
+        REQUIRE(equal_a_b_lib == equal_a_b_man);
+        REQUIRE(diff_a_b_lib == diff_a_b_man);
+    }
 
     SECTION("Vector addition") {
         auto val_x_a = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT

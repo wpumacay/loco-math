@@ -33,6 +33,8 @@ auto kernel_dot_v3f(const Array3f& lhs, const Array3f& rhs) -> float32_t;
 auto kernel_cross_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
     -> void;
 
+auto kernel_compare_eq_v3f(const Array3f& lhs, const Array3f& rhs) -> bool;
+
 // ***************************************************************************//
 //    Declarations for double-precision floating point numbers (float64_t)    //
 // ***************************************************************************//
@@ -59,6 +61,8 @@ auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs) -> float64_t;
 
 auto kernel_cross_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
     -> void;
+
+auto kernel_compare_eq_v3d(const Array3d& lhs, const Array3d& rhs) -> bool;
 
 }  // namespace scalar
 }  // namespace math

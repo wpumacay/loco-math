@@ -137,6 +137,16 @@ auto operator*(const Vec3f& lhs, const Vec3f& rhs) -> Vec3f {
     return result;
 }
 
+template <>
+auto operator==(const Vec3f& lhs, const Vec3f& rhs) -> bool {
+    return scalar::kernel_compare_eq_v3f(lhs.elements(), rhs.elements());
+}
+
+template <>
+auto operator!=(const Vec3f& lhs, const Vec3f& rhs) -> bool {
+    return !scalar::kernel_compare_eq_v3f(lhs.elements(), rhs.elements());
+}
+
 // ***************************************************************************//
 //     Specializations for double-precision floating numbers (float64_t)      //
 // ***************************************************************************//
@@ -258,6 +268,16 @@ auto operator*(const Vec3d& lhs, const Vec3d& rhs) -> Vec3d {
                                 rhs.elements());
 #endif
     return result;
+}
+
+template <>
+auto operator==(const Vec3d& lhs, const Vec3d& rhs) -> bool {
+    return scalar::kernel_compare_eq_v3d(lhs.elements(), rhs.elements());
+}
+
+template <>
+auto operator!=(const Vec3d& lhs, const Vec3d& rhs) -> bool {
+    return !scalar::kernel_compare_eq_v3d(lhs.elements(), rhs.elements());
 }
 
 }  // namespace math

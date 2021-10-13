@@ -64,6 +64,14 @@ auto kernel_cross_v3f(Array3f& dst, const Array3f& lhs, const Array3f& rhs)
     dst[2] = lhs[0] * rhs[1] - lhs[1] * rhs[0];
 }
 
+auto kernel_compare_eq_v3f(const Array3f& lhs, const Array3f& rhs) -> bool {
+    // Check all-close within an epsilon (EPS)
+    constexpr auto EPSILON = tiny::math::EPS<float32_t>;
+    return (std::abs(lhs[0] - rhs[0]) < EPSILON) &&
+           (std::abs(lhs[1] - rhs[1]) < EPSILON) &&
+           (std::abs(lhs[2] - rhs[2]) < EPSILON);
+}
+
 // ***************************************************************************//
 //   Implementations for double-precision floating point numbers (float64_t)  //
 // ***************************************************************************//
@@ -121,6 +129,14 @@ auto kernel_cross_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
     dst[1] = lhs[2] * rhs[0] - lhs[0] * rhs[2];
     // v.z =  v1.x  *  v2.y  -  v1.y  *  v2.x
     dst[2] = lhs[0] * rhs[1] - lhs[1] * rhs[0];
+}
+
+auto kernel_compare_eq_v3d(const Array3d& lhs, const Array3d& rhs) -> bool {
+    // Check all-close within an epsilon (EPS)
+    constexpr auto EPSILON = tiny::math::EPS<float64_t>;
+    return (std::abs(lhs[0] - rhs[0]) < EPSILON) &&
+           (std::abs(lhs[1] - rhs[1]) < EPSILON) &&
+           (std::abs(lhs[2] - rhs[2]) < EPSILON);
 }
 
 }  // namespace scalar

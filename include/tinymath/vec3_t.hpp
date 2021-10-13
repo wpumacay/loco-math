@@ -96,6 +96,14 @@ auto operator*(const Vector3<Scalar_T>& lhs, const Vector3<Scalar_T>& rhs)
     -> Vector3<Scalar_T>;
 
 template <typename Scalar_T>
+auto operator==(const Vector3<Scalar_T>& lhs, const Vector3<Scalar_T>& rhs)
+    -> bool;
+
+template <typename Scalar_T>
+auto operator!=(const Vector3<Scalar_T>& lhs, const Vector3<Scalar_T>& rhs)
+    -> bool;
+
+template <typename Scalar_T>
 auto operator<<(std::ostream& output_stream, const Vector3<Scalar_T>& src)
     -> std::ostream& {
     output_stream << "(" << src.x() << ", " << src.y() << ", " << src.z()

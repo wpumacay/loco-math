@@ -11,6 +11,7 @@
  * - kernel_add_v3f                 : SSE
  * - kernel_sub_v3f                 : SSE
  * - kernel_scale_v3f               : SSE
+ * - kernel_hadamard_v3f            : SSE
  * - kernel_length_square_v3f       : SSE4.1 (_mm_dp_ps)
  * - kernel_length_v3f              : SSE4.1 (_mm_dp_ps)
  * - kernel_normalize_in_place_v3f  : SSE4.1 (_mm_dp_ps)

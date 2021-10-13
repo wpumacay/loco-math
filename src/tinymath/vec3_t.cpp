@@ -252,7 +252,7 @@ template <>
 auto operator*(const Vec3d& lhs, const Vec3d& rhs) -> Vec3d {
     Vec3d result;
 #if defined(TINYMATH_AVX_ENABLED)
-
+    avx::kernel_hadamard_v3d(result.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_hadamard_v3d(result.elements(), lhs.elements(),
                                 rhs.elements());

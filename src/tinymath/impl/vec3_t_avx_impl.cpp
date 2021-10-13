@@ -10,6 +10,7 @@
  * - kernel_add_v3d                 : AVX
  * - kernel_sub_v3d                 : AVX
  * - kernel_scale_v3d               : AVX
+ * - kernel_hadamard_v3d            : AVX
  * - kernel_length_square_v3d       : AVX + SSE2
  * - kernel_length_v3d              : AVX + SSE2
  * - kernel_normalize_in_place_v3d  : AVX
@@ -27,7 +28,6 @@ namespace avx {
 using Vec3d = Vector3<float64_t>;
 using Array3d = Vec3d::BufferType;
 
-// NOLINTNEXTLINE(runtime/references)
 auto kernel_add_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
     -> void {
     auto ymm_lhs = _mm256_loadu_pd(lhs.data());
@@ -36,7 +36,6 @@ auto kernel_add_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
     _mm256_storeu_pd(dst.data(), ymm_result);
 }
 
-// NOLINTNEXTLINE(runtime/references)
 auto kernel_sub_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
     -> void {
     auto ymm_lhs = _mm256_loadu_pd(lhs.data());
@@ -45,13 +44,19 @@ auto kernel_sub_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
     _mm256_storeu_pd(dst.data(), ymm_result);
 }
 
-// NOLINTNEXTLINE(runtime/references)
 auto kernel_scale_v3d(Array3d& dst, float64_t scale, const Array3d& vec)
     -> void {
     auto ymm_scale = _mm256_set1_pd(scale);
     auto ymm_vector = _mm256_loadu_pd(vec.data());
     auto ymm_result = _mm256_mul_pd(ymm_scale, ymm_vector);
     _mm256_storeu_pd(dst.data(), ymm_result);
+}
+
+auto kernel_hadamard_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
+    -> void {
+    auto ymm_lhs = _mm256_loadu_pd(lhs.data());
+    auto ymm_rhs = _mm256_loadu_pd(rhs.data());
+    _mm256_storeu_pd(dst.data(), _mm256_mul_pd(ymm_lhs, ymm_rhs));
 }
 
 auto kernel_length_square_v3d(const Array3d& vec) -> float64_t {
@@ -84,7 +89,6 @@ auto kernel_length_v3d(const Array3d& vec) -> float64_t {
     return _mm_cvtsd_f64(xmm_result);
 }
 
-// NOLINTNEXTLINE(runtime/references)
 auto kernel_normalize_in_place_v3d(Array3d& vec) -> void {
     auto ymm_v = _mm256_loadu_pd(vec.data());
     auto ymm_prod = _mm256_mul_pd(ymm_v, ymm_v);
@@ -110,7 +114,6 @@ auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs) -> float64_t {
     return _mm_cvtsd_f64(xmm_result);
 }
 
-// NOLINTNEXTLINE(runtime/references)
 auto kernel_cross_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
     -> void {
     // Implementation adapted from @ian_mallett (https://bit.ly/3lu6pVe)

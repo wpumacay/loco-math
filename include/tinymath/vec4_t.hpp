@@ -18,6 +18,7 @@ class Vector4 {
     constexpr static uint32_t BUFFER_SIZE = 4;
     constexpr static uint32_t VECTOR_NDIM = 4;
 
+    using Type = Vector4<Scalar_T>;
     using ElementType = Scalar_T;
     using BufferType = std::array<Scalar_T, BUFFER_SIZE>;
 
@@ -59,6 +60,8 @@ class Vector4 {
         return m_Elements[index];
     }
 
+    auto dot(const Vector4<Scalar_T>& other) const -> Scalar_T;
+
     auto toString() const -> std::string;
 
     constexpr auto ndim() const -> uint32_t { return VECTOR_NDIM; }
@@ -66,8 +69,8 @@ class Vector4 {
     constexpr auto buffer_size() const -> uint32_t { return BUFFER_SIZE; }
 
  private:
-    // @todo(wilbert): add union trick to handle xmm and ymm registers on
-    // SIMD
+    // @todo(wilbert): add union trick to handle xmm and ymm registers on SIMD
+    // @todo(wilbert): use alignas(sizeof(T)*BUFFER_SIZE) to fix issue #5
 
     BufferType m_Elements = {0, 0, 0, 0};
 };
@@ -88,10 +91,17 @@ template <typename Scalar_T>
 auto operator*(const Vector4<Scalar_T>& vec, Scalar_T scale)
     -> Vector4<Scalar_T>;
 
-// @todo(wilbert): implement Hadamard-Schur product (PR: #3)
 template <typename Scalar_T>
-auto operator*(const Vector4<Scalar_T>& v1, const Vector4<Scalar_T>& v2)
+auto operator*(const Vector4<Scalar_T>& lhs, const Vector4<Scalar_T>& rhs)
     -> Vector4<Scalar_T>;
+
+template <typename Scalar_T>
+auto operator==(const Vector4<Scalar_T>& lhs, const Vector4<Scalar_T>& rhs)
+    -> bool;
+
+template <typename Scalar_T>
+auto operator!=(const Vector4<Scalar_T>& lhs, const Vector4<Scalar_T>& rhs)
+    -> bool;
 
 template <typename Scalar_T>
 auto operator<<(std::ostream& output_stream, const Vector4<Scalar_T>& src)

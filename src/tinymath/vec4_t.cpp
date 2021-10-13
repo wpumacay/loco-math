@@ -14,8 +14,19 @@
 namespace tiny {
 namespace math {
 
-// Specializations of operators for single-precision types (float32_t)
+// ***************************************************************************//
+//     Specializations for single-precision floating numbers (float32_t)      //
+// ***************************************************************************//
 using Vec4f = Vector4<float32_t>;
+
+template <>
+auto Vec4f::dot(const Vec4f& other) const -> float32_t {
+#if defined(TINYMATH_SSE_ENABLED)
+
+#else
+    return scalar::kernel_dot_v4f(elements(), other.elements());
+#endif
+}
 
 template <>
 auto operator+(const Vec4f& lhs, const Vec4f& rhs) -> Vec4f {
@@ -65,8 +76,19 @@ auto operator*(const Vec4f& vec, float32_t scale) -> Vec4f {
     return result;
 }
 
-// Specializations of operators for double-precision types (float64_t)
+// ***************************************************************************//
+//     Specializations for double-precision floating numbers (float64_t)      //
+// ***************************************************************************//
 using Vec4d = Vector4<float64_t>;
+
+template <>
+auto Vec4d::dot(const Vec4d& other) const -> float64_t {
+#if defined(TINYMATH_AVX_ENABLED)
+
+#else
+    return scalar::kernel_dot_v4d(elements(), other.elements());
+#endif
+}
 
 template <>
 auto operator+(const Vec4d& lhs, const Vec4d& rhs) -> Vec4d {

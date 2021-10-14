@@ -71,7 +71,7 @@ with open("requirements.txt", "r") as fh:
 
 setup(
     name="wp-tinymath",
-    version="0.1.0",
+    version="0.2.0",
     description="A basic math library for vectors and matrices",
     long_description=longDescription,
     long_description_content_type="text/markdown",

@@ -1,8 +1,19 @@
 #if defined(TINYMATH_SSE_ENABLED)
 
+#include <smmintrin.h>
 #include <xmmintrin.h>
 
 #include <tinymath/impl/vec4_t_sse_impl.hpp>
+
+/**
+ * SSE instruction sets required for each kernel:
+ *
+ * - kernel_add_v4f                 : SSE
+ * - kernel_sub_v4f                 : SSE
+ * - kernel_scale_v4f               : SSE
+ * - kernel_hadamard_v4f            : SSE
+ * - kernel_dot_v4f                 : SSE4.1 (_mm_dp_ps)
+ */
 
 namespace tiny {
 namespace math {
@@ -40,6 +51,21 @@ auto kernel_scale_v4f(Array4f& dst, float32_t scale, const Array4f& vec)
     auto xmm_vector = _mm_loadu_ps(vec.data());
     auto xmm_result = _mm_mul_ps(xmm_scale, xmm_vector);
     _mm_storeu_ps(dst.data(), xmm_result);
+}
+
+auto kernel_hadamard_v4f(Array4f& dst, const Array4f& lhs, const Array4f& rhs)
+    -> void {
+    auto xmm_lhs = _mm_loadu_ps(lhs.data());
+    auto xmm_rhs = _mm_loadu_ps(rhs.data());
+    _mm_storeu_ps(dst.data(), _mm_mul_ps(xmm_lhs, xmm_rhs));
+}
+
+auto kernel_dot_v4f(const Array4f& lhs, const Array4f& rhs) -> float32_t {
+    constexpr int32_t COND_PROD_MASK = 0xf1;
+    auto xmm_lhs = _mm_loadu_ps(lhs.data());
+    auto xmm_rhs = _mm_loadu_ps(rhs.data());
+    auto xmm_cond_prod = _mm_dp_ps(xmm_lhs, xmm_rhs, COND_PROD_MASK);
+    return _mm_cvtss_f32(xmm_cond_prod);
 }
 
 }  // namespace sse

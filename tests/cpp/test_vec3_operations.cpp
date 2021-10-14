@@ -4,6 +4,7 @@
 
 /*
  * @todo(wilbert): replace GENERATE of fixed values with random values + seed
+ * @todo(wilbert): add IF-THEN sections to use == and != operators instead
  */
 
 template <typename T>

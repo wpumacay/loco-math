@@ -18,6 +18,7 @@ class Vector3 {
     constexpr static uint32_t BUFFER_SIZE = 4;
     constexpr static uint32_t VECTOR_NDIM = 3;
 
+    using Type = Vector3<Scalar_T>;
     using ElementType = Scalar_T;
     using BufferType = std::array<Scalar_T, BUFFER_SIZE>;
 
@@ -28,6 +29,8 @@ class Vector3 {
     explicit Vector3(Scalar_T x, Scalar_T y);
 
     explicit Vector3(Scalar_T x, Scalar_T y, Scalar_T z);
+
+    // @todo(wilbert): RAII breaks (rule of 5). Add remaining initializers
 
     auto x() -> Scalar_T& { return m_Elements[0]; }
 
@@ -71,6 +74,7 @@ class Vector3 {
 
  private:
     // @todo(wilbert): add union trick to handle xmm and ymm registers on SIMD
+    // @todo(wilbert): use alignas(sizeof(T)*BUFFER_SIZE) to fix issue #5
 
     BufferType m_Elements = {0, 0, 0, 0};
 };

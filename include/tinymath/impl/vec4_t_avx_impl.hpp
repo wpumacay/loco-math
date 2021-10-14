@@ -23,6 +23,9 @@ auto kernel_sub_v4d(Array4d& dst, const Array4d& lhs, const Array4d& rhs)
 auto kernel_scale_v4d(Array4d& dst, float64_t scale, const Array4d& vec)
     -> void;
 
+auto kernel_hadamard_v4d(Array4d& dst, const Array4d& lhs, const Array4d& rhs)
+    -> void;
+
 auto kernel_dot_v4d(const Array4d& lhs, const Array4d& rhs) -> float64_t;
 
 }  // namespace avx

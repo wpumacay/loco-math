@@ -49,6 +49,13 @@ auto kernel_scale_v4d(Array4d& dst, float64_t scale, const Array4d& vec)
     _mm256_storeu_pd(dst.data(), ymm_result);
 }
 
+auto kernel_hadamard_v4d(Array4d& dst, const Array4d& lhs, const Array4d& rhs)
+    -> void {
+    auto ymm_lhs = _mm256_loadu_pd(lhs.data());
+    auto ymm_rhs = _mm256_loadu_pd(rhs.data());
+    _mm256_storeu_pd(dst.data(), _mm256_mul_pd(ymm_lhs, ymm_rhs));
+}
+
 auto kernel_dot_v4d(const Array4d& lhs, const Array4d& rhs) -> float64_t {
     auto ymm_lhs = _mm256_loadu_pd(lhs.data());
     auto ymm_rhs = _mm256_loadu_pd(rhs.data());

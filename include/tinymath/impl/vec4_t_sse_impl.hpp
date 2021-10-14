@@ -23,6 +23,9 @@ auto kernel_sub_v4f(Array4f& dst, const Array4f& lhs, const Array4f& rhs)
 auto kernel_scale_v4f(Array4f& dst, float32_t scale, const Array4f& vec)
     -> void;
 
+auto kernel_hadamard_v4f(Array4f& dst, const Array4f& lhs, const Array4f& rhs)
+    -> void;
+
 auto kernel_dot_v4f(const Array4f& lhs, const Array4f& rhs) -> float32_t;
 
 }  // namespace sse

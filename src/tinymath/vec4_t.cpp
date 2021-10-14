@@ -76,6 +76,28 @@ auto operator*(const Vec4f& vec, float32_t scale) -> Vec4f {
     return result;
 }
 
+template <>
+auto operator*(const Vec4f& lhs, const Vec4f& rhs) -> Vec4f {
+    Vec4f result;
+#if defined(TINYMATH_SSE_ENABLED)
+    sse::kernel_hadamard_v4f(result.elements(), lhs.elements(), rhs.elements());
+#else
+    scalar::kernel_hadamard_v4f(result.elements(), lhs.elements(),
+                                rhs.elements());
+#endif
+    return result;
+};
+
+template <>
+auto operator==(const Vec4f& lhs, const Vec4f& rhs) -> bool {
+    return scalar::kernel_compare_eq_v4f(lhs.elements(), rhs.elements());
+}
+
+template <>
+auto operator!=(const Vec4f& lhs, const Vec4f& rhs) -> bool {
+    return !scalar::kernel_compare_eq_v4f(lhs.elements(), rhs.elements());
+}
+
 // ***************************************************************************//
 //     Specializations for double-precision floating numbers (float64_t)      //
 // ***************************************************************************//
@@ -136,6 +158,28 @@ auto operator*(const Vec4d& vec, float64_t scale) -> Vec4d {
     scalar::kernel_scale_v4d(result.elements(), scale, vec.elements());
 #endif
     return result;
+}
+
+template <>
+auto operator*(const Vec4d& lhs, const Vec4d& rhs) -> Vec4d {
+    Vec4d result;
+#if defined(TINYMATH_AVX_ENABLED)
+    avx::kernel_hadamard_v4d(result.elements(), lhs.elements(), rhs.elements());
+#else
+    scalar::kernel_hadamard_v4d(result.elements(), lhs.elements(),
+                                rhs.elements());
+#endif
+    return result;
+}
+
+template <>
+auto operator==(const Vec4d& lhs, const Vec4d& rhs) -> bool {
+    return scalar::kernel_compare_eq_v4d(lhs.elements(), rhs.elements());
+}
+
+template <>
+auto operator!=(const Vec4d& lhs, const Vec4d& rhs) -> bool {
+    return !scalar::kernel_compare_eq_v4d(lhs.elements(), rhs.elements());
 }
 
 }  // namespace math

@@ -53,6 +53,13 @@ auto kernel_scale_v4f(Array4f& dst, float32_t scale, const Array4f& vec)
     _mm_storeu_ps(dst.data(), xmm_result);
 }
 
+auto kernel_hadamard_v4f(Array4f& dst, const Array4f& lhs, const Array4f& rhs)
+    -> void {
+    auto xmm_lhs = _mm_loadu_ps(lhs.data());
+    auto xmm_rhs = _mm_loadu_ps(rhs.data());
+    _mm_storeu_ps(dst.data(), _mm_mul_ps(xmm_lhs, xmm_rhs));
+}
+
 auto kernel_dot_v4f(const Array4f& lhs, const Array4f& rhs) -> float32_t {
     constexpr int32_t COND_PROD_MASK = 0xf1;
     auto xmm_lhs = _mm_loadu_ps(lhs.data());

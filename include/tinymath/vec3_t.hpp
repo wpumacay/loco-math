@@ -76,7 +76,8 @@ class Vector3 {
     // @todo(wilbert): add union trick to handle xmm and ymm registers on SIMD
     // @todo(wilbert): use alignas(sizeof(T)*BUFFER_SIZE) to fix issue #5
 
-    BufferType m_Elements = {0, 0, 0, 0};
+    alignas(sizeof(Scalar_T) * BUFFER_SIZE) BufferType m_Elements = {0, 0, 0,
+                                                                     0};
 };
 
 template <typename Scalar_T>

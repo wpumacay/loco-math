@@ -30,42 +30,42 @@ using Array3d = Vec3d::BufferType;
 
 auto kernel_add_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
     -> void {
-    auto ymm_lhs = _mm256_loadu_pd(lhs.data());
-    auto ymm_rhs = _mm256_loadu_pd(rhs.data());
+    auto ymm_lhs = _mm256_load_pd(lhs.data());
+    auto ymm_rhs = _mm256_load_pd(rhs.data());
     auto ymm_result = _mm256_add_pd(ymm_lhs, ymm_rhs);
-    _mm256_storeu_pd(dst.data(), ymm_result);
+    _mm256_store_pd(dst.data(), ymm_result);
 }
 
 auto kernel_sub_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
     -> void {
-    auto ymm_lhs = _mm256_loadu_pd(lhs.data());
-    auto ymm_rhs = _mm256_loadu_pd(rhs.data());
+    auto ymm_lhs = _mm256_load_pd(lhs.data());
+    auto ymm_rhs = _mm256_load_pd(rhs.data());
     auto ymm_result = _mm256_sub_pd(ymm_lhs, ymm_rhs);
-    _mm256_storeu_pd(dst.data(), ymm_result);
+    _mm256_store_pd(dst.data(), ymm_result);
 }
 
 auto kernel_scale_v3d(Array3d& dst, float64_t scale, const Array3d& vec)
     -> void {
     auto ymm_scale = _mm256_set1_pd(scale);
-    auto ymm_vector = _mm256_loadu_pd(vec.data());
+    auto ymm_vector = _mm256_load_pd(vec.data());
     auto ymm_result = _mm256_mul_pd(ymm_scale, ymm_vector);
-    _mm256_storeu_pd(dst.data(), ymm_result);
+    _mm256_store_pd(dst.data(), ymm_result);
 }
 
 auto kernel_hadamard_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
     -> void {
-    auto ymm_lhs = _mm256_loadu_pd(lhs.data());
-    auto ymm_rhs = _mm256_loadu_pd(rhs.data());
-    _mm256_storeu_pd(dst.data(), _mm256_mul_pd(ymm_lhs, ymm_rhs));
+    auto ymm_lhs = _mm256_load_pd(lhs.data());
+    auto ymm_rhs = _mm256_load_pd(rhs.data());
+    _mm256_store_pd(dst.data(), _mm256_mul_pd(ymm_lhs, ymm_rhs));
 }
 
 auto kernel_length_square_v3d(const Array3d& vec) -> float64_t {
     // Implementation based on this post: https://bit.ly/3lt3ts4
     // Instruction-sets required (AVX, SSE2)
     // -------------------------
-    // AVX:_mm256_loadu_pd,_mm256_mul_pd,_mm256_hadd_pd,_mm256_extractf128_pd
+    // AVX:_mm256_load_pd,_mm256_mul_pd,_mm256_hadd_pd,_mm256_extractf128_pd
     // SSE2: _mm_add_pd, _mm_sqrt_pd, _mm_cvtsd_f64
-    auto ymm_v = _mm256_loadu_pd(vec.data());
+    auto ymm_v = _mm256_load_pd(vec.data());
     auto ymm_prod = _mm256_mul_pd(ymm_v, ymm_v);
     auto ymm_hsum = _mm256_hadd_pd(ymm_prod, ymm_prod);
     auto xmm_lo_sum = _mm256_extractf128_pd(ymm_hsum, 0);
@@ -78,9 +78,9 @@ auto kernel_length_v3d(const Array3d& vec) -> float64_t {
     // Implementation based on this post: https://bit.ly/3lt3ts4
     // Instruction-sets required (AVX, SSE2)
     // -------------------------
-    // AVX: _mm256_loadu_pd,_mm256_mul_pd,_mm256_hadd_pd,_mm256_extractf128_pd
+    // AVX: _mm256_load_pd,_mm256_mul_pd,_mm256_hadd_pd,_mm256_extractf128_pd
     // SSE2: _mm_add_pd,_mm_sqrt_pd,_mm_cvtsd_f64
-    auto ymm_v = _mm256_loadu_pd(vec.data());
+    auto ymm_v = _mm256_load_pd(vec.data());
     auto ymm_prod = _mm256_mul_pd(ymm_v, ymm_v);
     auto ymm_hsum = _mm256_hadd_pd(ymm_prod, ymm_prod);
     auto xmm_lo_sum = _mm256_extractf128_pd(ymm_hsum, 0);
@@ -90,7 +90,7 @@ auto kernel_length_v3d(const Array3d& vec) -> float64_t {
 }
 
 auto kernel_normalize_in_place_v3d(Array3d& vec) -> void {
-    auto ymm_v = _mm256_loadu_pd(vec.data());
+    auto ymm_v = _mm256_load_pd(vec.data());
     auto ymm_prod = _mm256_mul_pd(ymm_v, ymm_v);
     // Construct the sum of squares into each double of a 256-bit register
     auto tmp_0 = _mm256_permute2f128_pd(ymm_prod, ymm_prod, 0x21);
@@ -100,12 +100,12 @@ auto kernel_normalize_in_place_v3d(Array3d& vec) -> void {
     auto tmp_3 = _mm256_sqrt_pd(tmp_2);
     // Normalize the vector and store the result back
     auto ymm_normalized = _mm256_div_pd(ymm_v, tmp_3);
-    _mm256_storeu_pd(vec.data(), ymm_normalized);
+    _mm256_store_pd(vec.data(), ymm_normalized);
 }
 
 auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs) -> float64_t {
-    auto ymm_lhs = _mm256_loadu_pd(lhs.data());
-    auto ymm_rhs = _mm256_loadu_pd(rhs.data());
+    auto ymm_lhs = _mm256_load_pd(lhs.data());
+    auto ymm_rhs = _mm256_load_pd(rhs.data());
     auto ymm_prod = _mm256_mul_pd(ymm_lhs, ymm_rhs);
     auto ymm_hsum = _mm256_hadd_pd(ymm_prod, ymm_prod);
     auto xmm_lo_sum = _mm256_extractf128_pd(ymm_hsum, 0);
@@ -117,8 +117,8 @@ auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs) -> float64_t {
 auto kernel_cross_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
     -> void {
     // Implementation adapted from @ian_mallett (https://bit.ly/3lu6pVe)
-    auto vec_a = _mm256_loadu_pd(lhs.data());
-    auto vec_b = _mm256_loadu_pd(rhs.data());
+    auto vec_a = _mm256_load_pd(lhs.data());
+    auto vec_b = _mm256_load_pd(rhs.data());
 
     // Construct both {a[1], a[2], a[0], 0} and {a[2], a[0], a[1], 0} **********
     auto tmp_0a = _mm256_permute2f128_pd(vec_a, vec_a, 0x21);
@@ -143,8 +143,8 @@ auto kernel_cross_v3d(Array3d& dst, const Array3d& lhs, const Array3d& rhs)
     auto tmp_5b = _mm256_blend_pd(tmp_1b, tmp_2b, 0x02);
     auto tmp_6b = _mm256_blend_pd(tmp_0b, tmp_5b, 0x0b);  // {b[1],b[2],b[0],0}
     // *************************************************************************
-    _mm256_storeu_pd(dst.data(), _mm256_sub_pd(_mm256_mul_pd(tmp_6a, tmp_4b),
-                                               _mm256_mul_pd(tmp_4a, tmp_6b)));
+    _mm256_store_pd(dst.data(), _mm256_sub_pd(_mm256_mul_pd(tmp_6a, tmp_4b),
+                                              _mm256_mul_pd(tmp_4a, tmp_6b)));
     // @todo(wilbert): replace permutation madness with "permute4x64_pd" (AVX2)
 }
 

@@ -28,42 +28,41 @@ using Array4f = Vec4f::BufferType;
 // NOLINTNEXTLINE(runtime/references)
 auto kernel_add_v4f(Array4f& dst, const Array4f& lhs, const Array4f& rhs)
     -> void {
-    auto xmm_lhs = _mm_loadu_ps(lhs.data());
-    auto xmm_rhs = _mm_loadu_ps(rhs.data());
+    auto xmm_lhs = _mm_load_ps(lhs.data());
+    auto xmm_rhs = _mm_load_ps(rhs.data());
     auto xmm_result = _mm_add_ps(xmm_lhs, xmm_rhs);
-    // @todo(wilbert): check alignment (I thought it was already aligned :O)
-    _mm_storeu_ps(dst.data(), xmm_result);
+    _mm_store_ps(dst.data(), xmm_result);
 }
 
 // NOLINTNEXTLINE(runtime/references)
 auto kernel_sub_v4f(Array4f& dst, const Array4f& lhs, const Array4f& rhs)
     -> void {
-    auto xmm_lhs = _mm_loadu_ps(lhs.data());
-    auto xmm_rhs = _mm_loadu_ps(rhs.data());
+    auto xmm_lhs = _mm_load_ps(lhs.data());
+    auto xmm_rhs = _mm_load_ps(rhs.data());
     auto xmm_result = _mm_sub_ps(xmm_lhs, xmm_rhs);
-    _mm_storeu_ps(dst.data(), xmm_result);
+    _mm_store_ps(dst.data(), xmm_result);
 }
 
 // NOLINTNEXTLINE(runtime/references)
 auto kernel_scale_v4f(Array4f& dst, float32_t scale, const Array4f& vec)
     -> void {
     auto xmm_scale = _mm_set1_ps(scale);
-    auto xmm_vector = _mm_loadu_ps(vec.data());
+    auto xmm_vector = _mm_load_ps(vec.data());
     auto xmm_result = _mm_mul_ps(xmm_scale, xmm_vector);
-    _mm_storeu_ps(dst.data(), xmm_result);
+    _mm_store_ps(dst.data(), xmm_result);
 }
 
 auto kernel_hadamard_v4f(Array4f& dst, const Array4f& lhs, const Array4f& rhs)
     -> void {
-    auto xmm_lhs = _mm_loadu_ps(lhs.data());
-    auto xmm_rhs = _mm_loadu_ps(rhs.data());
-    _mm_storeu_ps(dst.data(), _mm_mul_ps(xmm_lhs, xmm_rhs));
+    auto xmm_lhs = _mm_load_ps(lhs.data());
+    auto xmm_rhs = _mm_load_ps(rhs.data());
+    _mm_store_ps(dst.data(), _mm_mul_ps(xmm_lhs, xmm_rhs));
 }
 
 auto kernel_dot_v4f(const Array4f& lhs, const Array4f& rhs) -> float32_t {
     constexpr int32_t COND_PROD_MASK = 0xf1;
-    auto xmm_lhs = _mm_loadu_ps(lhs.data());
-    auto xmm_rhs = _mm_loadu_ps(rhs.data());
+    auto xmm_lhs = _mm_load_ps(lhs.data());
+    auto xmm_rhs = _mm_load_ps(rhs.data());
     auto xmm_cond_prod = _mm_dp_ps(xmm_lhs, xmm_rhs, COND_PROD_MASK);
     return _mm_cvtss_f32(xmm_cond_prod);
 }

@@ -1,5 +1,5 @@
 #include <iostream>
-#include <tinymath/vec4_t.hpp>
+#include <tinymath/tinymath.hpp>
 
 template <typename T>
 auto printVector(const tiny::math::Vector4<T>& vec) -> void {

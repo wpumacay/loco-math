@@ -1,6 +1,6 @@
 #include <iomanip>
 #include <iostream>
-#include <tinymath/vec3_t.hpp>
+#include <tinymath/tinymath.hpp>
 #include <type_traits>
 
 template <typename T>

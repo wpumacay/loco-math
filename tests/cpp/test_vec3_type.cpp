@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 #include <cmath>
-#include <tinymath/vec3_t.hpp>
+#include <tinymath/tinymath.hpp>
 
 /*
  * @todo(wilbert): replace GENERATE of fixed values with random values + seed

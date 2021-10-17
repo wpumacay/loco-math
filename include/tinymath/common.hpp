@@ -1,5 +1,19 @@
 #pragma once
 
+// clang-format off
+#if defined(TINYMATH_FORCE_INLINE)
+    #if defined(TINYMATH_COMPILER_CLANG) || defined(TINYMATH_COMPILER_GCC)
+        #define TM_INLINE inline __attribute__((__always_inline__))
+    #elif defined(TINYMATH_COMPILER_MSVC)
+        #define TM_INLINE __forceinline
+    #else
+        #define TM_INLINE inline
+    #endif
+#else
+    #define TM_INLINE inline
+#endif
+// clang-format on
+
 namespace tiny {
 namespace math {
 

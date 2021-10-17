@@ -26,12 +26,11 @@ option(TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen+Breathe)" OFF)
 option(TINYMATH_BUILD_TESTS "Build C++ unit-tests (requires google-test)" ON)
 option(TINYMATH_BUILD_EXAMPLES "Build C++ examples" ON)
 
-add_library(TinyMathCpp ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/vec3_t.cpp
-                        ${CMAKE_CURRENT_SOURCE_DIR}/src/tinymath/vec4_t.cpp)
+add_library(TinyMathCpp INTERFACE)
 # Set features and other settings for this target
-target_compile_features(TinyMathCpp PUBLIC cxx_std_11)
+target_compile_features(TinyMathCpp INTERFACE cxx_std_11)
 target_include_directories(TinyMathCpp
-                           PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+                           INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Configure the target with the required compiler features and options
 tmSetupCompileProperties(

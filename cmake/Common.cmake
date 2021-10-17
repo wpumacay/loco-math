@@ -150,34 +150,35 @@ function(tmSetupCompileProperties)
   string(TOUPPER "${TM_SETUP_PROJECT}" TM_SETUP_PROJECT_NAME)
 
   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_definitions(${TM_SETUP_TARGET}
-                               PUBLIC -D${TM_SETUP_PROJECT_NAME}_COMPILER_CLANG)
+    target_compile_definitions(
+      ${TM_SETUP_TARGET} INTERFACE -D${TM_SETUP_PROJECT_NAME}_COMPILER_CLANG)
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    target_compile_definitions(${TM_SETUP_TARGET}
-                               PUBLIC -D${TM_SETUP_PROJECT_NAME}_COMPILER_GCC)
+    target_compile_definitions(
+      ${TM_SETUP_TARGET} INTERFACE -D${TM_SETUP_PROJECT_NAME}_COMPILER_GCC)
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_compile_definitions(${TM_SETUP_TARGET}
-                               PUBLIC -D${TM_SETUP_PROJECT_NAME}_COMPILER_MSVC)
+    target_compile_definitions(
+      ${TM_SETUP_TARGET} INTERFACE -D${TM_SETUP_PROJECT_NAME}_COMPILER_MSVC)
   endif()
 
   # Make sure that we don't re-define the make_unique if it's already exposed
   if(MSVC)
-    target_compile_options(${TM_SETUP_TARGET} PUBLIC "/Zc:__cplusplus")
-    target_compile_options(${TM_SETUP_TARGET} PUBLIC "/permissive-")
+    target_compile_options(${TM_SETUP_TARGET} INTERFACE "/Zc:__cplusplus")
+    target_compile_options(${TM_SETUP_TARGET} INTERFACE "/permissive-")
   endif()
 
   if(TM_SETUP_USE_SIMD)
     target_compile_definitions(${TM_SETUP_TARGET}
-                               PUBLIC -D${TM_SETUP_PROJECT_NAME}_SSE_ENABLED)
+                               INTERFACE -D${TM_SETUP_PROJECT_NAME}_SSE_ENABLED)
     target_compile_definitions(${TM_SETUP_TARGET}
-                               PUBLIC -D${TM_SETUP_PROJECT_NAME}_AVX_ENABLED)
+                               INTERFACE -D${TM_SETUP_PROJECT_NAME}_AVX_ENABLED)
     # Enable compile-options according to each compiler variant
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-      target_compile_options(${TM_SETUP_TARGET} PUBLIC -msse -msse2 -msse4.1
-                                                       -mavx)
+      target_compile_options(${TM_SETUP_TARGET} INTERFACE -msse -msse2 -msse4.1
+                                                          -mavx)
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-      target_compile_options(${TM_SETUP_TARGET} PUBLIC /arch:SSE /arch:SSE2
-                                                       /arch:SSE4.1 /arch:AVX)
+      target_compile_options(
+        ${TM_SETUP_TARGET} INTERFACE /arch:SSE /arch:SSE2 /arch:SSE4.1
+                                     /arch:AVX)
     else()
       tmMessage(
         "We don't yet support SIMD for compiler '${CMAKE_CXX_COMPILER_ID}'"
@@ -186,14 +187,15 @@ function(tmSetupCompileProperties)
   endif()
 
   if(TM_SETUP_USE_INLINE)
-    target_compile_definitions(${TM_SETUP_TARGET}
-                               PUBLIC -D${TM_SETUP_PROJECT_NAME}_FORCE_INLINE)
+    target_compile_definitions(
+      ${TM_SETUP_TARGET} INTERFACE -D${TM_SETUP_PROJECT_NAME}_FORCE_INLINE)
   endif()
 
 endfunction()
 
 # Helper macro that shows various settings obtained during configuration
 function(tmPrintSummary)
+  # cmake-lint: disable=R0915
   set(oneValueArgs TARGET)
   cmake_parse_arguments(TM "" "${oneValueArgs}" "" ${ARGN})
 
@@ -204,9 +206,19 @@ function(tmPrintSummary)
   endif()
 
   # Get the information set into the target
-  get_target_property(TM_COMPILE_FEATURES ${TM_TARGET} COMPILE_FEATURES)
-  get_target_property(TM_COMPILE_OPTIONS ${TM_TARGET} COMPILE_OPTIONS)
-  get_target_property(TM_COMPILE_DEFINITIONS ${TM_TARGET} COMPILE_DEFINITIONS)
+  get_target_property(TM_TARGET_TYPE ${TM_TARGET} TYPE)
+  if(${TM_TARGET_TYPE} STREQUAL "INTERFACE_LIBRARY")
+    get_target_property(TM_COMPILE_FEATURES ${TM_TARGET}
+                        INTERFACE_COMPILE_FEATURES)
+    get_target_property(TM_COMPILE_OPTIONS ${TM_TARGET}
+                        INTERFACE_COMPILE_OPTIONS)
+    get_target_property(TM_COMPILE_DEFINITIONS ${TM_TARGET}
+                        INTERFACE_COMPILE_DEFINITIONS)
+  elseif(${TM_TARGET} MATCHES "LIBRARY|EXECUTABLE")
+    get_target_property(TM_COMPILE_FEATURES ${TM_TARGET} COMPILE_FEATURES)
+    get_target_property(TM_COMPILE_OPTIONS ${TM_TARGET} COMPILE_OPTIONS)
+    get_target_property(TM_COMPILE_DEFINITIONS ${TM_TARGET} COMPILE_DEFINITIONS)
+  endif()
 
   # The list of all valid options exposed by the project TinyMath. Notice that
   # this part is project specific, so we have to rewrite this macro on every

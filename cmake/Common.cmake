@@ -128,15 +128,102 @@ function(tmInitializeProject)
       PARENT_SCOPE)
 endfunction()
 
-# Helper macro that shows various settings obtained during configuration
-function(tmPrintSummary)
-  if(NOT PROJECT_NAME)
+# Helper function that setups compiler flags and features to the given target
+function(tmSetupCompileProperties)
+  set(oneValueArgs PROJECT TARGET USE_SIMD USE_INLINE)
+  cmake_parse_arguments(TM_SETUP "" "${oneValueArgs}" "" ${ARGN})
+
+  if((NOT DEFINED TM_SETUP_PROJECT) OR (NOT DEFINED TM_SETUP_TARGET))
+    tmMessage(
+      "tmSetupCompileProperties: must provide at least PROJECT and TARGET"
+      LOG_LEVEL FATAL_ERROR)
     return()
   endif()
+
+  if(NOT TARGET ${TM_SETUP_TARGET})
+    tmMessage("Tried baking compiler information into a non-target object"
+              LOG_LEVEL WARNING)
+    return()
+  endif()
+
+  # Make sure we're following the convention of setting flags as UPPER_CASE
+  string(TOUPPER "${TM_SETUP_PROJECT}" TM_SETUP_PROJECT_NAME)
+
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_definitions(
+      ${TM_SETUP_TARGET} INTERFACE -D${TM_SETUP_PROJECT_NAME}_COMPILER_CLANG)
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    target_compile_definitions(
+      ${TM_SETUP_TARGET} INTERFACE -D${TM_SETUP_PROJECT_NAME}_COMPILER_GCC)
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    target_compile_definitions(
+      ${TM_SETUP_TARGET} INTERFACE -D${TM_SETUP_PROJECT_NAME}_COMPILER_MSVC)
+  endif()
+
+  # Make sure that we don't re-define the make_unique if it's already exposed
+  if(MSVC)
+    target_compile_options(${TM_SETUP_TARGET} INTERFACE "/Zc:__cplusplus")
+    target_compile_options(${TM_SETUP_TARGET} INTERFACE "/permissive-")
+  endif()
+
+  if(TM_SETUP_USE_SIMD)
+    target_compile_definitions(${TM_SETUP_TARGET}
+                               INTERFACE -D${TM_SETUP_PROJECT_NAME}_SSE_ENABLED)
+    target_compile_definitions(${TM_SETUP_TARGET}
+                               INTERFACE -D${TM_SETUP_PROJECT_NAME}_AVX_ENABLED)
+    # Enable compile-options according to each compiler variant
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+      target_compile_options(${TM_SETUP_TARGET} INTERFACE -msse -msse2 -msse4.1
+                                                          -mavx)
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+      target_compile_options(
+        ${TM_SETUP_TARGET} INTERFACE /arch:SSE /arch:SSE2 /arch:SSE4.1
+                                     /arch:AVX)
+    else()
+      tmMessage(
+        "We don't yet support SIMD for compiler '${CMAKE_CXX_COMPILER_ID}'"
+        LOG_LEVEL WARNING)
+    endif()
+  endif()
+
+  if(TM_SETUP_USE_INLINE)
+    target_compile_definitions(
+      ${TM_SETUP_TARGET} INTERFACE -D${TM_SETUP_PROJECT_NAME}_FORCE_INLINE)
+  endif()
+
+endfunction()
+
+# Helper macro that shows various settings obtained during configuration
+function(tmPrintSummary)
+  # cmake-lint: disable=R0915
+  set(oneValueArgs TARGET)
+  cmake_parse_arguments(TM "" "${oneValueArgs}" "" ${ARGN})
+
+  if(NOT TARGET ${TM_TARGET})
+    tmMessage("Tried printing summary of a non-target: [${TM_TARGET}]"
+              LOG_LEVEL WARNING)
+    return()
+  endif()
+
+  # Get the information set into the target
+  get_target_property(TM_TARGET_TYPE ${TM_TARGET} TYPE)
+  if(${TM_TARGET_TYPE} STREQUAL "INTERFACE_LIBRARY")
+    get_target_property(TM_COMPILE_FEATURES ${TM_TARGET}
+                        INTERFACE_COMPILE_FEATURES)
+    get_target_property(TM_COMPILE_OPTIONS ${TM_TARGET}
+                        INTERFACE_COMPILE_OPTIONS)
+    get_target_property(TM_COMPILE_DEFINITIONS ${TM_TARGET}
+                        INTERFACE_COMPILE_DEFINITIONS)
+  elseif(${TM_TARGET} MATCHES "LIBRARY|EXECUTABLE")
+    get_target_property(TM_COMPILE_FEATURES ${TM_TARGET} COMPILE_FEATURES)
+    get_target_property(TM_COMPILE_OPTIONS ${TM_TARGET} COMPILE_OPTIONS)
+    get_target_property(TM_COMPILE_DEFINITIONS ${TM_TARGET} COMPILE_DEFINITIONS)
+  endif()
+
   # The list of all valid options exposed by the project TinyMath. Notice that
   # this part is project specific, so we have to rewrite this macro on every
   # project we use (we could generalize it further, but for now this works ok)
-  set(optionsArgs PYTHON_BINDINGS DOCS TESTS EXAMPLES SSE AVX)
+  set(optionsArgs PYTHON_BINDINGS DOCS TESTS EXAMPLES SIMD INLINE)
   # cmake-format: off
   message("****************************************************")
   message("Build options summary for project ${PROJECT_NAME}")
@@ -146,7 +233,6 @@ function(tmPrintSummary)
   message("CMAKE_MODULE_PATH              : ${CMAKE_MODULE_PATH}")
   message("CMAKE_EXPORT_COMPILE_COMMANDS  : ${CMAKE_EXPORT_COMPILE_COMMANDS}")
   message("CMAKE_POSITION_INDEPENDENT_CODE: ${CMAKE_POSITION_INDEPENDENT_CODE}")
-  message("CMAKE_C_COMPILER               : ${CMAKE_C_COMPILER}")
   message("CMAKE_CXX_COMPILER             : ${CMAKE_CXX_COMPILER}")
   message("CMAKE_BUILD_TYPE               : ${CMAKE_BUILD_TYPE}")
   message("CMAKE_LIBRARY_OUTPUT_DIRECTORY : ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
@@ -165,7 +251,12 @@ function(tmPrintSummary)
   if(MSVC)
     message("MSVC_VERSION                   : ${MSVC_VERSION}")
   endif()
-
+  # Target information
+  message("Target [${TM_TARGET}] info --------------------------------")
+  message("COMPILE_FEATURES               : ${TM_COMPILE_FEATURES}")
+  message("COMPILE_OPTIONS                : ${TM_COMPILE_OPTIONS}")
+  message("COMPILE_DEFINITIONS            : ${TM_COMPILE_DEFINITIONS}")
+  message("-----------------------------------------------------------")
   # Project-specific settings
   message("${PROJECT_IS_ROOT_VARNAME} > ${${PROJECT_IS_ROOT_VARNAME}}")
   foreach(varOption IN LISTS optionsArgs)

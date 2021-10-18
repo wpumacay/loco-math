@@ -2,12 +2,10 @@
 
 #include <array>
 #include <cstdint>
-#include <ios>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <tinymath/common.hpp>
-#include <type_traits>
 
 namespace tiny {
 namespace math {
@@ -54,17 +52,18 @@ class Vector3 {
         return m_Elements[index];
     }
 
-    auto squaredNorm() const -> Scalar_T;
+    TM_INLINE auto squaredNorm() const -> Scalar_T;
 
-    auto norm() const -> Scalar_T;
+    TM_INLINE auto norm() const -> Scalar_T;
 
-    auto normalize() -> void;
+    TM_INLINE auto normalize() -> void;
 
-    auto normalized() const -> Vector3<Scalar_T>;
+    TM_INLINE auto normalized() const -> Vector3<Scalar_T>;
 
-    auto dot(const Vector3<Scalar_T>& other) const -> Scalar_T;
+    TM_INLINE auto dot(const Vector3<Scalar_T>& other) const -> Scalar_T;
 
-    auto cross(const Vector3<Scalar_T>& other) const -> Vector3<Scalar_T>;
+    TM_INLINE auto cross(const Vector3<Scalar_T>& other) const
+        -> Vector3<Scalar_T>;
 
     auto toString() const -> std::string;
 
@@ -81,96 +80,40 @@ class Vector3 {
 };
 
 template <typename Scalar_T>
-auto operator+(const Vector3<Scalar_T>& lhs, const Vector3<Scalar_T>& rhs)
+TM_INLINE auto operator+(const Vector3<Scalar_T>& lhs,
+                         const Vector3<Scalar_T>& rhs) -> Vector3<Scalar_T>;
+
+template <typename Scalar_T>
+TM_INLINE auto operator-(const Vector3<Scalar_T>& lhs,
+                         const Vector3<Scalar_T>& rhs) -> Vector3<Scalar_T>;
+
+template <typename Scalar_T>
+TM_INLINE auto operator*(Scalar_T scale, const Vector3<Scalar_T>& vec)
     -> Vector3<Scalar_T>;
 
 template <typename Scalar_T>
-auto operator-(const Vector3<Scalar_T>& lhs, const Vector3<Scalar_T>& rhs)
+TM_INLINE auto operator*(const Vector3<Scalar_T>& vec, Scalar_T scale)
     -> Vector3<Scalar_T>;
 
 template <typename Scalar_T>
-auto operator*(Scalar_T scale, const Vector3<Scalar_T>& vec)
-    -> Vector3<Scalar_T>;
+TM_INLINE auto operator*(const Vector3<Scalar_T>& lhs,
+                         const Vector3<Scalar_T>& rhs) -> Vector3<Scalar_T>;
 
 template <typename Scalar_T>
-auto operator*(const Vector3<Scalar_T>& vec, Scalar_T scale)
-    -> Vector3<Scalar_T>;
+TM_INLINE auto operator==(const Vector3<Scalar_T>& lhs,
+                          const Vector3<Scalar_T>& rhs) -> bool;
 
 template <typename Scalar_T>
-auto operator*(const Vector3<Scalar_T>& lhs, const Vector3<Scalar_T>& rhs)
-    -> Vector3<Scalar_T>;
-
-template <typename Scalar_T>
-auto operator==(const Vector3<Scalar_T>& lhs, const Vector3<Scalar_T>& rhs)
-    -> bool;
-
-template <typename Scalar_T>
-auto operator!=(const Vector3<Scalar_T>& lhs, const Vector3<Scalar_T>& rhs)
-    -> bool;
+TM_INLINE auto operator!=(const Vector3<Scalar_T>& lhs,
+                          const Vector3<Scalar_T>& rhs) -> bool;
 
 template <typename Scalar_T>
 auto operator<<(std::ostream& output_stream, const Vector3<Scalar_T>& src)
-    -> std::ostream& {
-    output_stream << "(" << src.x() << ", " << src.y() << ", " << src.z()
-                  << ")";
-    return output_stream;
-}
+    -> std::ostream&;
 
 template <typename Scalar_T>
 auto operator>>(std::istream& input_stream, Vector3<Scalar_T>& dst)
-    -> std::istream& {
-    // Based on ignition-math implementation https://bit.ly/3iqAVgS
-    Scalar_T x{};
-    Scalar_T y{};
-    Scalar_T z{};
-
-    input_stream.setf(std::ios_base::skipws);
-    input_stream >> x >> y >> z;
-    if (!input_stream.fail()) {
-        dst.x() = x;
-        dst.y() = y;
-        dst.z() = z;
-    }
-
-    return input_stream;
-}
-
-template <typename Scalar_T>
-Vector3<Scalar_T>::Vector3(Scalar_T x) {
-    m_Elements[0] = x;
-    m_Elements[1] = x;
-    m_Elements[2] = x;
-    m_Elements[3] = 0;
-}
-
-template <typename Scalar_T>
-Vector3<Scalar_T>::Vector3(Scalar_T x, Scalar_T y) {
-    m_Elements[0] = x;
-    m_Elements[1] = y;
-    m_Elements[2] = y;
-    m_Elements[3] = 0;
-}
-
-template <typename Scalar_T>
-Vector3<Scalar_T>::Vector3(Scalar_T x, Scalar_T y, Scalar_T z) {
-    m_Elements[0] = x;
-    m_Elements[1] = y;
-    m_Elements[2] = z;
-    m_Elements[3] = 0;
-}
-
-template <typename Scalar_T>
-auto Vector3<Scalar_T>::toString() const -> std::string {
-    std::stringstream str_result;
-    if (std::is_same<ElementType, float>()) {
-        str_result << "Vector3f(" << x() << ", " << y() << ", " << z() << ")";
-    } else if (std::is_same<ElementType, double>()) {
-        str_result << "Vector3d(" << x() << ", " << y() << ", " << z() << ")";
-    } else {
-        str_result << "Vector3X(" << x() << ", " << y() << ", " << z() << ")";
-    }
-    return str_result.str();
-}
+    -> std::istream&;
 
 }  // namespace math
 }  // namespace tiny

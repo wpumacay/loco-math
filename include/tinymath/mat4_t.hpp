@@ -50,23 +50,35 @@ class Matrix4 {
     }
 
     /// Gets a mutable reference to the requested matrix entry
-    auto operator()(uint32_t col_index, uint32_t row_index) -> Scalar_T& {
+    auto operator()(uint32_t row_index, uint32_t col_index) -> Scalar_T& {
         return m_Elements[col_index][row_index];
     }
 
     /// Gets an unmutable reference to the requested matrix entry
-    auto operator()(uint32_t col_index, uint32_t row_index) const -> Scalar_T& {
+    auto operator()(uint32_t row_index, uint32_t col_index) const
+        -> const Scalar_T& {
         return m_Elements[col_index][row_index];
     }
 
     /// Transposes the matrix in-place
-    auto transposeInPlace() -> void;
+    TM_INLINE auto transposeInPlace() -> void;
 
     /// Returns the transposed version of the matrix
-    auto transpose() const -> Matrix4<Scalar_T>;
+    TM_INLINE auto transpose() const -> Matrix4<Scalar_T>;
 
     /// Returns a printable string-representation of the matrix
     auto toString() const -> std::string;
+
+    /// Returns the number of rows
+    constexpr auto rows() const -> uint32_t { return MATRIX_NDIM; }
+
+    /// Returns the number of columns
+    constexpr auto cols() const -> uint32_t { return MATRIX_NDIM; }
+
+    /// Returns the number of elements in the matrix
+    constexpr auto size() const -> uint32_t {
+        return MATRIX_NDIM * MATRIX_NDIM;
+    }
 
     /// Returns the dimnension of the matrix
     constexpr auto ndim() const -> uint32_t { return MATRIX_NDIM; }

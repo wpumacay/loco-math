@@ -7,9 +7,15 @@
 #include <string>
 #include <type_traits>
 
-// @todo(wilbert): include kernels here
-#include <tinymath/mat4_t.hpp>
+#include <tinymath/impl/mat4_t_scalar_impl.hpp>
 
+#if defined(TINYMATH_SSE_ENABLED)
+// #include <tinymath/impl/mat4_t_sse_impl.hpp>
+#endif
+
+#if defined(TINYMATH_AVX_ENABLED)
+// #include <tinymath/impl/mat4_t_avx_impl.hpp>
+#endif
 // clang-format on
 
 namespace tiny {
@@ -70,21 +76,13 @@ using Mat4f = Matrix4<float32_t>;
 
 template <>
 TM_INLINE auto Mat4f::transposeInPlace() -> void {
-#if defined(TINYMATH_SSE_ENABLED)
-    // scalar::kernel_transpose_matrix_in_place_m4f(elements());
-#else
-    // sse::kernel_transpose_matrix_in_place_m4f(elements());
-#endif
+    scalar::kernel_transpose_in_place_m4f(elements());
 }
 
 template <>
 TM_INLINE auto Mat4f::transpose() const -> Mat4f {
-    Mat4f result;
-#if defined(TINYMATH_SSE_ENABLED)
-    // scalar::kernel_transpose_matrix_in_place_m4f(result.elements());
-#else
-    // sse::kernel_transpose_matrix_in_place_m4f(result.elements());
-#endif
+    Mat4f result = *this;
+    scalar::kernel_transpose_in_place_m4f(result.elements());
     return result;
 }
 
@@ -95,21 +93,13 @@ using Mat4d = Matrix4<float64_t>;
 
 template <>
 TM_INLINE auto Mat4d::transposeInPlace() -> void {
-#if defined(TINYMATH_AVX_ENABLED)
-    // scalar::kernel_transpose_matrix_in_place_m4d(elements());
-#else
-    // avx::kernel_transpose_matrix_in_place_m4d(elements());
-#endif
+    scalar::kernel_transpose_in_place_m4d(elements());
 }
 
 template <>
 TM_INLINE auto Mat4d::transpose() const -> Mat4d {
-    Mat4d result;
-#if defined(TINYMATH_AVX_ENABLED)
-    // scalar::kernel_transpose_matrix_in_place_m4d(result.elements());
-#else
-    // avx::kernel_transpose_matrix_in_place_m4d(result.elements());
-#endif
+    Mat4d result = *this;
+    scalar::kernel_transpose_in_place_m4d(result.elements());
     return result;
 }
 

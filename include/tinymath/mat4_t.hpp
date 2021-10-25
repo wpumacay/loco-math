@@ -86,6 +86,14 @@ class Matrix4 {
     /// Returns the number of scalars used by the storage of the matrix
     constexpr auto buffer_size() const -> uint32_t { return BUFFER_SIZE; }
 
+    /// Returns the size (in bytes) of the matrix
+    constexpr auto num_bytes_size() const -> uint32_t { return sizeof(Type); }
+
+    /// Returns the alignment (in bytes) of the matrix
+    constexpr auto num_bytes_alignment() const -> uint32_t {
+        return alignof(Type);
+    }
+
  private:
     /// The buffer (array) where all data lies
     BufferType m_Elements;

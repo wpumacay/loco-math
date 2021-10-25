@@ -1,13 +1,22 @@
 #include <iomanip>
 #include <iostream>
 #include <tinymath/tinymath.hpp>
-
-#include "tinymath/common.hpp"
+#include <type_traits>
 
 template <typename T>
 auto run_example_mat4() -> void {
     using Mat4 = tiny::math::Matrix4<T>;
     using Vec4 = typename Mat4::ColumnType;
+
+    // Checking size and alignment
+    if (std::is_same<T, float>()) {
+        std::cout << "Matrix4-float32 type:\n";
+    } else if (std::is_same<T, double>()) {
+        std::cout << "Matrix4-float64 type:\n";
+    }
+
+    std::cout << "sizeof(Mat4): " << sizeof(Mat4) << "\n";
+    std::cout << "alignof(Mat4): " << alignof(Mat4) << "\n";
 
     // Default constructor: initializes to zero-matrix
     Mat4 mat_a;
@@ -46,15 +55,15 @@ auto run_example_mat4() -> void {
     std::cout << "matrix-d\n";
     std::cout << mat_d.toString() << "\n";
     std::cout << "--------------\n";
+
+    std::cout << "**********************************************************\n";
 }
 
 auto main() -> int {
     constexpr int32_t PRINT_PRECISION = 7;
     std::cout << std::setprecision(PRINT_PRECISION);
 
-    std::cout << "Showcasing float32 mat4 types\n";
     run_example_mat4<tiny::math::float32_t>();
-    std::cout << "Showcasing float64 mat4 types\n";
     run_example_mat4<tiny::math::float64_t>();
 
     return 0;

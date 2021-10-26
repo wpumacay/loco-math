@@ -18,8 +18,8 @@ namespace math {
 ///
 /// This is a class that represents a 3d-vector with entries x, y, z of some
 /// scalar floating-point type. Its storage is a buffer of the given scalar
-/// type, and it's aligned accordingly in order to used packed versions of SIMD
-/// instructions (when using either SSE or AVX intrinsics).
+/// type, and it's aligned accordingly in order to use the aligned versions of
+/// some SIMD instructions (when using either SSE or AVX intrinsics).
 template <typename Scalar_T>
 class Vector3 {
  public:

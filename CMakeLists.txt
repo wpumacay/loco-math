@@ -19,8 +19,8 @@ include(GNUInstallDirs)
 # common settings that we might need later during configuration
 tmInitializeProject()
 
-option(TINYMATH_BUILD_SIMD "Build using SIMD support" ON)
-option(TINYMATH_BUILD_INLINE "Build with inlining when requested" ON)
+option(TINYMATH_BUILD_SIMD "Build using SIMD support" OFF)
+option(TINYMATH_BUILD_INLINE "Build with inlining when requested" OFF)
 option(TINYMATH_BUILD_PYTHON_BINDINGS "Build bindings (requires Pybind11)" OFF)
 option(TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen+Breathe)" OFF)
 option(TINYMATH_BUILD_TESTS "Build C++ unit-tests (requires google-test)" ON)

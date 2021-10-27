@@ -24,4 +24,5 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/test_vec4_operations.cpp)
 target_link_libraries(TinyMathCppTests PRIVATE tinymath::tinymath
                                                Catch2::Catch2)
-catch_discover_tests(TinyMathCppTests)
+# Discover tets and pick an integer as the random seed
+catch_discover_tests(TinyMathCppTests EXTRA_ARGS --rng-seed 721790)

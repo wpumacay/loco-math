@@ -1,20 +1,27 @@
 #include <catch2/catch.hpp>
 #include <cmath>
 #include <tinymath/tinymath.hpp>
-
-/*
- * @todo(wilbert): replace GENERATE of fixed values with random values + seed
- */
+#include <type_traits>
 
 // NOLINTNEXTLINE
-TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core API", "[vec3_t][template]",
+TEMPLATE_TEST_CASE("Vector3 class (vec3_t) constructors", "[vec3_t][template]",
                    tiny::math::float32_t, tiny::math::float64_t) {
     using T = TestType;
     using Vector3 = tiny::math::Vector3<T>;
 
-    constexpr TestType EPSILON = tiny::math::EPS<T>;
+    // Checking size and alignment (we pad by 1 scalar to keep the alignment)
+    constexpr int EXPECTED_SIZE = 4 * sizeof(T);
+    constexpr int EXPECTED_ALIGNMENT = 4 * sizeof(T);
+    static_assert(std::is_floating_point<T>(), "");
+    static_assert(EXPECTED_SIZE == Vector3::num_bytes_size(), "");
+    static_assert(EXPECTED_ALIGNMENT == Vector3::num_bytes_alignment(), "");
 
-    SECTION("Constructor Vector3()") {
+    constexpr T EPSILON = tiny::math::EPS<T>;
+    constexpr int32_t NUM_SAMPLES = 10;
+    constexpr T RAND_RANGE_MIN = static_cast<T>(-10.0);
+    constexpr T RAND_RANGE_MAX = static_cast<T>(10.0);
+
+    SECTION("Default constructor") {
         Vector3 v;
 
         REQUIRE(std::abs(v.x() - static_cast<T>(0.0)) < EPSILON);
@@ -22,19 +29,22 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core API", "[vec3_t][template]",
         REQUIRE(std::abs(v.z() - static_cast<T>(0.0)) < EPSILON);
     }
 
-    SECTION("Constructor Vector3(T x)") {
-        auto val = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
+    SECTION("From single scalar argument") {
+        auto val_x =
+            GENERATE(take(NUM_SAMPLES, random(RAND_RANGE_MIN, RAND_RANGE_MAX)));
 
-        Vector3 v(val);
+        Vector3 v(val_x);
 
-        REQUIRE(std::abs(v.x() - val) < EPSILON);
-        REQUIRE(std::abs(v.y() - val) < EPSILON);
-        REQUIRE(std::abs(v.z() - val) < EPSILON);
+        REQUIRE(std::abs(v.x() - val_x) < EPSILON);
+        REQUIRE(std::abs(v.y() - val_x) < EPSILON);
+        REQUIRE(std::abs(v.z() - val_x) < EPSILON);
     }
 
-    SECTION("Constructor Vector3(T x, T y)") {
-        auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
-        auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
+    SECTION("From two scalar arguments") {
+        auto val_x =
+            GENERATE(take(NUM_SAMPLES, random(RAND_RANGE_MIN, RAND_RANGE_MAX)));
+        auto val_y =
+            GENERATE(take(NUM_SAMPLES, random(RAND_RANGE_MIN, RAND_RANGE_MAX)));
 
         Vector3 v(val_x, val_y);
 
@@ -43,15 +53,23 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core API", "[vec3_t][template]",
         REQUIRE(std::abs(v.z() - val_y) < EPSILON);
     }
 
-    SECTION("Constructor Vector3(T x, T y, T z)") {
-        auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
-        auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
-        auto val_z = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);  // NOLINT
+    SECTION("From three scalar arguments or from initializer_list") {
+        auto val_x =
+            GENERATE(take(NUM_SAMPLES, random(RAND_RANGE_MIN, RAND_RANGE_MAX)));
+        auto val_y =
+            GENERATE(take(NUM_SAMPLES, random(RAND_RANGE_MIN, RAND_RANGE_MAX)));
+        auto val_z =
+            GENERATE(take(NUM_SAMPLES, random(RAND_RANGE_MIN, RAND_RANGE_MAX)));
 
-        Vector3 v(val_x, val_y, val_z);
+        Vector3 v_1(val_x, val_y, val_z);
+        Vector3 v_2 = {val_x, val_y, val_z};
 
-        REQUIRE(std::abs(v.x() - val_x) < EPSILON);
-        REQUIRE(std::abs(v.y() - val_y) < EPSILON);
-        REQUIRE(std::abs(v.z() - val_z) < EPSILON);
+        REQUIRE(std::abs(v_1.x() - val_x) < EPSILON);
+        REQUIRE(std::abs(v_1.y() - val_y) < EPSILON);
+        REQUIRE(std::abs(v_1.z() - val_z) < EPSILON);
+
+        REQUIRE(std::abs(v_2.x() - val_x) < EPSILON);
+        REQUIRE(std::abs(v_2.y() - val_y) < EPSILON);
+        REQUIRE(std::abs(v_2.z() - val_z) < EPSILON);
     }
 }

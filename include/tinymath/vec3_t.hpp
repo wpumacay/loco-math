@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <initializer_list>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -46,6 +47,8 @@ class Vector3 {
 
     /// Constructs a vector of the form (x, y, z)
     explicit Vector3(Scalar_T x, Scalar_T y, Scalar_T z);
+
+    Vector3(const std::initializer_list<Scalar_T>& values);
 
     // @todo(wilbert): RAII breaks (rule of 5). Add remaining initializers
 
@@ -110,10 +113,10 @@ class Vector3 {
     constexpr auto buffer_size() const -> uint32_t { return BUFFER_SIZE; }
 
     /// Returns the size (in bytes) of the vector
-    constexpr auto num_bytes_size() const -> uint32_t { return sizeof(Type); }
+    static constexpr auto num_bytes_size() -> uint32_t { return sizeof(Type); }
 
     /// Returns the alignment (in bytes) of the vector
-    constexpr auto num_bytes_alignment() const -> uint32_t {
+    static constexpr auto num_bytes_alignment() -> uint32_t {
         return alignof(Type);
     }
 

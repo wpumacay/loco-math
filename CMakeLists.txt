@@ -49,8 +49,10 @@ add_subdirectory(examples/cpp)
 # Add C++ tests to the build process
 add_subdirectory(tests/cpp)
 
+# Add Python bindings to the build process
+add_subdirectory(python/tinymath/bindings)
+
 # ~~~
-# add_subdirectory(python)
 # add_subdirectory(docs)
 # ~~~
 

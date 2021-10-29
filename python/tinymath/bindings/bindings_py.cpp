@@ -25,7 +25,11 @@ extern void bindings_vector4(py::module& m, const std::string& className);
 }  // namespace tiny
 
 // NOLINTNEXTLINE @todo(wilbert): check how other projects handle this part
+<<<<<<< HEAD
 PYBIND11_MODULE(tinymath, m) {
+=======
+PYBIND11_MODULE(tinymath_py, m) {
+>>>>>>> dev
     using float32_t = float;
     using float64_t = double;
 

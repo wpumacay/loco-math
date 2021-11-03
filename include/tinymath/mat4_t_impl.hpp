@@ -21,19 +21,30 @@
 namespace tiny {
 namespace math {
 
-// clang-format off
 template <typename T>
-Matrix4<T>::Matrix4(T x00, T x01, T x02, T x03,
-                    T x10, T x11, T x12, T x13,
-                    T x20, T x21, T x22, T x23,
-                    T x30, T x31, T x32, T x33) {
+Matrix4<T>::Matrix4(T x00, T x01, T x02, T x03, T x10, T x11, T x12, T x13,
+                    T x20, T x21, T x22, T x23, T x30, T x31, T x32, T x33) {
     auto& data = m_Elements;
-    data[0][0] = x00; data[1][0] = x01; data[2][0] = x02; data[3][0] = x03;
-    data[0][1] = x10; data[1][1] = x11; data[2][1] = x12; data[3][1] = x13;
-    data[0][2] = x20; data[1][2] = x21; data[2][2] = x22; data[3][2] = x23;
-    data[0][3] = x30; data[1][3] = x31; data[2][3] = x32; data[3][3] = x33;
+    data[0][0] = x00;
+    data[1][0] = x01;
+    data[2][0] = x02;
+    data[3][0] = x03;
+
+    data[0][1] = x10;
+    data[1][1] = x11;
+    data[2][1] = x12;
+    data[3][1] = x13;
+
+    data[0][2] = x20;
+    data[1][2] = x21;
+    data[2][2] = x22;
+    data[3][2] = x23;
+
+    data[0][3] = x30;
+    data[1][3] = x31;
+    data[2][3] = x32;
+    data[3][3] = x33;
 }
-// clang-format on
 
 template <typename T>
 Matrix4<T>::Matrix4(T d0, T d1, T d2, T d3) {
@@ -67,6 +78,17 @@ auto Matrix4<T>::toString() const -> std::string {
                 << data[2][3] << ", " << data[3][3] << " )";
 
     return sstr_result.str();
+}
+
+template <typename T>
+auto Matrix4<T>::Identity() -> Matrix4<T> {
+    // @todo(wilbert): use initializer list to create identity matrix
+    return Matrix4<T>();
+}
+
+template <typename T>
+auto Matrix4<T>::Zeros() -> Matrix4<T> {
+    return Matrix4<T>();
 }
 
 // ***************************************************************************//

@@ -6,15 +6,32 @@
 namespace tiny {
 namespace math {
 
+/// \class Matrix4
+///
+/// \brief Class representation of a 4 by 4 matrix of real-valued entries
+///
+/// \tparam Scalar_T Type of scalar value used for the entries of the matrix
+///
+/// This is a class that represents 4x4 matrices with real-valued entries. The
+/// internal data is stored as the columns of the matrix using 4d vectors of the
+/// same scalar type. The resulting storage is column major and aligned in a way
+/// that allows the use of aligned versions of some SIMD instructions (when
+/// using either SSE or AVX instrinsics).
 template <typename Scalar_T>
 class Matrix4 {
  public:
+    /// Number of scalars used in the storage of the matrix
     constexpr static uint32_t BUFFER_SIZE = 16;
+    /// Number of dimensions of the matrix (square 4x4 matrix)
     constexpr static uint32_t MATRIX_NDIM = 4;
 
+    /// Typename of the matrix
     using Type = Matrix4<Scalar_T>;
+    /// Typename of the scalar used for the matrix entries (float, double, etc.)
     using ElementType = Scalar_T;
+    /// Typename of the internal storage used by the matrix
     using BufferType = std::array<Vector4<Scalar_T>, MATRIX_NDIM>;
+    /// Typename of the columns of the matrix
     using ColumnType = Vector4<Scalar_T>;
 
     /// Creates a zero-initialized matrix
@@ -94,9 +111,15 @@ class Matrix4 {
         return alignof(Type);
     }
 
+    /// Returns a 4x4 identity matrix of the current scalar type
+    static auto Identity() -> Type;
+
+    /// Returns a 4x4 zero matrix of the current scalar type
+    static auto Zeros() -> Type;
+
  private:
-    /// The buffer (array) where all data lies
-    BufferType m_Elements;
+    /// The buffer where all data lies (as an array of 4 column vectors)
+    alignas(sizeof(Scalar_T) * BUFFER_SIZE) BufferType m_Elements;
 };
 
 }  // namespace math

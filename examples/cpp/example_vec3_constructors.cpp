@@ -32,6 +32,8 @@ auto run_example_vec3() -> void {
     Vec3 vec_c(1.0, 2.0);          // NOLINT
     Vec3 vec_d(1.0, 2.0, 3.0);     // NOLINT
     Vec3 vec_e = {2.0, 4.0, 6.0};  // NOLINT
+    Vec3 vec_f;
+    vec_f << 1.0, 2.0, 3.0;
 
     // Send the sample vectors to the standard output stream
     std::cout << vec_a << "\n";
@@ -39,6 +41,7 @@ auto run_example_vec3() -> void {
     std::cout << vec_c << "\n";
     std::cout << vec_d << "\n";
     std::cout << vec_e << "\n";
+    std::cout << vec_f << "\n";
 
     std::cout << "**********************************************************\n";
 }

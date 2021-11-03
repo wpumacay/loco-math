@@ -11,6 +11,10 @@
 namespace tiny {
 namespace math {
 
+// Forward-declare comma-initializer for vector3-types
+template <typename Scalar_T>
+class Vec3CommaInitializer;
+
 /// \class Vector3
 ///
 /// \brief Class representation of a vector in 3d-space
@@ -84,6 +88,11 @@ class Vector3 {
         return m_Elements[index];
     }
 
+    /// Returns a comma-initializer to construct the matrix via its coefficients
+    auto operator<<(Scalar_T coeff) -> Vec3CommaInitializer<Scalar_T> {
+        return Vec3CommaInitializer<Scalar_T>(*this, coeff);
+    }
+
     /// Returns the square of the norm-2 of the vector (spare a sqrt calc.)
     TM_INLINE auto squaredNorm() const -> Scalar_T;
 
@@ -124,6 +133,57 @@ class Vector3 {
     /// Storage of the vector's scalars (we pad by 1 due to SIMD-alignment)
     alignas(sizeof(Scalar_T) * BUFFER_SIZE) BufferType m_Elements = {0, 0, 0,
                                                                      0};
+};
+
+template <typename Scalar_T>
+class Vec3CommaInitializer {
+ public:
+    /// Number of scalar dimensions of the vector
+    constexpr static uint32_t VECTOR_NDIM = 3;
+    /// Index of the first vector entry
+    constexpr static int32_t VECTOR_FIRST_INDEX = 0;
+    /// Index of the last vector entry
+    constexpr static int32_t VECTOR_LAST_INDEX = VECTOR_NDIM - 1;
+
+    /// Type of this comma-initializer
+    using Type = Vec3CommaInitializer<Scalar_T>;
+    /// Vector type currently in use
+    using VectorType = Vector3<Scalar_T>;
+
+    /// Constructs a comma-initializer for the given vector and initial coeff.
+    // NOLINTNEXTLINE(runtime/references)
+    inline explicit Vec3CommaInitializer(VectorType& vec, Scalar_T coeff0)
+        : m_VectorRef(vec) {
+        // Append first coefficient to the vector
+        _append(coeff0);
+    }
+
+    /// Destroys and terminates the operations of the initializer
+    inline ~Vec3CommaInitializer() { _finished(); }
+
+    /// Appends the given coefficient to the initializer for building the vec3
+    auto operator,(Scalar_T next_coeff) -> Type& {
+        // @todo(wilbert): remove the if and use an assert (avoid extra instr.)
+        if (m_CurrentBuildIndex <= VECTOR_LAST_INDEX) {
+            _append(next_coeff);
+        }
+        return *this;
+    }
+
+ private:
+    /// Appends the coefficient to the vector being built
+    TM_INLINE auto _append(Scalar_T coeff) -> void {
+        m_VectorRef[m_CurrentBuildIndex++] = coeff;
+    }
+
+    /// Terminates the operations of the initializer and returns the built vec3
+    TM_INLINE auto _finished() -> VectorType& { return m_VectorRef; }
+
+ private:
+    /// Mutable reference to the vector we're currently constructing
+    VectorType& m_VectorRef;
+    /// Index of the current coefficient being built
+    int32_t m_CurrentBuildIndex = VECTOR_FIRST_INDEX;
 };
 
 /// \brief Returns the vector-sum of two 3d vector operands

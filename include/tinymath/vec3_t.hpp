@@ -53,22 +53,22 @@ class Vector3 {
     // @todo(wilbert): RAII breaks (rule of 5). Add remaining initializers
 
     /// Returns a mutable reference to the x-component of the vector
-    constexpr auto x() -> Scalar_T& { return m_Elements[0]; }
+    auto x() -> Scalar_T& { return m_Elements[0]; }
 
     /// Returns a mutable reference to the y-component of the vector
-    constexpr auto y() -> Scalar_T& { return m_Elements[1]; }
+    auto y() -> Scalar_T& { return m_Elements[1]; }
 
     /// Returns a mutable reference to the z-component of the vector
-    constexpr auto z() -> Scalar_T& { return m_Elements[2]; }
+    auto z() -> Scalar_T& { return m_Elements[2]; }
 
     /// Returns an unmutable reference to the x-component of the vector
-    constexpr auto x() const -> const Scalar_T& { return m_Elements[0]; }
+    auto x() const -> const Scalar_T& { return m_Elements[0]; }
 
     /// Returns an unmutable reference to the y-component of the vector
-    constexpr auto y() const -> const Scalar_T& { return m_Elements[1]; }
+    auto y() const -> const Scalar_T& { return m_Elements[1]; }
 
     /// Returns an unmutable reference to the z-component of the vector
-    constexpr auto z() const -> const Scalar_T& { return m_Elements[2]; }
+    auto z() const -> const Scalar_T& { return m_Elements[2]; }
 
     /// Returns a mutable reference to the underlying storage of the vector
     auto elements() -> BufferType& { return m_Elements; }

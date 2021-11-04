@@ -50,6 +50,9 @@ class Vector4 {
     /// Constructs a vector of the form (x, y, z, w)
     explicit Vector4(Scalar_T x, Scalar_T y, Scalar_T z, Scalar_T w);
 
+    /// Constructs a vector from an initializer list of the form {x, y, z, w}
+    Vector4(const std::initializer_list<Scalar_T>& values);
+
     // @todo(wilbert): RAII break (rule of 5)
 
     /// Returns a mutable reference to the x-component of the vector
@@ -103,10 +106,10 @@ class Vector4 {
     constexpr auto buffer_size() const -> uint32_t { return BUFFER_SIZE; }
 
     /// Returns the size (in bytes) of the vector
-    constexpr auto num_bytes_size() const -> uint32_t { return sizeof(Type); }
+    static constexpr auto num_bytes_size() -> uint32_t { return sizeof(Type); }
 
     /// Returns the alignment (in bytes) of the vector
-    constexpr auto num_bytes_alignment() const -> uint32_t {
+    static constexpr auto num_bytes_alignment() -> uint32_t {
         return alignof(Type);
     }
 

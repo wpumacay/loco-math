@@ -48,6 +48,7 @@ class Vector3 {
     /// Constructs a vector of the form (x, y, z)
     explicit Vector3(Scalar_T x, Scalar_T y, Scalar_T z);
 
+    /// COnstructs a vector from an initializer list of the form {x, y, z}
     Vector3(const std::initializer_list<Scalar_T>& values);
 
     // @todo(wilbert): RAII breaks (rule of 5). Add remaining initializers

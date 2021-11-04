@@ -4,6 +4,7 @@
 #include <ios>
 #include <cmath>
 #include <string>
+#include <algorithm>
 #include <type_traits>
 
 #include <tinymath/impl/vec4_t_scalar_impl.hpp>
@@ -79,6 +80,14 @@ Vector4<Scalar_T>::Vector4(Scalar_T x, Scalar_T y, Scalar_T z, Scalar_T w) {
     m_Elements[1] = y;
     m_Elements[2] = z;
     m_Elements[3] = w;
+}
+
+template <typename Scalar_T>
+Vector4<Scalar_T>::Vector4(const std::initializer_list<Scalar_T>& values) {
+    // Complain in case we don't receive exactly 4 values
+    assert(values.size() == Vector4<Scalar_T>::VECTOR_NDIM);
+    // Just copy the whole data from the initializer list
+    std::copy(values.begin(), values.end(), m_Elements.data());
 }
 
 template <typename Scalar_T>

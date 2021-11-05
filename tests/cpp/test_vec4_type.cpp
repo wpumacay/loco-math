@@ -1,75 +1,99 @@
 #include <catch2/catch.hpp>
 #include <cmath>
 #include <tinymath/tinymath.hpp>
+#include <type_traits>
 
-/*
- * @todo(wilbert): replace GENERATE of fixed values with random values + seed
- */
+constexpr int N_SAMPLES = 10;
+constexpr double RANGE_MIN = -10.0;
+constexpr double RANGE_MAX = 10.0;
+
+template <typename T>
+auto FuncAllClose(const tiny::math::Vector4<T>& vec, T x, T y, T z, T w)
+    -> void {
+    constexpr T EPSILON = tiny::math::EPS<T>;
+    REQUIRE(std::abs(vec.x() - x) < EPSILON);
+    REQUIRE(std::abs(vec.y() - y) < EPSILON);
+    REQUIRE(std::abs(vec.z() - z) < EPSILON);
+    REQUIRE(std::abs(vec.w() - w) < EPSILON);
+}
 
 // NOLINTNEXTLINE
-TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core API", "[vec4_t][template]",
+TEMPLATE_TEST_CASE("Vector4 class (vec4_t) constructors", "[vec4_t][template]",
                    tiny::math::float32_t, tiny::math::float64_t) {
     using T = TestType;
     using Vector4 = tiny::math::Vector4<T>;
 
-    constexpr TestType EPSILON = tiny::math::EPS<T>;
+    // Checking size and alignment (we pad by 1 scalar to keep the alignment)
+    constexpr int EXPECTED_SIZE = 4 * sizeof(T);
+    constexpr int EXPECTED_ALIGNMENT = 4 * sizeof(T);
+    static_assert(std::is_floating_point<T>(), "");
+    static_assert(EXPECTED_SIZE == Vector4::num_bytes_size(), "");
+    static_assert(EXPECTED_ALIGNMENT == Vector4::num_bytes_alignment(), "");
 
-    SECTION("Constructor Vector4()") {
+    // Checking the correctness of the constructors
+
+    SECTION("Default constructor") {
         Vector4 v;
-
-        REQUIRE(std::abs(v.x() - static_cast<T>(0.0)) < EPSILON);
-        REQUIRE(std::abs(v.y() - static_cast<T>(0.0)) < EPSILON);
-        REQUIRE(std::abs(v.z() - static_cast<T>(0.0)) < EPSILON);
-        REQUIRE(std::abs(v.w() - static_cast<T>(0.0)) < EPSILON);
+        FuncAllClose<T>(v, 0.0, 0.0, 0.0, 0.0);
     }
 
-    SECTION("Constructor Vector4(T x)") {
-        auto val = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
+    SECTION("From single scalar argument") {
+        auto val_x =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
 
-        Vector4 v(val);
+        Vector4 v(val_x);
 
-        REQUIRE(std::abs(v.x() - val) < EPSILON);
-        REQUIRE(std::abs(v.y() - val) < EPSILON);
-        REQUIRE(std::abs(v.z() - val) < EPSILON);
-        REQUIRE(std::abs(v.w() - val) < EPSILON);
+        FuncAllClose<T>(v, val_x, val_x, val_x, val_x);
     }
 
-    SECTION("Constructor Vector4(T x, T y)") {
-        auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
-        auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
+    SECTION("From two scalar arguments") {
+        auto val_x =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
+        auto val_y =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
 
         Vector4 v(val_x, val_y);
 
-        REQUIRE(std::abs(v.x() - val_x) < EPSILON);
-        REQUIRE(std::abs(v.y() - val_y) < EPSILON);
-        REQUIRE(std::abs(v.z() - val_y) < EPSILON);
-        REQUIRE(std::abs(v.w() - val_y) < EPSILON);
+        FuncAllClose<T>(v, val_x, val_y, val_y, val_y);
     }
 
-    SECTION("Constructor Vector4(T x, T y, T z)") {
-        auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
-        auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
-        auto val_z = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);  // NOLINT
+    SECTION("From three scalar arguments") {
+        auto val_x =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
+        auto val_y =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
+        auto val_z =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
 
         Vector4 v(val_x, val_y, val_z);
 
-        REQUIRE(std::abs(v.x() - val_x) < EPSILON);
-        REQUIRE(std::abs(v.y() - val_y) < EPSILON);
-        REQUIRE(std::abs(v.z() - val_z) < EPSILON);
-        REQUIRE(std::abs(v.w() - val_z) < EPSILON);
+        FuncAllClose<T>(v, val_x, val_y, val_z, val_z);
     }
 
-    SECTION("Constructor Vector4(T x, T y, T z, T w)") {
-        auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);   // NOLINT
-        auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);   // NOLINT
-        auto val_z = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);   // NOLINT
-        auto val_w = GENERATE(as<T>{}, 4.0, 6.0, 8.0, 10.0);  // NOLINT
+    SECTION("From four scalar arguments or from initializer_list") {
+        auto val_x =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
+        auto val_y =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
+        auto val_z =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
+        auto val_w =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
 
-        Vector4 v(val_x, val_y, val_z, val_w);
+        Vector4 v_1(val_x, val_y, val_z, val_w);
+        Vector4 v_2 = {val_x, val_y, val_z, val_w};
 
-        REQUIRE(std::abs(v.x() - val_x) < EPSILON);
-        REQUIRE(std::abs(v.y() - val_y) < EPSILON);
-        REQUIRE(std::abs(v.z() - val_z) < EPSILON);
-        REQUIRE(std::abs(v.w() - val_w) < EPSILON);
+        FuncAllClose<T>(v_1, val_x, val_y, val_z, val_w);
+        FuncAllClose<T>(v_2, val_x, val_y, val_z, val_w);
     }
 }

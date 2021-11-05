@@ -14,7 +14,7 @@ namespace scalar {
 using Mat4f = Matrix4<float32_t>;
 using ArrayCols4f = Mat4f::BufferType;
 
-TM_INLINE auto kernel_transpose_in_place_m4f(ArrayCols4f& cols) {
+TM_INLINE auto kernel_transpose_in_place_m4f(ArrayCols4f& cols) -> void {
     for (int32_t i = 1; i < Mat4f::MATRIX_NDIM; ++i) {
         for (int32_t j = 0; j < i; ++j) {
             std::swap(cols[i][j], cols[j][i]);
@@ -28,7 +28,7 @@ TM_INLINE auto kernel_transpose_in_place_m4f(ArrayCols4f& cols) {
 using Mat4d = Matrix4<float64_t>;
 using ArrayCols4d = Mat4d::BufferType;
 
-TM_INLINE auto kernel_transpose_in_place_m4d(ArrayCols4d& cols) {
+TM_INLINE auto kernel_transpose_in_place_m4d(ArrayCols4d& cols) -> void {
     for (int32_t i = 1; i < Mat4d::MATRIX_NDIM; ++i) {
         for (int32_t j = 0; j < i; ++j) {
             std::swap(cols[i][j], cols[j][i]);

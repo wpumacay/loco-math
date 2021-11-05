@@ -3,6 +3,10 @@
 #include <tinymath/tinymath.hpp>
 #include <type_traits>
 
+constexpr int N_SAMPLES = 10;
+constexpr double RANGE_MIN = -10.0;
+constexpr double RANGE_MAX = 10.0;
+
 template <typename T>
 auto FuncAllClose(const tiny::math::Vector4<T>& vec, T x, T y, T z, T w)
     -> void {
@@ -27,9 +31,6 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) constructors", "[vec4_t][template]",
     static_assert(EXPECTED_ALIGNMENT == Vector4::num_bytes_alignment(), "");
 
     // Checking the correctness of the constructors
-    constexpr int N_SAMPLES = 10;
-    constexpr T RANGE_MIN = static_cast<T>(-10.0);
-    constexpr T RANGE_MAX = static_cast<T>(10.0);
 
     SECTION("Default constructor") {
         Vector4 v;
@@ -37,7 +38,9 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) constructors", "[vec4_t][template]",
     }
 
     SECTION("From single scalar argument") {
-        auto val_x = GENERATE(take(N_SAMPLES, random(RANGE_MIN, RANGE_MAX)));
+        auto val_x =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
 
         Vector4 v(val_x);
 
@@ -45,8 +48,12 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) constructors", "[vec4_t][template]",
     }
 
     SECTION("From two scalar arguments") {
-        auto val_x = GENERATE(take(N_SAMPLES, random(RANGE_MIN, RANGE_MAX)));
-        auto val_y = GENERATE(take(N_SAMPLES, random(RANGE_MIN, RANGE_MAX)));
+        auto val_x =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
+        auto val_y =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
 
         Vector4 v(val_x, val_y);
 
@@ -54,9 +61,15 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) constructors", "[vec4_t][template]",
     }
 
     SECTION("From three scalar arguments") {
-        auto val_x = GENERATE(take(N_SAMPLES, random(RANGE_MIN, RANGE_MAX)));
-        auto val_y = GENERATE(take(N_SAMPLES, random(RANGE_MIN, RANGE_MAX)));
-        auto val_z = GENERATE(take(N_SAMPLES, random(RANGE_MIN, RANGE_MAX)));
+        auto val_x =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
+        auto val_y =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
+        auto val_z =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
 
         Vector4 v(val_x, val_y, val_z);
 
@@ -64,10 +77,18 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) constructors", "[vec4_t][template]",
     }
 
     SECTION("From four scalar arguments or from initializer_list") {
-        auto val_x = GENERATE(take(N_SAMPLES, random(RANGE_MIN, RANGE_MAX)));
-        auto val_y = GENERATE(take(N_SAMPLES, random(RANGE_MIN, RANGE_MAX)));
-        auto val_z = GENERATE(take(N_SAMPLES, random(RANGE_MIN, RANGE_MAX)));
-        auto val_w = GENERATE(take(N_SAMPLES, random(RANGE_MIN, RANGE_MAX)));
+        auto val_x =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
+        auto val_y =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
+        auto val_z =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
+        auto val_w =
+            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
+                                            static_cast<T>(RANGE_MAX))));
 
         Vector4 v_1(val_x, val_y, val_z, val_w);
         Vector4 v_2 = {val_x, val_y, val_z, val_w};

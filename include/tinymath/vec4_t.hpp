@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cassert>
 #include <cstdint>
 #include <iostream>
 #include <sstream>
@@ -97,6 +98,7 @@ class Vector4 {
         return m_Elements[index];
     }
 
+    /// Returns a comma-initializer to construct the vector via its coefficients
     auto operator<<(Scalar_T coeff) -> Vec4CommaInitializer<Scalar_T> {
         return Vec4CommaInitializer<Scalar_T>(*this, coeff);
     }
@@ -161,7 +163,8 @@ class Vec4CommaInitializer {
     explicit Vec4CommaInitializer(VectorType& vec, Scalar_T coeff0)
         : m_VectorRef(vec) {
         // Append first coefficient to the vector
-        _append(coeff0);
+        m_VectorRef[0] = coeff0;
+        ++m_CurrentBuildIndex;
     }
 
     /// Constructs a comma-initializer by copying from another one
@@ -184,21 +187,16 @@ class Vec4CommaInitializer {
 
     /// Appends the given coefficient to the initializer for building the vec4
     auto operator,(Scalar_T next_coeff) -> Type& {
-        // @todo(wilbert): remove the if and use an assert (avoid extra instr.)
-        if (m_CurrentBuildIndex <= VECTOR_LAST_INDEX) {
-            _append(next_coeff);
-        }
+        assert(m_CurrentBuildIndex <= VECTOR_LAST_INDEX);
+        m_VectorRef[m_CurrentBuildIndex++] = next_coeff;
         return *this;
     }
 
  private:
-    /// Appends the coefficient to the vector being built
-    TM_INLINE auto _append(Scalar_T coeff) -> void {
-        m_VectorRef[m_CurrentBuildIndex++] = coeff;
+    /// Terminates the operations of the initializer
+    TM_INLINE auto _finished() -> void {
+        assert(m_CurrentBuildIndex == (VECTOR_LAST_INDEX + 1));
     }
-
-    /// Terminates the operations of the initializer and returns the built vec4
-    TM_INLINE auto _finished() -> VectorType& { return m_VectorRef; }
 
  private:
     /// Mutable reference to the vector we're currently constructing

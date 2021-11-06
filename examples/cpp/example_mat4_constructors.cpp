@@ -39,6 +39,15 @@ auto run_example_mat4() -> void {
     Vec4 col3(4.0, 8.0, 12.0, 16.0);
     Mat4 mat_d(col0, col1, col2, col3);
 
+    // clang-format off
+    // Construct from comma-initializer
+    Mat4 mat_e;
+    mat_e << 1.0,  2.0,  3.0,  4.0,
+             5.0,  6.0,  7.0,  8.0,
+             9.0,  10.0, 11.0, 12.0,
+             13.0, 14.0, 15.0, 16.0;
+    // clang-format on
+
     // Show the matrices :)
     std::cout << "matrix-a\n";
     std::cout << mat_a.toString() << "\n";
@@ -54,6 +63,10 @@ auto run_example_mat4() -> void {
 
     std::cout << "matrix-d\n";
     std::cout << mat_d.toString() << "\n";
+    std::cout << "--------------\n";
+
+    std::cout << "matrix-e\n";
+    std::cout << mat_e.toString() << "\n";
     std::cout << "--------------\n";
 
     std::cout << "**********************************************************\n";

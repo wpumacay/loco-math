@@ -55,8 +55,6 @@ class Vector3 {
     /// COnstructs a vector from an initializer list of the form {x, y, z}
     Vector3(const std::initializer_list<Scalar_T>& values);
 
-    // @todo(wilbert): RAII breaks (rule of 5). Add remaining initializers
-
     /// Returns a mutable reference to the x-component of the vector
     auto x() -> Scalar_T& { return m_Elements[0]; }
 
@@ -136,6 +134,20 @@ class Vector3 {
                                                                      0};
 };
 
+/// \class Vec3CommaInitializer
+///
+/// \brief Helper class used during comma-initialization of vec3-types
+///
+/// \tparam Scalar_T Type of scalar used for the 3d vector being constructed
+///
+/// This is a helper class used for operations of the form `v << 1, 2, 3;`,
+/// which require to concatenate a comma-initializer after using the `<<`
+/// operator. This is based on Eigen's comma-initializer implementation.
+///
+/// \code
+///     Vector3d vec;
+///     vec << 1.0, 2.0, 3.0;
+/// \endcode
 template <typename Scalar_T>
 class Vec3CommaInitializer {
  public:
@@ -153,14 +165,29 @@ class Vec3CommaInitializer {
 
     /// Constructs a comma-initializer for the given vector and initial coeff.
     // NOLINTNEXTLINE(runtime/references)
-    inline explicit Vec3CommaInitializer(VectorType& vec, Scalar_T coeff0)
+    explicit Vec3CommaInitializer(VectorType& vec, Scalar_T coeff0)
         : m_VectorRef(vec) {
         // Append first coefficient to the vector
         _append(coeff0);
     }
 
+    /// Constructs a comma-initializer by copying from another one
+    Vec3CommaInitializer(const Vec3CommaInitializer<Scalar_T>& other) = default;
+
+    /// Copies the contents of a given comma-initializer
+    auto operator=(const Vec3CommaInitializer<Scalar_T>& rhs)
+        -> Vec3CommaInitializer<Scalar_T>& = default;
+
+    /// Constructs a comma-initializer by moving the ownership of another one
+    Vec3CommaInitializer(Vec3CommaInitializer<Scalar_T>&& other) noexcept =
+        default;
+
+    /// Moves the contents of a given comma-initializer
+    auto operator=(Vec3CommaInitializer<Scalar_T>&& rhs) noexcept
+        -> Vec3CommaInitializer<Scalar_T>& = default;
+
     /// Destroys and terminates the operations of the initializer
-    inline ~Vec3CommaInitializer() { _finished(); }
+    ~Vec3CommaInitializer() { _finished(); }
 
     /// Appends the given coefficient to the initializer for building the vec3
     auto operator,(Scalar_T next_coeff) -> Type& {

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15..3.19)
 
 project(
   TinyMath
-  VERSION 0.2.0
+  VERSION 0.3.0
   DESCRIPTION "A basic math library for vectors and matrices"
   HOMEPAGE_URL "https://github.com/wpumacay/tiny_math"
   LANGUAGES C CXX)

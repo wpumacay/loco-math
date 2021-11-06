@@ -56,7 +56,9 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) constructors", "[vec3_t][template]",
         FuncAllClose(v, val_x, val_y, val_y);
     }
 
-    SECTION("From three scalar arguments or from initializer_list") {
+    SECTION(
+        "From three scalar arguments, from initializer_list, or using "
+        "comma-initializer") {
         auto val_x =
             GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
                                             static_cast<T>(RANGE_MAX))));
@@ -69,8 +71,11 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) constructors", "[vec3_t][template]",
 
         Vector3 v_1(val_x, val_y, val_z);
         Vector3 v_2 = {val_x, val_y, val_z};
+        Vector3 v_3;
+        v_3 << val_x, val_y, val_z;
 
         FuncAllClose(v_1, val_x, val_y, val_z);
         FuncAllClose(v_2, val_x, val_y, val_z);
+        FuncAllClose(v_3, val_x, val_y, val_z);
     }
 }

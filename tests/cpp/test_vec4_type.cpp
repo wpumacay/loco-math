@@ -76,7 +76,9 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) constructors", "[vec4_t][template]",
         FuncAllClose<T>(v, val_x, val_y, val_z, val_z);
     }
 
-    SECTION("From four scalar arguments or from initializer_list") {
+    SECTION(
+        "From four scalar arguments, from initializer_list, or using "
+        "comma-initializer") {
         auto val_x =
             GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
                                             static_cast<T>(RANGE_MAX))));
@@ -92,8 +94,11 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) constructors", "[vec4_t][template]",
 
         Vector4 v_1(val_x, val_y, val_z, val_w);
         Vector4 v_2 = {val_x, val_y, val_z, val_w};
+        Vector4 v_3;
+        v_3 << val_x, val_y, val_z, val_w;
 
         FuncAllClose<T>(v_1, val_x, val_y, val_z, val_w);
         FuncAllClose<T>(v_2, val_x, val_y, val_z, val_w);
+        FuncAllClose<T>(v_3, val_x, val_y, val_z, val_w);
     }
 }

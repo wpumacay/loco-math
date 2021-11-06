@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cassert>
 #include <cstdint>
 #include <initializer_list>
 #include <iostream>
@@ -10,6 +11,10 @@
 
 namespace tiny {
 namespace math {
+
+// Forward-declare comma-initializer for vector3-types
+template <typename Scalar_T>
+class Vec3CommaInitializer;
 
 /// \class Vector3
 ///
@@ -51,8 +56,6 @@ class Vector3 {
     /// COnstructs a vector from an initializer list of the form {x, y, z}
     Vector3(const std::initializer_list<Scalar_T>& values);
 
-    // @todo(wilbert): RAII breaks (rule of 5). Add remaining initializers
-
     /// Returns a mutable reference to the x-component of the vector
     auto x() -> Scalar_T& { return m_Elements[0]; }
 
@@ -83,6 +86,11 @@ class Vector3 {
     /// Returns an unmutable reference to the requested entry of the vector
     auto operator[](uint32_t index) const -> const Scalar_T& {
         return m_Elements[index];
+    }
+
+    /// Returns a comma-initializer to construct the vector via its coefficients
+    auto operator<<(Scalar_T coeff) -> Vec3CommaInitializer<Scalar_T> {
+        return Vec3CommaInitializer<Scalar_T>(*this, coeff);
     }
 
     /// Returns the square of the norm-2 of the vector (spare a sqrt calc.)
@@ -125,6 +133,82 @@ class Vector3 {
     /// Storage of the vector's scalars (we pad by 1 due to SIMD-alignment)
     alignas(sizeof(Scalar_T) * BUFFER_SIZE) BufferType m_Elements = {0, 0, 0,
                                                                      0};
+};
+
+/// \class Vec3CommaInitializer
+///
+/// \brief Helper class used during comma-initialization of vec3-types
+///
+/// \tparam Scalar_T Type of scalar used for the 3d vector being constructed
+///
+/// This is a helper class used for operations of the form `v << 1, 2, 3;`,
+/// which require to concatenate a comma-initializer after using the `<<`
+/// operator. This is based on Eigen's comma-initializer implementation.
+///
+/// \code
+///     Vector3d vec;
+///     vec << 1.0, 2.0, 3.0;
+/// \endcode
+template <typename Scalar_T>
+class Vec3CommaInitializer {
+ public:
+    /// Number of scalar dimensions of the vector
+    constexpr static uint32_t VECTOR_NDIM = 3;
+    /// Index of the first vector entry
+    constexpr static int32_t VECTOR_FIRST_INDEX = 0;
+    /// Index of the last vector entry
+    constexpr static int32_t VECTOR_LAST_INDEX = VECTOR_NDIM - 1;
+
+    /// Type of this comma-initializer
+    using Type = Vec3CommaInitializer<Scalar_T>;
+    /// Vector type currently in use
+    using VectorType = Vector3<Scalar_T>;
+
+    /// Constructs a comma-initializer for the given vector and initial coeff.
+    // NOLINTNEXTLINE(runtime/references)
+    explicit Vec3CommaInitializer(VectorType& vec, Scalar_T coeff0)
+        : m_VectorRef(vec) {
+        // Append first coefficient to the vector
+        m_VectorRef[0] = coeff0;
+        ++m_CurrentBuildIndex;
+    }
+
+    /// Constructs a comma-initializer by copying from another one
+    Vec3CommaInitializer(const Vec3CommaInitializer<Scalar_T>& other) = default;
+
+    /// Copies the contents of a given comma-initializer
+    auto operator=(const Vec3CommaInitializer<Scalar_T>& rhs)
+        -> Vec3CommaInitializer<Scalar_T>& = default;
+
+    /// Constructs a comma-initializer by moving the ownership of another one
+    Vec3CommaInitializer(Vec3CommaInitializer<Scalar_T>&& other) noexcept =
+        default;
+
+    /// Moves the contents of a given comma-initializer
+    auto operator=(Vec3CommaInitializer<Scalar_T>&& rhs) noexcept
+        -> Vec3CommaInitializer<Scalar_T>& = default;
+
+    /// Destroys and terminates the operations of the initializer
+    ~Vec3CommaInitializer() { _finished(); }
+
+    /// Appends the given coefficient to the initializer for building the vec3
+    auto operator,(Scalar_T next_coeff) -> Type& {
+        assert(m_CurrentBuildIndex <= VECTOR_LAST_INDEX);
+        m_VectorRef[m_CurrentBuildIndex++] = next_coeff;
+        return *this;
+    }
+
+ private:
+    /// Terminates the operations of the initializer
+    TM_INLINE auto _finished() -> void {
+        assert(m_CurrentBuildIndex == (VECTOR_LAST_INDEX + 1));
+    }
+
+ private:
+    /// Mutable reference to the vector we're currently constructing
+    VectorType& m_VectorRef;
+    /// Index of the current coefficient being built
+    int32_t m_CurrentBuildIndex = VECTOR_FIRST_INDEX;
 };
 
 /// \brief Returns the vector-sum of two 3d vector operands

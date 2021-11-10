@@ -18,6 +18,9 @@
 #endif
 // clang-format on
 
+// @todo(wilbert): use std::enable_if and some traits to only specialize for
+// types when there is either SSE or AVX support enabled (to avoid repetition)
+
 namespace tiny {
 namespace math {
 
@@ -98,14 +101,111 @@ using Mat4f = Matrix4<float32_t>;
 
 template <>
 TM_INLINE auto Mat4f::transposeInPlace() -> void {
-    scalar::kernel_transpose_in_place_m4f(elements());
+    // scalar::kernel_transpose_inplace_mat4<float32_t>(elements());
+    scalar::kernel_transpose_inplace_mat4<float32_t>(elements());
 }
 
 template <>
 TM_INLINE auto Mat4f::transpose() const -> Mat4f {
     Mat4f result = *this;
-    scalar::kernel_transpose_in_place_m4f(result.elements());
+    scalar::kernel_transpose_inplace_mat4<float32_t>(result.elements());
     return result;
+}
+
+template <>
+TM_INLINE auto operator+(const Mat4f& lhs, const Mat4f& rhs) -> Mat4f {
+    Mat4f result;
+#if defined(TINYMATH_AVX_ENABLED)
+    // avx::kernel_sub_mat4f(result.elements(), lhs.elements(), rhs.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+    // sse::kernel_sub_mat4f(result.elements(), lhs.elements(), rhs.elements());
+#else
+    scalar::kernel_add_mat4<float32_t>(result.elements(), lhs.elements(),
+                                       rhs.elements());
+#endif
+    return result;
+}
+
+template <>
+TM_INLINE auto operator-(const Mat4f& lhs, const Mat4f& rhs) -> Mat4f {
+    Mat4f result;
+#if defined(TINYMATH_AVX_ENABLED)
+    // avx::kernel_sub_mat4f(result.elements(), lhs.elements(), rhs.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+    // sse::kernel_sub_mat4f(result.elements(), lhs.elements(), rhs.elements());
+#else
+    scalar::kernel_sub_mat4<float32_t>(result.elements(), lhs.elements(),
+                                       rhs.elements());
+#endif
+    return result;
+}
+
+template <>
+TM_INLINE auto operator*(float32_t scale, const Mat4f& mat) -> Mat4f {
+    Mat4f result;
+#if defined(TINYMATH_AVX_ENABLED)
+    // avx::kernel_scale_mat4f(result.elements(), scale, mat.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+    // sse::kernel_scale_mat4f(result.elements(), scale, mat.elements());
+#else
+    scalar::kernel_scale_mat4<float32_t>(result.elements(), scale,
+                                         mat.elements());
+#endif
+    return result;
+}
+
+template <>
+TM_INLINE auto operator*(const Mat4f& mat, float32_t scale) -> Mat4f {
+    Mat4f result;
+#if defined(TINYMATH_AVX_ENABLED)
+    // avx::kernel_scale_mat4f(result.elements(), scale, mat.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+    // sse::kernel_scale_mat4f(result.elements(), scale, mat.elements());
+#else
+    scalar::kernel_scale_mat4<float32_t>(result.elements(), scale,
+                                         mat.elements());
+#endif
+    return result;
+}
+
+template <>
+TM_INLINE auto operator*(const Mat4f& lhs, const Mat4f& rhs) -> Mat4f {
+    Mat4f result;
+#if defined(TINYMATH_AVX_ENABLED)
+// avx::kernel_matmul_mat4f(result.elements(), lhs.elements(), rhs.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+// sse::kernel_matmul_mat4f(result.elements(), lhs.elements(), rhs.elements());
+#else
+    scalar::kernel_matmul_mat4<float32_t>(result.elements(), lhs.elements(),
+                                          rhs.elements());
+#endif
+    return result;
+}
+
+template <>
+TM_INLINE auto hadamard(const Mat4f& lhs, const Mat4f& rhs) -> Mat4f {
+    Mat4f result;
+#if defined(TINYMATH_AVX_ENABLED)
+// avx::kernel_hadamard_mat4f(result.elements(),lhs.elements(),rhs.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+// sse::kernel_hadamard_mat4f(result.elements(),lhs.elements(),rhs.elements());
+#else
+    scalar::kernel_matmul_mat4<float32_t>(result.elements(), lhs.elements(),
+                                          rhs.elements());
+#endif
+    return result;
+}
+
+template <>
+TM_INLINE auto operator==(const Mat4f& lhs, const Mat4f& rhs) -> bool {
+    return scalar::kernel_compare_eq_mat4<float32_t>(lhs.elements(),
+                                                     rhs.elements());
+}
+
+template <>
+TM_INLINE auto operator!=(const Mat4f& lhs, const Mat4f& rhs) -> bool {
+    return !scalar::kernel_compare_eq_mat4<float32_t>(lhs.elements(),
+                                                      rhs.elements());
 }
 
 // ***************************************************************************//
@@ -115,14 +215,110 @@ using Mat4d = Matrix4<float64_t>;
 
 template <>
 TM_INLINE auto Mat4d::transposeInPlace() -> void {
-    scalar::kernel_transpose_in_place_m4d(elements());
+    scalar::kernel_transpose_inplace_mat4<float64_t>(elements());
 }
 
 template <>
 TM_INLINE auto Mat4d::transpose() const -> Mat4d {
     Mat4d result = *this;
-    scalar::kernel_transpose_in_place_m4d(result.elements());
+    scalar::kernel_transpose_inplace_mat4<float64_t>(result.elements());
     return result;
+}
+
+template <>
+TM_INLINE auto operator+(const Mat4d& lhs, const Mat4d& rhs) -> Mat4d {
+    Mat4d result;
+#if defined(TINYMATH_AVX_ENABLED)
+    // avx::kernel_sub_mat4d(result.elements(), lhs.elements(), rhs.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+    // sse::kernel_sub_mat4d(result.elements(), lhs.elements(), rhs.elements());
+#else
+    scalar::kernel_add_mat4<float64_t>(result.elements(), lhs.elements(),
+                                       rhs.elements());
+#endif
+    return result;
+}
+
+template <>
+TM_INLINE auto operator-(const Mat4d& lhs, const Mat4d& rhs) -> Mat4d {
+    Mat4d result;
+#if defined(TINYMATH_AVX_ENABLED)
+    // avx::kernel_sub_mat4d(result.elements(), lhs.elements(), rhs.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+    // sse::kernel_sub_mat4d(result.elements(), lhs.elements(), rhs.elements());
+#else
+    scalar::kernel_sub_mat4<float64_t>(result.elements(), lhs.elements(),
+                                       rhs.elements());
+#endif
+    return result;
+}
+
+template <>
+TM_INLINE auto operator*(float64_t scale, const Mat4d& mat) -> Mat4d {
+    Mat4d result;
+#if defined(TINYMATH_AVX_ENABLED)
+    // avx::kernel_scale_mat4d(result.elements(), scale, mat.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+    // sse::kernel_scale_mat4d(result.elements(), scale, mat.elements());
+#else
+    scalar::kernel_scale_mat4<float64_t>(result.elements(), scale,
+                                         mat.elements());
+#endif
+    return result;
+}
+
+template <>
+TM_INLINE auto operator*(const Mat4d& mat, float64_t scale) -> Mat4d {
+    Mat4d result;
+#if defined(TINYMATH_AVX_ENABLED)
+    // avx::kernel_scale_mat4d(result.elements(), scale, mat.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+    // sse::kernel_scale_mat4d(result.elements(), scale, mat.elements());
+#else
+    scalar::kernel_scale_mat4<float64_t>(result.elements(), scale,
+                                         mat.elements());
+#endif
+    return result;
+}
+
+template <>
+TM_INLINE auto operator*(const Mat4d& lhs, const Mat4d& rhs) -> Mat4d {
+    Mat4d result;
+#if defined(TINYMATH_AVX_ENABLED)
+// avx::kernel_matmul_mat4d(result.elements(), lhs.elements(), rhs.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+// sse::kernel_matmul_mat4d(result.elements(), lhs.elements(), rhs.elements());
+#else
+    scalar::kernel_matmul_mat4<float64_t>(result.elements(), lhs.elements(),
+                                          rhs.elements());
+#endif
+    return result;
+}
+
+template <>
+TM_INLINE auto hadamard(const Mat4d& lhs, const Mat4d& rhs) -> Mat4d {
+    Mat4d result;
+#if defined(TINYMATH_AVX_ENABLED)
+// avx::kernel_hadamard_mat4d(result.elements(),lhs.elements(),rhs.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+// sse::kernel_hadamard_mat4d(result.elements(),lhs.elements(),rhs.elements());
+#else
+    scalar::kernel_matmul_mat4<float64_t>(result.elements(), lhs.elements(),
+                                          rhs.elements());
+#endif
+    return result;
+}
+
+template <>
+TM_INLINE auto operator==(const Mat4d& lhs, const Mat4d& rhs) -> bool {
+    return scalar::kernel_compare_eq_mat4<float64_t>(lhs.elements(),
+                                                     rhs.elements());
+}
+
+template <>
+TM_INLINE auto operator!=(const Mat4d& lhs, const Mat4d& rhs) -> bool {
+    return !scalar::kernel_compare_eq_mat4<float64_t>(lhs.elements(),
+                                                      rhs.elements());
 }
 
 }  // namespace math

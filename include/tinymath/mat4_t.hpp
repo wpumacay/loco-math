@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cassert>
+#include <istream>
+#include <ostream>
 #include <string>
 #include <tinymath/vec4_t.hpp>
 
@@ -215,6 +217,46 @@ class Mat4CommaInitializer {
     /// Index of the current coefficient being built
     int32_t m_CurrentBuildIndex = MATRIX_FIRST_INDEX;
 };
+
+template <typename Scalar_T>
+TM_INLINE auto operator+(const Matrix4<Scalar_T>& lhs,
+                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T>;
+
+template <typename Scalar_T>
+TM_INLINE auto operator-(const Matrix4<Scalar_T>& lhs,
+                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T>;
+
+template <typename Scalar_T>
+TM_INLINE auto operator*(Scalar_T scale, const Matrix4<Scalar_T>& mat)
+    -> Matrix4<Scalar_T>;
+
+template <typename Scalar_T>
+TM_INLINE auto operator*(const Matrix4<Scalar_T>& mat, Scalar_T scale)
+    -> Matrix4<Scalar_T>;
+
+template <typename Scalar_T>
+TM_INLINE auto operator*(const Matrix4<Scalar_T>& lhs,
+                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T>;
+
+template <typename Scalar_T>
+TM_INLINE auto hadamard(const Matrix4<Scalar_T>& lhs,
+                        const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T>;
+
+template <typename Scalar_T>
+TM_INLINE auto operator==(const Matrix4<Scalar_T>& lhs,
+                          const Matrix4<Scalar_T>& rhs) -> bool;
+
+template <typename Scalar_T>
+TM_INLINE auto operator!=(const Matrix4<Scalar_T>& lhs,
+                          const Matrix4<Scalar_T>& rhs) -> bool;
+
+template <typename Scalar_T>
+auto operator<<(std::ostream& output_stream, const Matrix4<Scalar_T>& src)
+    -> std::ostream&;
+
+template <typename Scalar_T>
+auto operator>>(std::istream& input_stream, Matrix4<Scalar_T>& dst)
+    -> std::istream&;
 
 }  // namespace math
 }  // namespace tiny

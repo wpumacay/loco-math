@@ -18,8 +18,14 @@
 #endif
 // clang-format on
 
-// @todo(wilbert): use std::enable_if and some traits to only specialize for
-// types when there is either SSE or AVX support enabled (to avoid repetition)
+// @todo(wilbert): refactor SFINAE usage to avoid extra duplication (should be
+// able to dispatch from a single declaration). Either use "if constexpr(c++17)"
+// or dispatch SSE-AVX specific kernels in their own implementation headers
+
+// @todo(wilbert): also, I think I don't quite understand SFINAE as much as I
+// should, cause the type* = nullptr is just a fix I found. I think I was
+// supposed to use enable_if on the return type side, as Eigen does in its
+// codebase (which gets a little verbose, but still works)
 
 namespace tiny {
 namespace math {
@@ -95,230 +101,275 @@ auto Matrix4<T>::Zeros() -> Matrix4<T> {
 }
 
 // ***************************************************************************//
-//     Specializations for single-precision floating numbers (float32_t)      //
+//                     Dispatch operator for matrix addition                  //
 // ***************************************************************************//
-using Mat4f = Matrix4<float32_t>;
 
-template <>
-TM_INLINE auto Mat4f::transposeInPlace() -> void {
-    // scalar::kernel_transpose_inplace_mat4<float32_t>(elements());
-    scalar::kernel_transpose_inplace_mat4<float32_t>(elements());
-}
-
-template <>
-TM_INLINE auto Mat4f::transpose() const -> Mat4f {
-    Mat4f result = *this;
-    scalar::kernel_transpose_inplace_mat4<float32_t>(result.elements());
+template <typename Scalar_T,
+          typename std::enable_if<CpuNoSIMD<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator+(const Matrix4<Scalar_T>& lhs,
+                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
+    scalar::kernel_add_mat4<Scalar_T>(result.elements(), lhs.elements(),
+                                      rhs.elements());
     return result;
 }
 
-template <>
-TM_INLINE auto operator+(const Mat4f& lhs, const Mat4f& rhs) -> Mat4f {
-    Mat4f result;
+template <typename Scalar_T,
+          typename std::enable_if<CpuHasSIMD<Scalar_T>::value &&
+                                  IsFloat32<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator+(const Matrix4<Scalar_T>& lhs,
+                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
 #if defined(TINYMATH_AVX_ENABLED)
-    // avx::kernel_sub_mat4f(result.elements(), lhs.elements(), rhs.elements());
+// avx::kernel_add_mat4f(result.elements(), lhs.elements(), rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
-    // sse::kernel_sub_mat4f(result.elements(), lhs.elements(), rhs.elements());
-#else
-    scalar::kernel_add_mat4<float32_t>(result.elements(), lhs.elements(),
-                                       rhs.elements());
+// sse::kernel_add_mat4f(result.elements(), lhs.elements(), rhs.elements());
 #endif
     return result;
 }
 
-template <>
-TM_INLINE auto operator-(const Mat4f& lhs, const Mat4f& rhs) -> Mat4f {
-    Mat4f result;
+template <typename Scalar_T,
+          typename std::enable_if<CpuHasSIMD<Scalar_T>::value &&
+                                  IsFloat64<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator+(const Matrix4<Scalar_T>& lhs,
+                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
 #if defined(TINYMATH_AVX_ENABLED)
-    // avx::kernel_sub_mat4f(result.elements(), lhs.elements(), rhs.elements());
+// avx::kernel_add_mat4d(result.elements(), lhs.elements(), rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
-    // sse::kernel_sub_mat4f(result.elements(), lhs.elements(), rhs.elements());
-#else
-    scalar::kernel_sub_mat4<float32_t>(result.elements(), lhs.elements(),
-                                       rhs.elements());
+// sse::kernel_add_mat4d(result.elements(), lhs.elements(), rhs.elements());
 #endif
     return result;
 }
 
-template <>
-TM_INLINE auto operator*(float32_t scale, const Mat4f& mat) -> Mat4f {
-    Mat4f result;
+// ***************************************************************************//
+//                   Dispatch operator for matrix substraction                //
+// ***************************************************************************//
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuNoSIMD<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator-(const Matrix4<Scalar_T>& lhs,
+                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
+    scalar::kernel_sub_mat4<Scalar_T>(result.elements(), lhs.elements(),
+                                      rhs.elements());
+    return result;
+}
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuHasSIMD<Scalar_T>::value &&
+                                  IsFloat32<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator-(const Matrix4<Scalar_T>& lhs,
+                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
 #if defined(TINYMATH_AVX_ENABLED)
-    // avx::kernel_scale_mat4f(result.elements(), scale, mat.elements());
+// avx::kernel_sub_mat4f(result.elements(), lhs.elements(), rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
-    // sse::kernel_scale_mat4f(result.elements(), scale, mat.elements());
-#else
-    scalar::kernel_scale_mat4<float32_t>(result.elements(), scale,
-                                         mat.elements());
+// sse::kernel_sub_mat4f(result.elements(), lhs.elements(), rhs.elements());
 #endif
     return result;
 }
 
-template <>
-TM_INLINE auto operator*(const Mat4f& mat, float32_t scale) -> Mat4f {
-    Mat4f result;
+template <typename Scalar_T,
+          typename std::enable_if<CpuHasSIMD<Scalar_T>::value &&
+                                  IsFloat64<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator-(const Matrix4<Scalar_T>& lhs,
+                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
 #if defined(TINYMATH_AVX_ENABLED)
-    // avx::kernel_scale_mat4f(result.elements(), scale, mat.elements());
+// avx::kernel_sub_mat4d(result.elements(), lhs.elements(), rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
-    // sse::kernel_scale_mat4f(result.elements(), scale, mat.elements());
-#else
-    scalar::kernel_scale_mat4<float32_t>(result.elements(), scale,
-                                         mat.elements());
+// sse::kernel_sub_mat4d(result.elements(), lhs.elements(), rhs.elements());
 #endif
     return result;
 }
 
-template <>
-TM_INLINE auto operator*(const Mat4f& lhs, const Mat4f& rhs) -> Mat4f {
-    Mat4f result;
+// ***************************************************************************//
+//                Dispatch operator for scalar-matrix product                 //
+// ***************************************************************************//
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuNoSIMD<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator*(double scale, const Matrix4<Scalar_T>& mat)
+    -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
+    scalar::kernel_scale_mat4<Scalar_T>(result.elements(), scale,
+                                        mat.elements());
+    return result;
+}
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuHasSIMD<Scalar_T>::value &&
+                                  IsFloat32<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator*(double scale, const Matrix4<Scalar_T>& mat)
+    -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
+#if defined(TINYMATH_AVX_ENABLED)
+// avx::kernel_scale_mat4f(result.elements(), scale, mat.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+// sse::kernel_scale_mat4f(result.elements(), scale, mat.elements());
+#endif
+    return result;
+}
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuHasSIMD<Scalar_T>::value &&
+                                  IsFloat64<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator*(double scale, const Matrix4<Scalar_T>& mat)
+    -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
+#if defined(TINYMATH_AVX_ENABLED)
+// avx::kernel_scale_mat4d(result.elements(), scale, mat.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+// sse::kernel_scale_mat4d(result.elements(), scale, mat.elements());
+#endif
+    return result;
+}
+
+// ***************************************************************************//
+//                Dispatch operator for matrix-scalar product                 //
+// ***************************************************************************//
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuNoSIMD<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator*(const Matrix4<Scalar_T>& mat, double scale)
+    -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
+    scalar::kernel_scale_mat4<Scalar_T>(result.elements(), scale,
+                                        mat.elements());
+    return result;
+}
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuHasSIMD<Scalar_T>::value &&
+                                  IsFloat32<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator*(const Matrix4<Scalar_T>& mat, double scale)
+    -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
+#if defined(TINYMATH_AVX_ENABLED)
+// avx::kernel_scale_mat4f(result.elements(), scale, mat.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+// sse::kernel_scale_mat4f(result.elements(), scale, mat.elements());
+#endif
+    return result;
+}
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuHasSIMD<Scalar_T>::value &&
+                                  IsFloat64<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator*(const Matrix4<Scalar_T>& mat, double scale)
+    -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
+#if defined(TINYMATH_AVX_ENABLED)
+// avx::kernel_scale_mat4d(result.elements(), scale, mat.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+// sse::kernel_scale_mat4d(result.elements(), scale, mat.elements());
+#endif
+    return result;
+}
+
+// ***************************************************************************//
+//                Dispatch operator for matrix-matrix product                 //
+// ***************************************************************************//
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuNoSIMD<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator*(const Matrix4<Scalar_T>& lhs,
+                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
+    scalar::kernel_matmul_mat4<Scalar_T>(result.elements(), lhs.elements(),
+                                         rhs.elements());
+    return result;
+}
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuHasSIMD<Scalar_T>::value &&
+                                  IsFloat32<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator*(const Matrix4<Scalar_T>& lhs,
+                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
 #if defined(TINYMATH_AVX_ENABLED)
 // avx::kernel_matmul_mat4f(result.elements(), lhs.elements(), rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
 // sse::kernel_matmul_mat4f(result.elements(), lhs.elements(), rhs.elements());
-#else
-    scalar::kernel_matmul_mat4<float32_t>(result.elements(), lhs.elements(),
-                                          rhs.elements());
 #endif
     return result;
 }
 
-template <>
-TM_INLINE auto hadamard(const Mat4f& lhs, const Mat4f& rhs) -> Mat4f {
-    Mat4f result;
-#if defined(TINYMATH_AVX_ENABLED)
-// avx::kernel_hadamard_mat4f(result.elements(),lhs.elements(),rhs.elements());
-#elif defined(TINYMATH_SSE_ENABLED)
-// sse::kernel_hadamard_mat4f(result.elements(),lhs.elements(),rhs.elements());
-#else
-    scalar::kernel_matmul_mat4<float32_t>(result.elements(), lhs.elements(),
-                                          rhs.elements());
-#endif
-    return result;
-}
-
-template <>
-TM_INLINE auto operator==(const Mat4f& lhs, const Mat4f& rhs) -> bool {
-    return scalar::kernel_compare_eq_mat4<float32_t>(lhs.elements(),
-                                                     rhs.elements());
-}
-
-template <>
-TM_INLINE auto operator!=(const Mat4f& lhs, const Mat4f& rhs) -> bool {
-    return !scalar::kernel_compare_eq_mat4<float32_t>(lhs.elements(),
-                                                      rhs.elements());
-}
-
-// ***************************************************************************//
-//     Specializations for double-precision floating numbers (float64_t)      //
-// ***************************************************************************//
-using Mat4d = Matrix4<float64_t>;
-
-template <>
-TM_INLINE auto Mat4d::transposeInPlace() -> void {
-    scalar::kernel_transpose_inplace_mat4<float64_t>(elements());
-}
-
-template <>
-TM_INLINE auto Mat4d::transpose() const -> Mat4d {
-    Mat4d result = *this;
-    scalar::kernel_transpose_inplace_mat4<float64_t>(result.elements());
-    return result;
-}
-
-template <>
-TM_INLINE auto operator+(const Mat4d& lhs, const Mat4d& rhs) -> Mat4d {
-    Mat4d result;
-#if defined(TINYMATH_AVX_ENABLED)
-    // avx::kernel_sub_mat4d(result.elements(), lhs.elements(), rhs.elements());
-#elif defined(TINYMATH_SSE_ENABLED)
-    // sse::kernel_sub_mat4d(result.elements(), lhs.elements(), rhs.elements());
-#else
-    scalar::kernel_add_mat4<float64_t>(result.elements(), lhs.elements(),
-                                       rhs.elements());
-#endif
-    return result;
-}
-
-template <>
-TM_INLINE auto operator-(const Mat4d& lhs, const Mat4d& rhs) -> Mat4d {
-    Mat4d result;
-#if defined(TINYMATH_AVX_ENABLED)
-    // avx::kernel_sub_mat4d(result.elements(), lhs.elements(), rhs.elements());
-#elif defined(TINYMATH_SSE_ENABLED)
-    // sse::kernel_sub_mat4d(result.elements(), lhs.elements(), rhs.elements());
-#else
-    scalar::kernel_sub_mat4<float64_t>(result.elements(), lhs.elements(),
-                                       rhs.elements());
-#endif
-    return result;
-}
-
-template <>
-TM_INLINE auto operator*(float64_t scale, const Mat4d& mat) -> Mat4d {
-    Mat4d result;
-#if defined(TINYMATH_AVX_ENABLED)
-    // avx::kernel_scale_mat4d(result.elements(), scale, mat.elements());
-#elif defined(TINYMATH_SSE_ENABLED)
-    // sse::kernel_scale_mat4d(result.elements(), scale, mat.elements());
-#else
-    scalar::kernel_scale_mat4<float64_t>(result.elements(), scale,
-                                         mat.elements());
-#endif
-    return result;
-}
-
-template <>
-TM_INLINE auto operator*(const Mat4d& mat, float64_t scale) -> Mat4d {
-    Mat4d result;
-#if defined(TINYMATH_AVX_ENABLED)
-    // avx::kernel_scale_mat4d(result.elements(), scale, mat.elements());
-#elif defined(TINYMATH_SSE_ENABLED)
-    // sse::kernel_scale_mat4d(result.elements(), scale, mat.elements());
-#else
-    scalar::kernel_scale_mat4<float64_t>(result.elements(), scale,
-                                         mat.elements());
-#endif
-    return result;
-}
-
-template <>
-TM_INLINE auto operator*(const Mat4d& lhs, const Mat4d& rhs) -> Mat4d {
-    Mat4d result;
+template <typename Scalar_T,
+          typename std::enable_if<CpuHasSIMD<Scalar_T>::value &&
+                                  IsFloat64<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator*(const Matrix4<Scalar_T>& lhs,
+                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
 #if defined(TINYMATH_AVX_ENABLED)
 // avx::kernel_matmul_mat4d(result.elements(), lhs.elements(), rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
 // sse::kernel_matmul_mat4d(result.elements(), lhs.elements(), rhs.elements());
-#else
-    scalar::kernel_matmul_mat4<float64_t>(result.elements(), lhs.elements(),
-                                          rhs.elements());
 #endif
     return result;
 }
 
-template <>
-TM_INLINE auto hadamard(const Mat4d& lhs, const Mat4d& rhs) -> Mat4d {
-    Mat4d result;
+// ***************************************************************************//
+//             Dispatch operator for element-wise matrix product              //
+// ***************************************************************************//
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuNoSIMD<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto hadamard(const Matrix4<Scalar_T>& lhs,
+                        const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
+    scalar::kernel_hadamard_mat4<Scalar_T>(result.elements(), lhs.elements(),
+                                           rhs.elements());
+    return result;
+}
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuHasSIMD<Scalar_T>::value &&
+                                  IsFloat32<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto hadamard(const Matrix4<Scalar_T>& lhs,
+                        const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
+#if defined(TINYMATH_AVX_ENABLED)
+// avx::kernel_hadamard_mat4f(result.elements(),lhs.elements(),rhs.elements());
+#elif defined(TINYMATH_SSE_ENABLED)
+// sse::kernel_hadamard_mat4f(result.elements(),lhs.elements(),rhs.elements());
+#endif
+    return result;
+}
+
+template <typename Scalar_T,
+          typename std::enable_if<CpuHasSIMD<Scalar_T>::value &&
+                                  IsFloat64<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto hadamard(const Matrix4<Scalar_T>& lhs,
+                        const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T> {
+    Matrix4<Scalar_T> result;
 #if defined(TINYMATH_AVX_ENABLED)
 // avx::kernel_hadamard_mat4d(result.elements(),lhs.elements(),rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
-// sse::kernel_hadamard_mat4d(result.elements(),lhs.elements(),rhs.elements());
-#else
-    scalar::kernel_matmul_mat4<float64_t>(result.elements(), lhs.elements(),
-                                          rhs.elements());
+// sse::kernel_hadamard_mat4d(result.elements(),lsh.elements(),rhs.elements());
 #endif
     return result;
 }
 
-template <>
-TM_INLINE auto operator==(const Mat4d& lhs, const Mat4d& rhs) -> bool {
-    return scalar::kernel_compare_eq_mat4<float64_t>(lhs.elements(),
-                                                     rhs.elements());
+// ***************************************************************************//
+//                  Dispatch matrix comparison operators                      //
+// ***************************************************************************//
+
+template <typename Scalar_T,
+          typename std::enable_if<IsScalar<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator==(const Matrix4<Scalar_T>& lhs,
+                          const Matrix4<Scalar_T>& rhs) -> bool {
+    return scalar::kernel_compare_eq_mat4<Scalar_T>(lhs.elements(),
+                                                    rhs.elements());
 }
 
-template <>
-TM_INLINE auto operator!=(const Mat4d& lhs, const Mat4d& rhs) -> bool {
-    return !scalar::kernel_compare_eq_mat4<float64_t>(lhs.elements(),
-                                                      rhs.elements());
+template <typename Scalar_T,
+          typename std::enable_if<IsScalar<Scalar_T>::value>::type* = nullptr>
+TM_INLINE auto operator!=(const Matrix4<Scalar_T>& lhs,
+                          const Matrix4<Scalar_T>& rhs) -> bool {
+    return !scalar::kernel_compare_eq_mat4<Scalar_T>(lhs.elements(),
+                                                     rhs.elements());
 }
 
 }  // namespace math

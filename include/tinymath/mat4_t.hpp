@@ -1,10 +1,15 @@
 #pragma once
 
+// clang-format off
 #include <cassert>
 #include <istream>
 #include <ostream>
 #include <string>
+#include <utility>
+#include <type_traits>
+
 #include <tinymath/vec4_t.hpp>
+// clang-format on
 
 namespace tiny {
 namespace math {
@@ -218,35 +223,43 @@ class Mat4CommaInitializer {
     int32_t m_CurrentBuildIndex = MATRIX_FIRST_INDEX;
 };
 
-template <typename Scalar_T>
+template <typename Scalar_T,
+          typename std::enable_if<CpuNoSIMD<Scalar_T>::value>::type>
 TM_INLINE auto operator+(const Matrix4<Scalar_T>& lhs,
                          const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T>;
 
-template <typename Scalar_T>
+template <typename Scalar_T,
+          typename std::enable_if<CpuNoSIMD<Scalar_T>::value>::type>
 TM_INLINE auto operator-(const Matrix4<Scalar_T>& lhs,
                          const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T>;
 
-template <typename Scalar_T>
-TM_INLINE auto operator*(Scalar_T scale, const Matrix4<Scalar_T>& mat)
+template <typename Scalar_T,
+          typename std::enable_if<CpuNoSIMD<Scalar_T>::value>::type>
+TM_INLINE auto operator*(double scale, const Matrix4<Scalar_T>& mat)
     -> Matrix4<Scalar_T>;
 
-template <typename Scalar_T>
-TM_INLINE auto operator*(const Matrix4<Scalar_T>& mat, Scalar_T scale)
+template <typename Scalar_T,
+          typename std::enable_if<CpuNoSIMD<Scalar_T>::value>::type>
+TM_INLINE auto operator*(const Matrix4<Scalar_T>& mat, double scale)
     -> Matrix4<Scalar_T>;
 
-template <typename Scalar_T>
+template <typename Scalar_T,
+          typename std::enable_if<CpuNoSIMD<Scalar_T>::value>::type>
 TM_INLINE auto operator*(const Matrix4<Scalar_T>& lhs,
                          const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T>;
 
-template <typename Scalar_T>
+template <typename Scalar_T,
+          typename std::enable_if<CpuNoSIMD<Scalar_T>::value>::type>
 TM_INLINE auto hadamard(const Matrix4<Scalar_T>& lhs,
                         const Matrix4<Scalar_T>& rhs) -> Matrix4<Scalar_T>;
 
-template <typename Scalar_T>
+template <typename Scalar_T,
+          typename std::enable_if<IsScalar<Scalar_T>::value>::type>
 TM_INLINE auto operator==(const Matrix4<Scalar_T>& lhs,
                           const Matrix4<Scalar_T>& rhs) -> bool;
 
-template <typename Scalar_T>
+template <typename Scalar_T,
+          typename std::enable_if<IsScalar<Scalar_T>::value>::type>
 TM_INLINE auto operator!=(const Matrix4<Scalar_T>& lhs,
                           const Matrix4<Scalar_T>& rhs) -> bool;
 

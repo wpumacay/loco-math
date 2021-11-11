@@ -27,6 +27,11 @@
 // supposed to use enable_if on the return type side, as Eigen does in its
 // codebase (which gets a little verbose, but still works)
 
+// SFINAE implementation based on these resources:
+// * https://youtu.be/Vkck4EU2lOU
+// * https://akrzemi1.wordpress.com/examples/overloading-enable_if/
+// * https://youtu.be/ybaE9qlhHvw
+
 namespace tiny {
 namespace math {
 

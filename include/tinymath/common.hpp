@@ -66,6 +66,14 @@ template <typename Tp>
 struct CpuHasSIMD : public std::integral_constant<bool,
                 IsScalar<Tp>::value && (HAS_SSE::value || HAS_AVX::value)> {};
 
+template <typename Tp>
+struct CpuHasSSE : public std::integral_constant<bool,
+                IsScalar<Tp>::value && HAS_SSE::value> {};
+
+template <typename Tp>
+struct CpuHasAVX : public std::integral_constant<bool,
+                IsScalar<Tp>::value && HAS_AVX::value> {};
+
 // clang-format on
 
 }  // namespace math

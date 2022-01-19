@@ -1,5 +1,7 @@
 #pragma once
 
+// clang-format off
+#include <ios>
 #include <array>
 #include <cassert>
 #include <cstdint>
@@ -7,7 +9,10 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <algorithm>
+
 #include <tinymath/common.hpp>
+// clang-format on
 
 namespace tiny {
 namespace math {
@@ -45,16 +50,36 @@ class Vector3 {
     Vector3() = default;
 
     /// Constructs a vector of the form (x, x, x)
-    explicit Vector3(Scalar_T x);
+    explicit Vector3(Scalar_T x) {
+        m_Elements[0] = x;
+        m_Elements[1] = x;
+        m_Elements[2] = x;
+        m_Elements[3] = 0;
+    }
 
     /// Constructs a vector of the form (x, y, y)
-    explicit Vector3(Scalar_T x, Scalar_T y);
+    explicit Vector3(Scalar_T x, Scalar_T y) {
+        m_Elements[0] = x;
+        m_Elements[1] = y;
+        m_Elements[2] = y;
+        m_Elements[3] = 0;
+    }
 
     /// Constructs a vector of the form (x, y, z)
-    explicit Vector3(Scalar_T x, Scalar_T y, Scalar_T z);
+    explicit Vector3(Scalar_T x, Scalar_T y, Scalar_T z) {
+        m_Elements[0] = x;
+        m_Elements[1] = y;
+        m_Elements[2] = z;
+        m_Elements[3] = 0;
+    }
 
     /// COnstructs a vector from an initializer list of the form {x, y, z}
-    Vector3(const std::initializer_list<Scalar_T>& values);
+    Vector3(const std::initializer_list<Scalar_T>& values) {
+        // Complain in case we don't receive exactly 3 values
+        assert(values.size() == Vector3<Scalar_T>::VECTOR_NDIM);
+        // Just copy the whole data from the initializer list
+        std::copy(values.begin(), values.end(), m_Elements.data());
+    }
 
     /// Returns a mutable reference to the x-component of the vector
     auto x() -> Scalar_T& { return m_Elements[0]; }
@@ -93,27 +118,21 @@ class Vector3 {
         return Vec3CommaInitializer<Scalar_T>(*this, coeff);
     }
 
-    /// Returns the square of the norm-2 of the vector (spare a sqrt calc.)
-    TM_INLINE auto squaredNorm() const -> Scalar_T;
-
-    /// Returns the norm-2 of the vector
-    TM_INLINE auto norm() const -> Scalar_T;
-
-    /// Normalizes this vector in-place
-    TM_INLINE auto normalize() -> void;
-
-    /// Returns a normalized version of this vector (without modifying this one)
-    TM_INLINE auto normalized() const -> Vector3<Scalar_T>;
-
-    /// Returns the dot-product of this vector with the given vector argument
-    TM_INLINE auto dot(const Vector3<Scalar_T>& other) const -> Scalar_T;
-
-    /// Returns the cross-product of this vector with the given vector argument
-    TM_INLINE auto cross(const Vector3<Scalar_T>& other) const
-        -> Vector3<Scalar_T>;
-
     /// Returns a printable string-representation of the vector
-    auto toString() const -> std::string;
+    auto toString() const -> std::string {
+        std::stringstream str_result;
+        if (std::is_same<ElementType, float>()) {
+            str_result << "Vector3f(" << x() << ", " << y() << ", " << z()
+                       << ")";
+        } else if (std::is_same<ElementType, double>()) {
+            str_result << "Vector3d(" << x() << ", " << y() << ", " << z()
+                       << ")";
+        } else {
+            str_result << "Vector3X(" << x() << ", " << y() << ", " << z()
+                       << ")";
+        }
+        return str_result.str();
+    }
 
     /// Returns the number of dimensions of the vector (Vector3 <-> 3 scalars)
     constexpr auto ndim() const -> uint32_t { return VECTOR_NDIM; }
@@ -211,117 +230,6 @@ class Vec3CommaInitializer {
     int32_t m_CurrentBuildIndex = VECTOR_FIRST_INDEX;
 };
 
-/// \brief Returns the vector-sum of two 3d vector operands
-///
-/// \tparam Scalar_T Type of scalar value used for the 3d-vector operands
-///
-/// This operator implements an element-wise sum of two Vector3 operands given
-/// as input arguments. The internal operator selects the appropriate "kernel"
-/// (just a function) to which to call, depending on whether or not the library
-/// was compiled using SIMD support (i.e. SSE and AVX function intrinsics will
-/// be used to handle the operation).
-///
-/// \param[in] lhs Left-hand-side operand of the vector-sum
-/// \param[in] rhs Right-hand-side operand of the vector-sum
-template <typename Scalar_T>
-TM_INLINE auto operator+(const Vector3<Scalar_T>& lhs,
-                         const Vector3<Scalar_T>& rhs) -> Vector3<Scalar_T>;
-
-/// \brief Returns the vector-difference of two 3d vector operands
-///
-/// \tparam Scalar_T Type of scalar value used for the 3d-vector operands
-///
-/// This operator implements an element-wise difference of two Vector3 operands
-/// given as input arguments. The internal operator selects the appropriate
-/// "kernel" (just a function) to which to call, depending on whether or not the
-/// library was compiled using SIMD support (i.e. SSE and AVX function
-/// intrinsics will be used to handle the operation).
-///
-/// \param[in] lhs Left-hand-side operand of the vector-sum
-/// \param[in] rhs Right-hand-side operand of the vector-sum
-template <typename Scalar_T>
-TM_INLINE auto operator-(const Vector3<Scalar_T>& lhs,
-                         const Vector3<Scalar_T>& rhs) -> Vector3<Scalar_T>;
-
-/// \brief Returns the scalar-vector product of a scalar and 3d vector operands
-///
-/// \tparam Scalar_T Type of scalar used by both scalar and vector operands
-///
-/// This operator implements the scalar-vector product of two operands (a scalar
-/// and a vector in that order) given as input arguments. The internal operator
-/// selects the appropriate "kernel" (just a function) to which to call,
-/// depending on whether or not the library was compiled using SIMD support
-/// (i.e. SSE and AVX function intrinsics will be used to handle the operation).
-///
-/// \param[in] scale Scalar value by which to scale the second operand
-/// \param[in] vec Vector in 3d-space which we want to scale
-template <typename Scalar_T>
-TM_INLINE auto operator*(Scalar_T scale, const Vector3<Scalar_T>& vec)
-    -> Vector3<Scalar_T>;
-
-/// \brief Returns the vector-scalar product of a 3d vector and scalar operands
-///
-/// \tparam Scalar_T Type of scalar used by both vector and scalar operands
-///
-/// This operator implements the vector-scalar product of two operands (a vector
-/// and a scalar in that order) given as input arguments. The internal operator
-/// selects the appropriate "kernel" (just a function) to which to call,
-/// depending on whether or not the library was compiled using SIMD support
-/// (i.e. SSE and AVX function intrinsics will be used to handle the operation).
-///
-/// \param[in] vec Vector in 3d-space which we want to scale
-/// \param[in] scale Scalar value by which to scale the first operand
-template <typename Scalar_T>
-TM_INLINE auto operator*(const Vector3<Scalar_T>& vec, Scalar_T scale)
-    -> Vector3<Scalar_T>;
-
-/// \brief Returns the element-wise product of two 3d vector operands
-///
-/// \tparam Scalar_T Type of scalar value used by the 3d-vector operands
-///
-/// This operator implements an element-wise product (Hadamard-Schur product) of
-/// two Vector3 operands given as input arguments. The internal operator selects
-/// the appropriate "kernel" (just a function) to which to call, depending on
-/// whether or not the library was compiled using SIMD support (i.e. SSE and AVX
-/// function intrinsics will be used to handle the operation).
-///
-/// \param[in] lhs Left-hand-side operand of the element-wise product
-/// \param[in] rhs Right-hand-side operand of the element-wise product
-template <typename Scalar_T>
-TM_INLINE auto operator*(const Vector3<Scalar_T>& lhs,
-                         const Vector3<Scalar_T>& rhs) -> Vector3<Scalar_T>;
-
-/// \brief Checks if two given vectors are "equal" (within epsilon margin)
-///
-/// \tparam Scalar_T Type of scalar value used by the 3d-vector operands
-///
-/// This operator implements an "np.allclose"-like operation (numpy's allclose
-/// function), checking if the corresponding (x,y,z) entries of both operands
-/// are within a certain margin "epsilon" (pre-defined constant). There was an
-/// "equal"-like SIMD instruction that implements floating point comparisons,
-/// however, we're not using it as single-precision floating point operations
-/// and transformation functions within the library might result in compounding
-/// errors that the user might want to test a small margin of error tuned
-/// appropriately (specially for single-precision floating point types)
-///
-/// \param[in] lhs Left-hand-side operand of the comparison
-/// \param[in] rhs Right-hand-side operand of the comparison
-/// \returns true if the given vectors are within a pre-defined epsilon margin
-template <typename Scalar_T>
-TM_INLINE auto operator==(const Vector3<Scalar_T>& lhs,
-                          const Vector3<Scalar_T>& rhs) -> bool;
-
-/// \brief Checks if two given vectors are not "equal" (within epsilon margin)
-///
-/// \tparam Scalar_T Type of scalar value used by the 3d-vector operands
-///
-/// \param[in] lhs Left-hand-side operand of the comparison
-/// \param[in] rhs Right-hand-side operand of the comparison
-/// \returns true if the given vectors are not within a pre-defined margin
-template <typename Scalar_T>
-TM_INLINE auto operator!=(const Vector3<Scalar_T>& lhs,
-                          const Vector3<Scalar_T>& rhs) -> bool;
-
 /// \brief Prints the given 3d vector to the given output stream
 ///
 /// \tparam Scalar_T Type of scalar used by the 3d vector operand
@@ -331,7 +239,11 @@ TM_INLINE auto operator!=(const Vector3<Scalar_T>& lhs,
 /// \returns A reference to the modified output stream (to concatenate calls)
 template <typename Scalar_T>
 auto operator<<(std::ostream& output_stream, const Vector3<Scalar_T>& src)
-    -> std::ostream&;
+    -> std::ostream& {
+    output_stream << "(" << src.x() << ", " << src.y() << ", " << src.z()
+                  << ")";
+    return output_stream;
+}
 
 /// \brief Reads a 3d vector from the given input stream
 ///
@@ -342,7 +254,22 @@ auto operator<<(std::ostream& output_stream, const Vector3<Scalar_T>& src)
 /// \returns A reference to the modified input stream (to concatenate calls)
 template <typename Scalar_T>
 auto operator>>(std::istream& input_stream, Vector3<Scalar_T>& dst)
-    -> std::istream&;
+    -> std::istream& {
+    // Based on ignition-math implementation https://bit.ly/3iqAVgS
+    Scalar_T x{};
+    Scalar_T y{};
+    Scalar_T z{};
+
+    input_stream.setf(std::ios_base::skipws);
+    input_stream >> x >> y >> z;
+    if (!input_stream.fail()) {
+        dst.x() = x;
+        dst.y() = y;
+        dst.z() = z;
+    }
+
+    return input_stream;
+}
 
 }  // namespace math
 }  // namespace tiny

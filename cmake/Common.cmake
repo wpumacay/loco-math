@@ -169,8 +169,11 @@ function(tmSetupCompileProperties)
   if(TM_SETUP_USE_SIMD)
     target_compile_definitions(${TM_SETUP_TARGET}
                                INTERFACE -D${TM_SETUP_PROJECT_NAME}_SSE_ENABLED)
-    target_compile_definitions(${TM_SETUP_TARGET}
-                               INTERFACE -D${TM_SETUP_PROJECT_NAME}_AVX_ENABLED)
+    # ~~~
+    # testing only SSE
+    # target_compile_definitions(${TM_SETUP_TARGET}
+    #                            INTERFACE -D${TM_SETUP_PROJECT_NAME}_AVX_ENABL)
+    # ~~~
     # Enable compile-options according to each compiler variant
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
       target_compile_options(${TM_SETUP_TARGET} INTERFACE -msse -msse2 -msse4.1

@@ -18,7 +18,7 @@ TM_INLINE auto squareNorm(const Vector3<T>& vec) -> T {
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert): call the related AVX implementation
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert): call the related SSE implementation
+    return sse::kernel_length_square_vec3<T>(vec.elements());
 #else
     return scalar::kernel_length_square_vec3<T>(vec.elements());
 #endif
@@ -31,7 +31,7 @@ TM_INLINE auto norm(const Vector3<T>& vec) -> T {
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert): call the related AVX implementation
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert): call the related SSE implementation
+    return sse::kernel_length_vec3<T>(vec.elements());
 #else
     return std::sqrt(scalar::kernel_length_square_vec3<T>(vec.elements()));
 #endif
@@ -45,7 +45,7 @@ TM_INLINE auto normalize(const Vector3<T>& vec) -> Vector3<T> {
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert)
+    sse::kernel_normalize_in_place_vec3<T>(vec_normalized.elements());
 #else
     scalar::kernel_normalize_in_place_vec3<T>(vec_normalized.elements());
 #endif
@@ -59,7 +59,7 @@ TM_INLINE auto normalize_in_place(Vector3<T>& vec) -> void {  // NOLINT
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert)
+    sse::kernel_normalize_in_place_vec3<T>(vec.elements());
 #else
     scalar::kernel_normalize_in_place_vec3<T>(vec.elements());
 #endif
@@ -72,7 +72,7 @@ TM_INLINE auto dot(const Vector3<T>& lhs, const Vector3<T>& rhs) -> T {
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert)
+    return sse::kernel_dot_vec3<T>(lhs.elements(), rhs.elements());
 #else
     return scalar::kernel_dot_vec3<T>(lhs.elements(), rhs.elements());
 #endif
@@ -87,7 +87,8 @@ TM_INLINE auto cross(const Vector3<T>& lhs, const Vector3<T>& rhs)
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert)
+    sse::kernel_cross_vec3<T>(vec_cross.elements(), lhs.elements(),
+                              rhs.elements());
 #else
     scalar::kernel_cross_vec3<T>(vec_cross.elements(), lhs.elements(),
                                  rhs.elements());
@@ -115,7 +116,8 @@ TM_INLINE auto operator+(const Vector3<T>& lhs, const Vector3<T>& rhs)
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert)
+    sse::kernel_add_vec3<T>(vec_result.elements(), lhs.elements(),
+                            rhs.elements());
 #else
     scalar::kernel_add_vec3<T>(vec_result.elements(), lhs.elements(),
                                rhs.elements());
@@ -143,7 +145,8 @@ TM_INLINE auto operator-(const Vector3<T>& lhs, const Vector3<T>& rhs)
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert)
+    sse::kernel_sub_vec3<T>(vec_result.elements(), lhs.elements(),
+                            rhs.elements());
 #else
     scalar::kernel_sub_vec3<T>(vec_result.elements(), lhs.elements(),
                                rhs.elements());
@@ -170,7 +173,7 @@ TM_INLINE auto operator*(T scale, const Vector3<T>& vec) -> Vector3<T> {
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert)
+    sse::kernel_scale_vec3<T>(vec_result.elements(), scale, vec.elements());
 #else
     scalar::kernel_scale_vec3<T>(vec_result.elements(), scale, vec.elements());
 #endif
@@ -196,7 +199,7 @@ TM_INLINE auto operator*(const Vector3<T>& vec, T scale) -> Vector3<T> {
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert)
+    sse::kernel_scale_vec3<T>(vec_result.elements(), scale, vec.elements());
 #else
     scalar::kernel_scale_vec3(vec_result.elements(), scale, vec.elements());
 #endif
@@ -223,7 +226,8 @@ TM_INLINE auto operator*(const Vector3<T>& lhs, const Vector3<T>& rhs)
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert)
+    sse::kernel_hadamard_vec3<T>(vec_result.elements(), lhs.elements(),
+                                 rhs.elements());
 #else
     scalar::kernel_hadamard_vec3<T>(vec_result.elements(), lhs.elements(),
                                     rhs.elements());

@@ -136,7 +136,7 @@ TM_INLINE auto operator-(const Matrix4<Scalar_T>& lhs,
     avx::kernel_sub_mat4<Scalar_T>(result.elements(), lhs.elements(),
                                    rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
-    sse::kernek_sub_mat4<Scalar_T>(result.elements(), lhs.elements(),
+    sse::kernel_sub_mat4<Scalar_T>(result.elements(), lhs.elements(),
                                    rhs.elements());
 #else
     scalar::kernel_sub_mat4<Scalar_T>(result.elements(), lhs.elements(),

@@ -2,10 +2,12 @@
 
 #if defined(TINYMATH_SSE_ENABLED)
 
+#include <emmintrin.h>
 #include <smmintrin.h>
 #include <xmmintrin.h>
 
 #include <tinymath/vec3_t.hpp>
+#include <type_traits>
 
 /**
  * SSE instruction sets required for each kernel:
@@ -24,6 +26,49 @@
 namespace tiny {
 namespace math {
 namespace sse {
+
+template <typename T>
+using ArrayBuffer = typename Vector3<T>::BufferType;
+
+template <typename T>
+constexpr int32_t VECTOR_NDIM = Vector3<T>::VECTOR_NDIM;
+
+template <typename T>
+constexpr int32_t BUFFER_SIZE = Vector3<T>::BUFFER_SIZE;
+
+template <typename T,
+          typename std::enable_if<CpuHasSSE<T>::value &&
+                                  IsFloat32<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_add_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
+                               const ArrayBuffer<T>& rhs) -> void {
+    // All elements of the buffer (4xf32, recall padding for alignment) fit into
+    // a single xmm register (128-bits <=> 4xfloat32)
+    auto xmm_lhs = _mm_load_ps(lhs.data());
+    auto xmm_rhs = _mm_load_ps(rhs.data());
+    auto xmm_result = _mm_add_ps(xmm_lhs, xmm_rhs);
+    _mm_store_ps(dst.data(), xmm_result);
+}
+
+template <typename T,
+          typename std::enable_if<CpuHasSSE<T>::value &&
+                                  IsFloat64<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_add_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
+                               const ArrayBuffer<T>& rhs) -> void {
+    static_assert(std::is_same<double, T>::value, "We must be using f64");
+    // Vector buffer contains 4xfloat64 <=> 256 bits <=> 32 bytes; however, xmm
+    // registers are only 16 bytes wide. We'll just unroll the loop once (make
+    // the point-wise operation twice on the registers, using lo-hi parts). Note
+    // that we also require support for SSE2 to use the appropriate intrinsics
+    // @todo(wilbert): try using static_cast and pointer-arithmetic replacements
+    auto xmm_lhs_lo = _mm_load_pd(lhs.data());
+    auto xmm_lhs_hi = _mm_load_pd(lhs.data() + 2);
+    auto xmm_rhs_lo = _mm_load_pd(rhs.data());
+    auto xmm_rhs_hi = _mm_load_pd(rhs.data() + 2);
+    auto xmm_result_lo = _mm_add_pd(xmm_lhs_lo, xmm_rhs_lo);
+    auto xmm_result_hi = _mm_add_pd(xmm_lhs_hi, xmm_rhs_hi);
+    _mm_store_pd(dst.data(), xmm_result_lo);
+    _mm_store_pd(dst.data() + 2, xmm_result_hi);
+}
 
 // ***************************************************************************//
 //   Implementations for single-precision floating point numbers (float32_t)  //

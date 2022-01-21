@@ -24,44 +24,128 @@ namespace tiny {
 namespace math {
 namespace avx {
 
-// ***************************************************************************//
-//   Implementations for double-precision floating point numbers (float64_t)  //
-// ***************************************************************************//
-using Vec3d = Vector3<float64_t>;
-using Array3d = Vec3d::BufferType;
+template <typename T>
+using ArrayBuffer = typename Vector3<T>::BufferType;
 
-TM_INLINE auto kernel_add_v3d(Array3d& dst, const Array3d& lhs,
-                              const Array3d& rhs) -> void {
+template <typename T>
+constexpr int32_t VECTOR_NDIM = Vector3<T>::VECTOR_NDIM;
+
+template <typename T>
+constexpr int32_t BUFFER_SIZE = Vector3<T>::BUFFER_SIZE;
+
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat32<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_add_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
+                               const ArrayBuffer<T>& rhs) -> void {
+    static_assert(std::is_same<float, T>::value, "We must be using f32");
+    auto ymm_lhs = _mm256_load_ps(lhs.data());
+    auto ymm_rhs = _mm256_load_ps(rhs.data());
+    auto ymm_result = _mm256_add_ps(ymm_lhs, ymm_rhs);
+    _mm256_zeroupper();
+    _mm256_store_ps(dst.data(), ymm_result);
+}
+
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat64<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_add_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
+                               const ArrayBuffer<T>& rhs) -> void {
+    static_assert(std::is_same<double, T>::value, "We must be using f64");
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
     auto ymm_result = _mm256_add_pd(ymm_lhs, ymm_rhs);
     _mm256_store_pd(dst.data(), ymm_result);
 }
 
-TM_INLINE auto kernel_sub_v3d(Array3d& dst, const Array3d& lhs,
-                              const Array3d& rhs) -> void {
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat32<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_sub_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
+                               const ArrayBuffer<T>& rhs) -> void {
+    static_assert(std::is_same<float, T>::value, "We must be using f32");
+    auto ymm_lhs = _mm256_load_ps(lhs.data());
+    auto ymm_rhs = _mm256_load_ps(rhs.data());
+    auto ymm_result = _mm256_sub_ps(ymm_lhs, ymm_rhs);
+    _mm256_zeroupper();
+    _mm256_store_ps(dst.data(), ymm_result);
+}
+
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat64<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_sub_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
+                               const ArrayBuffer<T>& rhs) -> void {
+    static_assert(std::is_same<double, T>::value, "We must be using f64");
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
     auto ymm_result = _mm256_sub_pd(ymm_lhs, ymm_rhs);
     _mm256_store_pd(dst.data(), ymm_result);
 }
 
-TM_INLINE auto kernel_scale_v3d(Array3d& dst, float64_t scale,
-                                const Array3d& vec) -> void {
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat32<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_scale_vec3(ArrayBuffer<T>& dst, T scale,
+                                 const ArrayBuffer<T>& vec) -> void {
+    static_assert(std::is_same<float, T>::value, "We must be using f32");
+    auto ymm_scale = _mm256_set1_ps(scale);
+    auto ymm_vector = _mm256_load_ps(vec.data());
+    auto ymm_result = _mm256_mul_ps(ymm_scale, ymm_vector);
+    _mm256_zeroupper();
+    _mm256_store_ps(dst.data(), ymm_result);
+}
+
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat64<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_scale_vec3(ArrayBuffer<T>& dst, T scale,
+                                 const ArrayBuffer<T>& vec) -> void {
+    static_assert(std::is_same<double, T>::value, "We must be using f64");
     auto ymm_scale = _mm256_set1_pd(scale);
     auto ymm_vector = _mm256_load_pd(vec.data());
     auto ymm_result = _mm256_mul_pd(ymm_scale, ymm_vector);
     _mm256_store_pd(dst.data(), ymm_result);
 }
 
-TM_INLINE auto kernel_hadamard_v3d(Array3d& dst, const Array3d& lhs,
-                                   const Array3d& rhs) -> void {
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat32<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_hadamard_vec3(ArrayBuffer<T>& dst,
+                                    const ArrayBuffer<T>& lhs,
+                                    const ArrayBuffer<T>& rhs) -> void {
+    static_assert(std::is_same<float, T>::value, "We must be using f32");
+    auto ymm_lhs = _mm256_load_ps(lhs.data());
+    auto ymm_rhs = _mm256_load_ps(rhs.data());
+    auto ymm_result = _mm256_mul_ps(ymm_lhs, ymm_rhs);
+    _mm256_zeroupper();
+    _mm256_store_ps(dst.data(), ymm_result);
+}
+
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat64<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_hadamard_vec3(ArrayBuffer<T>& dst,
+                                    const ArrayBuffer<T>& lhs,
+                                    const ArrayBuffer<T>& rhs) -> void {
+    static_assert(std::is_same<double, T>::value, "We must be using f64");
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
     _mm256_store_pd(dst.data(), _mm256_mul_pd(ymm_lhs, ymm_rhs));
 }
 
-TM_INLINE auto kernel_length_square_v3d(const Array3d& vec) -> float64_t {
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat32<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_length_square_vec3(const ArrayBuffer<T>& vec) -> T {
+    static_assert(std::is_same<float, T>::value, "We must be using f32");
+}
+
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat64<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_length_square_vec3(const ArrayBuffer<T>& vec) -> T {
+    static_assert(std::is_same<double, T>::value, "We must be using f64");
     // Implementation based on this post: https://bit.ly/3lt3ts4
     // Instruction-sets required (AVX, SSE2)
     // -------------------------
@@ -76,7 +160,18 @@ TM_INLINE auto kernel_length_square_v3d(const Array3d& vec) -> float64_t {
     return _mm_cvtsd_f64(xmm_result);
 }
 
-TM_INLINE auto kernel_length_v3d(const Array3d& vec) -> float64_t {
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat32<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_length_vec3(const ArrayBuffer<T>& vec) -> T {
+    static_assert(std::is_same<float, T>::value, "We must be using f32");
+}
+
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat64<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_length_vec3(const ArrayBuffer<T>& vec) -> T {
+    static_assert(std::is_same<double, T>::value, "We must be using f64");
     // Implementation based on this post: https://bit.ly/3lt3ts4
     // Instruction-sets required (AVX, SSE2)
     // -------------------------
@@ -91,7 +186,18 @@ TM_INLINE auto kernel_length_v3d(const Array3d& vec) -> float64_t {
     return _mm_cvtsd_f64(xmm_result);
 }
 
-TM_INLINE auto kernel_normalize_in_place_v3d(Array3d& vec) -> void {
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat32<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_normalize_in_place_vec3(ArrayBuffer<T>& vec) -> void {
+    static_assert(std::is_same<float, T>::value, "We must be using f32");
+}
+
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat64<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_normalize_in_place_vec3(ArrayBuffer<T>& vec) -> void {
+    static_assert(std::is_same<double, T>::value, "We must be using f64");
     auto ymm_v = _mm256_load_pd(vec.data());
     auto ymm_prod = _mm256_mul_pd(ymm_v, ymm_v);
     // Construct the sum of squares into each double of a 256-bit register
@@ -105,8 +211,20 @@ TM_INLINE auto kernel_normalize_in_place_v3d(Array3d& vec) -> void {
     _mm256_store_pd(vec.data(), ymm_normalized);
 }
 
-TM_INLINE auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs)
-    -> float64_t {
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat32<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_dot_vec3(const ArrayBuffer<T>& lhs,
+                               const ArrayBuffer<T>& rhs) -> T {
+    static_assert(std::is_same<float, T>::value, "We must be using f32");
+}
+
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat64<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_dot_vec3(const ArrayBuffer<T>& lhs,
+                               const ArrayBuffer<T>& rhs) -> T {
+    static_assert(std::is_same<double, T>::value, "We must be using f64");
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
     auto ymm_prod = _mm256_mul_pd(ymm_lhs, ymm_rhs);
@@ -117,8 +235,20 @@ TM_INLINE auto kernel_dot_v3d(const Array3d& lhs, const Array3d& rhs)
     return _mm_cvtsd_f64(xmm_result);
 }
 
-TM_INLINE auto kernel_cross_v3d(Array3d& dst, const Array3d& lhs,
-                                const Array3d& rhs) -> void {
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat32<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_cross_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
+                                 const ArrayBuffer<T>& rhs) -> void {
+    static_assert(std::is_same<float, T>::value, "We must be using f32");
+}
+
+template <typename T,
+          typename std::enable_if<CpuHasAVX<T>::value &&
+                                  IsFloat64<T>::value>::type* = nullptr>
+TM_INLINE auto kernel_cross_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
+                                 const ArrayBuffer<T>& rhs) -> void {
+    static_assert(std::is_same<double, T>::value, "We must be using f64");
     // Implementation adapted from @ian_mallett (https://bit.ly/3lu6pVe)
     auto vec_a = _mm256_load_pd(lhs.data());
     auto vec_b = _mm256_load_pd(rhs.data());

@@ -1,12 +1,19 @@
 #pragma once
 
+// clang-format off
+#include <ios>
 #include <array>
 #include <cassert>
 #include <cstdint>
+#include <initializer_list>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <algorithm>
+#include <type_traits>
+
 #include <tinymath/common.hpp>
+// clang-format on
 
 namespace tiny {
 namespace math {
@@ -44,19 +51,44 @@ class Vector4 {
     Vector4() = default;
 
     /// Constructs a vector of the form (x, x, x, x)
-    explicit Vector4(Scalar_T x);
+    explicit Vector4(Scalar_T x) {
+        m_Elements[0] = x;
+        m_Elements[1] = x;
+        m_Elements[2] = x;
+        m_Elements[3] = x;
+    }
 
     /// Constructs a vector of the form (x, y, y, y)
-    explicit Vector4(Scalar_T x, Scalar_T y);
+    explicit Vector4(Scalar_T x, Scalar_T y) {
+        m_Elements[0] = x;
+        m_Elements[1] = y;
+        m_Elements[2] = y;
+        m_Elements[3] = y;
+    }
 
     /// Constructs a vector of the form (x, y, z, z)
-    explicit Vector4(Scalar_T x, Scalar_T y, Scalar_T z);
+    explicit Vector4(Scalar_T x, Scalar_T y, Scalar_T z) {
+        m_Elements[0] = x;
+        m_Elements[1] = y;
+        m_Elements[2] = z;
+        m_Elements[3] = z;
+    }
 
     /// Constructs a vector of the form (x, y, z, w)
-    explicit Vector4(Scalar_T x, Scalar_T y, Scalar_T z, Scalar_T w);
+    explicit Vector4(Scalar_T x, Scalar_T y, Scalar_T z, Scalar_T w) {
+        m_Elements[0] = x;
+        m_Elements[1] = y;
+        m_Elements[2] = z;
+        m_Elements[3] = w;
+    }
 
     /// Constructs a vector from an initializer list of the form {x, y, z, w}
-    Vector4(const std::initializer_list<Scalar_T>& values);
+    Vector4(const std::initializer_list<Scalar_T>& values) {
+        // Complain in case we don't receive exactly 4 values
+        assert(values.size() == Vector4<Scalar_T>::VECTOR_NDIM);
+        // Just copy the whole data from the initializer list
+        std::copy(values.begin(), values.end(), m_Elements.data());
+    }
 
     // @todo(wilbert): RAII break (rule of 5)
 
@@ -103,11 +135,21 @@ class Vector4 {
         return Vec4CommaInitializer<Scalar_T>(*this, coeff);
     }
 
-    /// Returns the dot-product of this vector with the given vector argument
-    TM_INLINE auto dot(const Vector4<Scalar_T>& other) const -> Scalar_T;
-
     /// Returns a printable string-representation of the vector
-    auto toString() const -> std::string;
+    auto toString() const -> std::string {
+        std::stringstream str_result;
+        if (std::is_same<ElementType, float>()) {
+            str_result << "Vector4f(" << x() << ", " << y() << ", " << z()
+                       << ", " << w() << ")";
+        } else if (std::is_same<ElementType, double>()) {
+            str_result << "Vector4d(" << x() << ", " << y() << ", " << z()
+                       << ", " << w() << ")";
+        } else {
+            str_result << "Vector4X(" << x() << ", " << y() << ", " << z()
+                       << ", " << w() << ")";
+        }
+        return str_result.str();
+    }
 
     /// Returns the number of dimensions of the vector (Vector4 <-> 4 scalars)
     constexpr auto ndim() const -> uint32_t { return VECTOR_NDIM; }
@@ -205,138 +247,49 @@ class Vec4CommaInitializer {
     int32_t m_CurrentBuildIndex = VECTOR_FIRST_INDEX;
 };
 
-/// \brief Returns the vector-sum of two 4d vector operands
-///
-/// \tparam Scalar_T Type of scalar value used for the 4d-vector operands
-///
-/// This operator implements an element-wise sum of two Vector4 operands given
-/// as input arguments. The internal operator selects the appropriate "kernel"
-/// (just a function) to which to call, depending on whether or not the library
-/// was compiled using SIMD support (i.e. SSE and AVX function intrinsics will
-/// be used to handle the operation).
-///
-/// \param[in] lhs Left-hand-side operand of the vector-sum
-/// \param[in] rhs Right-hand-side operand of the vector-sum
-template <typename Scalar_T>
-auto operator+(const Vector4<Scalar_T>& lhs, const Vector4<Scalar_T>& rhs)
-    -> Vector4<Scalar_T>;
-
-/// \brief Returns the vector-difference of two 4d vector operands
-///
-/// \tparam Scalar_T Type of scalar value used for the 4d-vector operands
-///
-/// This operator implements an element-wise difference of two Vector4 operands
-/// given as input arguments. The internal operator selects the appropriate
-/// "kernel" (just a function) to which to call, depending on whether or not the
-/// library was compiled using SIMD support (i.e. SSE and AVX function
-/// intrinsics will be used to handle the operation).
-///
-/// \param[in] lhs Left-hand-side operand of the vector-sum
-/// \param[in] rhs Right-hand-side operand of the vector-sum
-template <typename Scalar_T>
-auto operator-(const Vector4<Scalar_T>& lhs, const Vector4<Scalar_T>& rhs)
-    -> Vector4<Scalar_T>;
-
-/// \brief Returns the scalar-vector product of a scalar and 4d vector operands
-///
-/// \tparam Scalar_T Type of scalar used by both scalar and vector operands
-///
-/// This operator implements the scalar-vector product of two operands (a scalar
-/// and a vector in that order) given as input arguments. The internal operator
-/// selects the appropriate "kernel" (just a function) to which to call,
-/// depending on whether or not the library was compiled using SIMD support
-/// (i.e. SSE and AVX function intrinsics will be used to handle the operation).
-///
-/// \param[in] scale Scalar value by which to scale the second operand
-/// \param[in] vec Vector in 4d-space which we want to scale
-template <typename Scalar_T>
-auto operator*(Scalar_T scale, const Vector4<Scalar_T>& vec)
-    -> Vector4<Scalar_T>;
-
-/// \brief Returns the vector-scalar product of a 4d vector and scalar operands
-///
-/// \tparam Scalar_T Type of scalar used by both vector and scalar operands
-///
-/// This operator implements the vector-scalar product of two operands (a vector
-/// and a scalar in that order) given as input arguments. The internal operator
-/// selects the appropriate "kernel" (just a function) to which to call,
-/// depending on whether or not the library was compiled using SIMD support
-/// (i.e. SSE and AVX function intrinsics will be used to handle the operation).
-///
-/// \param[in] vec Vector in 4d-space which we want to scale
-/// \param[in] scale Scalar value by which to scale the first operand
-template <typename Scalar_T>
-auto operator*(const Vector4<Scalar_T>& vec, Scalar_T scale)
-    -> Vector4<Scalar_T>;
-
-/// \brief Returns the element-wise product of two 4d vector operands
-///
-/// \tparam Scalar_T Type of scalar value used by the 4d-vector operands
-///
-/// This operator implements an element-wise product (Hadamard-Schur product) of
-/// two Vector4 operands given as input arguments. The internal operator selects
-/// the appropriate "kernel" (just a function) to which to call, depending on
-/// whether or not the library was compiled using SIMD support (i.e. SSE and AVX
-/// function intrinsics will be used to handle the operation).
-///
-/// \param[in] lhs Left-hand-side operand of the element-wise product
-/// \param[in] rhs Right-hand-side operand of the element-wise product
-template <typename Scalar_T>
-auto operator*(const Vector4<Scalar_T>& lhs, const Vector4<Scalar_T>& rhs)
-    -> Vector4<Scalar_T>;
-
-/// \brief Checks if two given vectors are "equal" (within epsilon margin)
-///
-/// \tparam Scalar_T Type of scalar value used by the 4d-vector operands
-///
-/// This operator implements an "np.allclose"-like operation (numpy's allclose
-/// function), checking if the corresponding (x,y,z) entries of both operands
-/// are within a certain margin "epsilon" (pre-defined constant). There was an
-/// "equal"-like SIMD instruction that implements floating point comparisons,
-/// however, we're not using it as single-precision floating point operations
-/// and transformation functions within the library might result in compounding
-/// errors that the user might want to test a small margin of error tuned
-/// appropriately (specially for single-precision floating point types)
-///
-/// \param[in] lhs Left-hand-side operand of the comparison
-/// \param[in] rhs Right-hand-side operand of the comparison
-/// \returns true if the given vectors are within a pre-defined epsilon margin
-template <typename Scalar_T>
-auto operator==(const Vector4<Scalar_T>& lhs, const Vector4<Scalar_T>& rhs)
-    -> bool;
-
-/// \brief Checks if two given vectors are not "equal" (within epsilon margin)
-///
-/// \tparam Scalar_T Type of scalar value used by the 4d-vector operands
-///
-/// \param[in] lhs Left-hand-side operand of the comparison
-/// \param[in] rhs Right-hand-side operand of the comparison
-/// \returns true if the given vectors are not within a pre-defined margin
-template <typename Scalar_T>
-auto operator!=(const Vector4<Scalar_T>& lhs, const Vector4<Scalar_T>& rhs)
-    -> bool;
-
 /// \brief Prints the given 4d vector to the given output stream
 ///
-/// \tparam Scalar_T Type of scalar used by the 4d vector operand
+/// \tparam T Type of scalar used by the 4d vector operand
 ///
 /// \param[in,out] output_stream The output stream to write the vector to
 /// \param[in] src The vector we want to print to the output stream
 /// \returns A reference to the modified output stream (to concatenate calls)
-template <typename Scalar_T>
-auto operator<<(std::ostream& output_stream, const Vector4<Scalar_T>& src)
-    -> std::ostream&;
+template <typename T,
+          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+auto operator<<(std::ostream& output_stream, const Vector4<T>& src)
+    -> std::ostream& {
+    output_stream << "(" << src.x() << ", " << src.y() << ", " << src.z()
+                  << ", " << src.w() << ")";
+    return output_stream;
+}
 
 /// \brief Reads a 4d vector from the given input stream
 ///
-/// \tparam Scalar_T Type of scalar used by the 4d vector operand
+/// \tparam T Type of scalar used by the 4d vector operand
 ///
 /// \param[in,out] input_stream The input stream from which to read the vector
 /// \param[out] dst The vector in which to place the read values
 /// \returns A reference to the modified input stream (to concatenate calls)
-template <typename Scalar_T>
-auto operator>>(std::istream& input_stream, Vector4<Scalar_T>& dst)
-    -> std::istream&;
+template <typename T,
+          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+auto operator>>(std::istream& input_stream, Vector4<T>& dst) -> std::istream& {
+    // Based on ignition-math implementation https://bit.ly/3iqAVgS
+    T x{};
+    T y{};
+    T z{};
+    T w{};
+
+    input_stream.setf(std::ios_base::skipws);
+    input_stream >> x >> y >> z >> w;
+    if (!input_stream.fail()) {
+        dst.x() = x;
+        dst.y() = y;
+        dst.z() = z;
+        dst.w() = w;
+    }
+
+    return input_stream;
+}
 
 }  // namespace math
 }  // namespace tiny

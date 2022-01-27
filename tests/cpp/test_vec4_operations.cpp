@@ -162,7 +162,7 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
 
         auto dot = val_x_a * val_x_b + val_y_a * val_y_b + val_z_a * val_z_b +
                    val_w_a * val_w_b;
-        auto v_dot = v_a.dot(v_b);
+        auto v_dot = tiny::math::dot(v_a, v_b);
 
         REQUIRE(std::abs(v_dot - dot) < EPSILON);
     }

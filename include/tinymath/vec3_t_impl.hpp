@@ -5,15 +5,16 @@
 #include <tinymath/impl/vec3_t_scalar_impl.hpp>
 #include <tinymath/impl/vec3_t_sse_impl.hpp>
 #include <tinymath/impl/vec3_t_avx_impl.hpp>
-#include <type_traits>
 // clang-format on
 
 namespace tiny {
 namespace math {
 
+template <typename T>
+using SFINAE_VEC3_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
+
 /// \brief Returns the square of the norm-2 of the vector
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto squareNorm(const Vector3<T>& vec) -> T {
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert): call the related AVX implementation
@@ -25,8 +26,7 @@ TM_INLINE auto squareNorm(const Vector3<T>& vec) -> T {
 }
 
 /// \brief Returns the norm-2 of the vector
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto norm(const Vector3<T>& vec) -> T {
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert): call the related AVX implementation
@@ -38,8 +38,7 @@ TM_INLINE auto norm(const Vector3<T>& vec) -> T {
 }
 
 /// \brief Returns a normalized version of this vector
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto normalize(const Vector3<T>& vec) -> Vector3<T> {
     Vector3<T> vec_normalized = vec;
 #if defined(TINYMATH_AVX_ENABLED)
@@ -54,7 +53,7 @@ TM_INLINE auto normalize(const Vector3<T>& vec) -> Vector3<T> {
 
 /// \brief Normalizes in-place the given vector
 template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+          SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto normalize_in_place(Vector3<T>& vec) -> void {  // NOLINT
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
@@ -66,8 +65,7 @@ TM_INLINE auto normalize_in_place(Vector3<T>& vec) -> void {  // NOLINT
 }
 
 /// \brief Returns the dot-product of the given two vectors
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto dot(const Vector3<T>& lhs, const Vector3<T>& rhs) -> T {
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
@@ -79,8 +77,7 @@ TM_INLINE auto dot(const Vector3<T>& lhs, const Vector3<T>& rhs) -> T {
 }
 
 /// \brief Returns the cross-product of the given two vectors
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto cross(const Vector3<T>& lhs, const Vector3<T>& rhs)
     -> Vector3<T> {
     Vector3<T> vec_cross;
@@ -108,21 +105,18 @@ TM_INLINE auto cross(const Vector3<T>& lhs, const Vector3<T>& rhs)
 ///
 /// \param[in] lhs Left-hand-side operand of the vector-sum
 /// \param[in] rhs Right-hand-side operand of the vector-sum
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto operator+(const Vector3<T>& lhs, const Vector3<T>& rhs)
     -> Vector3<T> {
-    Vector3<T> vec_result;
+    Vector3<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    sse::kernel_add_vec3<T>(vec_result.elements(), lhs.elements(),
-                            rhs.elements());
+    sse::kernel_add_vec3<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
-    scalar::kernel_add_vec3<T>(vec_result.elements(), lhs.elements(),
-                               rhs.elements());
+    scalar::kernel_add_vec3<T>(dst.elements(), lhs.elements(), rhs.elements());
 #endif
-    return vec_result;
+    return dst;
 }
 
 /// \brief Returns the vector-difference of two 3d vector operands
@@ -137,21 +131,18 @@ TM_INLINE auto operator+(const Vector3<T>& lhs, const Vector3<T>& rhs)
 ///
 /// \param[in] lhs Left-hand-side operand of the vector-sum
 /// \param[in] rhs Right-hand-side operand of the vector-sum
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto operator-(const Vector3<T>& lhs, const Vector3<T>& rhs)
     -> Vector3<T> {
-    Vector3<T> vec_result;
+    Vector3<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    sse::kernel_sub_vec3<T>(vec_result.elements(), lhs.elements(),
-                            rhs.elements());
+    sse::kernel_sub_vec3<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
-    scalar::kernel_sub_vec3<T>(vec_result.elements(), lhs.elements(),
-                               rhs.elements());
+    scalar::kernel_sub_vec3<T>(dst.elements(), lhs.elements(), rhs.elements());
 #endif
-    return vec_result;
+    return dst;
 }
 
 /// \brief Returns the scalar-vector product of a scalar and 3d vector operands
@@ -166,18 +157,17 @@ TM_INLINE auto operator-(const Vector3<T>& lhs, const Vector3<T>& rhs)
 ///
 /// \param[in] scale Scalar value by which to scale the second operand
 /// \param[in] vec Vector in 3d-space which we want to scale
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto operator*(T scale, const Vector3<T>& vec) -> Vector3<T> {
-    Vector3<T> vec_result;
+    Vector3<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    sse::kernel_scale_vec3<T>(vec_result.elements(), scale, vec.elements());
+    sse::kernel_scale_vec3<T>(dst.elements(), scale, vec.elements());
 #else
-    scalar::kernel_scale_vec3<T>(vec_result.elements(), scale, vec.elements());
+    scalar::kernel_scale_vec3<T>(dst.elements(), scale, vec.elements());
 #endif
-    return vec_result;
+    return dst;
 }
 
 /// \brief Returns the vector-scalar product of a 3d vector and scalar operands
@@ -192,18 +182,17 @@ TM_INLINE auto operator*(T scale, const Vector3<T>& vec) -> Vector3<T> {
 ///
 /// \param[in] vec Vector in 3d-space which we want to scale
 /// \param[in] scale Scalar value by which to scale the first operand
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto operator*(const Vector3<T>& vec, T scale) -> Vector3<T> {
-    Vector3<T> vec_result;
+    Vector3<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    sse::kernel_scale_vec3<T>(vec_result.elements(), scale, vec.elements());
+    sse::kernel_scale_vec3<T>(dst.elements(), scale, vec.elements());
 #else
-    scalar::kernel_scale_vec3(vec_result.elements(), scale, vec.elements());
+    scalar::kernel_scale_vec3(dst.elements(), scale, vec.elements());
 #endif
-    return vec_result;
+    return dst;
 }
 
 /// \brief Returns the element-wise product of two 3d vector operands
@@ -218,21 +207,20 @@ TM_INLINE auto operator*(const Vector3<T>& vec, T scale) -> Vector3<T> {
 ///
 /// \param[in] lhs Left-hand-side operand of the element-wise product
 /// \param[in] rhs Right-hand-side operand of the element-wise product
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto operator*(const Vector3<T>& lhs, const Vector3<T>& rhs)
     -> Vector3<T> {
-    Vector3<T> vec_result;
+    Vector3<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert)
 #elif defined(TINYMATH_SSE_ENABLED)
-    sse::kernel_hadamard_vec3<T>(vec_result.elements(), lhs.elements(),
+    sse::kernel_hadamard_vec3<T>(dst.elements(), lhs.elements(),
                                  rhs.elements());
 #else
-    scalar::kernel_hadamard_vec3<T>(vec_result.elements(), lhs.elements(),
+    scalar::kernel_hadamard_vec3<T>(dst.elements(), lhs.elements(),
                                     rhs.elements());
 #endif
-    return vec_result;
+    return dst;
 }
 
 /// \brief Checks if two given vectors are "equal" (within epsilon margin)
@@ -251,8 +239,7 @@ TM_INLINE auto operator*(const Vector3<T>& lhs, const Vector3<T>& rhs)
 /// \param[in] lhs Left-hand-side operand of the comparison
 /// \param[in] rhs Right-hand-side operand of the comparison
 /// \returns true if the given vectors are within a pre-defined epsilon margin
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto operator==(const Vector3<T>& lhs, const Vector3<T>& rhs)
     -> bool {
     return scalar::kernel_compare_eq_vec3<T>(lhs.elements(), rhs.elements());
@@ -265,8 +252,7 @@ TM_INLINE auto operator==(const Vector3<T>& lhs, const Vector3<T>& rhs)
 /// \param[in] lhs Left-hand-side operand of the comparison
 /// \param[in] rhs Right-hand-side operand of the comparison
 /// \returns true if the given vectors are not within a pre-defined margin
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto operator!=(const Vector3<T>& lhs, const Vector3<T>& rhs)
     -> bool {
     return !scalar::kernel_compare_eq_vec3<T>(lhs.elements(), rhs.elements());

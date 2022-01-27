@@ -10,6 +10,7 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
+#include <type_traits>
 
 #include <tinymath/common.hpp>
 // clang-format on

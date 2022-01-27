@@ -25,6 +25,14 @@ function(tmInitializeProject)
     return()
   endif()
 
+  # Define the default build type (in case no other project set it)
+  # cmake-format: off
+  if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING
+        "Build options: Debug | Release | RelWithDebInfo | MinSizeRel" FORCE)
+  endif()
+  # cmake-format: on
+
   # Grab the correct name for the variable to be exposed to the developer
   string(TOUPPER "${PROJECT_NAME}" ProjectNameUpper)
   string(TOUPPER "${PROJECT_NAME}_IS_ROOT_PROJECT" ProjectIsRootVarname)

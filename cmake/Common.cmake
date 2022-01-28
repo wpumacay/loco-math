@@ -180,16 +180,24 @@ function(tmSetupCompileProperties)
     # ~~~
     # testing only SSE
     # target_compile_definitions(${TM_SETUP_TARGET}
-    #                            INTERFACE -D${TM_SETUP_PROJECT_NAME}_AVX_ENABL)
+    #                    INTERFACE -D${TM_SETUP_PROJECT_NAME}_AVX_ENABLED)
     # ~~~
     # Enable compile-options according to each compiler variant
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-      target_compile_options(${TM_SETUP_TARGET} INTERFACE -msse -msse2 -msse4.1
-                                                          -mavx)
+      # ~~~
+      # testing only SSE
+      # target_compile_options(${TM_SETUP_TARGET} INTERFACE
+      # -msse -msse2 -msse4.1 -mavx)
+      # ~~~
+      target_compile_options(${TM_SETUP_TARGET} INTERFACE -msse -msse2 -msse4.1)
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-      target_compile_options(
-        ${TM_SETUP_TARGET} INTERFACE /arch:SSE /arch:SSE2 /arch:SSE4.1
-                                     /arch:AVX)
+      # ~~~
+      # testing only SSE
+      # target_compile_options(${TM_SETUP_TARGET} INTERFACE
+      # /arch:SSE /arch:SSE2 /arch:SSE4.1 /arch:AVX)
+      # ~~~
+      target_compile_options(${TM_SETUP_TARGET} INTERFACE /arch:SSE /arch:SSE2
+                                                          /arch:SSE4.1)
     else()
       tmMessage(
         "We don't yet support SIMD for compiler '${CMAKE_CXX_COMPILER_ID}'"

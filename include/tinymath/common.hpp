@@ -10,8 +10,17 @@
         #define TM_INLINE inline
     #endif
 #else
-    #define TM_INLINE inline
+    #define TM_INLINE
 #endif
+
+#if defined(TINYMATH_COMPILER_CLANG) || defined(TINYMATH_COMPILER_GCC)
+    #define TM_NEVER_INLINE __attribute__((noinline))
+#elif defined(TINYMATH_COMPILER_MSVC)
+    #define TM_NEVER_INLINE __declspec(noinline)
+#else
+    #define TM_NEVER_INLINE
+#endif
+
 // clang-format on
 
 #include <type_traits>

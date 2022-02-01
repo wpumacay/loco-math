@@ -9,15 +9,22 @@
 /**
  * AVX instruction sets required for each kernel:
  *
- * - kernel_add_vec3                : AVX
- * - kernel_sub_vec3                : AVX
- * - kernel_scale_vec3              : AVX
- * - kernel_hadamard_vec3           : AVX
- * - kernel_length_square_vec3      : AVX|SSE2
- * - kernel_length_vec3             : AVX|SSE2
- * - kernel_normalize_in_place_vec3 : AVX
- * - kernel_dot_vec3                : AVX|SSE2
- * - kernel_cross_vec3              : AVX
+ * - kernel_add_vec3                : SSE|AVX
+ * - kernel_sub_vec3                : SSE|AVX
+ * - kernel_scale_vec3              : SSE|AVX
+ * - kernel_hadamard_vec3           : SSE|AVX
+ * - kernel_length_square_vec3      : SSE|AVX|SSE2
+ * - kernel_length_vec3             : SSE|AVX|SSE2
+ * - kernel_normalize_in_place_vec3 : SSE|AVX
+ * - kernel_dot_vec3                : SSE|AVX|SSE2
+ * - kernel_cross_vec3              : SSE|AVX
+ *
+ * Notes:
+ * 1. For AVX float32:
+ *    _mm256_store functions could potentially write contiguous data, so we
+ *    rather use SSE instructions and let the compiler use AVX instructions
+ *    mixed with XMM registers instead of YMM registers. Another option would
+ *    be to use `maskload` instead of `load` to avoid these out-of-bounds writes
  */
 
 namespace tiny {
@@ -33,124 +40,128 @@ constexpr int32_t VECTOR_NDIM = Vector3<T>::VECTOR_NDIM;
 template <typename T>
 constexpr int32_t BUFFER_SIZE = Vector3<T>::BUFFER_SIZE;
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat32<T>::value>::type* = nullptr>
+// NOLINTNEXTLINE
+#define COMPILE_TIME_CHECKS_VEC3_F32_AVX(Scalar_T)                           \
+    {                                                                        \
+        static_assert(std::is_same<float, Scalar_T>::value,                  \
+                      "Must be using f32");                                  \
+        static_assert(BUFFER_SIZE<Scalar_T> == 4,                            \
+                      "Must be using 4xf32 as aligned buffer");              \
+        static_assert(VECTOR_NDIM<Scalar_T> == 3,                            \
+                      "Must be using 3xf32 for the elements of the vector"); \
+    }
+
+// NOLINTNEXTLINE
+#define COMPILE_TIME_CHECKS_VEC3_F64_AVX(Scalar_T)                           \
+    {                                                                        \
+        static_assert(std::is_same<double, Scalar_T>::value,                 \
+                      "Must be using f64");                                  \
+        static_assert(BUFFER_SIZE<Scalar_T> == 4,                            \
+                      "Must be using 4xf64 as aligned buffer");              \
+        static_assert(VECTOR_NDIM<Scalar_T> == 3,                            \
+                      "Must be using 3xf64 for the elements of the vector"); \
+    }
+
+template <typename T>
+using SFINAE_VEC3_F32_AVX_GUARD =
+    typename std::enable_if<CpuHasAVX<T>::value && IsFloat32<T>::value>::type*;
+
+template <typename T>
+using SFINAE_VEC3_F64_AVX_GUARD =
+    typename std::enable_if<CpuHasAVX<T>::value && IsFloat64<T>::value>::type*;
+
+template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_add_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> void {
-    // _mm256_store functions could potentially write contiguous data, so we
-    // rather use SSE instructions and let the compiler use AVX instructions
-    // mixed with XMM registers, instead of YMM registers
-    static_assert(std::is_same<float, T>::value, "We must be using f32");
-    static_assert(BUFFER_SIZE<T> == 4, "We must be using 4xf32");
+    COMPILE_TIME_CHECKS_VEC3_F32_AVX(T)
     auto xmm_lhs = _mm_load_ps(lhs.data());
     auto xmm_rhs = _mm_load_ps(rhs.data());
     auto xmm_result = _mm_add_ps(xmm_lhs, xmm_rhs);
     _mm_store_ps(dst.data(), xmm_result);
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat64<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_add_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> void {
-    static_assert(std::is_same<double, T>::value, "We must be using f64");
+    COMPILE_TIME_CHECKS_VEC3_F64_AVX(T)
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
     auto ymm_result = _mm256_add_pd(ymm_lhs, ymm_rhs);
     _mm256_store_pd(dst.data(), ymm_result);
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat32<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_sub_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> void {
-    static_assert(std::is_same<float, T>::value, "We must be using f32");
-    auto ymm_lhs = _mm256_load_ps(lhs.data());
-    auto ymm_rhs = _mm256_load_ps(rhs.data());
-    auto ymm_result = _mm256_sub_ps(ymm_lhs, ymm_rhs);
-    _mm256_zeroupper();
-    _mm256_store_ps(dst.data(), ymm_result);
+    COMPILE_TIME_CHECKS_VEC3_F32_AVX(T)
+    auto xmm_lhs = _mm_load_ps(lhs.data());
+    auto xmm_rhs = _mm_load_ps(rhs.data());
+    auto xmm_result = _mm_sub_ps(xmm_lhs, xmm_rhs);
+    _mm_store_ps(dst.data(), xmm_result);
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat64<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_sub_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> void {
-    static_assert(std::is_same<double, T>::value, "We must be using f64");
+    COMPILE_TIME_CHECKS_VEC3_F64_AVX(T)
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
     auto ymm_result = _mm256_sub_pd(ymm_lhs, ymm_rhs);
     _mm256_store_pd(dst.data(), ymm_result);
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat32<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_scale_vec3(ArrayBuffer<T>& dst, T scale,
                                  const ArrayBuffer<T>& vec) -> void {
-    static_assert(std::is_same<float, T>::value, "We must be using f32");
-    auto ymm_scale = _mm256_set1_ps(scale);
-    auto ymm_vector = _mm256_load_ps(vec.data());
-    auto ymm_result = _mm256_mul_ps(ymm_scale, ymm_vector);
-    _mm256_zeroupper();
-    _mm256_store_ps(dst.data(), ymm_result);
+    COMPILE_TIME_CHECKS_VEC3_F32_AVX(T)
+    auto xmm_scale = _mm_set1_ps(scale);
+    auto xmm_vector = _mm_load_ps(vec.data());
+    auto xmm_result = _mm_mul_ps(xmm_scale, xmm_vector);
+    _mm_store_ps(dst.data(), xmm_result);
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat64<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_scale_vec3(ArrayBuffer<T>& dst, T scale,
                                  const ArrayBuffer<T>& vec) -> void {
-    static_assert(std::is_same<double, T>::value, "We must be using f64");
+    COMPILE_TIME_CHECKS_VEC3_F64_AVX(T)
     auto ymm_scale = _mm256_set1_pd(scale);
     auto ymm_vector = _mm256_load_pd(vec.data());
     auto ymm_result = _mm256_mul_pd(ymm_scale, ymm_vector);
     _mm256_store_pd(dst.data(), ymm_result);
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat32<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_hadamard_vec3(ArrayBuffer<T>& dst,
                                     const ArrayBuffer<T>& lhs,
                                     const ArrayBuffer<T>& rhs) -> void {
-    static_assert(std::is_same<float, T>::value, "We must be using f32");
-    auto ymm_lhs = _mm256_load_ps(lhs.data());
-    auto ymm_rhs = _mm256_load_ps(rhs.data());
-    auto ymm_result = _mm256_mul_ps(ymm_lhs, ymm_rhs);
-    _mm256_zeroupper();
-    _mm256_store_ps(dst.data(), ymm_result);
+    COMPILE_TIME_CHECKS_VEC3_F32_AVX(T)
+    auto xmm_lhs = _mm_load_ps(lhs.data());
+    auto xmm_rhs = _mm_load_ps(rhs.data());
+    _mm_store_ps(dst.data(), _mm_mul_ps(xmm_lhs, xmm_rhs));
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat64<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_hadamard_vec3(ArrayBuffer<T>& dst,
                                     const ArrayBuffer<T>& lhs,
                                     const ArrayBuffer<T>& rhs) -> void {
-    static_assert(std::is_same<double, T>::value, "We must be using f64");
+    COMPILE_TIME_CHECKS_VEC3_F64_AVX(T)
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
     _mm256_store_pd(dst.data(), _mm256_mul_pd(ymm_lhs, ymm_rhs));
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat32<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_length_square_vec3(const ArrayBuffer<T>& vec) -> T {
-    static_assert(std::is_same<float, T>::value, "We must be using f32");
-    auto ymm_v = _mm256_load_ps(vec.data());
-    auto ymm_prod = _mm256_mul_ps(ymm_v, ymm_v);
+    COMPILE_TIME_CHECKS_VEC3_F32_AVX(T)
+    // Implementation based on this post: https://bit.ly/3FyZF0n
+    constexpr int32_t COND_PROD_MASK = 0x71;
+    auto xmm_v = _mm_load_ps(vec.data());
+    return _mm_cvtss_f32(_mm_dp_ps(xmm_v, xmm_v, COND_PROD_MASK));
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat64<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_length_square_vec3(const ArrayBuffer<T>& vec) -> T {
-    static_assert(std::is_same<double, T>::value, "We must be using f64");
+    COMPILE_TIME_CHECKS_VEC3_F64_AVX(T)
     // Implementation based on this post: https://bit.ly/3lt3ts4
     // Instruction-sets required (AVX, SSE2)
     // -------------------------
@@ -165,18 +176,18 @@ TM_INLINE auto kernel_length_square_vec3(const ArrayBuffer<T>& vec) -> T {
     return _mm_cvtsd_f64(xmm_result);
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat32<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_length_vec3(const ArrayBuffer<T>& vec) -> T {
-    static_assert(std::is_same<float, T>::value, "We must be using f32");
+    COMPILE_TIME_CHECKS_VEC3_F32_AVX(T)
+    // Implementation based on this post: https://bit.ly/3FyZF0n
+    constexpr int32_t COND_PROD_MASK = 0x71;
+    auto xmm_v = _mm_load_ps(vec.data());
+    return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm_v, xmm_v, COND_PROD_MASK)));
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat64<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_length_vec3(const ArrayBuffer<T>& vec) -> T {
-    static_assert(std::is_same<double, T>::value, "We must be using f64");
+    COMPILE_TIME_CHECKS_VEC3_F64_AVX(T)
     // Implementation based on this post: https://bit.ly/3lt3ts4
     // Instruction-sets required (AVX, SSE2)
     // -------------------------
@@ -191,18 +202,21 @@ TM_INLINE auto kernel_length_vec3(const ArrayBuffer<T>& vec) -> T {
     return _mm_cvtsd_f64(xmm_result);
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat32<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_normalize_in_place_vec3(ArrayBuffer<T>& vec) -> void {
-    static_assert(std::is_same<float, T>::value, "We must be using f32");
+    COMPILE_TIME_CHECKS_VEC3_F32_AVX(T)
+    // Implementation based on this post: https://bit.ly/3FyZF0n
+    constexpr int32_t COND_PROD_MASK = 0x7f;
+    auto xmm_v = _mm_load_ps(vec.data());
+    auto xmm_sums = _mm_dp_ps(xmm_v, xmm_v, COND_PROD_MASK);
+    auto xmm_r_sqrt_sums = _mm_sqrt_ps(xmm_sums);
+    auto xmm_v_norm = _mm_div_ps(xmm_v, xmm_r_sqrt_sums);
+    _mm_store_ps(vec.data(), xmm_v_norm);
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat64<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_normalize_in_place_vec3(ArrayBuffer<T>& vec) -> void {
-    static_assert(std::is_same<double, T>::value, "We must be using f64");
+    COMPILE_TIME_CHECKS_VEC3_F64_AVX(T)
     auto ymm_v = _mm256_load_pd(vec.data());
     auto ymm_prod = _mm256_mul_pd(ymm_v, ymm_v);
     // Construct the sum of squares into each double of a 256-bit register
@@ -216,20 +230,21 @@ TM_INLINE auto kernel_normalize_in_place_vec3(ArrayBuffer<T>& vec) -> void {
     _mm256_store_pd(vec.data(), ymm_normalized);
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat32<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_dot_vec3(const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> T {
-    static_assert(std::is_same<float, T>::value, "We must be using f32");
+    COMPILE_TIME_CHECKS_VEC3_F32_AVX(T)
+    constexpr int32_t COND_PROD_MASK = 0x71;
+    auto xmm_lhs = _mm_load_ps(lhs.data());
+    auto xmm_rhs = _mm_load_ps(rhs.data());
+    auto xmm_cond_prod = _mm_dp_ps(xmm_lhs, xmm_rhs, COND_PROD_MASK);
+    return _mm_cvtss_f32(xmm_cond_prod);
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat64<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_dot_vec3(const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> T {
-    static_assert(std::is_same<double, T>::value, "We must be using f64");
+    COMPILE_TIME_CHECKS_VEC3_F64_AVX(T)
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
     auto ymm_prod = _mm256_mul_pd(ymm_lhs, ymm_rhs);
@@ -240,20 +255,38 @@ TM_INLINE auto kernel_dot_vec3(const ArrayBuffer<T>& lhs,
     return _mm_cvtsd_f64(xmm_result);
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat32<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_cross_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                  const ArrayBuffer<T>& rhs) -> void {
-    static_assert(std::is_same<float, T>::value, "We must be using f32");
+    COMPILE_TIME_CHECKS_VEC3_F32_AVX(T)
+    // Implementation adapted from @ian_mallett (https://bit.ly/3lu6pVe)
+    constexpr auto MASK_A = tiny::math::ShuffleMask<3, 0, 2, 1>::value;
+    constexpr auto MASK_B = tiny::math::ShuffleMask<3, 1, 0, 2>::value;
+    // Recall that the dot product of two 3d-vectors a and b given by:
+    // a = {a[0], a[1], a[2], a[3]=0}, b = {b[0], b[1], b[2], b[3]=0}
+    // has as resulting expression:
+    // a (x) b = [a[1] * b[2] - a[2] * b[1],
+    //            a[2] * b[0] - a[0] * b[2],
+    //            a[0] * b[1] - a[1] * b[0],
+    //                        0            ]
+    auto vec_a = _mm_load_ps(lhs.data());  // a = {a[0], a[1], a[2], a[3]=0}
+    auto vec_b = _mm_load_ps(rhs.data());  // b = {b[0], b[1], b[2], b[3]=0}
+    // tmp_0 = {a[1], a[2], a[0], 0}
+    auto tmp_0 = _mm_shuffle_ps(vec_a, vec_a, MASK_A);
+    // tmp_1 = {b[2], b[0], b[1], 0}
+    auto tmp_1 = _mm_shuffle_ps(vec_b, vec_b, MASK_B);
+    // tmp_2 = {a[2], a[0], a[1], 0}
+    auto tmp_2 = _mm_shuffle_ps(vec_a, vec_a, MASK_B);
+    // tmp_3 = {b[1], b[2], b[0], 0}
+    auto tmp_3 = _mm_shuffle_ps(vec_b, vec_b, MASK_A);
+    _mm_store_ps(dst.data(), _mm_sub_ps(_mm_mul_ps(tmp_0, tmp_1),
+                                        _mm_mul_ps(tmp_2, tmp_3)));
 }
 
-template <typename T,
-          typename std::enable_if<CpuHasAVX<T>::value &&
-                                  IsFloat64<T>::value>::type* = nullptr>
+template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_cross_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                  const ArrayBuffer<T>& rhs) -> void {
-    static_assert(std::is_same<double, T>::value, "We must be using f64");
+    COMPILE_TIME_CHECKS_VEC3_F64_AVX(T)
     // Implementation adapted from @ian_mallett (https://bit.ly/3lu6pVe)
     auto vec_a = _mm256_load_pd(lhs.data());
     auto vec_b = _mm256_load_pd(rhs.data());

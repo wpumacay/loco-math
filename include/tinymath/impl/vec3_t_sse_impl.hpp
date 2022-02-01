@@ -7,7 +7,6 @@
 #include <xmmintrin.h>
 
 #include <tinymath/vec3_t.hpp>
-#include <type_traits>
 
 /**
  * SSE instruction sets required for each kernel:
@@ -22,7 +21,7 @@
  * - kernel_dot_vec3                : SSE|SSE2|SSE4.1 (_mm_dp_ps)
  * - kernel_cross_vec3              : SSE
  *
- * Note:
+ * Notes:
  * 1. For SSE-float32:
  *    All elements of the buffer (4xf32, recall padding for alignment) fit into
  *    a single xmm register (128-bits <=> 4xfloat32)
@@ -49,7 +48,7 @@ template <typename T>
 constexpr int32_t BUFFER_SIZE = Vector3<T>::BUFFER_SIZE;
 
 // NOLINTNEXTLINE
-#define COMPILE_TIME_CHECK_VEC3_F32_SSE(Scalar_T)                            \
+#define COMPILE_TIME_CHECKS_VEC3_F32_SSE(Scalar_T)                           \
     {                                                                        \
         static_assert(std::is_same<float, Scalar_T>::value,                  \
                       "Must be using f32");                                  \
@@ -60,7 +59,7 @@ constexpr int32_t BUFFER_SIZE = Vector3<T>::BUFFER_SIZE;
     }
 
 // NOLINTNEXTLINE
-#define COMPILE_TIME_CHECK_VEC3_F64_SSE(Scalar_T)                            \
+#define COMPILE_TIME_CHECKS_VEC3_F64_SSE(Scalar_T)                           \
     {                                                                        \
         static_assert(std::is_same<double, Scalar_T>::value,                 \
                       "Must be using f64");                                  \
@@ -81,7 +80,7 @@ using SFINAE_VEC3_F64_SSE_GUARD =
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_add_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> void {
-    COMPILE_TIME_CHECK_VEC3_F32_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F32_SSE(T)
     auto xmm_lhs = _mm_load_ps(lhs.data());
     auto xmm_rhs = _mm_load_ps(rhs.data());
     auto xmm_result = _mm_add_ps(xmm_lhs, xmm_rhs);
@@ -91,7 +90,7 @@ TM_INLINE auto kernel_add_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_add_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> void {
-    COMPILE_TIME_CHECK_VEC3_F64_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F64_SSE(T)
     auto xmm_lhs_lo = _mm_load_pd(lhs.data());
     auto xmm_lhs_hi = _mm_load_pd(lhs.data() + 2);
     auto xmm_rhs_lo = _mm_load_pd(rhs.data());
@@ -105,7 +104,7 @@ TM_INLINE auto kernel_add_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_sub_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> void {
-    COMPILE_TIME_CHECK_VEC3_F32_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F32_SSE(T)
     auto xmm_lhs = _mm_load_ps(lhs.data());
     auto xmm_rhs = _mm_load_ps(rhs.data());
     auto xmm_result = _mm_sub_ps(xmm_lhs, xmm_rhs);
@@ -115,7 +114,7 @@ TM_INLINE auto kernel_sub_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_sub_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> void {
-    COMPILE_TIME_CHECK_VEC3_F64_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F64_SSE(T)
     auto xmm_lhs_lo = _mm_load_pd(lhs.data());
     auto xmm_lhs_hi = _mm_load_pd(lhs.data() + 2);
     auto xmm_rhs_lo = _mm_load_pd(rhs.data());
@@ -129,7 +128,7 @@ TM_INLINE auto kernel_sub_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_scale_vec3(ArrayBuffer<T>& dst, T scale,
                                  const ArrayBuffer<T>& vec) -> void {
-    COMPILE_TIME_CHECK_VEC3_F32_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F32_SSE(T)
     auto xmm_scale = _mm_set1_ps(scale);
     auto xmm_vector = _mm_load_ps(vec.data());
     auto xmm_result = _mm_mul_ps(xmm_scale, xmm_vector);
@@ -139,7 +138,7 @@ TM_INLINE auto kernel_scale_vec3(ArrayBuffer<T>& dst, T scale,
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_scale_vec3(ArrayBuffer<T>& dst, T scale,
                                  const ArrayBuffer<T>& vec) -> void {
-    COMPILE_TIME_CHECK_VEC3_F64_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F64_SSE(T)
     auto xmm_scale = _mm_set1_pd(scale);
     auto xmm_vector_lo = _mm_load_pd(vec.data());
     auto xmm_vector_hi = _mm_load_pd(vec.data() + 2);
@@ -153,7 +152,7 @@ template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_hadamard_vec3(ArrayBuffer<T>& dst,
                                     const ArrayBuffer<T>& lhs,
                                     const ArrayBuffer<T>& rhs) -> void {
-    COMPILE_TIME_CHECK_VEC3_F32_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F32_SSE(T)
     auto xmm_lhs = _mm_load_ps(lhs.data());
     auto xmm_rhs = _mm_load_ps(rhs.data());
     _mm_store_ps(dst.data(), _mm_mul_ps(xmm_lhs, xmm_rhs));
@@ -163,7 +162,7 @@ template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_hadamard_vec3(ArrayBuffer<T>& dst,
                                     const ArrayBuffer<T>& lhs,
                                     const ArrayBuffer<T>& rhs) -> void {
-    COMPILE_TIME_CHECK_VEC3_F64_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F64_SSE(T)
     auto xmm_lhs_lo = _mm_load_pd(lhs.data());
     auto xmm_lhs_hi = _mm_load_pd(lhs.data() + 2);
     auto xmm_rhs_lo = _mm_load_pd(rhs.data());
@@ -174,7 +173,7 @@ TM_INLINE auto kernel_hadamard_vec3(ArrayBuffer<T>& dst,
 
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_length_square_vec3(const ArrayBuffer<T>& vec) -> T {
-    COMPILE_TIME_CHECK_VEC3_F32_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F32_SSE(T)
     // Implementation based on this post: https://bit.ly/3FyZF0n
     constexpr int32_t COND_PROD_MASK = 0x71;
     auto xmm_v = _mm_load_ps(vec.data());
@@ -183,7 +182,7 @@ TM_INLINE auto kernel_length_square_vec3(const ArrayBuffer<T>& vec) -> T {
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_length_square_vec3(const ArrayBuffer<T>& vec) -> T {
-    COMPILE_TIME_CHECK_VEC3_F64_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F64_SSE(T)
     // Implementation based on this post: https://bit.ly/3FyZF0n
     constexpr int32_t COND_PROD_MASK = 0x31;
     auto xmm_v_lo = _mm_load_pd(vec.data());
@@ -196,7 +195,7 @@ TM_INLINE auto kernel_length_square_vec3(const ArrayBuffer<T>& vec) -> T {
 
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_length_vec3(const ArrayBuffer<T>& vec) -> T {
-    COMPILE_TIME_CHECK_VEC3_F32_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F32_SSE(T)
     // Implementation based on this post: https://bit.ly/3FyZF0n
     constexpr int32_t COND_PROD_MASK = 0x71;
     auto xmm_v = _mm_load_ps(vec.data());
@@ -205,7 +204,7 @@ TM_INLINE auto kernel_length_vec3(const ArrayBuffer<T>& vec) -> T {
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_length_vec3(const ArrayBuffer<T>& vec) -> T {
-    COMPILE_TIME_CHECK_VEC3_F64_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F64_SSE(T)
     // Implementation based on this post: https://bit.ly/3FyZF0n
     constexpr int32_t COND_PROD_MASK = 0x31;
     auto xmm_v_01 = _mm_load_pd(vec.data());
@@ -218,7 +217,7 @@ TM_INLINE auto kernel_length_vec3(const ArrayBuffer<T>& vec) -> T {
 
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_normalize_in_place_vec3(ArrayBuffer<T>& vec) -> void {
-    COMPILE_TIME_CHECK_VEC3_F32_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F32_SSE(T)
     // Implementation based on this post: https://bit.ly/3FyZF0n
     constexpr int32_t COND_PROD_MASK = 0x7f;
     auto xmm_v = _mm_load_ps(vec.data());
@@ -230,7 +229,7 @@ TM_INLINE auto kernel_normalize_in_place_vec3(ArrayBuffer<T>& vec) -> void {
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_normalize_in_place_vec3(ArrayBuffer<T>& vec) -> void {
-    COMPILE_TIME_CHECK_VEC3_F64_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F64_SSE(T)
     // Implementation based on this post: https://bit.ly/3FyZF0n
     constexpr int32_t COND_PROD_MASK = 0x33;
     auto xmm_v_01 = _mm_load_pd(vec.data());
@@ -247,7 +246,7 @@ TM_INLINE auto kernel_normalize_in_place_vec3(ArrayBuffer<T>& vec) -> void {
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_dot_vec3(const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> T {
-    COMPILE_TIME_CHECK_VEC3_F32_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F32_SSE(T)
     constexpr int32_t COND_PROD_MASK = 0x71;
     auto xmm_lhs = _mm_load_ps(lhs.data());
     auto xmm_rhs = _mm_load_ps(rhs.data());
@@ -258,7 +257,7 @@ TM_INLINE auto kernel_dot_vec3(const ArrayBuffer<T>& lhs,
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_dot_vec3(const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> T {
-    COMPILE_TIME_CHECK_VEC3_F64_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F64_SSE(T)
     constexpr int32_t COND_PROD_MASK = 0x31;
     auto xmm_lhs_01 = _mm_load_pd(lhs.data());
     auto xmm_lhs_23 = _mm_load_pd(lhs.data() + 2);
@@ -272,7 +271,7 @@ TM_INLINE auto kernel_dot_vec3(const ArrayBuffer<T>& lhs,
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_cross_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                  const ArrayBuffer<T>& rhs) -> void {
-    COMPILE_TIME_CHECK_VEC3_F32_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F32_SSE(T)
     // Implementation adapted from @ian_mallett (https://bit.ly/3lu6pVe)
     constexpr auto MASK_A = tiny::math::ShuffleMask<3, 0, 2, 1>::value;
     constexpr auto MASK_B = tiny::math::ShuffleMask<3, 1, 0, 2>::value;
@@ -300,7 +299,7 @@ TM_INLINE auto kernel_cross_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_cross_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                  const ArrayBuffer<T>& rhs) -> void {
-    COMPILE_TIME_CHECK_VEC3_F64_SSE(T)
+    COMPILE_TIME_CHECKS_VEC3_F64_SSE(T)
     // @todo(wilbert): so far I can't find a way that might be better than
     // the scalar implementation (besides it might be vectorized by O3)
     dst[0] = lhs[1] * rhs[2] - lhs[2] * rhs[1];

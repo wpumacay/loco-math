@@ -17,7 +17,7 @@ using SFINAE_VEC3_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto squareNorm(const Vector3<T>& vec) -> T {
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): call the related AVX implementation
+    return avx::kernel_length_square_vec3<T>(vec.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     return sse::kernel_length_square_vec3<T>(vec.elements());
 #else
@@ -29,7 +29,7 @@ TM_INLINE auto squareNorm(const Vector3<T>& vec) -> T {
 template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto norm(const Vector3<T>& vec) -> T {
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): call the related AVX implementation
+    return avx::kernel_length_vec3<T>(vec.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     return sse::kernel_length_vec3<T>(vec.elements());
 #else
@@ -42,7 +42,7 @@ template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto normalize(const Vector3<T>& vec) -> Vector3<T> {
     Vector3<T> vec_normalized = vec;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert)
+    avx::kernel_normalize_in_place_vec3<T>(vec_normalized.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_normalize_in_place_vec3<T>(vec_normalized.elements());
 #else
@@ -52,11 +52,10 @@ TM_INLINE auto normalize(const Vector3<T>& vec) -> Vector3<T> {
 }
 
 /// \brief Normalizes in-place the given vector
-template <typename T,
-          SFINAE_VEC3_GUARD<T> = nullptr>
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto normalize_in_place(Vector3<T>& vec) -> void {  // NOLINT
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert)
+    avx::kernel_normalize_in_place_vec3<T>(vec.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_normalize_in_place_vec3<T>(vec.elements());
 #else
@@ -68,7 +67,7 @@ TM_INLINE auto normalize_in_place(Vector3<T>& vec) -> void {  // NOLINT
 template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto dot(const Vector3<T>& lhs, const Vector3<T>& rhs) -> T {
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert)
+    return avx::kernel_dot_vec3<T>(lhs.elements(), rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     return sse::kernel_dot_vec3<T>(lhs.elements(), rhs.elements());
 #else
@@ -82,7 +81,8 @@ TM_INLINE auto cross(const Vector3<T>& lhs, const Vector3<T>& rhs)
     -> Vector3<T> {
     Vector3<T> vec_cross;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert)
+    avx::kernel_cross_vec3<T>(vec_cross.elements(), lhs.elements(),
+                              rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_cross_vec3<T>(vec_cross.elements(), lhs.elements(),
                               rhs.elements());
@@ -110,7 +110,7 @@ TM_INLINE auto operator+(const Vector3<T>& lhs, const Vector3<T>& rhs)
     -> Vector3<T> {
     Vector3<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert)
+    avx::kernel_add_vec3<T>(dst.elements(), lhs.elements(), rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_add_vec3<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
@@ -136,7 +136,7 @@ TM_INLINE auto operator-(const Vector3<T>& lhs, const Vector3<T>& rhs)
     -> Vector3<T> {
     Vector3<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert)
+    avx::kernel_sub_vec3<T>(dst.elements(), lhs.elements(), rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_sub_vec3<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
@@ -161,7 +161,7 @@ template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto operator*(T scale, const Vector3<T>& vec) -> Vector3<T> {
     Vector3<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert)
+    avx::kernel_scale_vec3<T>(dst.elements(), scale, vec.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_scale_vec3<T>(dst.elements(), scale, vec.elements());
 #else
@@ -186,7 +186,7 @@ template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 TM_INLINE auto operator*(const Vector3<T>& vec, T scale) -> Vector3<T> {
     Vector3<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert)
+    avx::kernel_scale_vec3<T>(dst.elements(), scale, vec.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_scale_vec3<T>(dst.elements(), scale, vec.elements());
 #else
@@ -212,7 +212,8 @@ TM_INLINE auto operator*(const Vector3<T>& lhs, const Vector3<T>& rhs)
     -> Vector3<T> {
     Vector3<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert)
+    avx::kernel_hadamard_vec3<T>(dst.elements(), lhs.elements(),
+                                 rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_hadamard_vec3<T>(dst.elements(), lhs.elements(),
                                  rhs.elements());

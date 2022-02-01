@@ -9,15 +9,15 @@
 /**
  * AVX instruction sets required for each kernel:
  *
- * - kernel_add_v3d                 : AVX
- * - kernel_sub_v3d                 : AVX
- * - kernel_scale_v3d               : AVX
- * - kernel_hadamard_v3d            : AVX
- * - kernel_length_square_v3d       : AVX + SSE2
- * - kernel_length_v3d              : AVX + SSE2
- * - kernel_normalize_in_place_v3d  : AVX
- * - kernel_dot_v3d                 : AVX + SSE2
- * - kernel_cross_v3d               : AVX
+ * - kernel_add_vec3                : AVX
+ * - kernel_sub_vec3                : AVX
+ * - kernel_scale_vec3              : AVX
+ * - kernel_hadamard_vec3           : AVX
+ * - kernel_length_square_vec3      : AVX|SSE2
+ * - kernel_length_vec3             : AVX|SSE2
+ * - kernel_normalize_in_place_vec3 : AVX
+ * - kernel_dot_vec3                : AVX|SSE2
+ * - kernel_cross_vec3              : AVX
  */
 
 namespace tiny {
@@ -38,12 +38,15 @@ template <typename T,
                                   IsFloat32<T>::value>::type* = nullptr>
 TM_INLINE auto kernel_add_vec3(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
                                const ArrayBuffer<T>& rhs) -> void {
+    // _mm256_store functions could potentially write contiguous data, so we
+    // rather use SSE instructions and let the compiler use AVX instructions
+    // mixed with XMM registers, instead of YMM registers
     static_assert(std::is_same<float, T>::value, "We must be using f32");
-    auto ymm_lhs = _mm256_load_ps(lhs.data());
-    auto ymm_rhs = _mm256_load_ps(rhs.data());
-    auto ymm_result = _mm256_add_ps(ymm_lhs, ymm_rhs);
-    _mm256_zeroupper();
-    _mm256_store_ps(dst.data(), ymm_result);
+    static_assert(BUFFER_SIZE<T> == 4, "We must be using 4xf32");
+    auto xmm_lhs = _mm_load_ps(lhs.data());
+    auto xmm_rhs = _mm_load_ps(rhs.data());
+    auto xmm_result = _mm_add_ps(xmm_lhs, xmm_rhs);
+    _mm_store_ps(dst.data(), xmm_result);
 }
 
 template <typename T,
@@ -139,6 +142,8 @@ template <typename T,
                                   IsFloat32<T>::value>::type* = nullptr>
 TM_INLINE auto kernel_length_square_vec3(const ArrayBuffer<T>& vec) -> T {
     static_assert(std::is_same<float, T>::value, "We must be using f32");
+    auto ymm_v = _mm256_load_ps(vec.data());
+    auto ymm_prod = _mm256_mul_ps(ymm_v, ymm_v);
 }
 
 template <typename T,

@@ -19,7 +19,7 @@ TM_INLINE auto dot(const Vector4<T>& lhs, const Vector4<T>& rhs) -> T {
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert): call the appropriate AVX implementation
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert): call the appropriate SSE implementation
+    return sse::kernel_dot_vec4<T>(lhs.elements(), rhs.elements());
 #else
     return scalar::kernel_dot_vec4<T>(lhs.elements(), rhs.elements());
 #endif
@@ -44,7 +44,7 @@ TM_INLINE auto operator+(const Vector4<T>& lhs, const Vector4<T>& rhs)
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert): call the appropriate AVX implementation
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert): call the appropriate SSE implementation
+    sse::kernel_add_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_add_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
 #endif
@@ -70,7 +70,7 @@ TM_INLINE auto operator-(const Vector4<T>& lhs, const Vector4<T>& rhs)
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert): call the appropriate AVX implementation
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert): call the appropriate SSE implementation
+    sse::kernel_sub_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_sub_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
 #endif
@@ -95,7 +95,7 @@ TM_INLINE auto operator*(T scale, const Vector4<T>& vec) -> Vector4<T> {
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert): call the appropriate AVX implementation
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert): call the appropriate SSE implementation
+    sse::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
 #else
     scalar::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
 #endif
@@ -120,7 +120,7 @@ TM_INLINE auto operator*(const Vector4<T>& vec, T scale) -> Vector4<T> {
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert): call the appropriate AVX implementation
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert): call the appropriate SSE implementation
+    sse::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
 #else
     scalar::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
 #endif
@@ -146,7 +146,8 @@ TM_INLINE auto operator*(const Vector4<T>& lhs, const Vector4<T>& rhs)
 #if defined(TINYMATH_AVX_ENABLED)
     // @todo(wilbert): call the appropriate AVX implementation
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert): call the appropriate SSE implementation
+    sse::kernel_hadamard_vec4<T>(dst.elements(), lhs.elements(),
+                                 rhs.elements());
 #else
     scalar::kernel_hadamard_vec4<T>(dst.elements(), lhs.elements(),
                                     rhs.elements());

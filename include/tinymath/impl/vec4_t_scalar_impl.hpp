@@ -7,7 +7,7 @@ namespace math {
 namespace scalar {
 
 template <typename T>
-using ArrayBuffer = typename Vector4<T>::BufferType;
+using Vec4Buffer = typename Vector4<T>::BufferType;
 
 template <typename T>
 constexpr int32_t VECTOR_NDIM = Vector4<T>::VECTOR_NDIM;
@@ -35,8 +35,8 @@ using SFINAE_VEC4_SCALAR_GUARD =
     typename std::enable_if<IsScalar<T>::value>::type*;
 
 template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_add_vec4(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
-                               const ArrayBuffer<T>& rhs) -> void {
+TM_INLINE auto kernel_add_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
+                               const Vec4Buffer<T>& rhs) -> void {
     COMPILE_TIME_CHECKS_VEC4_SCALAR(T)
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
         dst[i] = lhs[i] + rhs[i];
@@ -44,8 +44,8 @@ TM_INLINE auto kernel_add_vec4(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_sub_vec4(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
-                               const ArrayBuffer<T>& rhs) -> void {
+TM_INLINE auto kernel_sub_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
+                               const Vec4Buffer<T>& rhs) -> void {
     COMPILE_TIME_CHECKS_VEC4_SCALAR(T)
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
         dst[i] = lhs[i] - rhs[i];
@@ -53,8 +53,8 @@ TM_INLINE auto kernel_sub_vec4(ArrayBuffer<T>& dst, const ArrayBuffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_scale_vec4(ArrayBuffer<T>& dst, T scale,
-                                 const ArrayBuffer<T>& vec) -> void {
+TM_INLINE auto kernel_scale_vec4(Vec4Buffer<T>& dst, T scale,
+                                 const Vec4Buffer<T>& vec) -> void {
     COMPILE_TIME_CHECKS_VEC4_SCALAR(T)
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
         dst[i] = scale * vec[i];
@@ -62,9 +62,9 @@ TM_INLINE auto kernel_scale_vec4(ArrayBuffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_hadamard_vec4(ArrayBuffer<T>& dst,
-                                    const ArrayBuffer<T>& lhs,
-                                    const ArrayBuffer<T>& rhs) -> void {
+TM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
+                                    const Vec4Buffer<T>& lhs,
+                                    const Vec4Buffer<T>& rhs) -> void {
     COMPILE_TIME_CHECKS_VEC4_SCALAR(T)
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
         dst[i] = lhs[i] * rhs[i];
@@ -72,8 +72,8 @@ TM_INLINE auto kernel_hadamard_vec4(ArrayBuffer<T>& dst,
 }
 
 template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_dot_vec4(const ArrayBuffer<T>& lhs,
-                               const ArrayBuffer<T>& rhs) -> T {
+TM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
+                               const Vec4Buffer<T>& rhs) -> T {
     COMPILE_TIME_CHECKS_VEC4_SCALAR(T)
     T accum = static_cast<T>(0.0);
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
@@ -83,8 +83,8 @@ TM_INLINE auto kernel_dot_vec4(const ArrayBuffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_compare_eq_vec4(const ArrayBuffer<T>& lhs,
-                                      const ArrayBuffer<T>& rhs) -> bool {
+TM_INLINE auto kernel_compare_eq_vec4(const Vec4Buffer<T>& lhs,
+                                      const Vec4Buffer<T>& rhs) -> bool {
     COMPILE_TIME_CHECKS_VEC4_SCALAR(T)
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
         if (std::abs(lhs[i] - rhs[i]) >= tiny::math::EPS<T>) {

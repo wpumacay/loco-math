@@ -9,10 +9,33 @@ namespace math {
 namespace scalar {
 
 template <typename T>
-using ArrayCols = typename Matrix4<T>::BufferType;
+using Mat4Buffer = typename Matrix4<T>::BufferType;
 
 template <typename T>
-TM_INLINE auto kernel_transpose_inplace_mat4(ArrayCols<T>& cols) -> void {
+using Vec4Buffer = typename Vector4<T>::BufferType;
+
+template <typename T>
+constexpr auto COMPILE_TIME_CHECKS_MAT4_SCALAR() -> void {
+    constexpr uint32_t EXPECTED_BUFFER_SIZE = 16;
+    constexpr uint32_t EXPECTED_NUM_DIMENSIONS = 4;
+
+    static_assert(Matrix4<T>::BUFFER_SIZE == EXPECTED_BUFFER_SIZE,
+                  "4x4 matrices must use 16 elements for the internal buffer");
+    static_assert(Matrix4<T>::MATRIX_NDIM == EXPECTED_NUM_DIMENSIONS,
+                  "4x4 matrices must have 4 as number of dimensions");
+    static_assert(sizeof(Matrix4<T>) == sizeof(T) * EXPECTED_BUFFER_SIZE,
+                  "4x4 matrices must use exactly this many bytes of storage");
+    static_assert(alignof(Matrix4<T>) == sizeof(T) * EXPECTED_BUFFER_SIZE,
+                  "4x4 matrices must be aligned to its corresponding size");
+}
+
+template <typename T>
+using SFINAE_MAT4_SCALAR_GUARD =
+    typename std::enable_if<IsScalar<T>::value>::type*;
+
+template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
+TM_INLINE auto kernel_transpose_inplace_mat4(Mat4Buffer<T>& cols) -> void {
+    COMPILE_TIME_CHECKS_MAT4_SCALAR<T>();
     for (int32_t col = 1; col < Matrix4<T>::MATRIX_NDIM; ++col) {
         for (int32_t row = 0; row < Matrix4<T>::MATRIX_NDIM; ++row) {
             std::swap(cols[col][row], cols[row][col]);
@@ -20,9 +43,10 @@ TM_INLINE auto kernel_transpose_inplace_mat4(ArrayCols<T>& cols) -> void {
     }
 }
 
-template <typename T>
-TM_INLINE auto kernel_add_mat4(ArrayCols<T>& dst, const ArrayCols<T>& lhs,
-                               const ArrayCols<T>& rhs) -> void {
+template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
+TM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+                               const Mat4Buffer<T>& rhs) -> void {
+    COMPILE_TIME_CHECKS_MAT4_SCALAR<T>();
     for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
         for (int32_t idx = 0; idx < Matrix4<T>::MATRIX_NDIM; ++idx) {
             dst[col][idx] = lhs[col][idx] + rhs[col][idx];
@@ -30,9 +54,10 @@ TM_INLINE auto kernel_add_mat4(ArrayCols<T>& dst, const ArrayCols<T>& lhs,
     }
 }
 
-template <typename T>
-TM_INLINE auto kernel_sub_mat4(ArrayCols<T>& dst, const ArrayCols<T>& lhs,
-                               const ArrayCols<T>& rhs) -> void {
+template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
+TM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+                               const Mat4Buffer<T>& rhs) -> void {
+    COMPILE_TIME_CHECKS_MAT4_SCALAR<T>();
     for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
         for (int32_t idx = 0; idx < Matrix4<T>::MATRIX_NDIM; ++idx) {
             dst[col][idx] = lhs[col][idx] - rhs[col][idx];
@@ -40,9 +65,10 @@ TM_INLINE auto kernel_sub_mat4(ArrayCols<T>& dst, const ArrayCols<T>& lhs,
     }
 }
 
-template <typename T>
-TM_INLINE auto kernel_scale_mat4(ArrayCols<T>& dst, T scale,
-                                 const ArrayCols<T>& mat) -> void {
+template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
+TM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
+                                 const Mat4Buffer<T>& mat) -> void {
+    COMPILE_TIME_CHECKS_MAT4_SCALAR<T>();
     for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
         for (int32_t idx = 0; idx < Matrix4<T>::MATRIX_NDIM; ++idx) {
             dst[col][idx] = scale * mat[col][idx];
@@ -50,9 +76,10 @@ TM_INLINE auto kernel_scale_mat4(ArrayCols<T>& dst, T scale,
     }
 }
 
-template <typename T>
-TM_INLINE auto kernel_matmul_mat4(ArrayCols<T>& dst, const ArrayCols<T>& lhs,
-                                  const ArrayCols<T>& rhs) -> void {
+template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
+TM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+                                  const Mat4Buffer<T>& rhs) -> void {
+    COMPILE_TIME_CHECKS_MAT4_SCALAR<T>();
     // We're assumming that dst is zero-initialized (default-constructor)
     for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
         for (int32_t row = 0; row < Matrix4<T>::MATRIX_NDIM; ++row) {
@@ -63,9 +90,19 @@ TM_INLINE auto kernel_matmul_mat4(ArrayCols<T>& dst, const ArrayCols<T>& lhs,
     }
 }
 
-template <typename T>
-TM_INLINE auto kernel_hadamard_mat4(ArrayCols<T>& dst, const ArrayCols<T>& lhs,
-                                    const ArrayCols<T>& rhs) -> void {
+template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
+TM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
+                                      const Mat4Buffer<T>& mat,
+                                      const Vec4Buffer<T>& vec) -> void {
+    COMPILE_TIME_CHECKS_MAT4_SCALAR<T>();
+    // @todo(wilbert): implement matmul mat4-vec4
+}
+
+template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
+TM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
+                                    const Mat4Buffer<T>& lhs,
+                                    const Mat4Buffer<T>& rhs) -> void {
+    COMPILE_TIME_CHECKS_MAT4_SCALAR<T>();
     for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
         for (int32_t idx = 0; idx < Matrix4<T>::MATRIX_NDIM; ++idx) {
             dst[col][idx] = lhs[col][idx] * rhs[col][idx];
@@ -73,14 +110,13 @@ TM_INLINE auto kernel_hadamard_mat4(ArrayCols<T>& dst, const ArrayCols<T>& lhs,
     }
 }
 
-template <typename T>
-TM_INLINE auto kernel_compare_eq_mat4(const ArrayCols<T>& lhs,
-                                      const ArrayCols<T>& rhs) -> bool {
-    constexpr auto EPSILON = tiny::math::EPS<T>;
-    constexpr auto NDIM = Matrix4<T>::MATRIX_NDIM;
-    for (int32_t col = 0; col < NDIM; ++col) {
-        for (int32_t idx = 0; idx < NDIM; ++idx) {
-            if (std::abs(lhs[col][idx] - rhs[col][idx]) > EPSILON) {
+template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
+TM_INLINE auto kernel_compare_eq_mat4(const Mat4Buffer<T>& lhs,
+                                      const Mat4Buffer<T>& rhs) -> bool {
+    COMPILE_TIME_CHECKS_MAT4_SCALAR<T>();
+    for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
+        for (int32_t idx = 0; idx < Matrix4<T>::MATRIX_NDIM; ++idx) {
+            if (std::abs(lhs[col][idx] - rhs[col][idx]) > tiny::math::EPS<T>) {
                 return false;
             }
         }

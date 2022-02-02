@@ -133,12 +133,6 @@ class Matrix4 {
         return Mat4CommaInitializer<Scalar_T>(*this, coeff);
     }
 
-    /// Transposes the matrix in-place
-    TM_INLINE auto transposeInPlace() -> void;
-
-    /// Returns the transposed version of the matrix
-    TM_INLINE auto transpose() const -> Matrix4<Scalar_T>;
-
     /// Returns a printable string-representation of the matrix
     auto toString() const -> std::string {
         auto& data = m_Elements;
@@ -283,13 +277,14 @@ class Mat4CommaInitializer {
     int32_t m_CurrentBuildIndex = MATRIX_FIRST_INDEX;
 };
 
-template <typename Scalar_T>
-auto operator<<(std::ostream& output_stream, const Matrix4<Scalar_T>& src)
+template <typename T,
+          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+auto operator<<(std::ostream& output_stream, const Matrix4<T>& src)
     -> std::ostream&;
 
-template <typename Scalar_T>
-auto operator>>(std::istream& input_stream, Matrix4<Scalar_T>& dst)
-    -> std::istream&;
+template <typename T,
+          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+auto operator>>(std::istream& input_stream, Matrix4<T>& dst) -> std::istream&;
 
 }  // namespace math
 }  // namespace tiny

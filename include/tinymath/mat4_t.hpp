@@ -168,10 +168,10 @@ class Matrix4 {
     constexpr auto buffer_size() const -> uint32_t { return BUFFER_SIZE; }
 
     /// Returns the size (in bytes) of the matrix
-    constexpr auto num_bytes_size() const -> uint32_t { return sizeof(Type); }
+    static constexpr auto num_bytes_size() -> uint32_t { return sizeof(Type); }
 
     /// Returns the alignment (in bytes) of the matrix
-    constexpr auto num_bytes_alignment() const -> uint32_t {
+    static constexpr auto num_bytes_alignment() -> uint32_t {
         return alignof(Type);
     }
 

@@ -59,6 +59,10 @@ template <typename T>
 using SFINAE_MAT4_F64_SSE_GUARD =
     typename std::enable_if<CpuHasSSE<T>::value && IsFloat64<T>::value>::type*;
 
+// ***************************************************************************//
+//                   Dispatch SSE-kernel for matrix addition                  //
+// ***************************************************************************//
+
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
@@ -70,6 +74,10 @@ TM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
     // @todo(wilbert): SSE implementation for mat4-f64 matrices
 }
+
+// ***************************************************************************//
+//                 Dispatch SSE-kernel for matrix substraction                //
+// ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
@@ -83,6 +91,10 @@ TM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
     // @todo(wilbert): SSE implementation for mat4-f64 matrices
 }
 
+// ***************************************************************************//
+//                Dispatch SSE-kernel for matrix-scalar product               //
+// ***************************************************************************//
+
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
                                  const Mat4Buffer<T>& mat) -> void {
@@ -95,6 +107,10 @@ TM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
     // @todo(wilbert): SSE implementation for mat4-f64 matrices
 }
 
+// ***************************************************************************//
+//                Dispatch SSE-kernel for matrix-matrix product               //
+// ***************************************************************************//
+
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                   const Mat4Buffer<T>& rhs) -> void {
@@ -106,6 +122,10 @@ TM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                   const Mat4Buffer<T>& rhs) -> void {
     // @todo(wilbert): SSE implementation for mat4-f64 matrices
 }
+
+// ***************************************************************************//
+//                Dispatch SSE-kernel for matrix-vector product               //
+// ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
@@ -113,6 +133,17 @@ TM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
                                       const Vec4Buffer<T>& vec) -> void {
     // @todo(wilbert): implement matmul mat4-vec4
 }
+
+template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
+TM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
+                                      const Mat4Buffer<T>& mat,
+                                      const Vec4Buffer<T>& vec) -> void {
+    // @todo(wilbert): implement matmul mat4-vec4
+}
+
+// ***************************************************************************//
+//             Dispatch SSE-kernel for matrix element-wise product            //
+// ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,

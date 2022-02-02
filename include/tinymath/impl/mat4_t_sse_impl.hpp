@@ -1,13 +1,11 @@
 #pragma once
 
-#include "tinymath/common.hpp"
 #if defined(TINYMATH_SSE_ENABLED)
 
 #include <smmintrin.h>
 #include <xmmintrin.h>
 
 #include <tinymath/mat4_t.hpp>
-#include <type_traits>
 
 namespace tiny {
 namespace math {

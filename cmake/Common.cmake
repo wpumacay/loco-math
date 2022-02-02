@@ -138,7 +138,7 @@ endfunction()
 
 # Helper function that setups compiler flags and features to the given target
 function(tmSetupCompileProperties)
-  set(oneValueArgs PROJECT TARGET USE_SIMD USE_INLINE)
+  set(oneValueArgs PROJECT TARGET USE_SSE USE_AVX USE_INLINE)
   cmake_parse_arguments(TM_SETUP "" "${oneValueArgs}" "" ${ARGN})
 
   if((NOT DEFINED TM_SETUP_PROJECT) OR (NOT DEFINED TM_SETUP_TARGET))
@@ -174,26 +174,36 @@ function(tmSetupCompileProperties)
     target_compile_options(${TM_SETUP_TARGET} INTERFACE "/permissive-")
   endif()
 
-  if(TM_SETUP_USE_SIMD)
+  if(TM_SETUP_USE_SSE)
     target_compile_definitions(${TM_SETUP_TARGET}
                                INTERFACE -D${TM_SETUP_PROJECT_NAME}_SSE_ENABLED)
-    target_compile_definitions(${TM_SETUP_TARGET}
-                               INTERFACE -D${TM_SETUP_PROJECT_NAME}_AVX_ENABLED)
-
     # Enable compile-options according to each compiler variant
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-      target_compile_options(${TM_SETUP_TARGET} INTERFACE -msse -msse2 -msse4.1
-                                                          -mavx)
       target_compile_options(${TM_SETUP_TARGET} INTERFACE -msse -msse2 -msse4.1)
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-      target_compile_options(
-        ${TM_SETUP_TARGET} INTERFACE /arch:SSE /arch:SSE2 /arch:SSE4.1
-                                     /arch:AVX)
       target_compile_options(${TM_SETUP_TARGET} INTERFACE /arch:SSE /arch:SSE2
                                                           /arch:SSE4.1)
     else()
       tmMessage(
-        "We don't yet support SIMD for compiler '${CMAKE_CXX_COMPILER_ID}'"
+        "We don't yet support SSE-SIMD for compiler '${CMAKE_CXX_COMPILER_ID}'"
+        LOG_LEVEL WARNING)
+    endif()
+  endif()
+
+  if(TM_SETUP_USE_AVX)
+    target_compile_definitions(${TM_SETUP_TARGET}
+                               INTERFACE -D${TM_SETUP_PROJECT_NAME}_AVX_ENABLED)
+    # Enable compile-options according to each compiler variant
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+      target_compile_options(${TM_SETUP_TARGET} INTERFACE -mavx -msse -msse2
+                                                          -msse4.1)
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+      target_compile_options(
+        ${TM_SETUP_TARGET} INTERFACE /arch:AVX /arch:SSE /arch:SSE2
+                                     /arch:SSE4.1)
+    else()
+      tmMessage(
+        "We don't yet support AVX-SIMD for compiler '${CMAKE_CXX_COMPILER_ID}'"
         LOG_LEVEL WARNING)
     endif()
   endif()

@@ -233,13 +233,14 @@ class Vec3CommaInitializer {
 
 /// \brief Prints the given 3d vector to the given output stream
 ///
-/// \tparam Scalar_T Type of scalar used by the 3d vector operand
+/// \tparam T Type of scalar used by the 3d vector operand
 ///
 /// \param[in,out] output_stream The output stream to write the vector to
 /// \param[in] src The vector we want to print to the output stream
 /// \returns A reference to the modified output stream (to concatenate calls)
-template <typename Scalar_T>
-auto operator<<(std::ostream& output_stream, const Vector3<Scalar_T>& src)
+template <typename T,
+          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+auto operator<<(std::ostream& output_stream, const Vector3<T>& src)
     -> std::ostream& {
     output_stream << "(" << src.x() << ", " << src.y() << ", " << src.z()
                   << ")";
@@ -248,18 +249,18 @@ auto operator<<(std::ostream& output_stream, const Vector3<Scalar_T>& src)
 
 /// \brief Reads a 3d vector from the given input stream
 ///
-/// \tparam Scalar_T Type of scalar used by the 3d vector operand
+/// \tparam T Type of scalar used by the 3d vector operand
 ///
 /// \param[in,out] input_stream The input stream from which to read the vector
 /// \param[out] dst The vector in which to place the read values
 /// \returns A reference to the modified input stream (to concatenate calls)
-template <typename Scalar_T>
-auto operator>>(std::istream& input_stream, Vector3<Scalar_T>& dst)
-    -> std::istream& {
+template <typename T,
+          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
+auto operator>>(std::istream& input_stream, Vector3<T>& dst) -> std::istream& {
     // Based on ignition-math implementation https://bit.ly/3iqAVgS
-    Scalar_T x{};
-    Scalar_T y{};
-    Scalar_T z{};
+    T x{};
+    T y{};
+    T z{};
 
     input_stream.setf(std::ios_base::skipws);
     input_stream >> x >> y >> z;

@@ -19,7 +19,8 @@ include(GNUInstallDirs)
 # common settings that we might need later during configuration
 tmInitializeProject()
 
-option(TINYMATH_BUILD_SIMD "Build using SIMD support" OFF)
+option(TINYMATH_BUILD_SSE "Build using SSE SIMD-extensions support" OFF)
+option(TINYMATH_BUILD_AVX "Build using AVX SIMD-extensions support" OFF)
 option(TINYMATH_BUILD_INLINE "Build with inlining when requested" OFF)
 option(TINYMATH_BUILD_PYTHON_BINDINGS "Build bindings (requires Pybind11)" OFF)
 option(TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen+Breathe)" OFF)
@@ -33,9 +34,14 @@ target_include_directories(TinyMathCpp
                            INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Configure the target with the required compiler features and options
+# cmake-format: off
 tmSetupCompileProperties(
-  PROJECT TinyMath TARGET TinyMathCpp USE_SIMD ${TINYMATH_BUILD_SIMD}
+  PROJECT TinyMath
+  TARGET TinyMathCpp
+  USE_SSE ${TINYMATH_BUILD_SSE}
+  USE_AVX ${TINYMATH_BUILD_AVX}
   USE_INLINE ${TINYMATH_BUILD_INLINE})
+# cmake-format: on
 
 # Expose an alias for the library (CMake namespace convention)
 add_library(tinymath::tinymath ALIAS TinyMathCpp)

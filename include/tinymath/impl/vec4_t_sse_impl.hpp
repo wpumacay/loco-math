@@ -14,7 +14,19 @@
  * - kernel_sub_vec4        : SSE|SSE2
  * - kernel_scale_vec4      : SSE|SSE2
  * - kernel_hadamard_vec4   : SSE|SSE2
- * - kernel_dot_vec4        : SSE|SSE4.1 (_mm_dp_ps, _mm_dp_pd)
+ * - kernel_dot_vec4        : SSE|SSE2|SSE4.1
+ *
+ * Notes:
+ * 1. For SSE-float32:
+ *    All elements of the buffer (4xf32, recall padding for alignment) fit into
+ *    a single xmm register (128-bits <=> 4xfloat32)
+ *
+ * 2. For SSE-float64:
+ *    Vector buffer contains 4xfloat64 <=> 256 bits <=> 32 bytes; however, xmm
+ *    registers are only 16 bytes wide. We'll just unroll the loop once (make
+ *    the point-wise operation twice on the registers, using lo-hi parts). Note
+ *    that we also require support for SSE2 to use the appropriate intrinsics
+ *    @todo(wilbert): try using static_cast and pointer-arithmetic replacements
  */
 
 namespace tiny {

@@ -17,7 +17,7 @@ using SFINAE_VEC4_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 TM_INLINE auto dot(const Vector4<T>& lhs, const Vector4<T>& rhs) -> T {
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): call the appropriate AVX implementation
+    return avx::kernel_dot_vec4<T>(lhs.elements(), rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     return sse::kernel_dot_vec4<T>(lhs.elements(), rhs.elements());
 #else
@@ -42,7 +42,7 @@ TM_INLINE auto operator+(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> Vector4<T> {
     Vector4<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): call the appropriate AVX implementation
+    avx::kernel_add_vec4<T>(dst.elements(), rhs.elements(), lhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_add_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
@@ -68,7 +68,7 @@ TM_INLINE auto operator-(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> Vector4<T> {
     Vector4<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): call the appropriate AVX implementation
+    avx::kernel_sub_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_sub_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
@@ -93,7 +93,7 @@ template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 TM_INLINE auto operator*(T scale, const Vector4<T>& vec) -> Vector4<T> {
     Vector4<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): call the appropriate AVX implementation
+    avx::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
 #else
@@ -118,7 +118,7 @@ template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 TM_INLINE auto operator*(const Vector4<T>& vec, T scale) -> Vector4<T> {
     Vector4<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): call the appropriate AVX implementation
+    avx::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
 #else
@@ -144,7 +144,8 @@ TM_INLINE auto operator*(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> Vector4<T> {
     Vector4<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): call the appropriate AVX implementation
+    avx::kernel_hadamard_vec4<T>(dst.elements(), lhs.elements(),
+                                 rhs.elements());
 #elif defined(TINYMATH_SSE_ENABLED)
     sse::kernel_hadamard_vec4<T>(dst.elements(), lhs.elements(),
                                  rhs.elements());

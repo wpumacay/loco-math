@@ -31,6 +31,12 @@ constexpr auto COMPILE_TIME_CHECKS_VEC4_F32_SSE() -> void {
                   "Must be using 4xf32 as aligned buffer");
     static_assert(Vector4<T>::VECTOR_NDIM == 4,
                   "Must be using 3xf32 for the elements of the vector");
+    static_assert(
+        sizeof(Vector4<T>) == sizeof(std::array<T, Vector4<T>::BUFFER_SIZE>),
+        "Must use exactly this many bytes of storage");
+    static_assert(
+        alignof(Vector4<T>) == sizeof(std::array<T, Vector4<T>::BUFFER_SIZE>),
+        "Must be aligned to its corresponding size");
 }
 
 template <typename T>
@@ -40,6 +46,12 @@ constexpr auto COMPILE_TIME_CHECKS_VEC4_F64_SSE() -> void {
                   "Must be using 4xf64 as aligned buffer");
     static_assert(Vector4<T>::VECTOR_NDIM == 4,
                   "Must be using 3xf64 for the elements of the vector");
+    static_assert(
+        sizeof(Vector4<T>) == sizeof(std::array<T, Vector4<T>::BUFFER_SIZE>),
+        "Must use exactly this many bytes of storage");
+    static_assert(
+        alignof(Vector4<T>) == sizeof(std::array<T, Vector4<T>::BUFFER_SIZE>),
+        "Must be aligned to its corresponding size");
 }
 
 template <typename T>

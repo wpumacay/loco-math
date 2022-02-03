@@ -280,11 +280,17 @@ class Mat4CommaInitializer {
 template <typename T,
           typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
 auto operator<<(std::ostream& output_stream, const Matrix4<T>& src)
-    -> std::ostream&;
+    -> std::ostream& {
+    // @todo(wilbert): complet this part of the implementation
+    return output_stream;
+}
 
 template <typename T,
           typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
-auto operator>>(std::istream& input_stream, Matrix4<T>& dst) -> std::istream&;
+auto operator>>(std::istream& input_stream, Matrix4<T>& dst) -> std::istream& {
+    // @todo(wilbert): complet this part of the implementation
+    return input_stream;
+}
 
 }  // namespace math
 }  // namespace tiny

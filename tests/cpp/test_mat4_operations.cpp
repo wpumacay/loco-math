@@ -220,34 +220,33 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
         // clang-format on
         // @todo(wilbert): test with poorly conditioned matrices
     }
-    // ~~~ (this sections requires revision, as throwing errors for the checks)
-    // SECTION("Matrix-Vector product") {
-    //     // Fixed test-case
-    //     // clang-format off
-    //     Matrix4 mat(9.0, 5.0,  9.0,  8.0,
-    //                -9.0, 1.0, -6.0,  8.0,
-    //               -10.0, 1.0,  3.0,  6.0,
-    //                -8.0, 2.0, -2.0, -2.0);
-    //     Vector4 vec(6.0, 7.0, -7.0, 5.0);
-    //     // clang-format on
-    //     auto mat_vec_mul_1 = mat * vec;
-    //     FuncAllClose<T>(mat_vec_mul_1, -14.0, -45.0, -104.0, -10.0);
-    //     // Test-cases using the random matrices (reuse some random numbers)
-    //     auto v0 = GenRandom(T, 1);
-    //     auto v1 = GenRandom(T, 1);
-    //     auto v2 = GenRandom(T, 1);
-    //     auto v3 = GenRandom(T, 1);
-    //     Vector4 v_a(v0, v1, v2, v3);
-    //     auto mat_vec_mul_2 = m_a * v_a;
-    //     // clang-format off
-    //     FuncAllClose<T>(mat_vec_mul_2,
-    //         x00 * v0 + x01 * v1 + x02 * v2 + x03 * v3,
-    //         x10 * v0 + x11 * v1 + x12 * v2 + x13 * v3,
-    //         x20 * v0 + x21 * v1 + x22 * v2 + x23 * v3,
-    //         x30 * v0 + x31 * v1 + x32 * v2 + x33 * v3);
-    //     // clang-format on
-    // }
-    // ~~~
+
+    SECTION("Matrix-Vector product") {
+        // Fixed test-case
+        // clang-format off
+        Matrix4 mat(9.0, 5.0,  9.0,  8.0,
+                   -9.0, 1.0, -6.0,  8.0,
+                  -10.0, 1.0,  3.0,  6.0,
+                   -8.0, 2.0, -2.0, -2.0);
+        Vector4 vec(6.0, 7.0, -7.0, 5.0);
+        // clang-format on
+        auto mat_vec_mul_1 = mat * vec;
+        FuncAllClose<T>(mat_vec_mul_1, 66.0, 35.0, -44.0, -30.0);
+        // Test-cases using the random matrices (reuse some random numbers)
+        auto v0 = GenRandom(T, 1);
+        auto v1 = GenRandom(T, 1);
+        auto v2 = GenRandom(T, 1);
+        auto v3 = GenRandom(T, 1);
+        Vector4 v_a(v0, v1, v2, v3);
+        auto mat_vec_mul_2 = m_a * v_a;
+        // clang-format off
+        FuncAllClose<T>(mat_vec_mul_2,
+          x00 * v0 + x01 * v1 + x02 * v2 + x03 * v3,
+          x10 * v0 + x11 * v1 + x12 * v2 + x13 * v3,
+          x20 * v0 + x21 * v1 + x22 * v2 + x23 * v3,
+          x30 * v0 + x31 * v1 + x32 * v2 + x33 * v3);
+        // clang-format on
+    }
     SECTION("Element-wise matrix product") {
         auto mat_elmwise = tiny::math::hadamard(m_a, m_b);
         // clang-format off

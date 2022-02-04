@@ -5,6 +5,7 @@ template <typename T, typename = typename std::enable_if<
                           tiny::math::IsScalar<T>::value>::type>
 auto run_operations_mat4() -> void {
     using Mat4 = tiny::math::Matrix4<T>;
+    using Vec4 = tiny::math::Vector4<T>;
 
     // Preamble (show the type we're currently working with)
     if (std::is_same<T, float>()) {
@@ -23,6 +24,8 @@ auto run_operations_mat4() -> void {
                10.0, 12.0, 14.0, 16.0,
                18.0, 20.0, 22.0, 24.0,
                26.0, 28.0, 30.0, 32.0);
+
+    Vec4 vec(1.0, 2.0, 3.0, 4.0);
     // clang-format on
 
     Mat4 mat_sum = mat_a + mat_b;
@@ -31,6 +34,7 @@ auto run_operations_mat4() -> void {
     Mat4 mat_scale_2 = mat_b * 0.25;
     Mat4 mat_matmul = mat_a * mat_b;
     Mat4 mat_hadamard = tiny::math::hadamard(mat_a, mat_b);
+    Vec4 vec_matvecmul = mat_a * vec;
 
     std::cout << "a: " << '\n' << mat_a.toString() << '\n';
     std::cout << "b: " << '\n' << mat_b.toString() << '\n';
@@ -40,6 +44,7 @@ auto run_operations_mat4() -> void {
     std::cout << "b * 0.25: " << '\n' << mat_scale_2.toString() << '\n';
     std::cout << "a * b: " << '\n' << mat_matmul.toString() << '\n';
     std::cout << "a . b: " << '\n' << mat_hadamard.toString() << '\n';
+    std::cout << "a * v: " << '\n' << vec_matvecmul.toString() << '\n';
     std::cout << "a == b: " << '\n'
               << ((mat_a == mat_b) ? "True" : "False") << '\n';
     std::cout << "a != b: " << '\n'

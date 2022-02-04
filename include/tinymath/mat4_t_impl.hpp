@@ -111,10 +111,9 @@ TM_INLINE auto operator*(const Matrix4<T>& lhs_mat, const Vector4<T>& rhs_vec)
 #elif defined(TINYMATH_SSE_ENABLED)
     // @todo(wilbert): implement matmul mat4-vec4
 #else
-    scalar::kernel_matmul_vec_mat4<T>(dst.elements(), lhs_mat.elements(),
-                                      rhs_vec.elements());
+    return scalar::kernel_matmul_vec_mat4<T>(lhs_mat.elements(),
+                                             rhs_vec.elements());
 #endif
-    return dst;
 }
 
 /// \brief Returns the element-wise product of the two given matrices

@@ -2,6 +2,8 @@
 #include <cmath>
 #include <tinymath/tinymath.hpp>
 
+#include "tinymath/mat4_t_impl.hpp"
+
 template <typename T>
 constexpr T RANGE_MIN = -10.0;
 template <typename T>
@@ -41,12 +43,35 @@ auto FuncAllClose(const tiny::math::Matrix4<T>& mat,
 }
 // clang-format on
 
+template <typename T>
+auto FuncAllClose(const tiny::math::Vector4<T>& vec, T x0, T x1, T x2, T x3)
+    -> void {
+    REQUIRE(std::abs(vec[0] - x0) < tiny::math::EPS<T>);
+    REQUIRE(std::abs(vec[1] - x1) < tiny::math::EPS<T>);
+    REQUIRE(std::abs(vec[2] - x2) < tiny::math::EPS<T>);
+    REQUIRE(std::abs(vec[3] - x3) < tiny::math::EPS<T>);
+}
+
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
                    tiny::math::float32_t, tiny::math::float64_t) {
     using T = TestType;
     using Matrix4 = tiny::math::Matrix4<T>;
     using Vector4 = tiny::math::Vector4<T>;
+
+    SECTION("Matrix comparison ==, !=") {
+        // clang-format off
+        Matrix4 m_1(1.0, 0.0, 0.0, 0.0,
+                    0.0, 2.0, 0.0, 0.0,
+                    0.0, 0.0, 3.0, 0.0,
+                    0.0, 0.0, 0.0, 4.0);
+        Matrix4 m_2(1.0, 2.0, 3.0, 4.0);
+        Matrix4 m_3(1.1, 2.1, 3.1, 4.1);
+        // clang-format on
+        REQUIRE(m_1 == m_2);
+        REQUIRE(m_2 != m_3);
+        REQUIRE(m_3 != m_1);
+    }
 
     // Generate first random matrix (2^8 cases possible values)
     auto x00 = GenRandom(T, 2);
@@ -104,19 +129,6 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
                 y30, y31, y32, y33);
     // clang-format on
 
-    SECTION("Matrix comparison ==, !=") {
-        // clang-format off
-        Matrix4 m_1(1.0, 0.0, 0.0, 0.0,
-                    0.0, 2.0, 0.0, 0.0,
-                    0.0, 0.0, 3.0, 0.0,
-                    0.0, 0.0, 0.0, 4.0);
-        Matrix4 m_2(1.0, 2.0, 3.0, 4.0);
-        Matrix4 m_3(1.1, 2.1, 3.1, 4.1);
-        // clang-format on
-        REQUIRE(m_1 == m_2);
-        REQUIRE(m_2 != m_3);
-        REQUIRE(m_3 != m_1);
-    }
     SECTION("Matrix addition") {
         auto mat_sum = m_a + m_b;
         // clang-format off
@@ -181,7 +193,7 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
             -61.0,   5.0, -30.0, -37.0);
         // clang-format on
 
-        // Test-cases using the random matrices D:
+        // Test-cases using the random matrices
         auto mat_mul_ab = m_a * m_b;
         // clang-format off
         FuncAllClose<T>(mat_mul_ab,
@@ -207,5 +219,43 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
             x30 * y03 + x31 * y13 + x32 * y23 + x33 * y33);
         // clang-format on
         // @todo(wilbert): test with poorly conditioned matrices
+    }
+    // ~~~ (this sections requires revision, as throwing errors for the checks)
+    // SECTION("Matrix-Vector product") {
+    //     // Fixed test-case
+    //     // clang-format off
+    //     Matrix4 mat(9.0, 5.0,  9.0,  8.0,
+    //                -9.0, 1.0, -6.0,  8.0,
+    //               -10.0, 1.0,  3.0,  6.0,
+    //                -8.0, 2.0, -2.0, -2.0);
+    //     Vector4 vec(6.0, 7.0, -7.0, 5.0);
+    //     // clang-format on
+    //     auto mat_vec_mul_1 = mat * vec;
+    //     FuncAllClose<T>(mat_vec_mul_1, -14.0, -45.0, -104.0, -10.0);
+    //     // Test-cases using the random matrices (reuse some random numbers)
+    //     auto v0 = GenRandom(T, 1);
+    //     auto v1 = GenRandom(T, 1);
+    //     auto v2 = GenRandom(T, 1);
+    //     auto v3 = GenRandom(T, 1);
+    //     Vector4 v_a(v0, v1, v2, v3);
+    //     auto mat_vec_mul_2 = m_a * v_a;
+    //     // clang-format off
+    //     FuncAllClose<T>(mat_vec_mul_2,
+    //         x00 * v0 + x01 * v1 + x02 * v2 + x03 * v3,
+    //         x10 * v0 + x11 * v1 + x12 * v2 + x13 * v3,
+    //         x20 * v0 + x21 * v1 + x22 * v2 + x23 * v3,
+    //         x30 * v0 + x31 * v1 + x32 * v2 + x33 * v3);
+    //     // clang-format on
+    // }
+    // ~~~
+    SECTION("Element-wise matrix product") {
+        auto mat_elmwise = tiny::math::hadamard(m_a, m_b);
+        // clang-format off
+        FuncAllClose<T>(mat_elmwise,
+            x00 * y00, x01 * y01, x02 * y02, x03 * y03,
+            x10 * y10, x11 * y11, x12 * y12, x13 * y13,
+            x20 * y20, x21 * y21, x22 * y22, x23 * y23,
+            x30 * y30, x31 * y31, x32 * y32, x33 * y33);
+        // clang-format on
     }
 }

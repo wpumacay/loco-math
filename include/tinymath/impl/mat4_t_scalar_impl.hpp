@@ -91,12 +91,12 @@ TM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
-                                      const Mat4Buffer<T>& mat,
-                                      const Vec4Buffer<T>& vec) -> void {
+TM_INLINE auto kernel_matmul_vec_mat4(const Mat4Buffer<T>& mat,
+                                      const Vec4Buffer<T>& vec) -> Vector4<T> {
     COMPILE_TIME_CHECKS_MAT4_SCALAR<T>();
     // Express as a linear combination of the columns of the matrix
-    dst = vec[0] * mat[0] + vec[1] * mat[1] + vec[2] * mat[2] + vec[3] * mat[3];
+    return vec[0] * mat[0] + vec[1] * mat[1] + vec[2] * mat[2] +
+           vec[3] * mat[3];
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>

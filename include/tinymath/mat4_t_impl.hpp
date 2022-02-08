@@ -105,11 +105,16 @@ TM_INLINE auto operator*(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
 template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
 TM_INLINE auto operator*(const Matrix4<T>& lhs_mat, const Vector4<T>& rhs_vec)
     -> Vector4<T> {
-    Vector4<T> dst;
 #if defined(TINYMATH_AVX_ENABLED)
-    // @todo(wilbert): implement matmul mat4-vec4
+    Vector4<T> dst;
+    avx::kernel_matmul_vec_mat4<T>(dst.elements(), lhs_mat.elements(),
+                                   rhs_vec.elements());
+    return dst;
 #elif defined(TINYMATH_SSE_ENABLED)
-    // @todo(wilbert): implement matmul mat4-vec4
+    Vector4<T> dst;
+    sse::kernel_matmul_vec_mat4<T>(dst.elements(), lhs_mat.elements(),
+                                   rhs_vec.elements());
+    return dst;
 #else
     return scalar::kernel_matmul_vec_mat4<T>(lhs_mat.elements(),
                                              rhs_vec.elements());

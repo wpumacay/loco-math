@@ -122,6 +122,12 @@ class Vector4 {
     /// Returns an unmutable reference to the underlying storage of the vector
     auto elements() const -> const BufferType& { return m_Elements; }
 
+    /// Returns a pointer to the data of the underlying storage in use
+    auto data() -> Scalar_T* { return m_Elements.data(); }
+
+    /// Reeturns a const-pointer to the data of the underlying storage in use
+    auto data() const -> const Scalar_T* { return m_Elements.data(); }
+
     /// Returns a mutable reference to the requested entry of the vector
     auto operator[](uint32_t index) -> Scalar_T& { return m_Elements[index]; }
 

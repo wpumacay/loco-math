@@ -2,8 +2,6 @@
 #include <cmath>
 #include <tinymath/tinymath.hpp>
 
-#include "tinymath/mat4_t_impl.hpp"
-
 template <typename T>
 constexpr T RANGE_MIN = -10.0;
 template <typename T>

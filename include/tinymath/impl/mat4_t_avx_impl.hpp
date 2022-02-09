@@ -186,37 +186,21 @@ TM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
 template <typename T, SFINAE_MAT4_F32_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                   const Mat4Buffer<T>& rhs) -> void {
+    // Use the SSE version as fallback (our previous implementation fails in
+    // some cases where the matrix seem poorly conditioned)
     for (int32_t k = 0; k < Matrix4<T>::MATRIX_NDIM; ++k) {
-        // Do a "pseudo-linear-combination" of columns 0,1
-        auto ymm_lhs_cols_01 = _mm256_load_ps(lhs[0].data());
-        auto scalar_rhs_v_0k = rhs[k][0];
-        auto scalar_rhs_v_1k = rhs[k][1];
-        auto ymm_scalar_rhs_01_k = _mm256_set_ps(
-            scalar_rhs_v_1k, scalar_rhs_v_1k, scalar_rhs_v_1k, scalar_rhs_v_1k,
-            scalar_rhs_v_0k, scalar_rhs_v_0k, scalar_rhs_v_0k, scalar_rhs_v_0k);
-        auto ymm_tmp_cols_01 =
-            _mm256_mul_ps(ymm_scalar_rhs_01_k, ymm_lhs_cols_01);
-
-        // Do a "pseudo-linear-combination" of columns 2,3
-        auto ymm_lhs_cols_23 = _mm256_load_ps(lhs[2].data());
-        auto scalar_rhs_v_2k = rhs[k][2];
-        auto scalar_rhs_v_3k = rhs[k][3];
-        auto ymm_scalar_rhs_23_k = _mm256_set_ps(
-            scalar_rhs_v_3k, scalar_rhs_v_3k, scalar_rhs_v_3k, scalar_rhs_v_3k,
-            scalar_rhs_v_2k, scalar_rhs_v_2k, scalar_rhs_v_2k, scalar_rhs_v_2k);
-        auto ymm_tmp_cols_23 =
-            _mm256_mul_ps(ymm_scalar_rhs_23_k, ymm_lhs_cols_23);
-
-        // Combine these "pseudo-linear-combinations" into a single register
-        // that holds the following data: [v0*a0+v2*a2 | v1*a1 + v3*a3]. Then,
-        // combine the lower and higher 128-bit parts via a sum into a single
-        // XMM register
-        auto ymm_tmp_cols_02_13 =
-            _mm256_add_ps(ymm_tmp_cols_01, ymm_tmp_cols_23);
-        auto xmm_tmp_cols_02 = _mm256_extractf128_ps(ymm_tmp_cols_02_13, 0);
-        auto xmm_tmp_cols_13 = _mm256_extractf128_ps(ymm_tmp_cols_02_13, 1);
-        _mm_store_ps(dst[k].data(),
-                     _mm_add_ps(xmm_tmp_cols_02, xmm_tmp_cols_13));
+        // Compute each resulting column, as in the  "matmul_vec" kernel
+        auto xmm_result_col_k = _mm_setzero_ps();
+        for (int32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+            //                              k=4            [      |     ]
+            // A * v = (lhs * rhs)[:,k] = SUM   rhs[j,k] * |  lhs[:,j]  ]
+            //                              k=0            [      |     ]
+            auto xmm_scalar_rhs_jk = _mm_set1_ps(rhs[k][j]);
+            auto xmm_lhs_col_j = _mm_load_ps(lhs[j].data());
+            xmm_result_col_k = _mm_add_ps(
+                xmm_result_col_k, _mm_mul_ps(xmm_scalar_rhs_jk, xmm_lhs_col_j));
+        }
+        _mm_store_ps(dst[k].data(), xmm_result_col_k);
     }
 }
 
@@ -250,34 +234,16 @@ template <typename T, SFINAE_MAT4_F32_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
                                       const Mat4Buffer<T>& mat,
                                       const Vec4Buffer<T>& vec) -> void {
-    // Similar to the kernel below, but take advantage of having double the size
-    // for a YMM register (do 2 columns at a time). Unroll to keep consistency
-
-    // Do a "pseudo-linear-combination" of columns 0,1
-    auto ymm_mat_cols_01 = _mm256_load_ps(mat[0].data());
-    auto scalar_v_0 = vec[0];
-    auto scalar_v_1 = vec[1];
-    auto ymm_scalar_v_01 =
-        _mm256_set_ps(scalar_v_1, scalar_v_1, scalar_v_1, scalar_v_1,
-                      scalar_v_0, scalar_v_0, scalar_v_0, scalar_v_0);
-    auto ymm_tmp_cols_01 = _mm256_mul_ps(ymm_scalar_v_01, ymm_mat_cols_01);
-
-    // Do a "pseudo-linear-combination" of columns 2,3
-    auto ymm_mat_cols_23 = _mm256_load_ps(mat[2].data());
-    auto scalar_v_2 = vec[2];
-    auto scalar_v_3 = vec[3];
-    auto ymm_scalar_v_23 =
-        _mm256_set_ps(scalar_v_3, scalar_v_3, scalar_v_3, scalar_v_3,
-                      scalar_v_2, scalar_v_2, scalar_v_2, scalar_v_2);
-    auto ymm_tmp_cols_23 = _mm256_mul_ps(ymm_scalar_v_23, ymm_mat_cols_23);
-
-    // Combine these "pseudo-linear-combinations" into a single register that
-    // holds the following data: [v0*a0+v2*a2 | v1*a1 + v3*a3]. Then, combine
-    // the lower and higher 128-bit parts via a sum into a single XMM register
-    auto ymm_tmp_cols_02_13 = _mm256_add_ps(ymm_tmp_cols_01, ymm_tmp_cols_23);
-    auto xmm_tmp_cols_02 = _mm256_extractf128_ps(ymm_tmp_cols_02_13, 0);
-    auto xmm_tmp_cols_13 = _mm256_extractf128_ps(ymm_tmp_cols_02_13, 1);
-    _mm_store_ps(dst.data(), _mm_add_ps(xmm_tmp_cols_02, xmm_tmp_cols_13));
+    // Use the SSE version as fallback (our previous implementation fails in
+    // some cases where the matrix seem poorly conditioned)
+    auto xmm_result = _mm_setzero_ps();
+    for (int32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+        auto xmm_scalar_vj = _mm_set1_ps(vec[j]);
+        auto xmm_mat_col_j = _mm_load_ps(mat[j].data());
+        xmm_result =
+            _mm_add_ps(xmm_result, _mm_mul_ps(xmm_scalar_vj, xmm_mat_col_j));
+    }
+    _mm_store_ps(dst.data(), xmm_result);
 }
 
 template <typename T, SFINAE_MAT4_F64_AVX_GUARD<T> = nullptr>

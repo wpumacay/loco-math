@@ -172,79 +172,78 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
     }
     SECTION("Matrix-Matrix product") {
         // clang-format off
-        // Fixed test-case
-        Matrix4 m_1(-10.0, -6.0, -6.0,  2.0,
-                    -8.0,  -6.0, -6.0, -5.0,
-                     7.0, -10.0,  5.0,  7.0,
-                    -2.0,  -9.0, -8.0,  6.0);
+            // Fixed test-case
+            Matrix4 m_1(-10.0, -6.0, -6.0,  2.0,
+                        -8.0,  -6.0, -6.0, -5.0,
+                         7.0, -10.0,  5.0,  7.0,
+                        -2.0,  -9.0, -8.0,  6.0);
 
-        Matrix4 m_2(7.0,  7.0, -6.0,  3.0,
-                   -7.0,  1.0,  8.0,  5.0,
-                    7.0, -2.0,  0.0, -4.0,
-                   -9.0,  2.0,  5.0, -3.0);
+            Matrix4 m_2(7.0,  7.0, -6.0,  3.0,
+                       -7.0,  1.0,  8.0,  5.0,
+                        7.0, -2.0,  0.0, -4.0,
+                       -9.0,  2.0,  5.0, -3.0);
 
-        auto mat_mul = m_1 * m_2;
-        FuncAllClose<T>(mat_mul,
-            -88.0, -60.0,  22.0, -42.0,
-            -11.0, -60.0, -25.0, -15.0,
-             91.0,  43.0, -87.0, -70.0,
-            -61.0,   5.0, -30.0, -37.0);
+            auto mat_mul = m_1 * m_2;
+            FuncAllClose<T>(mat_mul,
+                -88.0, -60.0,  22.0, -42.0,
+                -11.0, -60.0, -25.0, -15.0,
+                 91.0,  43.0, -87.0, -70.0,
+                -61.0,   5.0, -30.0, -37.0);
         // clang-format on
 
         // Test-cases using the random matrices
         auto mat_mul_ab = m_a * m_b;
         // clang-format off
-        FuncAllClose<T>(mat_mul_ab,
-            // First row
-            x00 * y00 + x01 * y10 + x02 * y20 + x03 * y30,
-            x00 * y01 + x01 * y11 + x02 * y21 + x03 * y31,
-            x00 * y02 + x01 * y12 + x02 * y22 + x03 * y32,
-            x00 * y03 + x01 * y13 + x02 * y23 + x03 * y33,
-            // Second row
-            x10 * y00 + x11 * y10 + x12 * y20 + x13 * y30,
-            x10 * y01 + x11 * y11 + x12 * y21 + x13 * y31,
-            x10 * y02 + x11 * y12 + x12 * y22 + x13 * y32,
-            x10 * y03 + x11 * y13 + x12 * y23 + x13 * y33,
-            // Third row
-            x20 * y00 + x21 * y10 + x22 * y20 + x23 * y30,
-            x20 * y01 + x21 * y11 + x22 * y21 + x23 * y31,
-            x20 * y02 + x21 * y12 + x22 * y22 + x23 * y32,
-            x20 * y03 + x21 * y13 + x22 * y23 + x23 * y33,
-            // Fourth row
-            x30 * y00 + x31 * y10 + x32 * y20 + x33 * y30,
-            x30 * y01 + x31 * y11 + x32 * y21 + x33 * y31,
-            x30 * y02 + x31 * y12 + x32 * y22 + x33 * y32,
-            x30 * y03 + x31 * y13 + x32 * y23 + x33 * y33);
+            FuncAllClose<T>(mat_mul_ab,
+                // First row
+                x00 * y00 + x01 * y10 + x02 * y20 + x03 * y30,
+                x00 * y01 + x01 * y11 + x02 * y21 + x03 * y31,
+                x00 * y02 + x01 * y12 + x02 * y22 + x03 * y32,
+                x00 * y03 + x01 * y13 + x02 * y23 + x03 * y33,
+                // Second row
+                x10 * y00 + x11 * y10 + x12 * y20 + x13 * y30,
+                x10 * y01 + x11 * y11 + x12 * y21 + x13 * y31,
+                x10 * y02 + x11 * y12 + x12 * y22 + x13 * y32,
+                x10 * y03 + x11 * y13 + x12 * y23 + x13 * y33,
+                // Third row
+                x20 * y00 + x21 * y10 + x22 * y20 + x23 * y30,
+                x20 * y01 + x21 * y11 + x22 * y21 + x23 * y31,
+                x20 * y02 + x21 * y12 + x22 * y22 + x23 * y32,
+                x20 * y03 + x21 * y13 + x22 * y23 + x23 * y33,
+                // Fourth row
+                x30 * y00 + x31 * y10 + x32 * y20 + x33 * y30,
+                x30 * y01 + x31 * y11 + x32 * y21 + x33 * y31,
+                x30 * y02 + x31 * y12 + x32 * y22 + x33 * y32,
+                x30 * y03 + x31 * y13 + x32 * y23 + x33 * y33);
         // clang-format on
         // @todo(wilbert): test with poorly conditioned matrices
     }
 
-    SECTION("Matrix-Vector product") {
-        // Fixed test-case
-        // clang-format off
-        Matrix4 mat(9.0, 5.0,  9.0,  8.0,
-                   -9.0, 1.0, -6.0,  8.0,
-                  -10.0, 1.0,  3.0,  6.0,
-                   -8.0, 2.0, -2.0, -2.0);
-        Vector4 vec(6.0, 7.0, -7.0, 5.0);
-        // clang-format on
-        auto mat_vec_mul_1 = mat * vec;
-        FuncAllClose<T>(mat_vec_mul_1, 66.0, 35.0, -44.0, -30.0);
-        // Test-cases using the random matrices (reuse some random numbers)
-        auto v0 = GenRandom(T, 1);
-        auto v1 = GenRandom(T, 1);
-        auto v2 = GenRandom(T, 1);
-        auto v3 = GenRandom(T, 1);
-        Vector4 v_a(v0, v1, v2, v3);
-        auto mat_vec_mul_2 = m_a * v_a;
-        // clang-format off
-        FuncAllClose<T>(mat_vec_mul_2,
-          x00 * v0 + x01 * v1 + x02 * v2 + x03 * v3,
-          x10 * v0 + x11 * v1 + x12 * v2 + x13 * v3,
-          x20 * v0 + x21 * v1 + x22 * v2 + x23 * v3,
-          x30 * v0 + x31 * v1 + x32 * v2 + x33 * v3);
-        // clang-format on
-    }
+    //    SECTION("Matrix-Vector product") {
+    //        // Fixed test-case
+    //        // clang-format off
+    //        Matrix4 mat(9.0, 5.0,  9.0,  8.0,
+    //                   -9.0, 1.0, -6.0,  8.0,
+    //                  -10.0, 1.0,  3.0,  6.0,
+    //                   -8.0, 2.0, -2.0, -2.0);
+    //        Vector4 vec(6.0, 7.0, -7.0, 5.0);
+    //        // clang-format on
+    //        auto mat_vec_mul_1 = mat * vec;
+    //        FuncAllClose<T>(mat_vec_mul_1, 66.0, 35.0, -44.0, -30.0);
+    //        // Test-cases using the random matrices (reuse some random
+    //        numbers) auto v0 = GenRandom(T, 1); auto v1 = GenRandom(T, 1);
+    //        auto v2 = GenRandom(T, 1);
+    //        auto v3 = GenRandom(T, 1);
+    //        Vector4 v_a(v0, v1, v2, v3);
+    //        auto mat_vec_mul_2 = m_a * v_a;
+    //        // clang-format off
+    //        FuncAllClose<T>(mat_vec_mul_2,
+    //          x00 * v0 + x01 * v1 + x02 * v2 + x03 * v3,
+    //          x10 * v0 + x11 * v1 + x12 * v2 + x13 * v3,
+    //          x20 * v0 + x21 * v1 + x22 * v2 + x23 * v3,
+    //          x30 * v0 + x31 * v1 + x32 * v2 + x33 * v3);
+    //        // clang-format on
+    //    }
     SECTION("Element-wise matrix product") {
         auto mat_elmwise = tiny::math::hadamard(m_a, m_b);
         // clang-format off

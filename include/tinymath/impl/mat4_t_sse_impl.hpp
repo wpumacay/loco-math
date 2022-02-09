@@ -51,6 +51,7 @@ template <typename T>
 constexpr auto COMPILE_TIME_CHECKS_MAT4_F32_SSE() -> void {
     constexpr uint32_t EXPECTED_BUFFER_SIZE = 16;
     constexpr uint32_t EXPECTED_NUM_DIMENSIONS = 4;
+    constexpr uint32_t EXPECTED_SIZEOF = sizeof(float) * EXPECTED_BUFFER_SIZE;
 
     static_assert(std::is_same<float, T>::value,
                   "4x4 f32 matrices should use single-precision floats");
@@ -58,9 +59,9 @@ constexpr auto COMPILE_TIME_CHECKS_MAT4_F32_SSE() -> void {
                   "4x4 matrices must use 16 elements for the internal buffer");
     static_assert(Matrix4<T>::MATRIX_NDIM == EXPECTED_NUM_DIMENSIONS,
                   "4x4 matrices must have 4 as number of dimensions");
-    static_assert(sizeof(Matrix4<T>) == sizeof(T) * EXPECTED_BUFFER_SIZE,
+    static_assert(sizeof(Matrix4<T>) == EXPECTED_SIZEOF,
                   "4x4 matrices must use exactly this many bytes of storage");
-    static_assert(alignof(Matrix4<T>) == sizeof(T) * EXPECTED_BUFFER_SIZE,
+    static_assert(alignof(Matrix4<T>) == EXPECTED_SIZEOF,
                   "4x4 matrices must be aligned to its corresponding size");
 }
 

@@ -46,8 +46,8 @@ auto main() -> int {
     // NOLINTNEXTLINE
     std::string vendor_str(reinterpret_cast<const char*>(vendor_regs.data()),
                            sizeof(uint) * 3);
-    std::cout << "Vendor information: " << vendor_str << '\n';
-    // -------------------------------------------------------------------------
+    // std::cout << "Vendor information: " << vendor_str << '\n';
+    //  -------------------------------------------------------------------------
 
     // Get CPU capabilities ----------------------------------------------------
     __get_cpuid(1, &regs.eax, &regs.ebx, &regs.ecx, &regs.edx);  // eax=1
@@ -73,7 +73,8 @@ auto main() -> int {
     ret_val |= (HAS_FMA ? 1 : 0) << RETVAL_BIT_FMA;
     ret_val |= (HAS_AVX ? 1 : 0) << RETVAL_BIT_AVX;
     ret_val |= (HAS_AVX2 ? 1 : 0) << RETVAL_BIT_AVX2;
-    std::cout << "retval: " << ret_val << '\n';
-    // -------------------------------------------------------------------------
-    return ret_val;
+    // std::cout << "retval: " << ret_val << '\n';
+    //  -------------------------------------------------------------------------
+    std::cout << ret_val;
+    return 0;
 }

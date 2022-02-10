@@ -19,6 +19,32 @@ function(tmMessage var_message)
   endif()
 endfunction()
 
+# Helper function that gets the host's CPU SIMD capabilities
+function(tmCheckCpuInfo)
+  try_run(
+    # Variable where the result of running the program is stored (exit-code)
+    var_run_result
+    # Variable where the result of compiling the program is stored (TRUE|FALSE)
+    var_compile_result
+    # Where to place the executable generated after linking
+    ${CMAKE_CURRENT_BINARY_DIR}
+    # File path of the source file to be compiled and run
+    ${CMAKE_SOURCE_DIR}/cmake/check_simd_x86.cpp
+    # Variable where the messages generated during compilation is stored
+    COMPILE_OUTPUT_VARIABLE var_compile_output
+    # Variable where the output of running the program is stored (stdout?)
+    RUN_OUTPUT_VARIABLE var_run_output)
+
+  message("Compilation result:\n${var_compile_result}")
+  message("Compilation output:\n${var_compile_output}")
+  message("Running result:\n${var_run_result}")
+  message("Running output:\n${var_run_output}")
+
+  if(${var_run_output} EQUAL 447)
+    message("Yay!!!!!!")
+  endif()
+endfunction()
+
 # Helper macro that initializes the project properly (whether if root or not)
 function(tmInitializeProject)
   if(NOT PROJECT_NAME)
@@ -154,6 +180,9 @@ function(tmSetupCompileProperties)
     return()
   endif()
 
+  # Check the SIMD capabilities of our CPU
+  tmCheckCpuInfo()
+
   # Make sure we're following the convention of setting flags as UPPER_CASE
   string(TOUPPER "${TM_SETUP_PROJECT}" TM_SETUP_PROJECT_NAME)
 
@@ -245,7 +274,7 @@ function(tmPrintSummary)
   # The list of all valid options exposed by the project TinyMath. Notice that
   # this part is project specific, so we have to rewrite this macro on every
   # project we use (we could generalize it further, but for now this works ok)
-  set(optionsArgs PYTHON_BINDINGS DOCS TESTS EXAMPLES SIMD INLINE)
+  set(optionsArgs SSE AVX INLINE PYTHON_BINDINGS DOCS TESTS EXAMPLES)
   # cmake-format: off
   message("****************************************************")
   message("Build options summary for project ${PROJECT_NAME}")

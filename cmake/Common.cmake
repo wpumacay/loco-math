@@ -19,8 +19,50 @@ function(tmMessage var_message)
   endif()
 endfunction()
 
+# Helper function that sets the appropriate SIMD flags for the target compiler
+function(tmAddSimdFlag var_project var_target var_simd_feat_name var_available)
+  # Check if the feature is actually available (see tmCheckCpuSimdInfo)
+  if(${var_available} EQUAL -1)
+    return()
+  endif()
+
+  if(NOT TARGET ${var_target})
+    tmMessage("Given target ${var_target} is not a proper target to be setup"
+              LOG_LEVEL WARNING)
+    return()
+  endif()
+
+  # Make sure we're following the convention of setting flags as UPPER_CASE
+  string(TOUPPER "${var_project}" var_project_upper)
+  string(TOUPPER "${var_simd_feat_name}" var_simd_feat_name_upper)
+
+  target_compile_definitions(
+    ${var_target}
+    INTERFACE -D${var_project_upper}_${var_simd_feat_name_upper}_ENABLED)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(${var_target} INTERFACE -m${var_simd_feat_name})
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    # Deal with the case of '_' to '.' for the compiler option
+    string(REPLACE "_" "." var_simd_feat_name_upper var_simd_feat_name_upper)
+    target_compile_options(${var_target}
+                           INTERFACE /arch:${var_simd_feat_name_upper})
+  else()
+    tmMessage("We don't yet support '${var_simd_feat_upper}' for compiler \
+      '${CMAKE_CXX_COMPILER_ID}'" LOG_LEVEL WARNING)
+  endif()
+endfunction()
+
 # Helper function that gets the host's CPU SIMD capabilities
-function(tmCheckCpuInfo)
+function(tmCheckCpuSimdInfo)
+  set(oneValueArgs OUTPUT_RUN_VAR RESULT_COMPILE_VAR PROJECT TARGET VERBOSE)
+  cmake_parse_arguments(TM_SIMD_INFO "" "${oneValueArgs}" "" ${ARGN})
+
+  message("TM_SIMD_INFO_OUTPUT_RUN_VAR: ${TM_SIMD_INFO_OUTPUT_RUN_VAR}")
+  message("TM_SIMD_INFO_RESULT_COMPILE_VAR: ${TM_SIMD_INFO_RESULT_COMPILE_VAR}")
+  message("TM_SIMD_INFO_PROJECT: ${TM_SIMD_INFO_PROJECT}")
+  message("TM_SIMD_INFO_TARGET: ${TM_SIMD_INFO_TARGET}")
+  message("TM_SIMD_INFO_VERBOSE: ${TM_SIMD_INFO_VERBOSE}")
+
   try_run(
     # Variable where the result of running the program is stored (exit-code)
     var_run_result
@@ -35,14 +77,65 @@ function(tmCheckCpuInfo)
     # Variable where the output of running the program is stored (stdout?)
     RUN_OUTPUT_VARIABLE var_run_output)
 
-  message("Compilation result:\n${var_compile_result}")
-  message("Compilation output:\n${var_compile_output}")
-  message("Running result:\n${var_run_result}")
-  message("Running output:\n${var_run_output}")
-
-  if(${var_run_output} EQUAL 447)
-    message("Yay!!!!!!")
+  if(TM_SIMD_INFO_VERBOSE)
+    message("Compilation result:\n${var_compile_result}")
+    message("Compilation output:\n${var_compile_output}")
+    message("Running result:\n${var_run_result}")
+    message("Running output:\n${var_run_output}")
   endif()
+
+  # Set output variables for caller to consume
+  set(${TM_SIMD_INFO_RESULT_COMPILE_VAR}
+      ${var_compile_result}
+      PARENT_SCOPE)
+  set(${TM_SIMD_INFO_OUTPUT_RUN_VAR}
+      ${var_run_output}
+      PARENT_SCOPE)
+
+  # Check if user gave us both TARGET and PROJECT parameters
+  if((NOT DEFINED TM_SIMD_INFO_TARGET) OR (NOT DEFINED TM_SIMD_INFO_PROJECT))
+    return()
+  endif()
+
+  # Target must be valid, so check just in case
+  if(NOT TARGET ${TM_SIMD_INFO_TARGET})
+    tmMessage(
+      "Tried to setup SIMD info into undefined target ${TM_SIMD_INFO_TARGET}"
+      LOG_LEVEL WARNING)
+    return()
+  endif()
+
+  # Configure the given target SIMD properties ---------------------------------
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_SSE=TRUE" var_simd_sse_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_SSE2=TRUE" var_simd_sse2_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_SSE3=TRUE" var_simd_sse3_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_SSSE3=TRUE" var_simd_ssse3_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_SSE4_1=TRUE" var_simd_sse4_1_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_SSE4_2=TRUE" var_simd_sse4_2_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_FMA=TRUE" var_simd_fma_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_AVX=TRUE" var_simd_avx_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_AVX2=TRUE" var_simd_avx2_idx)
+
+  tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "sse"
+                var_simd_sse_idx)
+  tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "sse2"
+                var_simd_sse2_idx)
+  tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "sse3"
+                var_simd_sse3_idx)
+  tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "ssse3"
+                var_simd_ssse3_idx)
+  tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "sse4_1"
+                var_simd_sse4_1_idx)
+  tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "sse4_2"
+                var_simd_sse4_2_idx)
+  tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "fma"
+                var_simd_fma_idx)
+  tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "avx"
+                var_simd_avx_idx)
+  tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "avx2"
+                var_simd_avx2_idx)
+
+  # ----------------------------------------------------------------------------
 endfunction()
 
 # Helper macro that initializes the project properly (whether if root or not)
@@ -180,9 +273,6 @@ function(tmSetupCompileProperties)
     return()
   endif()
 
-  # Check the SIMD capabilities of our CPU
-  tmCheckCpuInfo()
-
   # Make sure we're following the convention of setting flags as UPPER_CASE
   string(TOUPPER "${TM_SETUP_PROJECT}" TM_SETUP_PROJECT_NAME)
 
@@ -203,39 +293,21 @@ function(tmSetupCompileProperties)
     target_compile_options(${TM_SETUP_TARGET} INTERFACE "/permissive-")
   endif()
 
-  if(TM_SETUP_USE_SSE)
-    target_compile_definitions(${TM_SETUP_TARGET}
-                               INTERFACE -D${TM_SETUP_PROJECT_NAME}_SSE_ENABLED)
-    # Enable compile-options according to each compiler variant
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-      target_compile_options(${TM_SETUP_TARGET} INTERFACE -msse -msse2 -msse4.1)
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-      target_compile_options(${TM_SETUP_TARGET} INTERFACE /arch:SSE /arch:SSE2
-                                                          /arch:SSE4.1)
-    else()
-      tmMessage(
-        "We don't yet support SSE-SIMD for compiler '${CMAKE_CXX_COMPILER_ID}'"
-        LOG_LEVEL WARNING)
-    endif()
-  endif()
-
-  if(TM_SETUP_USE_AVX)
-    target_compile_definitions(${TM_SETUP_TARGET}
-                               INTERFACE -D${TM_SETUP_PROJECT_NAME}_AVX_ENABLED)
-    # Enable compile-options according to each compiler variant
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-      target_compile_options(${TM_SETUP_TARGET} INTERFACE -mavx -msse -msse2
-                                                          -msse4.1)
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-      target_compile_options(
-        ${TM_SETUP_TARGET} INTERFACE /arch:AVX /arch:SSE /arch:SSE2
-                                     /arch:SSE4.1)
-    else()
-      tmMessage(
-        "We don't yet support AVX-SIMD for compiler '${CMAKE_CXX_COMPILER_ID}'"
-        LOG_LEVEL WARNING)
-    endif()
-  endif()
+  # cmake-format: off
+  # Check the SIMD capabilities of our CPU
+  tmCheckCpuSimdInfo(
+    # Variable where to store the output of the check-simd helper
+    OUTPUT_RUN_VAR var_simd_check_output_run
+    # Variable where to store the result of whether or not check-simd compiled
+    RESULT_COMPILE_VAR var_simd_check_result_compile
+    # The project name we're currently working with
+    PROJECT ${TM_SETUP_PROJECT}
+    # The actual target we're currently configuring
+    TARGET ${TM_SETUP_TARGET}
+    # Show logs from compilation and run of the check-simd helper tool
+    VERBOSE FALSE
+  )
+  # cmake-format: on
 
   if(TM_SETUP_USE_INLINE)
     target_compile_definitions(

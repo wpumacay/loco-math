@@ -35,9 +35,14 @@ constexpr uint RETVAL_BIT_FMA = 6;
 constexpr uint RETVAL_BIT_AVX = 7;
 constexpr uint RETVAL_BIT_AVX2 = 8;
 
+template <typename T>
+auto report_feature(const std::string& feature_name, T feature_value) {
+    std::cout << feature_name << "=" << feature_value << '\n';
+}
+
 auto main() -> int {
     CPUIDregs regs;
-    int ret_val{0x00000000};
+    int simd_info_bits{0x00000000};
 
     // Get CPU vendor information ----------------------------------------------
     __get_cpuid(0, &regs.eax, &regs.ebx, &regs.ecx, &regs.edx);
@@ -47,7 +52,7 @@ auto main() -> int {
     std::string vendor_str(reinterpret_cast<const char*>(vendor_regs.data()),
                            sizeof(uint) * 3);
     // std::cout << "Vendor information: " << vendor_str << '\n';
-    //  -------------------------------------------------------------------------
+    //  ------------------------------------------------------------------------
 
     // Get CPU capabilities ----------------------------------------------------
     __get_cpuid(1, &regs.eax, &regs.ebx, &regs.ecx, &regs.edx);  // eax=1
@@ -63,18 +68,32 @@ auto main() -> int {
     const bool HAS_AVX2 = (regs.ebx & BIT_AVX2) != 0;
     // -------------------------------------------------------------------------
 
-    // Assemble the return value according to our custom info layout -----------
-    ret_val |= (HAS_SSE ? 1 : 0) << RETVAL_BIT_SSE;
-    ret_val |= (HAS_SSE2 ? 1 : 0) << RETVAL_BIT_SSE2;
-    ret_val |= (HAS_SSE3 ? 1 : 0) << RETVAL_BIT_SSE3;
-    ret_val |= (HAS_SSSE3 ? 1 : 0) << RETVAL_BIT_SSSE3;
-    ret_val |= (HAS_SSE4_1 ? 1 : 0) << RETVAL_BIT_SSE4_1;
-    ret_val |= (HAS_SSE4_2 ? 1 : 0) << RETVAL_BIT_SSE4_2;
-    ret_val |= (HAS_FMA ? 1 : 0) << RETVAL_BIT_FMA;
-    ret_val |= (HAS_AVX ? 1 : 0) << RETVAL_BIT_AVX;
-    ret_val |= (HAS_AVX2 ? 1 : 0) << RETVAL_BIT_AVX2;
-    // std::cout << "retval: " << ret_val << '\n';
-    //  -------------------------------------------------------------------------
-    std::cout << ret_val;
+    // Assemble the simd capabilities into bitfields for each feature ----------
+    simd_info_bits |= (HAS_SSE ? 1 : 0) << RETVAL_BIT_SSE;
+    simd_info_bits |= (HAS_SSE2 ? 1 : 0) << RETVAL_BIT_SSE2;
+    simd_info_bits |= (HAS_SSE3 ? 1 : 0) << RETVAL_BIT_SSE3;
+    simd_info_bits |= (HAS_SSSE3 ? 1 : 0) << RETVAL_BIT_SSSE3;
+    simd_info_bits |= (HAS_SSE4_1 ? 1 : 0) << RETVAL_BIT_SSE4_1;
+    simd_info_bits |= (HAS_SSE4_2 ? 1 : 0) << RETVAL_BIT_SSE4_2;
+    simd_info_bits |= (HAS_FMA ? 1 : 0) << RETVAL_BIT_FMA;
+    simd_info_bits |= (HAS_AVX ? 1 : 0) << RETVAL_BIT_AVX;
+    simd_info_bits |= (HAS_AVX2 ? 1 : 0) << RETVAL_BIT_AVX2;
+    // std::cout << "retval: " << simd_info_bits << '\n';
+    //  ------------------------------------------------------------------------
+
+    // Send to sdtout the cpuinfo as a csv like file ---------------------------
+    report_feature("VENDOR_NAME", vendor_str);
+    report_feature("VENDOR_MODEL", "Intel Core i0");
+    report_feature("CPU_SIMD_HAS_SSE", HAS_SSE ? "TRUE" : "FALSE");
+    report_feature("CPU_SIMD_HAS_SSE2", HAS_SSE2 ? "TRUE" : "FALSE");
+    report_feature("CPU_SIMD_HAS_SSE3", HAS_SSE3 ? "TRUE" : "FALSE");
+    report_feature("CPU_SIMD_HAS_SSSE3", HAS_SSSE3 ? "TRUE" : "FALSE");
+    report_feature("CPU_SIMD_HAS_SSE4_1", HAS_SSE4_1 ? "TRUE" : "FALSE");
+    report_feature("CPU_SIMD_HAS_SSE4_2", HAS_SSE4_2 ? "TRUE" : "FALSE");
+    report_feature("CPU_SIMD_HAS_FMA", HAS_FMA ? "TRUE" : "FALSE");
+    report_feature("CPU_SIMD_HAS_AVX", HAS_AVX ? "TRUE" : "FALSE");
+    report_feature("CPU_SIMD_HAS_AVX2", HAS_AVX2 ? "TRUE" : "FALSE");
+    report_feature("CPU_SIMD_FEATURES_BITS", simd_info_bits);
+    //  ------------------------------------------------------------------------
     return 0;
 }

@@ -15,7 +15,7 @@ template <typename T>
 using Vec4Buffer = typename Vector4<T>::BufferType;
 
 template <typename T>
-constexpr auto COMPILE_TIME_CHECKS_MAT4_SCALAR() -> void {
+constexpr auto COMPILE_TIME_CHECKS_MAT4_SCALAR() -> int {
     constexpr uint32_t EXPECTED_BUFFER_SIZE = 16;
     constexpr uint32_t EXPECTED_NUM_DIMENSIONS = 4;
 
@@ -27,6 +27,7 @@ constexpr auto COMPILE_TIME_CHECKS_MAT4_SCALAR() -> void {
                   "4x4 matrices must use exactly this many bytes of storage");
     static_assert(alignof(Matrix4<T>) == sizeof(T) * EXPECTED_BUFFER_SIZE,
                   "4x4 matrices must be aligned to its corresponding size");
+    return 0;
 }
 
 template <typename T>

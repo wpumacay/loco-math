@@ -11,7 +11,7 @@ template <typename T>
 using Vec3Buffer = typename Vector3<T>::BufferType;
 
 template <typename T>
-constexpr auto COMPILE_TIME_CHECKS_VEC3_SCALAR() -> void {
+constexpr auto COMPILE_TIME_CHECKS_VEC3_SCALAR() -> int {
     static_assert(Vector3<T>::BUFFER_SIZE == 4,
                   "Must use 4 elements for the internal buffer");
     static_assert(Vector3<T>::VECTOR_NDIM == 3,
@@ -22,6 +22,7 @@ constexpr auto COMPILE_TIME_CHECKS_VEC3_SCALAR() -> void {
     static_assert(
         alignof(Vector3<T>) == sizeof(std::array<T, Vector3<T>::BUFFER_SIZE>),
         "Must be aligned to its corresponding size");
+    return 0;
 }
 
 template <typename T>

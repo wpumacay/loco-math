@@ -10,7 +10,7 @@ template <typename T>
 using Vec4Buffer = typename Vector4<T>::BufferType;
 
 template <typename T>
-constexpr auto COMPILE_TIME_CHECKS_VEC4_SCALAR() -> void {
+constexpr auto COMPILE_TIME_CHECKS_VEC4_SCALAR() -> int {
     static_assert(Vector4<T>::BUFFER_SIZE == 4,
                   "Must use 4 elements for the internal buffer");
     static_assert(Vector4<T>::VECTOR_NDIM == 4,
@@ -21,6 +21,7 @@ constexpr auto COMPILE_TIME_CHECKS_VEC4_SCALAR() -> void {
     static_assert(
         alignof(Vector4<T>) == sizeof(std::array<T, Vector4<T>::BUFFER_SIZE>),
         "Must be aligned to its corresponding size");
+    return 0;
 }
 
 template <typename T>

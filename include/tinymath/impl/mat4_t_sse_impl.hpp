@@ -48,7 +48,7 @@ template <typename T>
 using Vec4Buffer = typename Vector4<T>::BufferType;
 
 template <typename T>
-constexpr auto COMPILE_TIME_CHECKS_MAT4_F32_SSE() -> void {
+constexpr auto COMPILE_TIME_CHECKS_MAT4_F32_SSE() -> int {
     constexpr uint32_t EXPECTED_BUFFER_SIZE = 16;
     constexpr uint32_t EXPECTED_NUM_DIMENSIONS = 4;
     constexpr uint32_t EXPECTED_SIZEOF = sizeof(float) * EXPECTED_BUFFER_SIZE;
@@ -63,10 +63,11 @@ constexpr auto COMPILE_TIME_CHECKS_MAT4_F32_SSE() -> void {
                   "4x4 matrices must use exactly this many bytes of storage");
     static_assert(alignof(Matrix4<T>) == EXPECTED_SIZEOF,
                   "4x4 matrices must be aligned to its corresponding size");
+    return 0;
 }
 
 template <typename T>
-constexpr auto COMPILE_TIME_CHECKS_MAT4_F64_SSE() -> void {
+constexpr auto COMPILE_TIME_CHECKS_MAT4_F64_SSE() -> int {
     constexpr uint32_t EXPECTED_BUFFER_SIZE = 16;
     constexpr uint32_t EXPECTED_NUM_DIMENSIONS = 4;
     constexpr uint32_t EXPECTED_SIZEOF = sizeof(double) * EXPECTED_BUFFER_SIZE;
@@ -81,6 +82,7 @@ constexpr auto COMPILE_TIME_CHECKS_MAT4_F64_SSE() -> void {
                   "4x4 matrices must use exactly this many bytes of storage");
     static_assert(alignof(Matrix4<T>) == EXPECTED_SIZEOF,
                   "4x4 matrices must be aligned to its corresponding size");
+    return 0;
 }
 
 template <typename T>

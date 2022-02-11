@@ -42,7 +42,7 @@ template <typename T>
 using Vec3Buffer = typename Vector3<T>::BufferType;
 
 template <typename T>
-constexpr auto COMPILE_TIME_CHECKS_VEC3_F32_SSE() -> void {
+constexpr auto COMPILE_TIME_CHECKS_VEC3_F32_SSE() -> int {
     static_assert(std::is_same<float, T>::value, "Must be using f32");
     static_assert(Vector3<T>::BUFFER_SIZE == 4,
                   "Must be using 4xf32 as aligned buffer");
@@ -54,10 +54,11 @@ constexpr auto COMPILE_TIME_CHECKS_VEC3_F32_SSE() -> void {
     static_assert(
         alignof(Vector3<T>) == sizeof(std::array<T, Vector3<T>::BUFFER_SIZE>),
         "Must be aligned to its corresponding size");
+    return 0;
 }
 
 template <typename T>
-constexpr auto COMPILE_TIME_CHECKS_VEC3_F64_SSE() -> void {
+constexpr auto COMPILE_TIME_CHECKS_VEC3_F64_SSE() -> int {
     static_assert(std::is_same<double, T>::value, "Must be using f64");
     static_assert(Vector3<T>::BUFFER_SIZE == 4,
                   "Must be using 4xf64 as aligned buffer");
@@ -69,6 +70,7 @@ constexpr auto COMPILE_TIME_CHECKS_VEC3_F64_SSE() -> void {
     static_assert(
         alignof(Vector3<T>) == sizeof(std::array<T, Vector3<T>::BUFFER_SIZE>),
         "Must be aligned to its corresponding size");
+    return 0;
 }
 
 template <typename T>

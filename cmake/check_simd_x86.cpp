@@ -1,5 +1,3 @@
-#include <cpuid.h>
-
 #include <array>
 #include <iostream>
 #include <string>
@@ -14,6 +12,29 @@ struct CPUIDregs {
     uint ecx{};
     uint edx{};
 };
+
+#if TINYMATH_SIMD_HAS_GET_CPUID == 1
+#include <cpuid.h>
+#elif TINYMATH_SIMD_HAS_INTRIN_CPUID == 1
+#include <intrin.h>
+#endif
+
+auto cpuid(uint* info, uint option_eax) -> void {
+#if TINYMATH_SIMD_HAS_GET_CPUID == 1
+    __get_cpuid(option_eax, info, info + 1, info + 2, info + 3);
+#elif TINYMATH_SIMD_HAS_INTRIN_CPUID == 1
+    __cpuid(info, option_eax);
+#endif
+}
+
+auto cpuidex(uint* info, uint option_eax, uint option_ecx) {
+#if TINYMATH_SIMD_HAS_GET_CPUID == 1
+    __get_cpuid_count(option_eax, option_ecx, info, info + 1, info + 2,
+                      info + 3);
+#elif TINYMATH_SIMD_HAS_INTRIN_CPUID == 1
+    __cpuidex(info, option_eax, option_ecx);
+#endif
+}
 
 constexpr uint BIT_SSE = (1 << 25);     // Capability found in edx (eax=1)
 constexpr uint BIT_SSE2 = (1 << 26);    // Capability found in edx (eax=1)
@@ -45,7 +66,7 @@ auto main() -> int {
     int simd_info_bits{0x00000000};
 
     // Get CPU vendor information ----------------------------------------------
-    __get_cpuid(0, &regs.eax, &regs.ebx, &regs.ecx, &regs.edx);
+    cpuid(reinterpret_cast<uint*>(&regs), 0);  // NOLINT
     // Assemble data to get vendor string
     std::array<uint, 3> vendor_regs = {regs.ebx, regs.edx, regs.ecx};
     // NOLINTNEXTLINE
@@ -55,7 +76,7 @@ auto main() -> int {
     //  ------------------------------------------------------------------------
 
     // Get CPU capabilities ----------------------------------------------------
-    __get_cpuid(1, &regs.eax, &regs.ebx, &regs.ecx, &regs.edx);  // eax=1
+    cpuid(reinterpret_cast<uint*>(&regs), 1);  // NOLINT
     const bool HAS_SSE = (regs.edx & BIT_SSE) != 0;
     const bool HAS_SSE2 = (regs.edx & BIT_SSE2) != 0;
     const bool HAS_SSE3 = (regs.ecx & BIT_SSE3) != 0;
@@ -64,7 +85,7 @@ auto main() -> int {
     const bool HAS_SSE4_2 = (regs.ecx & BIT_SSE4_2) != 0;
     const bool HAS_FMA = (regs.ecx & BIT_FMA) != 0;
     const bool HAS_AVX = (regs.ecx & BIT_AVX) != 0;
-    __get_cpuid_count(7, 0, &regs.eax, &regs.ebx, &regs.ecx, &regs.edx);
+    cpuidex(reinterpret_cast<uint*>(&regs), 7, 0);  // NOLINT
     const bool HAS_AVX2 = (regs.ebx & BIT_AVX2) != 0;
     // -------------------------------------------------------------------------
 

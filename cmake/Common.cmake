@@ -90,6 +90,20 @@ function(tmCheckCpuSimdInfo)
   message("TM_SIMD_HAS_GET_CPUID=${TM_SIMD_HAS_GET_CPUID}")
   message("TM_SIMD_HAS_GET_CPUID_COUNT=${TM_SIMD_HAS_GET_CPUID_COUNT}")
 
+  # Make sure that we at least place an integer value for these definitions
+  if(NOT TM_SIMD_HAS_INTRIN_CPUID)
+    set(TM_SIMD_HAS_INTRIN_CPUID 0)
+  endif()
+  if(NOT TM_SIMD_HAS_INTRIN_CPUIDEX)
+    set(TM_SIMD_HAS_INTRIN_CPUIDEX 0)
+  endif()
+  if(NOT TM_SIMD_HAS_GET_CPUID)
+    set(TM_SIMD_HAS_GET_CPUID 0)
+  endif()
+  if(NOT TM_SIMD_HAS_GET_CPUID_COUNT)
+    set(TM_SIMD_HAS_GET_CPUID_COUNT 0)
+  endif()
+
   # cmake-format: off
   try_run(
     # Variable where the result of running the program is stored (exit-code)

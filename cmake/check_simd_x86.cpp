@@ -32,7 +32,8 @@ auto cpuidex(uint* info, uint option_eax, uint option_ecx) {
     __get_cpuid_count(option_eax, option_ecx, info, info + 1, info + 2,
                       info + 3);
 #elif TINYMATH_SIMD_HAS_INTRIN_CPUID == 1
-    __cpuidex(reinterpret_cast<int*>(info), static_cast<int>(option_eax), static_cast<int>(option_ecx));
+    __cpuidex(reinterpret_cast<int*>(info), static_cast<int>(option_eax),
+              static_cast<int>(option_ecx));
 #endif
 }
 

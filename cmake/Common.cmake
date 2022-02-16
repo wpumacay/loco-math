@@ -23,6 +23,8 @@ endfunction()
 function(tmAddSimdFlag var_project var_target var_simd_feat_name var_available)
   # Check if the feature is actually available (see tmCheckCpuSimdInfo)
   if(${var_available} EQUAL -1)
+    message("SIMD option [${var_simd_feat_name}] is not present" LOG_LEVEL
+            WARNING)
     return()
   endif()
 
@@ -73,35 +75,31 @@ function(tmCheckCpuSimdInfo)
     #include <intrin.h>
     auto main() -> int { __cpuid(NULL, 0); return 0; }
     "
-    TM_SIMD_HAS_INTRIN_CPUID)
+    var_simd_has_intrin_cpuid)
   check_cxx_source_compiles(
     "
     #include <intrin.h>
     auto main() -> int { __cpuidex(NULL, 0, 0); return 0; }
     "
-    TM_SIMD_HAS_INTRIN_CPUIDEX)
+    var_simd_has_intrin_cpuidex)
 
   # Check if __get_cpuid and __get_cpuid_count are available
-  check_cxx_symbol_exists(__get_cpuid cpuid.h TM_SIMD_HAS_GET_CPUID)
-  check_cxx_symbol_exists(__get_cpuid_count cpuid.h TM_SIMD_HAS_GET_CPUID_COUNT)
-
-  message("TM_SIMD_HAS_INTRIN_CPUID=${TM_SIMD_HAS_INTRIN_CPUID}")
-  message("TM_SIMD_HAS_INTRIN_CPUIDEX=${TM_SIMD_HAS_INTRIN_CPUIDEX}")
-  message("TM_SIMD_HAS_GET_CPUID=${TM_SIMD_HAS_GET_CPUID}")
-  message("TM_SIMD_HAS_GET_CPUID_COUNT=${TM_SIMD_HAS_GET_CPUID_COUNT}")
+  check_cxx_symbol_exists(__get_cpuid cpuid.h var_simd_has_get_cpuid)
+  check_cxx_symbol_exists(__get_cpuid_count cpuid.h
+                          var_simd_has_get_cpuid_count)
 
   # Make sure that we at least place an integer value for these definitions
-  if(NOT TM_SIMD_HAS_INTRIN_CPUID)
-    set(TM_SIMD_HAS_INTRIN_CPUID 0)
+  if(NOT var_simd_has_intrin_cpuid)
+    set(var_simd_has_intrin_cpuid 0)
   endif()
-  if(NOT TM_SIMD_HAS_INTRIN_CPUIDEX)
-    set(TM_SIMD_HAS_INTRIN_CPUIDEX 0)
+  if(NOT var_simd_has_intrin_cpuidex)
+    set(var_simd_has_intrin_cpuidex 0)
   endif()
-  if(NOT TM_SIMD_HAS_GET_CPUID)
-    set(TM_SIMD_HAS_GET_CPUID 0)
+  if(NOT var_simd_has_get_cpuid)
+    set(var_simd_has_get_cpuid 0)
   endif()
-  if(NOT TM_SIMD_HAS_GET_CPUID_COUNT)
-    set(TM_SIMD_HAS_GET_CPUID_COUNT 0)
+  if(NOT var_simd_has_get_cpuid_count)
+    set(var_simd_has_get_cpuid_count 0)
   endif()
 
   # cmake-format: off
@@ -116,10 +114,10 @@ function(tmCheckCpuSimdInfo)
     ${CMAKE_SOURCE_DIR}/cmake/check_simd_x86.cpp
     # Send the definitions on what header file to use for 'cpuid' usage
     COMPILE_DEFINITIONS
-        -DTINYMATH_SIMD_HAS_INTRIN_CPUID=${TM_SIMD_HAS_INTRIN_CPUID}
-        -DTINYMATH_SIMD_HAS_INTRIN_CPUIDEX=${TM_SIMD_HAS_INTRIN_CPUIDEX}
-        -DTINYMATH_SIMD_HAS_GET_CPUID=${TM_SIMD_HAS_GET_CPUID}
-        -DTINYMATH_SIMD_HAS_GET_CPUID_COUNT=${TM_SIMD_HAS_GET_CPUID_COUNT}
+        -DTINYMATH_SIMD_HAS_INTRIN_CPUID=${var_simd_has_intrin_cpuid}
+        -DTINYMATH_SIMD_HAS_INTRIN_CPUIDEX=${var_simd_has_intrin_cpuidex}
+        -DTINYMATH_SIMD_HAS_GET_CPUID=${var_simd_has_get_cpuid}
+        -DTINYMATH_SIMD_HAS_GET_CPUID_COUNT=${var_simd_has_get_cpuid_count}
     # Variable where the messages generated during compilation is stored
     COMPILE_OUTPUT_VARIABLE var_compile_output
     # Variable where the output of running the program is stored (stdout?)
@@ -347,6 +345,14 @@ function(tmSetupCompileProperties)
   if(MSVC)
     target_compile_options(${TM_SETUP_TARGET} INTERFACE "/Zc:__cplusplus")
     target_compile_options(${TM_SETUP_TARGET} INTERFACE "/permissive-")
+  endif()
+
+  # Check if the user's environment has some SIMD flags enabled
+  if(DEFINED ENV{SIMD_USE_SSE})
+    set(TM_SETUP_USE_SSE $ENV{SIMD_USE_SSE})
+  endif()
+  if(DEFINED ENV{SIMD_USE_AVX})
+    set(TM_SETUP_USE_AVX $ENV{SIMD_USE_AVX})
   endif()
 
   # Only check for SIMD support if required by the user (unset by default)

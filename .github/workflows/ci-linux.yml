@@ -8,14 +8,16 @@ on:
       - dev
 
 jobs:
-  build-gcc:
+  build:
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-18.04, ubuntu-latest]
+        compiler: [gcc, clang]
         build-type: [Release, Debug]
+        vectorization: [none, simd-sse, simd-avx]
 
-    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • GCC"
+    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • ${{matrix.compiler}}  • vectorization:[${{matrix.vectorization}}]"
     runs-on: ${{matrix.os}}
 
     steps:
@@ -24,38 +26,39 @@ jobs:
     - name: Update CMake
       uses: jwlawson/actions-setup-cmake@v1.10
 
-    - name: Configure CMake
+    - if: ${{matrix.compiler}} == gcc
+      name: Configure C/C++ compiler [GCC]
       env:
         CC: gcc
         CXX: g++
-      run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
+      run: |
+        gcc --version
+        g++ --version
 
-    - name: Build C++ Project
-      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build-type}}
-
-    - name: Running C++ Tests
-      run: ctest --test-dir ${{github.workspace}}/build/tests/cpp
-
-  build-clang:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-18.04, ubuntu-latest]
-        build-type: [Release, Debug]
-
-    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • Clang"
-    runs-on: ${{matrix.os}}
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Update CMake
-      uses: jwlawson/actions-setup-cmake@v1.10
-
-    - name: Configure CMake
+    - if: ${{matrix.compiler}} == clang
+      name: Configure C/C++ compiler [Clang]
       env:
         CC: clang
         CXX: clang++
+      run: |
+        clang --version
+        clang++ --version
+
+    - if: ${{matrix.vectorization}} == none
+      name: Do not force vectorization (use cmake-options instead)
+      run: |
+        unset SIMD_USE_SSE
+        unset SIMD_USE_AVX
+
+    - if: ${{matrix.vectorization}} == simd-sse
+      name: Try [simd-sse] if available
+      run: export SIMD_USE_SSE=ON
+
+    - if: ${{matrix.vectorization}} == simd-avx
+      name: Try [simd-avx] if available
+      run: export SIMD_USE_AVX=ON
+
+    - name: Configure CMake
       run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
 
     - name: Build C++ Project

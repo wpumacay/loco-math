@@ -71,7 +71,7 @@ with section("lint"):
 
     # regular expression pattern describing valid names for variables with local
     # scope
-    local_var_pattern = "[a-z][a-z0-9_]+"
+    local_var_pattern = "[0-9a-zA-Z_]+"
 
     # regular expression pattern describing valid names for privatedirectory
     # variables

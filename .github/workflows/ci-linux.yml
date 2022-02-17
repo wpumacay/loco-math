@@ -26,19 +26,19 @@ jobs:
     - name: Update CMake
       uses: jwlawson/actions-setup-cmake@v1.10
 
-    - name: Configure C/C++ compiler • [${{matrix.compiler}}]
-      run: |
-        if [ "${{matrix.compiler}}" = "gcc" ]; then
-          export CC=gcc
-          export CXX=g++
-          echo "Choosing GNU/GCC as compiler"
-        elif [ "${{matrix.compiler}}" = "clang" ]; then
-          export CC=clang
-          export CXX=clang++
-          echo "Choosing LLVM/Clang as compiler"
-        else
-          echo "Compiler ${{matrix.compiler}} not supported yet"
-        fi
+    - if: ${{ matrix.compiler == 'gcc' }}
+      name: Configure GNU/GCC as C/C++ compiler
+      env:
+        CC=gcc
+        CXX=g++
+      run: echo "Choosing GNU/GCC as compiler"
+
+    - if: ${{ matrix.compiler == 'clang' }}
+      name: Configure LLVM/Clang as C/C++ compiler
+      env:
+        CC=clang
+        CXX=clang++
+      run: echo "Choosing LLVM/Clang as compiler"
 
     - name: Configure Vectorization • [${{matrix.vectorization}}]
       run: |

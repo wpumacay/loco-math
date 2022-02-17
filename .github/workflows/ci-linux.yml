@@ -28,12 +28,10 @@ jobs:
 
     - name: Configure C/C++ compiler • [${{matrix.compiler}}]
       run: |
-        if [ "${{matrix.compiler}}" == "gcc" ]
-        then
+        if [ "${{matrix.compiler}}" == "gcc" ]; then
           export CC=gcc
           export CXX=g++;
-        elif [ "${{matrix.compiler}} == "clang" ]
-        then
+        elif [ "${{matrix.compiler}} == "clang" ]; then
           export CC=clang
           export CXX=clang++
         else
@@ -42,18 +40,15 @@ jobs:
 
     - name: Configure Vectorization • [${{matrix.vectorization}}]
       run: |
-        if [ "${{matrix.vectorization}}" == "none" ]
-        then
+        if [ "${{matrix.vectorization}}" == "none" ]; then
           export SIMD_USE_SSE=OFF
           export SIMD_USE_AVX=OFF
-        elif [ "${{matrix.vectorization}}" == "simd-sse" ]
-        then
+        elif [ "${{matrix.vectorization}}" == "simd-sse" ]; then
           export SIMD_USE_SSE=ON
         elif [ "${{matrix.vectorization}}" == "simd-avx" ]
         then
           export SIMD_USE_AVX=ON
-        elif [ "${{matrix.vectorization}}" == "simd-full" ]
-        then
+        elif [ "${{matrix.vectorization}}" == "simd-full" ]; then
           export SIMD_USE_SSE=ON
           export SIMD_USE_AVX=ON
         else

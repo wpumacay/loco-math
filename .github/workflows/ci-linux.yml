@@ -29,15 +29,15 @@ jobs:
     - if: ${{ matrix.compiler == 'gcc' }}
       name: Configure GNU/GCC as C/C++ compiler
       env:
-        CC=gcc
-        CXX=g++
+        CC: gcc
+        CXX: g++
       run: echo "Choosing GNU/GCC as compiler"
 
     - if: ${{ matrix.compiler == 'clang' }}
       name: Configure LLVM/Clang as C/C++ compiler
       env:
-        CC=clang
-        CXX=clang++
+        CC: clang
+        CXX: clang++
       run: echo "Choosing LLVM/Clang as compiler"
 
     - name: Configure Vectorization • [${{matrix.vectorization}}]

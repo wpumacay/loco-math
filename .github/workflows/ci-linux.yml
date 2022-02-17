@@ -28,17 +28,17 @@ jobs:
 
     - if: ${{ matrix.compiler == 'gcc' }}
       name: Configure GNU/GCC as C/C++ compiler
-      env:
-        CC: gcc
-        CXX: g++
-      run: echo "Choosing GNU/GCC as compiler"
+      run: |
+        echo "Choosing GNU/GCC as compiler"
+        echo "CC=gcc" >> $GITHUB_ENV
+        echo "CXX=g++" >> $GITHUB_ENV
 
     - if: ${{ matrix.compiler == 'clang' }}
       name: Configure LLVM/Clang as C/C++ compiler
-      env:
-        CC: clang
-        CXX: clang++
-      run: echo "Choosing LLVM/Clang as compiler"
+      run: |
+        echo "Choosing LLVM/Clang as compiler"
+        echo "CC=clang" >> $GITHUB_ENV
+        echo "CXX=clang++" >> $GITHUB_ENV
 
     - name: Configure Vectorization • [${{matrix.vectorization}}]
       run: |
@@ -61,7 +61,9 @@ jobs:
         fi
 
     - name: Check environment settings
-      run: printenv
+      run: |
+        printenv
+        echo "github-env: ${GITHUB_ENV}"
 
     - name: Configure CMake
       run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}

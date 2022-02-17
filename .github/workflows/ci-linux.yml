@@ -60,6 +60,9 @@ jobs:
           echo "We do not yet support vectorization type [${{matrix.vectorization}}]"
         fi
 
+    - name: Check environment settings
+      run: printenv
+
     - name: Configure CMake
       run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
 

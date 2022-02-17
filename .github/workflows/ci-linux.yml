@@ -31,7 +31,7 @@ jobs:
         if [ "${{matrix.compiler}}" == "gcc" ]; then
           export CC=gcc
           export CXX=g++;
-        elif [ "${{matrix.compiler}} == "clang" ]; then
+        elif [ "${{matrix.compiler}}" == "clang" ]; then
           export CC=clang
           export CXX=clang++
         else

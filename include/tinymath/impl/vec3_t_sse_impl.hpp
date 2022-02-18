@@ -179,20 +179,18 @@ template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_length_square_vec3(const Vec3Buffer<T>& vec) -> T {
     COMPILE_TIME_CHECKS_VEC3_F32_SSE<T>();
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    constexpr int32_t COND_PROD_MASK = 0x71;
     auto xmm_v = _mm_load_ps(vec.data());
-    return _mm_cvtss_f32(_mm_dp_ps(xmm_v, xmm_v, COND_PROD_MASK));
+    return _mm_cvtss_f32(_mm_dp_ps(xmm_v, xmm_v, 0x71));
 }
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_length_square_vec3(const Vec3Buffer<T>& vec) -> T {
     COMPILE_TIME_CHECKS_VEC3_F64_SSE<T>();
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    constexpr int32_t COND_PROD_MASK = 0x31;
     auto xmm_v_lo = _mm_load_pd(vec.data());
     auto xmm_v_hi = _mm_load_pd(vec.data() + 2);
-    auto xmm_square_sum_lo = _mm_dp_pd(xmm_v_lo, xmm_v_lo, COND_PROD_MASK);
-    auto xmm_square_sum_hi = _mm_dp_pd(xmm_v_hi, xmm_v_hi, COND_PROD_MASK);
+    auto xmm_square_sum_lo = _mm_dp_pd(xmm_v_lo, xmm_v_lo, 0x31);
+    auto xmm_square_sum_hi = _mm_dp_pd(xmm_v_hi, xmm_v_hi, 0x31);
     auto xmm_square_sum = _mm_add_pd(xmm_square_sum_lo, xmm_square_sum_hi);
     return _mm_cvtsd_f64(xmm_square_sum);
 }
@@ -201,20 +199,18 @@ template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_length_vec3(const Vec3Buffer<T>& vec) -> T {
     COMPILE_TIME_CHECKS_VEC3_F32_SSE<T>();
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    constexpr int32_t COND_PROD_MASK = 0x71;
     auto xmm_v = _mm_load_ps(vec.data());
-    return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm_v, xmm_v, COND_PROD_MASK)));
+    return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm_v, xmm_v, 0x71)));
 }
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_length_vec3(const Vec3Buffer<T>& vec) -> T {
     COMPILE_TIME_CHECKS_VEC3_F64_SSE<T>();
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    constexpr int32_t COND_PROD_MASK = 0x31;
     auto xmm_v_01 = _mm_load_pd(vec.data());
     auto xmm_v_23 = _mm_load_pd(vec.data() + 2);
-    auto xmm_square_sum_01 = _mm_dp_pd(xmm_v_01, xmm_v_01, COND_PROD_MASK);
-    auto xmm_square_sum_23 = _mm_dp_pd(xmm_v_23, xmm_v_23, COND_PROD_MASK);
+    auto xmm_square_sum_01 = _mm_dp_pd(xmm_v_01, xmm_v_01, 0x31);
+    auto xmm_square_sum_23 = _mm_dp_pd(xmm_v_23, xmm_v_23, 0x31);
     auto xmm_square_sum = _mm_add_pd(xmm_square_sum_01, xmm_square_sum_23);
     return _mm_cvtsd_f64(_mm_sqrt_sd(xmm_square_sum, xmm_square_sum));
 }
@@ -223,9 +219,8 @@ template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_normalize_in_place_vec3(Vec3Buffer<T>& vec) -> void {
     COMPILE_TIME_CHECKS_VEC3_F32_SSE<T>();
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    constexpr int32_t COND_PROD_MASK = 0x7f;
     auto xmm_v = _mm_load_ps(vec.data());
-    auto xmm_sums = _mm_dp_ps(xmm_v, xmm_v, COND_PROD_MASK);
+    auto xmm_sums = _mm_dp_ps(xmm_v, xmm_v, 0x7f);
     auto xmm_r_sqrt_sums = _mm_sqrt_ps(xmm_sums);
     auto xmm_v_norm = _mm_div_ps(xmm_v, xmm_r_sqrt_sums);
     _mm_store_ps(vec.data(), xmm_v_norm);
@@ -235,11 +230,10 @@ template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_normalize_in_place_vec3(Vec3Buffer<T>& vec) -> void {
     COMPILE_TIME_CHECKS_VEC3_F64_SSE<T>();
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    constexpr int32_t COND_PROD_MASK = 0x33;
     auto xmm_v_01 = _mm_load_pd(vec.data());
     auto xmm_v_23 = _mm_load_pd(vec.data() + 2);
-    auto xmm_sums_01 = _mm_dp_pd(xmm_v_01, xmm_v_01, COND_PROD_MASK);
-    auto xmm_sums_23 = _mm_dp_pd(xmm_v_23, xmm_v_23, COND_PROD_MASK);
+    auto xmm_sums_01 = _mm_dp_pd(xmm_v_01, xmm_v_01, 0x33);
+    auto xmm_sums_23 = _mm_dp_pd(xmm_v_23, xmm_v_23, 0x33);
     auto xmm_r_sqrt_sums = _mm_sqrt_pd(_mm_add_pd(xmm_sums_01, xmm_sums_23));
     auto xmm_v_norm_01 = _mm_div_pd(xmm_v_01, xmm_r_sqrt_sums);
     auto xmm_v_norm_23 = _mm_div_pd(xmm_v_23, xmm_r_sqrt_sums);
@@ -251,10 +245,9 @@ template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_dot_vec3(const Vec3Buffer<T>& lhs,
                                const Vec3Buffer<T>& rhs) -> T {
     COMPILE_TIME_CHECKS_VEC3_F32_SSE<T>();
-    constexpr int32_t COND_PROD_MASK = 0x71;
     auto xmm_lhs = _mm_load_ps(lhs.data());
     auto xmm_rhs = _mm_load_ps(rhs.data());
-    auto xmm_cond_prod = _mm_dp_ps(xmm_lhs, xmm_rhs, COND_PROD_MASK);
+    auto xmm_cond_prod = _mm_dp_ps(xmm_lhs, xmm_rhs, 0x71);
     return _mm_cvtss_f32(xmm_cond_prod);
 }
 
@@ -262,13 +255,12 @@ template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_dot_vec3(const Vec3Buffer<T>& lhs,
                                const Vec3Buffer<T>& rhs) -> T {
     COMPILE_TIME_CHECKS_VEC3_F64_SSE<T>();
-    constexpr int32_t COND_PROD_MASK = 0x31;
     auto xmm_lhs_01 = _mm_load_pd(lhs.data());
     auto xmm_lhs_23 = _mm_load_pd(lhs.data() + 2);
     auto xmm_rhs_01 = _mm_load_pd(rhs.data());
     auto xmm_rhs_23 = _mm_load_pd(rhs.data() + 2);
-    auto xmm_dot_01 = _mm_dp_pd(xmm_lhs_01, xmm_rhs_01, COND_PROD_MASK);
-    auto xmm_dot_23 = _mm_dp_pd(xmm_lhs_23, xmm_rhs_23, COND_PROD_MASK);
+    auto xmm_dot_01 = _mm_dp_pd(xmm_lhs_01, xmm_rhs_01, 0x31);
+    auto xmm_dot_23 = _mm_dp_pd(xmm_lhs_23, xmm_rhs_23, 0x31);
     return _mm_cvtsd_f64(_mm_add_pd(xmm_dot_01, xmm_dot_23));
 }
 
@@ -277,8 +269,6 @@ TM_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
                                  const Vec3Buffer<T>& rhs) -> void {
     COMPILE_TIME_CHECKS_VEC3_F32_SSE<T>();
     // Implementation adapted from @ian_mallett (https://bit.ly/3lu6pVe)
-    constexpr auto MASK_A = tiny::math::ShuffleMask<3, 0, 2, 1>::value;
-    constexpr auto MASK_B = tiny::math::ShuffleMask<3, 1, 0, 2>::value;
     // Recall that the dot product of two 3d-vectors a and b given by:
     // a = {a[0], a[1], a[2], a[3]=0}, b = {b[0], b[1], b[2], b[3]=0}
     // has as resulting expression:
@@ -289,13 +279,21 @@ TM_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
     auto vec_a = _mm_load_ps(lhs.data());  // a = {a[0], a[1], a[2], a[3]=0}
     auto vec_b = _mm_load_ps(rhs.data());  // b = {b[0], b[1], b[2], b[3]=0}
     // tmp_0 = {a[1], a[2], a[0], 0}
-    auto tmp_0 = _mm_shuffle_ps(vec_a, vec_a, MASK_A);
+    auto tmp_0 = _mm_shuffle_ps(
+        vec_a, vec_a,
+        static_cast<int>(tiny::math::ShuffleMask<3, 0, 2, 1>::value));
     // tmp_1 = {b[2], b[0], b[1], 0}
-    auto tmp_1 = _mm_shuffle_ps(vec_b, vec_b, MASK_B);
+    auto tmp_1 = _mm_shuffle_ps(
+        vec_b, vec_b,
+        static_cast<int>(tiny::math::ShuffleMask<3, 1, 0, 2>::value));
     // tmp_2 = {a[2], a[0], a[1], 0}
-    auto tmp_2 = _mm_shuffle_ps(vec_a, vec_a, MASK_B);
+    auto tmp_2 = _mm_shuffle_ps(
+        vec_a, vec_a,
+        static_cast<int>(tiny::math::ShuffleMask<3, 1, 0, 2>::value));
     // tmp_3 = {b[1], b[2], b[0], 0}
-    auto tmp_3 = _mm_shuffle_ps(vec_b, vec_b, MASK_A);
+    auto tmp_3 = _mm_shuffle_ps(
+        vec_b, vec_b,
+        static_cast<int>(tiny::math::ShuffleMask<3, 0, 2, 1>::value));
     _mm_store_ps(dst.data(), _mm_sub_ps(_mm_mul_ps(tmp_0, tmp_1),
                                         _mm_mul_ps(tmp_2, tmp_3)));
 }

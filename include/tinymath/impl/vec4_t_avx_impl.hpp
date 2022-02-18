@@ -154,10 +154,9 @@ template <typename T, SFINAE_VEC4_F32_AVX_GUARD<T> = nullptr>
 TM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
                                const Vec4Buffer<T>& rhs) -> T {
     COMPILE_TIME_CHECKS_VEC4_F32_AVX<T>();
-    constexpr int32_t COND_PROD_MASK = 0xf1;
     auto xmm_lhs = _mm_load_ps(lhs.data());
     auto xmm_rhs = _mm_load_ps(rhs.data());
-    auto xmm_cond_prod = _mm_dp_ps(xmm_lhs, xmm_rhs, COND_PROD_MASK);
+    auto xmm_cond_prod = _mm_dp_ps(xmm_lhs, xmm_rhs, 0xf1);
     return _mm_cvtss_f32(xmm_cond_prod);
 }
 

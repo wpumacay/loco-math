@@ -174,10 +174,9 @@ template <typename T, SFINAE_VEC4_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
                                const Vec4Buffer<T>& rhs) -> T {
     COMPILE_TIME_CHECKS_VEC4_F32_SSE<T>();
-    constexpr int32_t COND_PROD_MASK = 0xf1;
     auto xmm_lhs = _mm_load_ps(lhs.data());
     auto xmm_rhs = _mm_load_ps(rhs.data());
-    auto xmm_cond_prod = _mm_dp_ps(xmm_lhs, xmm_rhs, COND_PROD_MASK);
+    auto xmm_cond_prod = _mm_dp_ps(xmm_lhs, xmm_rhs, 0xf1);
     return _mm_cvtss_f32(xmm_cond_prod);
 }
 
@@ -185,13 +184,12 @@ template <typename T, SFINAE_VEC4_F64_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
                                const Vec4Buffer<T>& rhs) -> T {
     COMPILE_TIME_CHECKS_VEC4_F64_SSE<T>();
-    constexpr int32_t COND_PROD_MASK = 0x31;
     auto xmm_lhs_lo = _mm_load_pd(lhs.data());
     auto xmm_lhs_hi = _mm_load_pd(lhs.data() + 2);
     auto xmm_rhs_lo = _mm_load_pd(rhs.data());
     auto xmm_rhs_hi = _mm_load_pd(rhs.data() + 2);
-    auto xmm_dot_lo = _mm_dp_pd(xmm_lhs_lo, xmm_rhs_lo, COND_PROD_MASK);
-    auto xmm_dot_hi = _mm_dp_pd(xmm_lhs_hi, xmm_rhs_hi, COND_PROD_MASK);
+    auto xmm_dot_lo = _mm_dp_pd(xmm_lhs_lo, xmm_rhs_lo, 0x31);
+    auto xmm_dot_hi = _mm_dp_pd(xmm_lhs_hi, xmm_rhs_hi, 0x31);
     return _mm_cvtsd_f64(_mm_add_pd(xmm_dot_lo, xmm_dot_hi));
 }
 

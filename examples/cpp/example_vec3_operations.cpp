@@ -21,11 +21,14 @@ auto main() -> int {
         printVector(vec_c);
         printVector(vec_d);
 
-        std::cout << "dot-vec3f(a,b): " << vec_a.dot(vec_b) << "\n";
-        std::cout << "len^2-vec3f(a): " << vec_a.squaredNorm() << "\n";
-        std::cout << "len^2-vec3f(b): " << vec_b.squaredNorm() << "\n";
-        std::cout << "len-vec3f(a): " << vec_a.norm() << "\n";
-        std::cout << "len-vec3f(b): " << vec_b.norm() << "\n";
+        std::cout << "dot-vec3f(a,b): " << tiny::math::dot(vec_a, vec_b)
+                  << "\n";
+        std::cout << "len^2-vec3f(a): " << tiny::math::squareNorm(vec_a)
+                  << "\n";
+        std::cout << "len^2-vec3f(b): " << tiny::math::squareNorm(vec_b)
+                  << "\n";
+        std::cout << "len-vec3f(a): " << tiny::math::norm(vec_a) << "\n";
+        std::cout << "len-vec3f(b): " << tiny::math::norm(vec_b) << "\n";
     }
 
     {
@@ -38,11 +41,14 @@ auto main() -> int {
         printVector(vec_c);
         printVector(vec_d);
 
-        std::cout << "dot-vec3d(a,b): " << vec_a.dot(vec_b) << "\n";
-        std::cout << "len^2-vec3d(a): " << vec_a.squaredNorm() << "\n";
-        std::cout << "len^2-vec3d(b): " << vec_b.squaredNorm() << "\n";
-        std::cout << "len-vec3d(a): " << vec_a.norm() << "\n";
-        std::cout << "len-vec3d(b): " << vec_b.norm() << "\n";
+        std::cout << "dot-vec3d(a,b): " << tiny::math::dot(vec_a, vec_b)
+                  << "\n";
+        std::cout << "len^2-vec3d(a): " << tiny::math::squareNorm(vec_a)
+                  << "\n";
+        std::cout << "len^2-vec3d(b): " << tiny::math::squareNorm(vec_b)
+                  << "\n";
+        std::cout << "len-vec3d(a): " << tiny::math::norm(vec_a) << "\n";
+        std::cout << "len-vec3d(b): " << tiny::math::norm(vec_b) << "\n";
     }
 
     return 0;

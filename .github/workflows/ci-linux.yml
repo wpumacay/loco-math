@@ -8,14 +8,16 @@ on:
       - dev
 
 jobs:
-  build-gcc:
+  build:
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-18.04, ubuntu-latest]
+        compiler: [gcc, clang]
         build-type: [Release, Debug]
+        vectorization: [none, simd-sse, simd-avx, simd-full]
 
-    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • GCC"
+    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • ${{matrix.compiler}}  • vectorization:[${{matrix.vectorization}}]"
     runs-on: ${{matrix.os}}
 
     steps:
@@ -24,38 +26,41 @@ jobs:
     - name: Update CMake
       uses: jwlawson/actions-setup-cmake@v1.10
 
+    - if: ${{ matrix.compiler == 'gcc' }}
+      name: Configure GNU/GCC as C/C++ compiler
+      run: |
+        echo "Choosing GNU/GCC as compiler"
+        echo "CC=gcc" >> $GITHUB_ENV
+        echo "CXX=g++" >> $GITHUB_ENV
+
+    - if: ${{ matrix.compiler == 'clang' }}
+      name: Configure LLVM/Clang as C/C++ compiler
+      run: |
+        echo "Choosing LLVM/Clang as compiler"
+        echo "CC=clang" >> $GITHUB_ENV
+        echo "CXX=clang++" >> $GITHUB_ENV
+
+    - name: Configure Vectorization • [${{matrix.vectorization}}]
+      run: |
+        if [ "${{matrix.vectorization}}" = "none" ]; then
+          echo "SIMD_USE_SSE=OFF" >> $GITHUB_ENV
+          echo "SIMD_USE_AVX=OFF" >> $GITHUB_ENV
+          echo "No vectorization (just use scalar kernels)"
+        elif [ "${{matrix.vectorization}}" = "simd-sse" ]; then
+          echo "SIMD_USE_SSE=ON" >> $GITHUB_ENV
+          echo "Try to use SSE kernels if the CPU has support for this ISA"
+        elif [ "${{matrix.vectorization}}" = "simd-avx" ]; then
+          echo "SIMD_USE_AVX=ON" >> $GITHUB_ENV
+          echo "Try to use AVX kernels if the CPU has support for this ISA"
+        elif [ "${{matrix.vectorization}}" = "simd-full" ]; then
+          echo "SIMD_USE_SSE=ON" >> $GITHUB_ENV
+          echo "SIMD_USE_AVX=ON" >> $GITHUB_ENV
+          echo "Try to use both SSE and AVX kernels if the CPU supports both"
+        else
+          echo "We do not yet support vectorization type [${{matrix.vectorization}}]"
+        fi
+
     - name: Configure CMake
-      env:
-        CC: gcc
-        CXX: g++
-      run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
-
-    - name: Build C++ Project
-      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build-type}}
-
-    - name: Running C++ Tests
-      run: ctest --test-dir ${{github.workspace}}/build/tests/cpp
-
-  build-clang:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-18.04, ubuntu-latest]
-        build-type: [Release, Debug]
-
-    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • Clang"
-    runs-on: ${{matrix.os}}
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Update CMake
-      uses: jwlawson/actions-setup-cmake@v1.10
-
-    - name: Configure CMake
-      env:
-        CC: clang
-        CXX: clang++
       run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
 
     - name: Build C++ Project

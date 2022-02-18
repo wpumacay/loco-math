@@ -19,11 +19,192 @@ function(tmMessage var_message)
   endif()
 endfunction()
 
+# Helper function that sets the appropriate SIMD flags for the target compiler
+function(tmAddSimdFlag var_project var_target var_simd_feat_name var_available)
+  # Check if the feature is actually available (see tmCheckCpuSimdInfo)
+  if(${var_available} EQUAL -1)
+    message("SIMD option [${var_simd_feat_name}] is not present" LOG_LEVEL
+            WARNING)
+    return()
+  endif()
+
+  if(NOT TARGET ${var_target})
+    tmMessage("Given target ${var_target} is not a proper target to be setup"
+              LOG_LEVEL WARNING)
+    return()
+  endif()
+
+  # Make sure we're following the convention of setting flags as UPPER_CASE
+  string(TOUPPER "${var_project}" var_project_upper)
+  string(TOUPPER "${var_simd_feat_name}" var_simd_feat_name_upper)
+  # Deal with the case of '_' to '.' for the compiler option
+  string(REPLACE "_" "." var_simd_feat_name_copt "${var_simd_feat_name}")
+  string(REPLACE "_" "." var_simd_feat_name_upper_copt
+                 "${var_simd_feat_name_upper}")
+
+  target_compile_definitions(
+    ${var_target}
+    INTERFACE -D${var_project_upper}_${var_simd_feat_name_upper}_ENABLED)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(${var_target} INTERFACE -m${var_simd_feat_name_copt})
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    target_compile_options(${var_target}
+                           INTERFACE /arch:${var_simd_feat_name_upper_copt})
+  else()
+    tmMessage("We don't yet support '${var_simd_feat_upper}' for compiler \
+      '${CMAKE_CXX_COMPILER_ID}'" LOG_LEVEL WARNING)
+  endif()
+endfunction()
+
+# Helper function that gets the host's CPU SIMD capabilities
+# ~~~
+# References used for this implementation:
+# * https://docs.microsoft.com/en-us/cpp/intrinsics/cpuid-cpuidex
+# * https://github.com/sergiud/cpuidpp/blob/master/CMakeLists.txt
+# ~~~
+function(tmCheckCpuSimdInfo)
+  set(oneValueArgs OUTPUT_RUN_VAR RESULT_COMPILE_VAR PROJECT TARGET USE_SSE
+                   USE_AVX VERBOSE)
+  cmake_parse_arguments(TM_SIMD_INFO "" "${oneValueArgs}" "" ${ARGN})
+
+  include(CheckCXXSourceCompiles)
+  include(CheckCXXSymbolExists)
+  # Check if __cpuid and __cpuidex are available (windows intrin.h)
+  check_cxx_source_compiles(
+    "
+    #include <intrin.h>
+    auto main() -> int { __cpuid(NULL, 0); return 0; }
+    "
+    var_simd_has_intrin_cpuid)
+  check_cxx_source_compiles(
+    "
+    #include <intrin.h>
+    auto main() -> int { __cpuidex(NULL, 0, 0); return 0; }
+    "
+    var_simd_has_intrin_cpuidex)
+
+  # Check if __get_cpuid and __get_cpuid_count are available
+  check_cxx_symbol_exists(__get_cpuid cpuid.h var_simd_has_get_cpuid)
+  check_cxx_symbol_exists(__get_cpuid_count cpuid.h
+                          var_simd_has_get_cpuid_count)
+
+  # Make sure that we at least place an integer value for these definitions
+  if(NOT var_simd_has_intrin_cpuid)
+    set(var_simd_has_intrin_cpuid 0)
+  endif()
+  if(NOT var_simd_has_intrin_cpuidex)
+    set(var_simd_has_intrin_cpuidex 0)
+  endif()
+  if(NOT var_simd_has_get_cpuid)
+    set(var_simd_has_get_cpuid 0)
+  endif()
+  if(NOT var_simd_has_get_cpuid_count)
+    set(var_simd_has_get_cpuid_count 0)
+  endif()
+
+  # cmake-format: off
+  try_run(
+    # Variable where the result of running the program is stored (exit-code)
+    var_run_result
+    # Variable where the result of compiling the program is stored (TRUE|FALSE)
+    var_compile_result
+    # Where to place the executable generated after linking
+    ${CMAKE_CURRENT_BINARY_DIR}
+    # File path of the source file to be compiled and run
+    ${CMAKE_SOURCE_DIR}/cmake/check_simd_x86.cpp
+    # Send the definitions on what header file to use for 'cpuid' usage
+    COMPILE_DEFINITIONS
+        -DTINYMATH_SIMD_HAS_INTRIN_CPUID=${var_simd_has_intrin_cpuid}
+        -DTINYMATH_SIMD_HAS_INTRIN_CPUIDEX=${var_simd_has_intrin_cpuidex}
+        -DTINYMATH_SIMD_HAS_GET_CPUID=${var_simd_has_get_cpuid}
+        -DTINYMATH_SIMD_HAS_GET_CPUID_COUNT=${var_simd_has_get_cpuid_count}
+    # Variable where the messages generated during compilation is stored
+    COMPILE_OUTPUT_VARIABLE var_compile_output
+    # Variable where the output of running the program is stored (stdout?)
+    RUN_OUTPUT_VARIABLE var_run_output)
+  # cmake-format: on
+
+  if(TM_SIMD_INFO_VERBOSE)
+    message("Compilation result:\n${var_compile_result}")
+    message("Compilation output:\n${var_compile_output}")
+    message("Running result:\n${var_run_result}")
+    message("Running output:\n${var_run_output}")
+  endif()
+
+  # Set output variables for caller to consume
+  set(${TM_SIMD_INFO_RESULT_COMPILE_VAR}
+      ${var_compile_result}
+      PARENT_SCOPE)
+  set(${TM_SIMD_INFO_OUTPUT_RUN_VAR}
+      ${var_run_output}
+      PARENT_SCOPE)
+
+  # Check if user gave us both TARGET and PROJECT parameters
+  if((NOT DEFINED TM_SIMD_INFO_TARGET) OR (NOT DEFINED TM_SIMD_INFO_PROJECT))
+    return()
+  endif()
+
+  # Target must be valid, so check just in case
+  if(NOT TARGET ${TM_SIMD_INFO_TARGET})
+    tmMessage(
+      "Tried to setup SIMD info into undefined target ${TM_SIMD_INFO_TARGET}"
+      LOG_LEVEL WARNING)
+    return()
+  endif()
+
+  # Configure the given target SIMD properties ---------------------------------
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_SSE=TRUE" var_simd_sse_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_SSE2=TRUE" var_simd_sse2_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_SSE3=TRUE" var_simd_sse3_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_SSSE3=TRUE" var_simd_ssse3_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_SSE4_1=TRUE" var_simd_sse4_1_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_SSE4_2=TRUE" var_simd_sse4_2_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_FMA=TRUE" var_simd_fma_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_AVX=TRUE" var_simd_avx_idx)
+  string(FIND ${var_run_output} "CPU_SIMD_HAS_AVX2=TRUE" var_simd_avx2_idx)
+
+  # Only setup flags if USE_SSE was requested by the user
+  if(TM_SIMD_INFO_USE_SSE)
+    tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "sse"
+                  var_simd_sse_idx)
+    tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "sse2"
+                  var_simd_sse2_idx)
+    tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "sse3"
+                  var_simd_sse3_idx)
+    tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "ssse3"
+                  var_simd_ssse3_idx)
+    tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "sse4_1"
+                  var_simd_sse4_1_idx)
+    tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "sse4_2"
+                  var_simd_sse4_2_idx)
+
+  endif()
+  # Only setup flags if USE_AVX was requested by the user
+  if(TM_SIMD_INFO_USE_AVX)
+    tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "fma"
+                  var_simd_fma_idx)
+    tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "avx"
+                  var_simd_avx_idx)
+    tmAddSimdFlag(${TM_SIMD_INFO_PROJECT} ${TM_SIMD_INFO_TARGET} "avx2"
+                  var_simd_avx2_idx)
+  endif()
+
+  # ----------------------------------------------------------------------------
+endfunction()
+
 # Helper macro that initializes the project properly (whether if root or not)
 function(tmInitializeProject)
   if(NOT PROJECT_NAME)
     return()
   endif()
+
+  # Define the default build type (in case no other project set it)
+  # cmake-format: off
+  if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING
+        "Build options: Debug | Release | RelWithDebInfo | MinSizeRel" FORCE)
+  endif()
+  # cmake-format: on
 
   # Grab the correct name for the variable to be exposed to the developer
   string(TOUPPER "${PROJECT_NAME}" ProjectNameUpper)
@@ -130,7 +311,7 @@ endfunction()
 
 # Helper function that setups compiler flags and features to the given target
 function(tmSetupCompileProperties)
-  set(oneValueArgs PROJECT TARGET USE_SIMD USE_INLINE)
+  set(oneValueArgs PROJECT TARGET USE_SSE USE_AVX USE_INLINE)
   cmake_parse_arguments(TM_SETUP "" "${oneValueArgs}" "" ${ARGN})
 
   if((NOT DEFINED TM_SETUP_PROJECT) OR (NOT DEFINED TM_SETUP_TARGET))
@@ -166,24 +347,34 @@ function(tmSetupCompileProperties)
     target_compile_options(${TM_SETUP_TARGET} INTERFACE "/permissive-")
   endif()
 
-  if(TM_SETUP_USE_SIMD)
-    target_compile_definitions(${TM_SETUP_TARGET}
-                               INTERFACE -D${TM_SETUP_PROJECT_NAME}_SSE_ENABLED)
-    target_compile_definitions(${TM_SETUP_TARGET}
-                               INTERFACE -D${TM_SETUP_PROJECT_NAME}_AVX_ENABLED)
-    # Enable compile-options according to each compiler variant
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-      target_compile_options(${TM_SETUP_TARGET} INTERFACE -msse -msse2 -msse4.1
-                                                          -mavx)
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-      target_compile_options(
-        ${TM_SETUP_TARGET} INTERFACE /arch:SSE /arch:SSE2 /arch:SSE4.1
-                                     /arch:AVX)
-    else()
-      tmMessage(
-        "We don't yet support SIMD for compiler '${CMAKE_CXX_COMPILER_ID}'"
-        LOG_LEVEL WARNING)
-    endif()
+  # Check if the user's environment has some SIMD flags enabled
+  if(DEFINED ENV{SIMD_USE_SSE})
+    set(TM_SETUP_USE_SSE $ENV{SIMD_USE_SSE})
+  endif()
+  if(DEFINED ENV{SIMD_USE_AVX})
+    set(TM_SETUP_USE_AVX $ENV{SIMD_USE_AVX})
+  endif()
+
+  # Only check for SIMD support if required by the user (unset by default)
+  if(TM_SETUP_USE_SSE OR TM_SETUP_USE_AVX)
+    # cmake-format: off
+    # Check the SIMD capabilities of our CPU
+    tmCheckCpuSimdInfo(
+      # Variable where to store the output of the check-simd helper
+      OUTPUT_RUN_VAR var_simd_check_output_run
+      # Variable where to store the result of whether or not check-simd compiled
+      RESULT_COMPILE_VAR var_simd_check_result_compile
+      # The project name we're currently working with
+      PROJECT ${TM_SETUP_PROJECT}
+      # The actual target we're currently configuring
+      TARGET ${TM_SETUP_TARGET}
+      # Enable SSE only if the user requested it
+      USE_SSE ${TM_SETUP_USE_SSE}
+      # Enable AVX only if the user requested it
+      USE_AVX ${TM_SETUP_USE_AVX}
+      # Show logs from compilation and run of the check-simd helper tool
+      VERBOSE FALSE)
+    # cmake-format: on
   endif()
 
   if(TM_SETUP_USE_INLINE)
@@ -223,7 +414,7 @@ function(tmPrintSummary)
   # The list of all valid options exposed by the project TinyMath. Notice that
   # this part is project specific, so we have to rewrite this macro on every
   # project we use (we could generalize it further, but for now this works ok)
-  set(optionsArgs PYTHON_BINDINGS DOCS TESTS EXAMPLES SIMD INLINE)
+  set(optionsArgs SSE AVX INLINE PYTHON_BINDINGS DOCS TESTS EXAMPLES)
   # cmake-format: off
   message("****************************************************")
   message("Build options summary for project ${PROJECT_NAME}")

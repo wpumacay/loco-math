@@ -71,7 +71,7 @@ with section("lint"):
 
     # regular expression pattern describing valid names for variables with local
     # scope
-    local_var_pattern = "[a-z][a-z0-9_]+"
+    local_var_pattern = "[0-9a-zA-Z_]+"
 
     # regular expression pattern describing valid names for privatedirectory
     # variables
@@ -99,10 +99,10 @@ with section("lint"):
     # Require no more than this many newlines between statements
     max_statement_spacing = 2
     max_returns = 6
-    max_branches = 12
+    max_branches = 15
     max_arguments = 5
     max_localvars = 15
-    max_statements = 50
+    max_statements = 60
 
 # -------------------------------
 # Options affecting file encoding

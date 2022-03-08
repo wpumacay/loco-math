@@ -22,7 +22,7 @@
 #endif
 
 // clang-format on
-
+#include <cstdint>
 #include <type_traits>
 
 namespace tiny {
@@ -84,6 +84,30 @@ struct CpuHasAVX : public std::integral_constant<bool,
                 IsScalar<Tp>::value && HAS_AVX::value> {};
 
 // clang-format on
+
+/// \class VecCommaInitializer
+///
+/// \brief Helper class used during comma-initialization of vec-types
+///
+/// \tparam Scalar_T Type of scalar used for the vector being constructed
+///
+/// This is a helper class used for operations of the form `v << 1, 2, 3, ...;`,
+/// which require to concatenate a comma-initializer after using the `<<`
+/// operator. This is based on Eigen's comma-initializer implementation.
+///
+/// \code
+///     Vector3d vec;
+///     vec << 1.0, 2.0, 3.0;
+/// \endcode
+template <typename T, uint32_t N>
+struct VecCommaInitializer {
+    /// Number of scalar dimensions of the vector
+    static constexpr uint32_t VECTOR_NDIM = N;
+    /// Index of the first vector entry on its storage buffer|array
+    static constexpr int32_t VECTOR_FIRST_INDEX = 0;
+    /// Index of the last vector entry on its storage buffer|array
+    static constexpr int32_t VECTOR_LAST_INDEX = VECTOR_NDIM - 1;
+};
 
 }  // namespace math
 }  // namespace tiny

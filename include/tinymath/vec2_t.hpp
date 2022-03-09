@@ -97,6 +97,11 @@ struct Vector2 {
         return m_Elements[index];
     }
 
+    /// Returns a comma-initializer to construct the vector via its coefficients
+    auto operator<<(Scalar_T coeff) -> VecCommaInitializer<ElementType, Type> {
+        return VecCommaInitializer<ElementType, Type>(*this, coeff);
+    }
+
     /// Returns a printable string-representation of the vector
     auto toString() const -> std::string {
         std::stringstream str_result;

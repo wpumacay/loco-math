@@ -22,6 +22,7 @@
 #endif
 
 // clang-format on
+#include <cassert>
 #include <cstdint>
 #include <type_traits>
 
@@ -89,7 +90,8 @@ struct CpuHasAVX : public std::integral_constant<bool,
 ///
 /// \brief Helper class used during comma-initialization of vec-types
 ///
-/// \tparam Scalar_T Type of scalar used for the vector being constructed
+/// \tparam T Type of scalar used for the vector being constructed
+/// \tparam V Type of vector related to this comma initializer
 ///
 /// This is a helper class used for operations of the form `v << 1, 2, 3, ...;`,
 /// which require to concatenate a comma-initializer after using the `<<`
@@ -99,14 +101,62 @@ struct CpuHasAVX : public std::integral_constant<bool,
 ///     Vector3d vec;
 ///     vec << 1.0, 2.0, 3.0;
 /// \endcode
-template <typename T, uint32_t N>
+template <typename T, typename V>
 struct VecCommaInitializer {
     /// Number of scalar dimensions of the vector
-    static constexpr uint32_t VECTOR_NDIM = N;
+    static constexpr uint32_t VECTOR_NDIM = V::VECTOR_NDIM;
     /// Index of the first vector entry on its storage buffer|array
     static constexpr int32_t VECTOR_FIRST_INDEX = 0;
     /// Index of the last vector entry on its storage buffer|array
     static constexpr int32_t VECTOR_LAST_INDEX = VECTOR_NDIM - 1;
+
+    /// Type alias for this comma-initializer
+    using Type = VecCommaInitializer<T, V>;
+    /// Type alias for the vector type linked to this initializer
+    using VectorType = V;
+
+    /// Creates a comma-initializer for the given vector and initial coeff.
+    // NOLINTNEXTLINE(runtime/references)
+    explicit VecCommaInitializer(VectorType& vec, T coeff0) : m_VectorRef(vec) {
+        // Append first coefficient to the vector
+        m_VectorRef[m_CurrentBuildIndex++] = coeff0;
+    }
+
+    // Follow RAII and the 'Rule of 5' (use defaults though) -------------------
+
+    VecCommaInitializer(const VecCommaInitializer<T, V>& rhs) = default;
+
+    VecCommaInitializer(VecCommaInitializer<T, V>&& rhs) noexcept = default;
+
+    auto operator=(const VecCommaInitializer<T, V>& rhs)
+        -> VecCommaInitializer<T, V>& = default;
+
+    auto operator=(VecCommaInitializer<T, V>&& rhs) noexcept
+        -> VecCommaInitializer<T, V>& = default;
+
+    /// Release any resources and terminate the initializer's operation
+    ~VecCommaInitializer() { _finished(); }
+
+    // -------------------------------------------------------------------------
+
+    /// Appends the given coefficient to the vector managed by this initializer
+    auto operator,(T next_coeff) -> Type& {
+        assert(m_CurrentBuildIndex <= VECTOR_LAST_INDEX);
+        m_VectorRef[m_CurrentBuildIndex++] = next_coeff;
+        return *this;
+    }
+
+ private:
+    /// Terminates the operations of the initializer
+    TM_INLINE auto _finished() -> void {
+        assert(m_CurrentBuildIndex == (VECTOR_LAST_INDEX + 1));
+    }
+
+ private:
+    /// Mutable reference to the vector we're currently constructing
+    VectorType& m_VectorRef;
+    /// Index of the current coefficient being 'built'
+    int32_t m_CurrentBuildIndex = VECTOR_FIRST_INDEX;
 };
 
 }  // namespace math

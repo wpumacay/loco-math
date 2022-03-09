@@ -31,8 +31,8 @@ auto run_example_vec2() -> void {
     Vec2 vec_b(1.0);
     Vec2 vec_c(1.0, 2.0);
     Vec2 vec_e = {2.0, 4.0};
-    //// Vec2 vec_f;
-    //// vec_f << 1.0, 2.0, 3.0;
+    Vec2 vec_f;
+    vec_f << 1.0, 2.0;
 
     // Send the sample vectors to the standard output stream
     std::cout << "Vector2()" << '\n';
@@ -43,8 +43,8 @@ auto run_example_vec2() -> void {
     std::cout << vec_c << "\n";
     std::cout << "Vector2 vec = {x, y}" << '\n';
     std::cout << vec_e << "\n";
-    //// std::cout << "Vector2 vec; vec << x, y, z;" << '\n';
-    //// std::cout << vec_f << "\n";
+    std::cout << "Vector2 vec; vec << x, y;" << '\n';
+    std::cout << vec_f << "\n";
 
     std::cout << "**********************************************************\n";
 }

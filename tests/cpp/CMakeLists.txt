@@ -18,6 +18,8 @@ include(${CMAKE_SOURCE_DIR}/third_party/catch2/source/contrib/Catch.cmake)
 add_executable(
   TinyMathCppTests
   ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_vec2_type.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_vec2_operations.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_vec3_type.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_vec3_operations.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_vec4_type.cpp

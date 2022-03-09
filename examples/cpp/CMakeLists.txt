@@ -13,6 +13,8 @@ endif()
 
 # List of all examples to be built
 set(TINYMATH_EXAMPLES_LIST
+    ${CMAKE_CURRENT_SOURCE_DIR}/example_vec2_constructors.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/example_vec2_operations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_vec3_constructors.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_vec3_operations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_vec4_constructors.cpp

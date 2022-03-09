@@ -90,7 +90,6 @@ struct CpuHasAVX : public std::integral_constant<bool,
 ///
 /// \brief Helper class used during comma-initialization of vec-types
 ///
-/// \tparam T Type of scalar used for the vector being constructed
 /// \tparam V Type of vector related to this comma initializer
 ///
 /// This is a helper class used for operations of the form `v << 1, 2, 3, ...;`,
@@ -101,7 +100,7 @@ struct CpuHasAVX : public std::integral_constant<bool,
 ///     Vector3d vec;
 ///     vec << 1.0, 2.0, 3.0;
 /// \endcode
-template <typename T, typename V>
+template <typename V>
 struct VecCommaInitializer {
     /// Number of scalar dimensions of the vector
     static constexpr uint32_t VECTOR_NDIM = V::VECTOR_NDIM;
@@ -110,8 +109,10 @@ struct VecCommaInitializer {
     /// Index of the last vector entry on its storage buffer|array
     static constexpr int32_t VECTOR_LAST_INDEX = VECTOR_NDIM - 1;
 
+    /// Type alias for the float|scalar type in use
+    using T = typename V::ElementType;
     /// Type alias for this comma-initializer
-    using Type = VecCommaInitializer<T, V>;
+    using Type = VecCommaInitializer<V>;
     /// Type alias for the vector type linked to this initializer
     using VectorType = V;
 
@@ -124,15 +125,15 @@ struct VecCommaInitializer {
 
     // Follow RAII and the 'Rule of 5' (use defaults though) -------------------
 
-    VecCommaInitializer(const VecCommaInitializer<T, V>& rhs) = default;
+    VecCommaInitializer(const VecCommaInitializer<V>& rhs) = default;
 
-    VecCommaInitializer(VecCommaInitializer<T, V>&& rhs) noexcept = default;
+    VecCommaInitializer(VecCommaInitializer<V>&& rhs) noexcept = default;
 
-    auto operator=(const VecCommaInitializer<T, V>& rhs)
-        -> VecCommaInitializer<T, V>& = default;
+    auto operator=(const VecCommaInitializer<V>& rhs)
+        -> VecCommaInitializer<V>& = default;
 
-    auto operator=(VecCommaInitializer<T, V>&& rhs) noexcept
-        -> VecCommaInitializer<T, V>& = default;
+    auto operator=(VecCommaInitializer<V>&& rhs) noexcept
+        -> VecCommaInitializer<V>& = default;
 
     /// Release any resources and terminate the initializer's operation
     ~VecCommaInitializer() { _finished(); }

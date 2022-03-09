@@ -98,8 +98,8 @@ struct Vector2 {
     }
 
     /// Returns a comma-initializer to construct the vector via its coefficients
-    auto operator<<(Scalar_T coeff) -> VecCommaInitializer<ElementType, Type> {
-        return VecCommaInitializer<ElementType, Type>(*this, coeff);
+    auto operator<<(Scalar_T coeff) -> VecCommaInitializer<Type> {
+        return VecCommaInitializer<Type>(*this, coeff);
     }
 
     /// Returns a printable string-representation of the vector

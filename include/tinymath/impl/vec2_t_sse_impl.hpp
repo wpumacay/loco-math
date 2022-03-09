@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(TINYMATH_SSE_ENABLED)
+#if defined(TINYMATH_SSE_ENABLED) || defined(TINYMATH_AVX_ENABLED)
 
 #include <emmintrin.h>
 #include <smmintrin.h>
@@ -33,6 +33,8 @@
  * 2. For SSE-float64:
  *  - @note(wilbert): All elements of the buffer (2xf64) fit into a single xmm
  *      register (128-bits <=> 2xfloat64)
+ *
+ * 3. Note that we're using the same SSE kernels for the AVX versions
  */
 
 namespace tiny {
@@ -76,11 +78,13 @@ constexpr auto COMPILE_TIME_CHECKS_VEC2_F64_SSE() -> int {
 
 template <typename T>
 using SFINAE_VEC2_F32_SSE_GUARD =
-    typename std::enable_if<CpuHasSSE<T>::value && IsFloat32<T>::value>::type*;
+    typename std::enable_if<(CpuHasSSE<T>::value || CpuHasAVX<T>::value) &&
+                            IsFloat32<T>::value>::type*;
 
 template <typename T>
 using SFINAE_VEC2_F64_SSE_GUARD =
-    typename std::enable_if<CpuHasSSE<T>::value && IsFloat64<T>::value>::type*;
+    typename std::enable_if<(CpuHasSSE<T>::value || CpuHasAVX<T>::value) &&
+                            IsFloat64<T>::value>::type*;
 
 template <typename T, SFINAE_VEC2_F32_SSE_GUARD<T> = nullptr>
 TM_INLINE auto kernel_add_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
@@ -246,4 +250,4 @@ TM_INLINE auto kernel_dot_vec2(const Vec2Buffer<T>& lhs,
 }  // namespace math
 }  // namespace tiny
 
-#endif  // TINYMATH_SSE_ENABLED
+#endif  // TINYMATH_SSE_ENABLED || TINYMATH_AVX_ENABLED

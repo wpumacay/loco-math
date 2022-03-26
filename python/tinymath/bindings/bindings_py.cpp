@@ -1,6 +1,7 @@
 #include <pybind11/pybind11.h>
 
 #include <string>
+#include <tinymath/tinymath.hpp>
 
 namespace py = pybind11;
 
@@ -25,17 +26,10 @@ extern void bindings_vector4(py::module& m, const std::string& className);
 }  // namespace tiny
 
 // NOLINTNEXTLINE @todo(wilbert): check how other projects handle this part
-<<<<<<< HEAD
-PYBIND11_MODULE(tinymath, m) {
-=======
 PYBIND11_MODULE(tinymath_py, m) {
->>>>>>> dev
-    using float32_t = float;
-    using float64_t = double;
+    // tiny::math::bindings_vector3<float32_t>(m, "Vector3f");
+    // tiny::math::bindings_vector3<float64_t>(m, "Vector3d");
 
-    tiny::math::bindings_vector3<float32_t>(m, "Vector3f");
-    tiny::math::bindings_vector3<float64_t>(m, "Vector3d");
-
-    tiny::math::bindings_vector4<float32_t>(m, "Vector4f");
-    tiny::math::bindings_vector4<float64_t>(m, "Vector4d");
+    // tiny::math::bindings_vector4<float32_t>(m, "Vector4f");
+    // tiny::math::bindings_vector4<float64_t>(m, "Vector4d");
 }

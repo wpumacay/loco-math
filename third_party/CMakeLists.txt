@@ -15,7 +15,7 @@ if(TINYMATH_BUILD_PYTHON_BINDINGS)
   tmConfigureGitDependency(
       TARGET pybind11
       REPO https://github.com/pybind/pybind11.git
-      TAG v2.7.1
+      TAG v2.9.1
       BUILD_MODE ${CMAKE_BUILD_TYPE}
       BUILD_ARGS
         -DPYBIND11_TEST=OFF)
@@ -35,7 +35,7 @@ if(TINYMATH_BUILD_TESTS)
   tmConfigureGitDependency(
       TARGET catch2
       REPO https://github.com/catchorg/Catch2.git
-      TAG v2.13.7
+      TAG v2.13.8
       BUILD_MODE ${CMAKE_BUILD_TYPE}
       BUILD_ARGS
         -DCATCH_INSTALL_DOCS=OFF

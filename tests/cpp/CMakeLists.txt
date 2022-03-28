@@ -6,8 +6,8 @@ if(NOT TINYMATH_BUILD_TESTS)
 endif()
 
 if((NOT TARGET tinymath::tinymath) OR (NOT TARGET Catch2::Catch2))
-  tmMessage(
-    "Unittests require both tinymath::tinymath and Catch2::Catch2 targets"
+  loco_message(
+    "Unittests require both [tinymath::tinymath] and [Catch2::Catch2] targets"
     LOG_LEVEL WARNING)
   return()
 endif()

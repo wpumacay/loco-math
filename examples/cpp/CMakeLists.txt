@@ -25,10 +25,8 @@ set(TINYMATH_EXAMPLES_LIST
     # Examples used to check each op assembly listing
     ${CMAKE_CURRENT_SOURCE_DIR}/operations/ex_vec3f_ops.cpp)
 
-# ~~~
-# @todo(wilbert): complete this part (add helper macro to loco-cmake)
-# # Create all the example targets
-# foreach(example_filepath IN LISTS TINYMATH_EXAMPLES_LIST)
-#   loco_setup_singlefile_example(${example_filepath})
-# endforeach()
-# ~~~
+# Create all the example targets
+foreach(example_filepath IN LISTS TINYMATH_EXAMPLES_LIST)
+  loco_setup_single_file_example(${example_filepath} TARGET_DEPENDENCIES
+                                 tinymath::tinymath)
+endforeach()

@@ -23,8 +23,8 @@ project(
 
 # -------------------------------------
 # Define some options the user can set before|while configuring the project
-option(TINYMATH_BUILD_SSE "Build using SSE SIMD-extensions support" OFF)
-option(TINYMATH_BUILD_AVX "Build using AVX SIMD-extensions support" OFF)
+option(TINYMATH_BUILD_SSE "Build using SSE SIMD-extensions support" ON)
+option(TINYMATH_BUILD_AVX "Build using AVX SIMD-extensions support" ON)
 option(TINYMATH_BUILD_INLINE "Build with inlining when requested" OFF)
 option(TINYMATH_BUILD_PYTHON_BINDINGS "Build bindings (requires Pybind11)" ON)
 option(TINYMATH_BUILD_DOCS "Build documentation (requires Doxygen+Breathe)" OFF)

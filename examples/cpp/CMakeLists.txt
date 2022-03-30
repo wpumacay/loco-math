@@ -7,7 +7,8 @@ if(NOT TINYMATH_BUILD_EXAMPLES)
 endif()
 
 if(NOT TARGET tinymath::tinymath)
-  tmMessage("Examples require tinymath::tinymath target" LOG_LEVEL WARNING)
+  loco_message("Examples require the [tinymath::tinymath] target to be defined"
+               LOG_LEVEL WARNING)
   return()
 endif()
 
@@ -26,5 +27,6 @@ set(TINYMATH_EXAMPLES_LIST
 
 # Create all the example targets
 foreach(example_filepath IN LISTS TINYMATH_EXAMPLES_LIST)
-  tmConfigureExample(${example_filepath})
+  loco_setup_single_file_example(${example_filepath} TARGET_DEPENDENCIES
+                                 tinymath::tinymath)
 endforeach()

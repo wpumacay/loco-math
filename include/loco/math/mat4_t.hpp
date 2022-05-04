@@ -1,6 +1,7 @@
 #pragma once
 
 // clang-format off
+#include <iomanip>
 #include <ios>
 #include <array>
 #include <cassert>
@@ -281,14 +282,45 @@ template <typename T,
           typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
 auto operator<<(std::ostream& output_stream, const Matrix4<T>& src)
     -> std::ostream& {
-    // @todo(wilbert): complet this part of the implementation
+    constexpr int PRECISION_DIGITS = 10;
+    output_stream << std::setprecision(PRECISION_DIGITS);
+    output_stream << "( " << src[0][0] << ", " << src[1][0] << ", " << src[2][0]
+                  << ", " << src[3][0] << "\n";
+    output_stream << "  " << src[0][1] << ", " << src[1][1] << ", " << src[2][1]
+                  << ", " << src[3][1] << "\n";
+    output_stream << "  " << src[0][2] << ", " << src[1][2] << ", " << src[2][2]
+                  << ", " << src[3][2] << "\n";
+    output_stream << "  " << src[0][3] << ", " << src[1][3] << ", " << src[2][3]
+                  << ", " << src[3][3] << " )";
     return output_stream;
 }
 
 template <typename T,
           typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
 auto operator>>(std::istream& input_stream, Matrix4<T>& dst) -> std::istream& {
-    // @todo(wilbert): complet this part of the implementation
+    // Based on ignition-math implementation https://bit.ly/3MPgPcW
+    input_stream.setf(std::ios_base::skipws);
+    // Temporary place to store the inputs given by the user
+    std::array<T, Matrix4<T>::BUFFER_SIZE> d;
+    // clang-format off
+    // Get these many items/elements from the input stream
+    input_stream >> d[0]  >> d[1]  >> d[2]  >> d[3]   // NOLINT
+                 >> d[4]  >> d[5]  >> d[6]  >> d[7]   // NOLINT
+                 >> d[8]  >> d[9]  >> d[10] >> d[11]  // NOLINT
+                 >> d[12] >> d[13] >> d[14] >> d[15]; // NOLINT
+    // clang-format on
+    if (!input_stream.fail()) {
+        // clang-format off
+        // NOLINTNEXTLINE
+        dst(0,0) = d[0];  dst(0,1) = d[1];  dst(0,2) = d[2];  dst(0,3) = d[3];
+        // NOLINTNEXTLINE
+        dst(1,0) = d[4];  dst(1,1) = d[5];  dst(1,2) = d[6];  dst(1,3) = d[7];
+        // NOLINTNEXTLINE
+        dst(2,0) = d[8];  dst(2,1) = d[9];  dst(2,2) = d[10]; dst(2,3) = d[11];
+        // NOLINTNEXTLINE
+        dst(3,0) = d[12]; dst(3,1) = d[13]; dst(3,2) = d[14]; dst(3,3) = d[15];
+        // clang-format on
+    }
     return input_stream;
 }
 

@@ -1,13 +1,13 @@
 #pragma once
 
 // clang-format off
-#include <tinymath/vec4_t.hpp>
-#include <tinymath/impl/vec4_t_scalar_impl.hpp>
-#include <tinymath/impl/vec4_t_sse_impl.hpp>
-#include <tinymath/impl/vec4_t_avx_impl.hpp>
+#include <loco/math/vec4_t.hpp>
+#include <loco/math/impl/vec4_t_scalar_impl.hpp>
+#include <loco/math/impl/vec4_t_sse_impl.hpp>
+#include <loco/math/impl/vec4_t_avx_impl.hpp>
 // clang-format on
 
-namespace tiny {
+namespace loco {
 namespace math {
 
 template <typename T>
@@ -15,10 +15,10 @@ using SFINAE_VEC4_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 
 /// \brief Returns the dot-product of the given two vectors
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
-TM_INLINE auto dot(const Vector4<T>& lhs, const Vector4<T>& rhs) -> T {
-#if defined(TINYMATH_AVX_ENABLED)
+LM_INLINE auto dot(const Vector4<T>& lhs, const Vector4<T>& rhs) -> T {
+#if defined(LOCOMATH_AVX_ENABLED)
     return avx::kernel_dot_vec4<T>(lhs.elements(), rhs.elements());
-#elif defined(TINYMATH_SSE_ENABLED)
+#elif defined(LOCOMATH_SSE_ENABLED)
     return sse::kernel_dot_vec4<T>(lhs.elements(), rhs.elements());
 #else
     return scalar::kernel_dot_vec4<T>(lhs.elements(), rhs.elements());
@@ -38,12 +38,12 @@ TM_INLINE auto dot(const Vector4<T>& lhs, const Vector4<T>& rhs) -> T {
 /// \param[in] lhs Left-hand-side operand of the vector-sum
 /// \param[in] rhs Right-hand-side operand of the vector-sum
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
-TM_INLINE auto operator+(const Vector4<T>& lhs, const Vector4<T>& rhs)
+LM_INLINE auto operator+(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> Vector4<T> {
     Vector4<T> dst;
-#if defined(TINYMATH_AVX_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED)
     avx::kernel_add_vec4<T>(dst.elements(), rhs.elements(), lhs.elements());
-#elif defined(TINYMATH_SSE_ENABLED)
+#elif defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_add_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_add_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
@@ -64,12 +64,12 @@ TM_INLINE auto operator+(const Vector4<T>& lhs, const Vector4<T>& rhs)
 /// \param[in] lhs Left-hand-side operand of the vector-sum
 /// \param[in] rhs Right-hand-side operand of the vector-sum
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
-TM_INLINE auto operator-(const Vector4<T>& lhs, const Vector4<T>& rhs)
+LM_INLINE auto operator-(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> Vector4<T> {
     Vector4<T> dst;
-#if defined(TINYMATH_AVX_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED)
     avx::kernel_sub_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
-#elif defined(TINYMATH_SSE_ENABLED)
+#elif defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_sub_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_sub_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
@@ -90,11 +90,11 @@ TM_INLINE auto operator-(const Vector4<T>& lhs, const Vector4<T>& rhs)
 /// \param[in] scale Scalar value by which to scale the second operand
 /// \param[in] vec Vector in 4d-space which we want to scale
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
-TM_INLINE auto operator*(T scale, const Vector4<T>& vec) -> Vector4<T> {
+LM_INLINE auto operator*(T scale, const Vector4<T>& vec) -> Vector4<T> {
     Vector4<T> dst;
-#if defined(TINYMATH_AVX_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED)
     avx::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
-#elif defined(TINYMATH_SSE_ENABLED)
+#elif defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
 #else
     scalar::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
@@ -115,11 +115,11 @@ TM_INLINE auto operator*(T scale, const Vector4<T>& vec) -> Vector4<T> {
 /// \param[in] vec Vector in 4d-space which we want to scale
 /// \param[in] scale Scalar value by which to scale the first operand
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
-TM_INLINE auto operator*(const Vector4<T>& vec, T scale) -> Vector4<T> {
+LM_INLINE auto operator*(const Vector4<T>& vec, T scale) -> Vector4<T> {
     Vector4<T> dst;
-#if defined(TINYMATH_AVX_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED)
     avx::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
-#elif defined(TINYMATH_SSE_ENABLED)
+#elif defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
 #else
     scalar::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
@@ -140,13 +140,13 @@ TM_INLINE auto operator*(const Vector4<T>& vec, T scale) -> Vector4<T> {
 /// \param[in] lhs Left-hand-side operand of the element-wise product
 /// \param[in] rhs Right-hand-side operand of the element-wise product
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
-TM_INLINE auto operator*(const Vector4<T>& lhs, const Vector4<T>& rhs)
+LM_INLINE auto operator*(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> Vector4<T> {
     Vector4<T> dst;
-#if defined(TINYMATH_AVX_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED)
     avx::kernel_hadamard_vec4<T>(dst.elements(), lhs.elements(),
                                  rhs.elements());
-#elif defined(TINYMATH_SSE_ENABLED)
+#elif defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_hadamard_vec4<T>(dst.elements(), lhs.elements(),
                                  rhs.elements());
 #else
@@ -173,7 +173,7 @@ TM_INLINE auto operator*(const Vector4<T>& lhs, const Vector4<T>& rhs)
 /// \param[in] rhs Right-hand-side operand of the comparison
 /// \returns true if the given vectors are within a pre-defined epsilon margin
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
-TM_INLINE auto operator==(const Vector4<T>& lhs, const Vector4<T>& rhs)
+LM_INLINE auto operator==(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> bool {
     return scalar::kernel_compare_eq_vec4<T>(lhs.elements(), rhs.elements());
 }
@@ -186,10 +186,10 @@ TM_INLINE auto operator==(const Vector4<T>& lhs, const Vector4<T>& rhs)
 /// \param[in] rhs Right-hand-side operand of the comparison
 /// \returns true if the given vectors are not within a pre-defined margin
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
-TM_INLINE auto operator!=(const Vector4<T>& lhs, const Vector4<T>& rhs)
+LM_INLINE auto operator!=(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> bool {
     return !scalar::kernel_compare_eq_vec4<T>(lhs.elements(), rhs.elements());
 }
 
 }  // namespace math
-}  // namespace tiny
+}  // namespace loco

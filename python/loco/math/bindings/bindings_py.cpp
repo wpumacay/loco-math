@@ -1,14 +1,14 @@
 #include <pybind11/pybind11.h>
 
+#include <loco/math/all.hpp>
 #include <string>
-#include <tinymath/tinymath.hpp>
 
 namespace py = pybind11;
 
 // @todo(wilbert): might need to avoid using extern, and instead add all the
 // binding-generation functions as parametrized templated functions
 
-namespace tiny {
+namespace loco {
 namespace math {
 
 // @todo(wilbert): check if should actually pass by reference, or should pass
@@ -23,13 +23,13 @@ extern void bindings_vector3(py::module& m, const std::string& className);
 extern void bindings_vector4(py::module& m, const std::string& className);
 
 }  // namespace math
-}  // namespace tiny
+}  // namespace loco
 
 // NOLINTNEXTLINE @todo(wilbert): check how other projects handle this part
-PYBIND11_MODULE(tinymath_py, m) {
-    // tiny::math::bindings_vector3<float32_t>(m, "Vector3f");
-    // tiny::math::bindings_vector3<float64_t>(m, "Vector3d");
+PYBIND11_MODULE(math, m) {
+    // loco::math::bindings_vector3<float32_t>(m, "Vector3f");
+    // loco::math::bindings_vector3<float64_t>(m, "Vector3d");
 
-    // tiny::math::bindings_vector4<float32_t>(m, "Vector4f");
-    // tiny::math::bindings_vector4<float64_t>(m, "Vector4d");
+    // loco::math::bindings_vector4<float32_t>(m, "Vector4f");
+    // loco::math::bindings_vector4<float64_t>(m, "Vector4d");
 }

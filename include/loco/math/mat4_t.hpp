@@ -13,10 +13,10 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <tinymath/vec4_t.hpp>
+#include <loco/math/vec4_t.hpp>
 // clang-format on
 
-namespace tiny {
+namespace loco {
 namespace math {
 
 // Forward declare comma-initializer for matrix4-types
@@ -266,7 +266,7 @@ class Mat4CommaInitializer {
 
  private:
     /// Terminates the operations of the initializer and returns the built vec3
-    TM_INLINE auto _finished() -> void {
+    LM_INLINE auto _finished() -> void {
         assert(m_CurrentBuildIndex == (MATRIX_LAST_INDEX + 1));
     }
 
@@ -293,4 +293,4 @@ auto operator>>(std::istream& input_stream, Matrix4<T>& dst) -> std::istream& {
 }
 
 }  // namespace math
-}  // namespace tiny
+}  // namespace loco

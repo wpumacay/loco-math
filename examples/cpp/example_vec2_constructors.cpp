@@ -1,6 +1,6 @@
 #include <iomanip>
 #include <iostream>
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 #include <type_traits>
 
 #define ERROR_1 "Wrong number of bytes in internal storage"
@@ -8,7 +8,7 @@
 
 template <typename T>
 auto run_example_vec2() -> void {
-    using Vec2 = tiny::math::Vector2<T>;
+    using Vec2 = loco::math::Vector2<T>;
 
     // Checking size and alignment (we won't do SIMD aligned load|store)
     constexpr int EXPECTED_SIZE = 2 * sizeof(T);

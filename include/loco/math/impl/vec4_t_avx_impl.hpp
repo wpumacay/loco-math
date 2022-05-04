@@ -1,10 +1,10 @@
 #pragma once
 
-#if defined(TINYMATH_AVX_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED)
 
 #include <immintrin.h>
 
-#include <tinymath/vec4_t.hpp>
+#include <loco/math/vec4_t.hpp>
 
 /**
  * AVX instruction sets required for each kernel:
@@ -23,7 +23,7 @@
  *    be to use `maskload` instead of `load` to avoid these out-of-bounds writes
  */
 
-namespace tiny {
+namespace loco {
 namespace math {
 namespace avx {
 
@@ -39,7 +39,7 @@ using SFINAE_VEC4_F64_AVX_GUARD =
     typename std::enable_if<CpuHasAVX<T>::value && IsFloat64<T>::value>::type*;
 
 template <typename T, SFINAE_VEC4_F32_AVX_GUARD<T> = nullptr>
-TM_INLINE auto kernel_add_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
+LM_INLINE auto kernel_add_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
                                const Vec4Buffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_load_ps(lhs.data());
     auto xmm_rhs = _mm_load_ps(rhs.data());
@@ -48,7 +48,7 @@ TM_INLINE auto kernel_add_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC4_F64_AVX_GUARD<T> = nullptr>
-TM_INLINE auto kernel_add_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
+LM_INLINE auto kernel_add_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
                                const Vec4Buffer<T>& rhs) -> void {
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
@@ -57,7 +57,7 @@ TM_INLINE auto kernel_add_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC4_F32_AVX_GUARD<T> = nullptr>
-TM_INLINE auto kernel_sub_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
+LM_INLINE auto kernel_sub_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
                                const Vec4Buffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_load_ps(lhs.data());
     auto xmm_rhs = _mm_load_ps(rhs.data());
@@ -66,7 +66,7 @@ TM_INLINE auto kernel_sub_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC4_F64_AVX_GUARD<T> = nullptr>
-TM_INLINE auto kernel_sub_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
+LM_INLINE auto kernel_sub_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
                                const Vec4Buffer<T>& rhs) -> void {
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
@@ -75,7 +75,7 @@ TM_INLINE auto kernel_sub_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC4_F32_AVX_GUARD<T> = nullptr>
-TM_INLINE auto kernel_scale_vec4(Vec4Buffer<T>& dst, T scale,
+LM_INLINE auto kernel_scale_vec4(Vec4Buffer<T>& dst, T scale,
                                  const Vec4Buffer<T>& vec) -> void {
     auto xmm_scale = _mm_set1_ps(scale);
     auto xmm_vector = _mm_load_ps(vec.data());
@@ -84,7 +84,7 @@ TM_INLINE auto kernel_scale_vec4(Vec4Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_VEC4_F64_AVX_GUARD<T> = nullptr>
-TM_INLINE auto kernel_scale_vec4(Vec4Buffer<T>& dst, T scale,
+LM_INLINE auto kernel_scale_vec4(Vec4Buffer<T>& dst, T scale,
                                  const Vec4Buffer<T>& vec) -> void {
     auto ymm_scale = _mm256_set1_pd(scale);
     auto ymm_vector = _mm256_load_pd(vec.data());
@@ -93,7 +93,7 @@ TM_INLINE auto kernel_scale_vec4(Vec4Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_VEC4_F32_AVX_GUARD<T> = nullptr>
-TM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
+LM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
                                     const Vec4Buffer<T>& lhs,
                                     const Vec4Buffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_load_ps(lhs.data());
@@ -102,7 +102,7 @@ TM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_VEC4_F64_AVX_GUARD<T> = nullptr>
-TM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
+LM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
                                     const Vec4Buffer<T>& lhs,
                                     const Vec4Buffer<T>& rhs) -> void {
     auto ymm_lhs = _mm256_load_pd(lhs.data());
@@ -111,7 +111,7 @@ TM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_VEC4_F32_AVX_GUARD<T> = nullptr>
-TM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
+LM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
                                const Vec4Buffer<T>& rhs) -> T {
     auto xmm_lhs = _mm_load_ps(lhs.data());
     auto xmm_rhs = _mm_load_ps(rhs.data());
@@ -120,7 +120,7 @@ TM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC4_F64_AVX_GUARD<T> = nullptr>
-TM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
+LM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
                                const Vec4Buffer<T>& rhs) -> T {
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
@@ -134,6 +134,6 @@ TM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
 
 }  // namespace avx
 }  // namespace math
-}  // namespace tiny
+}  // namespace loco
 
-#endif  // TINYMATH_AVX_ENABLED
+#endif  // LOCOMATH_AVX_ENABLED

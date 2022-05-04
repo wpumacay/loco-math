@@ -1,12 +1,12 @@
 #pragma once
 
-#if defined(TINYMATH_SSE_ENABLED)
+#if defined(LOCOMATH_SSE_ENABLED)
 
 #include <emmintrin.h>
 #include <smmintrin.h>
 #include <xmmintrin.h>
 
-#include <tinymath/mat4_t.hpp>
+#include <loco/math/mat4_t.hpp>
 
 /**
  * SSE instruction sets required for each kernel:
@@ -37,7 +37,7 @@
  *    view of matrices and vectors
  */
 
-namespace tiny {
+namespace loco {
 namespace math {
 namespace sse {
 
@@ -60,7 +60,7 @@ using SFINAE_MAT4_F64_SSE_GUARD =
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
     // [c0, c1, c2, c3] -> column-major order (in storage), each with 4 x f32
     // So, we can send each column to an xmm register. Also, don't unroll the
@@ -74,7 +74,7 @@ TM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
     // [c0, c1, c2, c3] -> column-major order (in storage), each with 4 x f32
     // So, we can send only half of each column to an xmm register
@@ -96,7 +96,7 @@ TM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
     for (int32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
         auto xmm_lhs_col_j = _mm_load_ps(lhs[j].data());
@@ -106,7 +106,7 @@ TM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
     for (int32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
         auto xmm_lhs_col_j_lo = _mm_load_pd(lhs[j].data());
@@ -126,7 +126,7 @@ TM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
+LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
                                  const Mat4Buffer<T>& mat) -> void {
     auto xmm_scale = _mm_set1_ps(scale);
     for (int32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
@@ -136,7 +136,7 @@ TM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
+LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
                                  const Mat4Buffer<T>& mat) -> void {
     auto xmm_scale_lo = _mm_set1_pd(scale);  // xmm = [scale(f64), scale(f64)]
     auto xmm_scale_hi = _mm_set1_pd(scale);  // xmm = [scale(f64), scale(f64)]
@@ -155,7 +155,7 @@ TM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                   const Mat4Buffer<T>& rhs) -> void {
     // Use the "linear combination view" of the matrix-vector product, and apply
     // it along all column vectors of the right-hand side
@@ -176,7 +176,7 @@ TM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                   const Mat4Buffer<T>& rhs) -> void {
     // Use the same approach as the f32 version, but use lo-hi halves xmm regs.
     for (int32_t k = 0; k < Matrix4<T>::MATRIX_NDIM; ++k) {
@@ -203,7 +203,7 @@ TM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
+LM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
                                       const Mat4Buffer<T>& mat,
                                       const Vec4Buffer<T>& vec) -> void {
     // Use the "linear combination view" of the matrix-vector product
@@ -227,7 +227,7 @@ TM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
+LM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
                                       const Mat4Buffer<T>& mat,
                                       const Vec4Buffer<T>& vec) -> void {
     // Use the "linear combination view" of the matrix-vector product
@@ -261,7 +261,7 @@ TM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
+LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
                                     const Mat4Buffer<T>& lhs,
                                     const Mat4Buffer<T>& rhs) -> void {
     for (int32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
@@ -272,7 +272,7 @@ TM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
+LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
                                     const Mat4Buffer<T>& lhs,
                                     const Mat4Buffer<T>& rhs) -> void {
     for (int32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
@@ -290,6 +290,6 @@ TM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
 
 }  // namespace sse
 }  // namespace math
-}  // namespace tiny
+}  // namespace loco
 
-#endif  // TINYMATH_SSE_ENABLED
+#endif  // LOCOMATH_SSE_ENABLED

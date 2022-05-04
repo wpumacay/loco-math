@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 
 template <typename T>
 constexpr auto FuncClose(T a, T b, T eps) -> bool {
@@ -13,11 +13,11 @@ constexpr auto FuncCompareEqual(T xa, T ya, T xb, T yb, T eps) -> bool {
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector2 class (vec2_t) core Operations", "[vec2_t][ops]",
-                   tiny::math::float32_t, tiny::math::float64_t) {
+                   loco::math::float32_t, loco::math::float64_t) {
     using T = TestType;
-    using Vector2 = tiny::math::Vector2<T>;
+    using Vector2 = loco::math::Vector2<T>;
 
-    constexpr T EPSILON = tiny::math::EPS<T>;
+    constexpr T EPSILON = loco::math::EPS<T>;
 
     SECTION("Vector comparison ==, !=") {
         Vector2 v_1(1.0, 2.0);  // NOLINT
@@ -116,8 +116,8 @@ TEMPLATE_TEST_CASE("Vector2 class (vec2_t) core Operations", "[vec2_t][ops]",
             auto length_square = val_x * val_x + val_y * val_y;
             auto length = std::sqrt(length_square);
 
-            auto v_length_square = tiny::math::squareNorm(v);
-            auto v_length = tiny::math::norm(v);
+            auto v_length_square = loco::math::squareNorm(v);
+            auto v_length = loco::math::norm(v);
 
             REQUIRE(std::abs(v_length_square - length_square) < EPSILON);
             REQUIRE(std::abs(v_length - length) < EPSILON);
@@ -127,13 +127,13 @@ TEMPLATE_TEST_CASE("Vector2 class (vec2_t) core Operations", "[vec2_t][ops]",
             auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
             auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
             Vector2 v(val_x, val_y);
-            tiny::math::normalize_in_place(v);
+            loco::math::normalize_in_place(v);
 
             auto norm = std::sqrt(val_x * val_x + val_y * val_y);
             auto val_xnorm = val_x / norm;
             auto val_ynorm = val_y / norm;
 
-            auto v_norm = tiny::math::norm(v);
+            auto v_norm = loco::math::norm(v);
 
             REQUIRE(std::abs(v_norm - 1.0) < EPSILON);
             REQUIRE(std::abs(v.x() - val_xnorm) < EPSILON);
@@ -144,13 +144,13 @@ TEMPLATE_TEST_CASE("Vector2 class (vec2_t) core Operations", "[vec2_t][ops]",
             auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);  // NOLINT
             auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
             Vector2 v(val_x, val_y);
-            auto vn = tiny::math::normalize(v);
+            auto vn = loco::math::normalize(v);
 
             auto norm = std::sqrt(val_x * val_x + val_y * val_y);
             auto val_xnorm = val_x / norm;
             auto val_ynorm = val_y / norm;
 
-            auto vn_norm = tiny::math::norm(vn);
+            auto vn_norm = loco::math::norm(vn);
 
             REQUIRE(std::abs(vn_norm - 1.0) < EPSILON);
             REQUIRE(std::abs(vn.x() - val_xnorm) < EPSILON);
@@ -168,7 +168,7 @@ TEMPLATE_TEST_CASE("Vector2 class (vec2_t) core Operations", "[vec2_t][ops]",
             Vector2 v_b(val_x_b, val_y_b);
 
             auto dot = val_x_a * val_x_b + val_y_a * val_y_b;
-            auto v_dot = tiny::math::dot(v_a, v_b);
+            auto v_dot = loco::math::dot(v_a, v_b);
 
             REQUIRE(std::abs(v_dot - dot) < EPSILON);
         }

@@ -1,10 +1,10 @@
 #pragma once
 
 #include <cmath>
-#include <tinymath/mat4_t.hpp>
+#include <loco/math/mat4_t.hpp>
 #include <utility>
 
-namespace tiny {
+namespace loco {
 namespace math {
 namespace scalar {
 
@@ -19,7 +19,7 @@ using SFINAE_MAT4_SCALAR_GUARD =
     typename std::enable_if<IsScalar<T>::value>::type*;
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_transpose_inplace_mat4(Mat4Buffer<T>& cols) -> void {
+LM_INLINE auto kernel_transpose_inplace_mat4(Mat4Buffer<T>& cols) -> void {
     for (int32_t col = 1; col < Matrix4<T>::MATRIX_NDIM; ++col) {
         for (int32_t row = 0; row < Matrix4<T>::MATRIX_NDIM; ++row) {
             std::swap(cols[col][row], cols[row][col]);
@@ -28,7 +28,7 @@ TM_INLINE auto kernel_transpose_inplace_mat4(Mat4Buffer<T>& cols) -> void {
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
     for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
         for (int32_t idx = 0; idx < Matrix4<T>::MATRIX_NDIM; ++idx) {
@@ -38,7 +38,7 @@ TM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
     for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
         for (int32_t idx = 0; idx < Matrix4<T>::MATRIX_NDIM; ++idx) {
@@ -48,7 +48,7 @@ TM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
+LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
                                  const Mat4Buffer<T>& mat) -> void {
     for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
         for (int32_t idx = 0; idx < Matrix4<T>::MATRIX_NDIM; ++idx) {
@@ -58,7 +58,7 @@ TM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                   const Mat4Buffer<T>& rhs) -> void {
     // We're assumming that dst is zero-initialized (default-constructor)
     for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
@@ -71,7 +71,7 @@ TM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_matmul_vec_mat4(const Mat4Buffer<T>& mat,
+LM_INLINE auto kernel_matmul_vec_mat4(const Mat4Buffer<T>& mat,
                                       const Vec4Buffer<T>& vec) -> Vector4<T> {
     // Express as a linear combination of the columns of the matrix
     return vec[0] * mat[0] + vec[1] * mat[1] + vec[2] * mat[2] +
@@ -79,7 +79,7 @@ TM_INLINE auto kernel_matmul_vec_mat4(const Mat4Buffer<T>& mat,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
+LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
                                     const Mat4Buffer<T>& lhs,
                                     const Mat4Buffer<T>& rhs) -> void {
     for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
@@ -90,11 +90,11 @@ TM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_compare_eq_mat4(const Mat4Buffer<T>& lhs,
+LM_INLINE auto kernel_compare_eq_mat4(const Mat4Buffer<T>& lhs,
                                       const Mat4Buffer<T>& rhs) -> bool {
     for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
         for (int32_t idx = 0; idx < Matrix4<T>::MATRIX_NDIM; ++idx) {
-            if (std::abs(lhs[col][idx] - rhs[col][idx]) > tiny::math::EPS<T>) {
+            if (std::abs(lhs[col][idx] - rhs[col][idx]) > loco::math::EPS<T>) {
                 return false;
             }
         }
@@ -104,4 +104,4 @@ TM_INLINE auto kernel_compare_eq_mat4(const Mat4Buffer<T>& lhs,
 
 }  // namespace scalar
 }  // namespace math
-}  // namespace tiny
+}  // namespace loco

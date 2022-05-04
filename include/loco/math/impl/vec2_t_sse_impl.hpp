@@ -1,12 +1,12 @@
 #pragma once
 
-#if defined(TINYMATH_SSE_ENABLED) || defined(TINYMATH_AVX_ENABLED)
+#if defined(LOCOMATH_SSE_ENABLED) || defined(LOCOMATH_AVX_ENABLED)
 
 #include <emmintrin.h>
 #include <smmintrin.h>
 #include <xmmintrin.h>
 
-#include <tinymath/vec2_t.hpp>
+#include <loco/math/vec2_t.hpp>
 
 /**
  * SSE instruction sets required for each kernel:
@@ -37,7 +37,7 @@
  * 3. Note that we're using the same SSE kernels for the AVX versions
  */
 
-namespace tiny {
+namespace loco {
 namespace math {
 namespace sse {
 
@@ -55,7 +55,7 @@ using SFINAE_VEC2_F64_SSE_GUARD =
                             IsFloat64<T>::value>::type*;
 
 template <typename T, SFINAE_VEC2_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_add_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
+LM_INLINE auto kernel_add_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
                                const Vec2Buffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
@@ -64,7 +64,7 @@ TM_INLINE auto kernel_add_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC2_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_add_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
+LM_INLINE auto kernel_add_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
                                const Vec2Buffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_loadu_pd(lhs.data());
     auto xmm_rhs = _mm_loadu_pd(rhs.data());
@@ -73,7 +73,7 @@ TM_INLINE auto kernel_add_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC2_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_sub_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
+LM_INLINE auto kernel_sub_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
                                const Vec2Buffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
@@ -82,7 +82,7 @@ TM_INLINE auto kernel_sub_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC2_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_sub_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
+LM_INLINE auto kernel_sub_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
                                const Vec2Buffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_loadu_pd(lhs.data());
     auto xmm_rhs = _mm_loadu_pd(rhs.data());
@@ -91,7 +91,7 @@ TM_INLINE auto kernel_sub_vec2(Vec2Buffer<T>& dst, const Vec2Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC2_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_scale_vec2(Vec2Buffer<T>& dst, T scale,
+LM_INLINE auto kernel_scale_vec2(Vec2Buffer<T>& dst, T scale,
                                  const Vec2Buffer<T>& vec) -> void {
     auto xmm_scale = _mm_set1_ps(scale);
     auto xmm_vector = _mm_loadu_ps(vec.data());
@@ -100,7 +100,7 @@ TM_INLINE auto kernel_scale_vec2(Vec2Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_VEC2_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_scale_vec2(Vec2Buffer<T>& dst, T scale,
+LM_INLINE auto kernel_scale_vec2(Vec2Buffer<T>& dst, T scale,
                                  const Vec2Buffer<T>& vec) -> void {
     auto xmm_scale = _mm_set1_pd(scale);
     auto xmm_vector = _mm_loadu_pd(vec.data());
@@ -109,7 +109,7 @@ TM_INLINE auto kernel_scale_vec2(Vec2Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_VEC2_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_hadamard_vec2(Vec2Buffer<T>& dst,
+LM_INLINE auto kernel_hadamard_vec2(Vec2Buffer<T>& dst,
                                     const Vec2Buffer<T>& lhs,
                                     const Vec2Buffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
@@ -119,7 +119,7 @@ TM_INLINE auto kernel_hadamard_vec2(Vec2Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_VEC2_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_hadamard_vec2(Vec2Buffer<T>& dst,
+LM_INLINE auto kernel_hadamard_vec2(Vec2Buffer<T>& dst,
                                     const Vec2Buffer<T>& lhs,
                                     const Vec2Buffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_loadu_pd(lhs.data());
@@ -129,7 +129,7 @@ TM_INLINE auto kernel_hadamard_vec2(Vec2Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_VEC2_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_length_square_vec2(const Vec2Buffer<T>& vec) -> T {
+LM_INLINE auto kernel_length_square_vec2(const Vec2Buffer<T>& vec) -> T {
     // Implementation based on this post: https://bit.ly/3FyZF0n
     auto xmm_v = _mm_loadu_ps(vec.data());
     auto xmm_square_sum = _mm_dp_ps(xmm_v, xmm_v, 0x31);
@@ -137,7 +137,7 @@ TM_INLINE auto kernel_length_square_vec2(const Vec2Buffer<T>& vec) -> T {
 }
 
 template <typename T, SFINAE_VEC2_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_length_square_vec2(const Vec2Buffer<T>& vec) -> T {
+LM_INLINE auto kernel_length_square_vec2(const Vec2Buffer<T>& vec) -> T {
     // Implementation based on this post: https://bit.ly/3FyZF0n
     auto xmm_v = _mm_loadu_pd(vec.data());
     auto xmm_square_sum = _mm_dp_pd(xmm_v, xmm_v, 0x31);
@@ -145,7 +145,7 @@ TM_INLINE auto kernel_length_square_vec2(const Vec2Buffer<T>& vec) -> T {
 }
 
 template <typename T, SFINAE_VEC2_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_length_vec2(const Vec2Buffer<T>& vec) -> T {
+LM_INLINE auto kernel_length_vec2(const Vec2Buffer<T>& vec) -> T {
     // Implementation based on this post: https://bit.ly/3FyZF0n
     auto xmm_v = _mm_loadu_ps(vec.data());
     auto xmm_square_sum = _mm_dp_ps(xmm_v, xmm_v, 0x31);
@@ -153,7 +153,7 @@ TM_INLINE auto kernel_length_vec2(const Vec2Buffer<T>& vec) -> T {
 }
 
 template <typename T, SFINAE_VEC2_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_length_vec2(const Vec2Buffer<T>& vec) -> T {
+LM_INLINE auto kernel_length_vec2(const Vec2Buffer<T>& vec) -> T {
     // Implementation based on this post: https://bit.ly/3FyZF0n
     auto xmm_v = _mm_loadu_pd(vec.data());
     auto xmm_square_sum = _mm_dp_pd(xmm_v, xmm_v, 0x31);
@@ -161,7 +161,7 @@ TM_INLINE auto kernel_length_vec2(const Vec2Buffer<T>& vec) -> T {
 }
 
 template <typename T, SFINAE_VEC2_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_normalize_in_place_vec2(Vec2Buffer<T>& vec) -> void {
+LM_INLINE auto kernel_normalize_in_place_vec2(Vec2Buffer<T>& vec) -> void {
     // Implementation based on this post: https://bit.ly/3FyZF0n
     auto xmm_v = _mm_loadu_ps(vec.data());
     auto xmm_sums = _mm_dp_ps(xmm_v, xmm_v, 0x3f);
@@ -171,7 +171,7 @@ TM_INLINE auto kernel_normalize_in_place_vec2(Vec2Buffer<T>& vec) -> void {
 }
 
 template <typename T, SFINAE_VEC2_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_normalize_in_place_vec2(Vec2Buffer<T>& vec) -> void {
+LM_INLINE auto kernel_normalize_in_place_vec2(Vec2Buffer<T>& vec) -> void {
     // Implementation based on this post: https://bit.ly/3FyZF0n
     auto xmm_v = _mm_loadu_pd(vec.data());
     auto xmm_sums = _mm_dp_pd(xmm_v, xmm_v, 0x33);
@@ -181,7 +181,7 @@ TM_INLINE auto kernel_normalize_in_place_vec2(Vec2Buffer<T>& vec) -> void {
 }
 
 template <typename T, SFINAE_VEC2_F32_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_dot_vec2(const Vec2Buffer<T>& lhs,
+LM_INLINE auto kernel_dot_vec2(const Vec2Buffer<T>& lhs,
                                const Vec2Buffer<T>& rhs) -> T {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
@@ -190,7 +190,7 @@ TM_INLINE auto kernel_dot_vec2(const Vec2Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC2_F64_SSE_GUARD<T> = nullptr>
-TM_INLINE auto kernel_dot_vec2(const Vec2Buffer<T>& lhs,
+LM_INLINE auto kernel_dot_vec2(const Vec2Buffer<T>& lhs,
                                const Vec2Buffer<T>& rhs) -> T {
     auto xmm_lhs = _mm_loadu_pd(lhs.data());
     auto xmm_rhs = _mm_loadu_pd(rhs.data());
@@ -200,6 +200,6 @@ TM_INLINE auto kernel_dot_vec2(const Vec2Buffer<T>& lhs,
 
 }  // namespace sse
 }  // namespace math
-}  // namespace tiny
+}  // namespace loco
 
-#endif  // TINYMATH_SSE_ENABLED || TINYMATH_AVX_ENABLED
+#endif  // LOCOMATH_SSE_ENABLED || LOCOMATH_AVX_ENABLED

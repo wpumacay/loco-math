@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 #include <cmath>
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 #include <type_traits>
 
 constexpr size_t N_SAMPLES = 10;
@@ -8,17 +8,17 @@ constexpr double RANGE_MIN = -10.0;
 constexpr double RANGE_MAX = 10.0;
 
 template <typename T>
-auto FuncAllClose(const tiny::math::Vector2<T>& vec, T x, T y) -> void {
-    constexpr T EPSILON = tiny::math::EPS<T>;
+auto FuncAllClose(const loco::math::Vector2<T>& vec, T x, T y) -> void {
+    constexpr T EPSILON = loco::math::EPS<T>;
     REQUIRE(std::abs(vec.x() - x) < EPSILON);
     REQUIRE(std::abs(vec.y() - y) < EPSILON);
 }
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector2 class (vec2_t) constructors", "[vec2_t][template]",
-                   tiny::math::float32_t, tiny::math::float64_t) {
+                   loco::math::float32_t, loco::math::float64_t) {
     using T = TestType;
-    using Vector2 = tiny::math::Vector2<T>;
+    using Vector2 = loco::math::Vector2<T>;
 
     // Checking size and alignment (we won't do SIMD aligned load|store)
     constexpr int EXPECTED_SIZE = 2 * sizeof(T);

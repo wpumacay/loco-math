@@ -2,18 +2,18 @@
 # CMake configuration for C++ examples
 # ~~~
 
-if(NOT TINYMATH_BUILD_EXAMPLES)
+if(NOT LOCOMATH_BUILD_EXAMPLES)
   return()
 endif()
 
-if(NOT TARGET tinymath::tinymath)
-  loco_message("Examples require the [tinymath::tinymath] target to be defined"
+if(NOT TARGET loco::math)
+  loco_message("Examples require the [loco::math] target to be defined"
                LOG_LEVEL WARNING)
   return()
 endif()
 
 # List of all examples to be built
-set(TINYMATH_EXAMPLES_LIST
+set(LOCOMATH_EXAMPLES_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/example_vec2_constructors.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_vec2_operations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_vec3_constructors.cpp
@@ -26,7 +26,7 @@ set(TINYMATH_EXAMPLES_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/operations/ex_vec3f_ops.cpp)
 
 # Create all the example targets
-foreach(example_filepath IN LISTS TINYMATH_EXAMPLES_LIST)
+foreach(example_filepath IN LISTS LOCOMATH_EXAMPLES_LIST)
   loco_setup_single_file_example(${example_filepath} TARGET_DEPENDENCIES
-                                 tinymath::tinymath)
+                                 loco::math)
 endforeach()

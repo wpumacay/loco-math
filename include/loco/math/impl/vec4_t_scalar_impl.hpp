@@ -1,8 +1,8 @@
 #pragma once
 
-#include <tinymath/vec4_t.hpp>
+#include <loco/math/vec4_t.hpp>
 
-namespace tiny {
+namespace loco {
 namespace math {
 namespace scalar {
 
@@ -14,7 +14,7 @@ using SFINAE_VEC4_SCALAR_GUARD =
     typename std::enable_if<IsScalar<T>::value>::type*;
 
 template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_add_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
+LM_INLINE auto kernel_add_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
                                const Vec4Buffer<T>& rhs) -> void {
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
         dst[i] = lhs[i] + rhs[i];
@@ -22,7 +22,7 @@ TM_INLINE auto kernel_add_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_sub_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
+LM_INLINE auto kernel_sub_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
                                const Vec4Buffer<T>& rhs) -> void {
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
         dst[i] = lhs[i] - rhs[i];
@@ -30,7 +30,7 @@ TM_INLINE auto kernel_sub_vec4(Vec4Buffer<T>& dst, const Vec4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_scale_vec4(Vec4Buffer<T>& dst, T scale,
+LM_INLINE auto kernel_scale_vec4(Vec4Buffer<T>& dst, T scale,
                                  const Vec4Buffer<T>& vec) -> void {
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
         dst[i] = scale * vec[i];
@@ -38,7 +38,7 @@ TM_INLINE auto kernel_scale_vec4(Vec4Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
+LM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
                                     const Vec4Buffer<T>& lhs,
                                     const Vec4Buffer<T>& rhs) -> void {
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
@@ -47,7 +47,7 @@ TM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
+LM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
                                const Vec4Buffer<T>& rhs) -> T {
     T accum = static_cast<T>(0.0);
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
@@ -57,10 +57,10 @@ TM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
-TM_INLINE auto kernel_compare_eq_vec4(const Vec4Buffer<T>& lhs,
+LM_INLINE auto kernel_compare_eq_vec4(const Vec4Buffer<T>& lhs,
                                       const Vec4Buffer<T>& rhs) -> bool {
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
-        if (std::abs(lhs[i] - rhs[i]) >= tiny::math::EPS<T>) {
+        if (std::abs(lhs[i] - rhs[i]) >= loco::math::EPS<T>) {
             return false;
         }
     }
@@ -69,4 +69,4 @@ TM_INLINE auto kernel_compare_eq_vec4(const Vec4Buffer<T>& lhs,
 
 }  // namespace scalar
 }  // namespace math
-}  // namespace tiny
+}  // namespace loco

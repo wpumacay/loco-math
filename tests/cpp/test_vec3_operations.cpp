@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 
 /*
  * @todo(wilbert): replace GENERATE of fixed values with random values + seed
@@ -20,11 +20,11 @@ constexpr auto FuncCompareEqual(T xa, T ya, T za, T xb, T yb, T zb, T eps)
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
-                   tiny::math::float32_t, tiny::math::float64_t) {
+                   loco::math::float32_t, loco::math::float64_t) {
     using T = TestType;
-    using Vector3 = tiny::math::Vector3<T>;
+    using Vector3 = loco::math::Vector3<T>;
 
-    constexpr T EPSILON = tiny::math::EPS<T>;
+    constexpr T EPSILON = loco::math::EPS<T>;
 
     SECTION("Vector comparison ==, !=") {
         Vector3 v_1(1.0, 2.0, 3.0);  // NOLINT
@@ -139,8 +139,8 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
         auto length_square = val_x * val_x + val_y * val_y + val_z * val_z;
         auto length = std::sqrt(length_square);
 
-        auto v_length_square = tiny::math::squareNorm(v);
-        auto v_length = tiny::math::norm(v);
+        auto v_length_square = loco::math::squareNorm(v);
+        auto v_length = loco::math::norm(v);
 
         REQUIRE(std::abs(v_length_square - length_square) < EPSILON);
         REQUIRE(std::abs(v_length - length) < EPSILON);
@@ -151,14 +151,14 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
         auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
         auto val_z = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);  // NOLINT
         Vector3 v(val_x, val_y, val_z);
-        tiny::math::normalize_in_place(v);
+        loco::math::normalize_in_place(v);
 
         auto norm = std::sqrt(val_x * val_x + val_y * val_y + val_z * val_z);
         auto val_xnorm = val_x / norm;
         auto val_ynorm = val_y / norm;
         auto val_znorm = val_z / norm;
 
-        auto v_norm = tiny::math::norm(v);
+        auto v_norm = loco::math::norm(v);
 
         REQUIRE(std::abs(v_norm - 1.0) < EPSILON);
         REQUIRE(std::abs(v.x() - val_xnorm) < EPSILON);
@@ -171,14 +171,14 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
         auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);  // NOLINT
         auto val_z = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);  // NOLINT
         Vector3 v(val_x, val_y, val_z);
-        auto vn = tiny::math::normalize(v);
+        auto vn = loco::math::normalize(v);
 
         auto norm = std::sqrt(val_x * val_x + val_y * val_y + val_z * val_z);
         auto val_xnorm = val_x / norm;
         auto val_ynorm = val_y / norm;
         auto val_znorm = val_z / norm;
 
-        auto vn_norm = tiny::math::norm(vn);
+        auto vn_norm = loco::math::norm(vn);
 
         REQUIRE(std::abs(vn_norm - 1.0) < EPSILON);
         REQUIRE(std::abs(vn.x() - val_xnorm) < EPSILON);
@@ -199,7 +199,7 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
         Vector3 v_b(val_x_b, val_y_b, val_z_b);
 
         auto dot = val_x_a * val_x_b + val_y_a * val_y_b + val_z_a * val_z_b;
-        auto v_dot = tiny::math::dot(v_a, v_b);
+        auto v_dot = loco::math::dot(v_a, v_b);
 
         REQUIRE(std::abs(v_dot - dot) < EPSILON);
     }
@@ -211,9 +211,9 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
             Vector3 v_j(0.0, 1.0, 0.0);
             Vector3 v_k(0.0, 0.0, 1.0);
 
-            auto v_ij = tiny::math::cross(v_i, v_j);
-            auto v_jk = tiny::math::cross(v_j, v_k);
-            auto v_ki = tiny::math::cross(v_k, v_i);
+            auto v_ij = loco::math::cross(v_i, v_j);
+            auto v_jk = loco::math::cross(v_j, v_k);
+            auto v_ki = loco::math::cross(v_k, v_i);
 
             // i x j = k
             REQUIRE(std::abs(v_ij.x() - 0.0) < EPSILON);
@@ -237,7 +237,7 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
             Vector3 v_b(4.0, 5.0, 6.0);  // NOLINT
             Vector3 v_c(7.0, 8.0, 9.0);  // NOLINT
 
-            auto result = tiny::math::cross(v_a, v_b) + v_c;
+            auto result = loco::math::cross(v_a, v_b) + v_c;
             REQUIRE(std::abs(result.x() - 4.0) < EPSILON);   // NOLINT
             REQUIRE(std::abs(result.y() - 14.0) < EPSILON);  // NOLINT
             REQUIRE(std::abs(result.z() - 6.0) < EPSILON);   // NOLINT

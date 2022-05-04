@@ -1,24 +1,24 @@
 #pragma once
 
 // clang-format off
-#if defined(TINYMATH_FORCE_INLINE)
-    #if defined(TINYMATH_COMPILER_CLANG) || defined(TINYMATH_COMPILER_GCC)
-        #define TM_INLINE inline __attribute__((__always_inline__))
-    #elif defined(TINYMATH_COMPILER_MSVC)
-        #define TM_INLINE __forceinline
+#if defined(LOCOMATH_FORCE_INLINE)
+    #if defined(LOCOMATH_COMPILER_CLANG) || defined(LOCOMATH_COMPILER_GCC)
+        #define LM_INLINE inline __attribute__((__always_inline__))
+    #elif defined(LOCOMATH_COMPILER_MSVC)
+        #define LM_INLINE __forceinline
     #else
-        #define TM_INLINE inline
+        #define LM_INLINE inline
     #endif
 #else
-    #define TM_INLINE
+    #define LM_INLINE
 #endif
 
-#if defined(TINYMATH_COMPILER_CLANG) || defined(TINYMATH_COMPILER_GCC)
-    #define TM_NEVER_INLINE __attribute__((noinline))
-#elif defined(TINYMATH_COMPILER_MSVC)
-    #define TM_NEVER_INLINE __declspec(noinline)
+#if defined(LOCOMATH_COMPILER_CLANG) || defined(LOCOMATH_COMPILER_GCC)
+    #define LM_NEVER_INLINE __attribute__((noinline))
+#elif defined(LOCOMATH_COMPILER_MSVC)
+    #define LM_NEVER_INLINE __declspec(noinline)
 #else
-    #define TM_NEVER_INLINE
+    #define LM_NEVER_INLINE
 #endif
 
 // clang-format on
@@ -26,7 +26,7 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace tiny {
+namespace loco {
 namespace math {
 
 template <typename Scalar_T>
@@ -45,13 +45,13 @@ struct ShuffleMask {
     static constexpr uint value = (((z) << 6) | ((y) << 4) | ((x) << 2) | (w));
 };
 
-#if defined(TINYMATH_SSE_ENABLED)
+#if defined(LOCOMATH_SSE_ENABLED)
 using HAS_SSE = std::true_type;
 #else
 using HAS_SSE = std::false_type;
 #endif
 
-#if defined(TINYMATH_AVX_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED)
 using HAS_AVX = std::true_type;
 #else
 using HAS_AVX = std::false_type;
@@ -149,7 +149,7 @@ struct VecCommaInitializer {
 
  private:
     /// Terminates the operations of the initializer
-    TM_INLINE auto _finished() -> void {
+    LM_INLINE auto _finished() -> void {
         assert(m_CurrentBuildIndex == (VECTOR_LAST_INDEX + 1));
     }
 
@@ -161,4 +161,4 @@ struct VecCommaInitializer {
 };
 
 }  // namespace math
-}  // namespace tiny
+}  // namespace loco

@@ -12,10 +12,10 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <tinymath/common.hpp>
+#include <loco/math/common.hpp>
 // clang-format on
 
-namespace tiny {
+namespace loco {
 namespace math {
 
 /// \class Vector3
@@ -200,4 +200,4 @@ auto operator>>(std::istream& input_stream, Vector3<T>& dst) -> std::istream& {
 }
 
 }  // namespace math
-}  // namespace tiny
+}  // namespace loco

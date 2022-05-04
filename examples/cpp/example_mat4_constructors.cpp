@@ -1,11 +1,11 @@
 #include <iomanip>
 #include <iostream>
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 #include <type_traits>
 
 template <typename T>
 auto run_example_mat4() -> void {
-    using Mat4 = tiny::math::Matrix4<T>;
+    using Mat4 = loco::math::Matrix4<T>;
     using Vec4 = typename Mat4::ColumnType;
 
     // Checking size and alignment
@@ -76,8 +76,8 @@ auto main() -> int {
     constexpr int32_t PRINT_PRECISION = 7;
     std::cout << std::setprecision(PRINT_PRECISION);
 
-    run_example_mat4<tiny::math::float32_t>();
-    run_example_mat4<tiny::math::float64_t>();
+    run_example_mat4<loco::math::float32_t>();
+    run_example_mat4<loco::math::float64_t>();
 
     return 0;
 }

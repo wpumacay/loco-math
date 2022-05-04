@@ -1,12 +1,12 @@
 #pragma once
 
 // clang-format off
-#include <tinymath/vec2_t.hpp>
-#include <tinymath/impl/vec2_t_scalar_impl.hpp>
-#include <tinymath/impl/vec2_t_sse_impl.hpp>
+#include <loco/math/vec2_t.hpp>
+#include <loco/math/impl/vec2_t_scalar_impl.hpp>
+#include <loco/math/impl/vec2_t_sse_impl.hpp>
 // clang-format on
 
-namespace tiny {
+namespace loco {
 namespace math {
 
 template <typename T>
@@ -14,8 +14,8 @@ using SFINAE_VEC2_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 
 /// \brief Returns the square of the norm-2 of the vector
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-TM_INLINE auto squareNorm(const Vector2<T>& vec) -> T {
-#if defined(TINYMATH_AVX_ENABLED) || defined(TINYMATH_SSE_ENABLED)
+LM_INLINE auto squareNorm(const Vector2<T>& vec) -> T {
+#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
     return sse::kernel_length_square_vec2<T>(vec.elements());
 #else
     return scalar::kernel_length_square_vec2<T>(vec.elements());
@@ -24,8 +24,8 @@ TM_INLINE auto squareNorm(const Vector2<T>& vec) -> T {
 
 /// \brief Returns the norm-2 of the vector
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-TM_INLINE auto norm(const Vector2<T>& vec) -> T {
-#if defined(TINYMATH_AVX_ENABLED) || defined(TINYMATH_SSE_ENABLED)
+LM_INLINE auto norm(const Vector2<T>& vec) -> T {
+#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
     return sse::kernel_length_vec2<T>(vec.elements());
 #else
     return std::sqrt(scalar::kernel_length_square_vec2<T>(vec.elements()));
@@ -34,9 +34,9 @@ TM_INLINE auto norm(const Vector2<T>& vec) -> T {
 
 /// \brief Returns a normalized version of this vector
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-TM_INLINE auto normalize(const Vector2<T>& vec) -> Vector2<T> {
+LM_INLINE auto normalize(const Vector2<T>& vec) -> Vector2<T> {
     Vector2<T> vec_normalized = vec;
-#if defined(TINYMATH_AVX_ENABLED) || defined(TINYMATH_SSE_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_normalize_in_place_vec2<T>(vec_normalized.elements());
 #else
     scalar::kernel_normalize_in_place_vec2<T>(vec_normalized.elements());
@@ -46,8 +46,8 @@ TM_INLINE auto normalize(const Vector2<T>& vec) -> Vector2<T> {
 
 /// \brief Normalizes in-place the given vector
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-TM_INLINE auto normalize_in_place(Vector2<T>& vec) -> void {  // NOLINT
-#if defined(TINYMATH_AVX_ENABLED) || defined(TINYMATH_SSE_ENABLED)
+LM_INLINE auto normalize_in_place(Vector2<T>& vec) -> void {  // NOLINT
+#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_normalize_in_place_vec2<T>(vec.elements());
 #else
     scalar::kernel_normalize_in_place_vec2<T>(vec.elements());
@@ -56,8 +56,8 @@ TM_INLINE auto normalize_in_place(Vector2<T>& vec) -> void {  // NOLINT
 
 /// \brief Returns the dot-product of the given two vectors
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-TM_INLINE auto dot(const Vector2<T>& lhs, const Vector2<T>& rhs) -> T {
-#if defined(TINYMATH_AVX_ENABLED) || defined(TINYMATH_SSE_ENABLED)
+LM_INLINE auto dot(const Vector2<T>& lhs, const Vector2<T>& rhs) -> T {
+#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
     return sse::kernel_dot_vec2<T>(lhs.elements(), rhs.elements());
 #else
     return scalar::kernel_dot_vec2<T>(lhs.elements(), rhs.elements());
@@ -77,10 +77,10 @@ TM_INLINE auto dot(const Vector2<T>& lhs, const Vector2<T>& rhs) -> T {
 /// \param[in] lhs Left-hand-side operand of the vector-sum
 /// \param[in] rhs Right-hand-side operand of the vector-sum
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-TM_INLINE auto operator+(const Vector2<T>& lhs, const Vector2<T>& rhs)
+LM_INLINE auto operator+(const Vector2<T>& lhs, const Vector2<T>& rhs)
     -> Vector2<T> {
     Vector2<T> dst;
-#if defined(TINYMATH_AVX_ENABLED) || defined(TINYMATH_SSE_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_add_vec2<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_add_vec2<T>(dst.elements(), lhs.elements(), rhs.elements());
@@ -101,10 +101,10 @@ TM_INLINE auto operator+(const Vector2<T>& lhs, const Vector2<T>& rhs)
 /// \param[in] lhs Left-hand-side operand of the vector-sum
 /// \param[in] rhs Right-hand-side operand of the vector-sum
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-TM_INLINE auto operator-(const Vector2<T>& lhs, const Vector2<T>& rhs)
+LM_INLINE auto operator-(const Vector2<T>& lhs, const Vector2<T>& rhs)
     -> Vector2<T> {
     Vector2<T> dst;
-#if defined(TINYMATH_AVX_ENABLED) || defined(TINYMATH_SSE_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_sub_vec2<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_sub_vec2<T>(dst.elements(), lhs.elements(), rhs.elements());
@@ -125,9 +125,9 @@ TM_INLINE auto operator-(const Vector2<T>& lhs, const Vector2<T>& rhs)
 /// \param[in] scale Scalar value by which to scale the second operand
 /// \param[in] vec Vector in 3d-space which we want to scale
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-TM_INLINE auto operator*(T scale, const Vector2<T>& vec) -> Vector2<T> {
+LM_INLINE auto operator*(T scale, const Vector2<T>& vec) -> Vector2<T> {
     Vector2<T> dst;
-#if defined(TINYMATH_AVX_ENABLED) || defined(TINYMATH_SSE_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_scale_vec2<T>(dst.elements(), scale, vec.elements());
 #else
     scalar::kernel_scale_vec2<T>(dst.elements(), scale, vec.elements());
@@ -148,9 +148,9 @@ TM_INLINE auto operator*(T scale, const Vector2<T>& vec) -> Vector2<T> {
 /// \param[in] vec Vector in 3d-space which we want to scale
 /// \param[in] scale Scalar value by which to scale the first operand
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-TM_INLINE auto operator*(const Vector2<T>& vec, T scale) -> Vector2<T> {
+LM_INLINE auto operator*(const Vector2<T>& vec, T scale) -> Vector2<T> {
     Vector2<T> dst;
-#if defined(TINYMATH_AVX_ENABLED) || defined(TINYMATH_SSE_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_scale_vec2<T>(dst.elements(), scale, vec.elements());
 #else
     scalar::kernel_scale_vec2(dst.elements(), scale, vec.elements());
@@ -171,10 +171,10 @@ TM_INLINE auto operator*(const Vector2<T>& vec, T scale) -> Vector2<T> {
 /// \param[in] lhs Left-hand-side operand of the element-wise product
 /// \param[in] rhs Right-hand-side operand of the element-wise product
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-TM_INLINE auto operator*(const Vector2<T>& lhs, const Vector2<T>& rhs)
+LM_INLINE auto operator*(const Vector2<T>& lhs, const Vector2<T>& rhs)
     -> Vector2<T> {
     Vector2<T> dst;
-#if defined(TINYMATH_AVX_ENABLED) || defined(TINYMATH_SSE_ENABLED)
+#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_hadamard_vec2<T>(dst.elements(), lhs.elements(),
                                  rhs.elements());
 #else
@@ -201,7 +201,7 @@ TM_INLINE auto operator*(const Vector2<T>& lhs, const Vector2<T>& rhs)
 /// \param[in] rhs Right-hand-side operand of the comparison
 /// \returns true if the given vectors are within a pre-defined epsilon margin
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-TM_INLINE auto operator==(const Vector2<T>& lhs, const Vector2<T>& rhs)
+LM_INLINE auto operator==(const Vector2<T>& lhs, const Vector2<T>& rhs)
     -> bool {
     return scalar::kernel_compare_eq_vec2<T>(lhs.elements(), rhs.elements());
 }
@@ -214,10 +214,10 @@ TM_INLINE auto operator==(const Vector2<T>& lhs, const Vector2<T>& rhs)
 /// \param[in] rhs Right-hand-side operand of the comparison
 /// \returns true if the given vectors are not within a pre-defined margin
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-TM_INLINE auto operator!=(const Vector2<T>& lhs, const Vector2<T>& rhs)
+LM_INLINE auto operator!=(const Vector2<T>& lhs, const Vector2<T>& rhs)
     -> bool {
     return !scalar::kernel_compare_eq_vec2<T>(lhs.elements(), rhs.elements());
 }
 
 }  // namespace math
-}  // namespace tiny
+}  // namespace loco

@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 #include <cmath>
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 #include <type_traits>
 
 constexpr int N_SAMPLES = 4;
@@ -9,41 +9,41 @@ constexpr double RANGE_MAX = 10.0;
 
 // clang-format off
 template <typename T>
-auto FuncAllClose(const tiny::math::Matrix4<T>& mat,
+auto FuncAllClose(const loco::math::Matrix4<T>& mat,
                   T x00, T x01, T x02, T x03,
                   T x10, T x11, T x12, T x13,
                   T x20, T x21, T x22, T x23,
                   T x30, T x31, T x32, T x33) -> void {
     const auto& cols = mat.elements();
 
-    REQUIRE(std::abs(cols[0][0] - x00) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[0][1] - x10) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[0][2] - x20) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[0][3] - x30) < tiny::math::EPS<T>);
+    REQUIRE(std::abs(cols[0][0] - x00) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[0][1] - x10) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[0][2] - x20) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[0][3] - x30) < loco::math::EPS<T>);
 
-    REQUIRE(std::abs(cols[1][0] - x01) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[1][1] - x11) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[1][2] - x21) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[1][3] - x31) < tiny::math::EPS<T>);
+    REQUIRE(std::abs(cols[1][0] - x01) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[1][1] - x11) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[1][2] - x21) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[1][3] - x31) < loco::math::EPS<T>);
 
-    REQUIRE(std::abs(cols[2][0] - x02) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[2][1] - x12) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[2][2] - x22) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[2][3] - x32) < tiny::math::EPS<T>);
+    REQUIRE(std::abs(cols[2][0] - x02) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[2][1] - x12) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[2][2] - x22) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[2][3] - x32) < loco::math::EPS<T>);
 
-    REQUIRE(std::abs(cols[3][0] - x03) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[3][1] - x13) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[3][2] - x23) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[3][3] - x33) < tiny::math::EPS<T>);
+    REQUIRE(std::abs(cols[3][0] - x03) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[3][1] - x13) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[3][2] - x23) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[3][3] - x33) < loco::math::EPS<T>);
 }
 // clang-format on
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) constructors", "[mat4_t][template]",
-                   tiny::math::float32_t, tiny::math::float64_t) {
+                   loco::math::float32_t, loco::math::float64_t) {
     using T = TestType;
-    using Matrix4 = tiny::math::Matrix4<T>;
-    using Vector4 = tiny::math::Vector4<T>;
+    using Matrix4 = loco::math::Matrix4<T>;
+    using Vector4 = loco::math::Vector4<T>;
 
     // Checking size and alignment (storage is an array of column vectors)
     constexpr int EXPECTED_SIZE = 16 * sizeof(T);

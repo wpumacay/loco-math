@@ -19,35 +19,35 @@ auto FuncAllClose(const loco::math::Matrix4<T>& mat,
                   T x30, T x31, T x32, T x33) -> void {
     const auto& cols = mat.elements();
 
-    REQUIRE(std::abs(cols[0][0] - x00) < loco::math::EPS<T>);
-    REQUIRE(std::abs(cols[0][1] - x10) < loco::math::EPS<T>);
-    REQUIRE(std::abs(cols[0][2] - x20) < loco::math::EPS<T>);
-    REQUIRE(std::abs(cols[0][3] - x30) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[0][0] - x00) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[0][1] - x10) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[0][2] - x20) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[0][3] - x30) < static_cast<T>(loco::math::EPS));
 
-    REQUIRE(std::abs(cols[1][0] - x01) < loco::math::EPS<T>);
-    REQUIRE(std::abs(cols[1][1] - x11) < loco::math::EPS<T>);
-    REQUIRE(std::abs(cols[1][2] - x21) < loco::math::EPS<T>);
-    REQUIRE(std::abs(cols[1][3] - x31) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[1][0] - x01) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[1][1] - x11) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[1][2] - x21) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[1][3] - x31) < static_cast<T>(loco::math::EPS));
 
-    REQUIRE(std::abs(cols[2][0] - x02) < loco::math::EPS<T>);
-    REQUIRE(std::abs(cols[2][1] - x12) < loco::math::EPS<T>);
-    REQUIRE(std::abs(cols[2][2] - x22) < loco::math::EPS<T>);
-    REQUIRE(std::abs(cols[2][3] - x32) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[2][0] - x02) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[2][1] - x12) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[2][2] - x22) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[2][3] - x32) < static_cast<T>(loco::math::EPS));
 
-    REQUIRE(std::abs(cols[3][0] - x03) < loco::math::EPS<T>);
-    REQUIRE(std::abs(cols[3][1] - x13) < loco::math::EPS<T>);
-    REQUIRE(std::abs(cols[3][2] - x23) < loco::math::EPS<T>);
-    REQUIRE(std::abs(cols[3][3] - x33) < loco::math::EPS<T>);
+    REQUIRE(std::abs(cols[3][0] - x03) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[3][1] - x13) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[3][2] - x23) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[3][3] - x33) < static_cast<T>(loco::math::EPS));
 }
 // clang-format on
 
 template <typename T>
 auto FuncAllClose(const loco::math::Vector4<T>& vec, T x0, T x1, T x2, T x3)
     -> void {
-    REQUIRE(std::abs(vec[0] - x0) < loco::math::EPS<T>);
-    REQUIRE(std::abs(vec[1] - x1) < loco::math::EPS<T>);
-    REQUIRE(std::abs(vec[2] - x2) < loco::math::EPS<T>);
-    REQUIRE(std::abs(vec[3] - x3) < loco::math::EPS<T>);
+    REQUIRE(std::abs(vec[0] - x0) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(vec[1] - x1) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(vec[2] - x2) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(vec[3] - x3) < static_cast<T>(loco::math::EPS));
 }
 
 // NOLINTNEXTLINE

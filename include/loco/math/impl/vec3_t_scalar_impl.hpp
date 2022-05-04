@@ -78,7 +78,7 @@ template <typename T, SFINAE_VEC3_SCALAR_GUARD<T> = nullptr>
 LM_INLINE auto kernel_compare_eq_vec3(const Vec3Buffer<T>& lhs,
                                       const Vec3Buffer<T>& rhs) -> bool {
     for (int32_t i = 0; i < Vector3<T>::VECTOR_NDIM; ++i) {
-        if (std::abs(lhs[i] - rhs[i]) >= loco::math::EPS<T>) {
+        if (std::abs(lhs[i] - rhs[i]) >= static_cast<T>(loco::math::EPS)) {
             return false;
         }
     }

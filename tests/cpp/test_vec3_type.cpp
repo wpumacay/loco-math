@@ -9,7 +9,7 @@ constexpr double RANGE_MAX = 10.0;
 
 template <typename T>
 auto FuncAllClose(const loco::math::Vector3<T>& vec, T x, T y, T z) -> void {
-    constexpr T EPSILON = loco::math::EPS<T>;
+    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
     REQUIRE(std::abs(vec.x() - x) < EPSILON);
     REQUIRE(std::abs(vec.y() - y) < EPSILON);
     REQUIRE(std::abs(vec.z() - z) < EPSILON);

@@ -60,7 +60,7 @@ template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
 LM_INLINE auto kernel_compare_eq_vec4(const Vec4Buffer<T>& lhs,
                                       const Vec4Buffer<T>& rhs) -> bool {
     for (int32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
-        if (std::abs(lhs[i] - rhs[i]) >= loco::math::EPS<T>) {
+        if (std::abs(lhs[i] - rhs[i]) >= static_cast<T>(loco::math::EPS)) {
             return false;
         }
     }

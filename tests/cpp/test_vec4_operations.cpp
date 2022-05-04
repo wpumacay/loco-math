@@ -25,7 +25,7 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
     using T = TestType;
     using Vector4 = loco::math::Vector4<T>;
 
-    constexpr T EPSILON = loco::math::EPS<T>;
+    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
 
     SECTION("Vector comparison ==, !=") {
         Vector4 v_1(1.0, 2.0, 3.0, 4.0);  // NOLINT

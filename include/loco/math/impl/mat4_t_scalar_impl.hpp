@@ -94,7 +94,8 @@ LM_INLINE auto kernel_compare_eq_mat4(const Mat4Buffer<T>& lhs,
                                       const Mat4Buffer<T>& rhs) -> bool {
     for (int32_t col = 0; col < Matrix4<T>::MATRIX_NDIM; ++col) {
         for (int32_t idx = 0; idx < Matrix4<T>::MATRIX_NDIM; ++idx) {
-            if (std::abs(lhs[col][idx] - rhs[col][idx]) > loco::math::EPS<T>) {
+            if (std::abs(lhs[col][idx] - rhs[col][idx]) >
+                static_cast<T>(loco::math::EPS)) {
                 return false;
             }
         }

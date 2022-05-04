@@ -78,7 +78,7 @@ template <typename T, SFINAE_VEC2_SCALAR_GUARD<T> = nullptr>
 LM_INLINE auto kernel_compare_eq_vec2(const Vec2Buffer<T>& lhs,
                                       const Vec2Buffer<T>& rhs) -> bool {
     for (int32_t i = 0; i < Vector2<T>::VECTOR_NDIM; ++i) {
-        if (std::abs(lhs[i] - rhs[i]) >= loco::math::EPS<T>) {
+        if (std::abs(lhs[i] - rhs[i]) >= static_cast<T>(loco::math::EPS)) {
             return false;
         }
     }

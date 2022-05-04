@@ -64,8 +64,8 @@ LM_NEVER_INLINE auto check_operator_hadamard() -> float {
 }
 
 auto main() -> int {
-    auto foo_add = check_operator_add();
-    auto foo_sub = check_operator_sub();
-    auto foo_hmd = check_operator_hadamard();
+    check_operator_add();
+    check_operator_sub();
+    check_operator_hadamard();
     return 0;
 }

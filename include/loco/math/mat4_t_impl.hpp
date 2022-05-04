@@ -62,11 +62,14 @@ template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
 LM_INLINE auto operator*(double scale, const Matrix4<T>& mat) -> Matrix4<T> {
     Matrix4<T> dst;
 #if defined(LOCOMATH_AVX_ENABLED)
-    avx::kernel_scale_mat4<T>(dst.elements(), scale, mat.elements());
+    avx::kernel_scale_mat4<T>(dst.elements(), static_cast<T>(scale),
+                              mat.elements());
 #elif defined(LOCOMATH_SSE_ENABLED)
-    sse::kernel_scale_mat4<T>(dst.elements(), scale, mat.elements());
+    sse::kernel_scale_mat4<T>(dst.elements(), static_cast<T>(scale),
+                              mat.elements());
 #else
-    scalar::kernel_scale_mat4<T>(dst.elements(), scale, mat.elements());
+    scalar::kernel_scale_mat4<T>(dst.elements(), static_cast<T>(scale),
+                                 mat.elements());
 #endif
     return dst;
 }
@@ -76,11 +79,14 @@ template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Matrix4<T>& mat, double scale) -> Matrix4<T> {
     Matrix4<T> dst;
 #if defined(LOCOMATH_AVX_ENABLED)
-    avx::kernel_scale_mat4<T>(dst.elements(), scale, mat.elements());
+    avx::kernel_scale_mat4<T>(dst.elements(), static_cast<T>(scale),
+                              mat.elements());
 #elif defined(LOCOMATH_SSE_ENABLED)
-    sse::kernel_scale_mat4<T>(dst.elements(), scale, mat.elements());
+    sse::kernel_scale_mat4<T>(dst.elements(), static_cast<T>(scale),
+                              mat.elements());
 #else
-    scalar::kernel_scale_mat4<T>(dst.elements(), scale, mat.elements());
+    scalar::kernel_scale_mat4<T>(dst.elements(), static_cast<T>(scale),
+                                 mat.elements());
 #endif
     return dst;
 }

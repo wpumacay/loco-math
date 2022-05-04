@@ -217,9 +217,9 @@ class Mat4CommaInitializer {
     /// Number of scalar dimensions of the vector
     constexpr static uint32_t MATRIX_NDIM = Matrix4<Scalar_T>::MATRIX_NDIM;
     /// Index of the first vector entry
-    constexpr static int32_t MATRIX_FIRST_INDEX = 0;
+    constexpr static uint32_t MATRIX_FIRST_INDEX = 0;
     /// Index of the last vector entry
-    constexpr static int32_t MATRIX_LAST_INDEX = MATRIX_NDIM * MATRIX_NDIM - 1;
+    constexpr static uint32_t MATRIX_LAST_INDEX = MATRIX_NDIM * MATRIX_NDIM - 1;
 
     /// Type of this comma-initializer
     using Type = Mat4CommaInitializer<Scalar_T>;
@@ -258,8 +258,8 @@ class Mat4CommaInitializer {
         assert(m_CurrentBuildIndex <= MATRIX_LAST_INDEX);
         // Get the indices of the current (col, row) we're dealing with (notice
         // that the current index grows in row-major order, unlike our layout)
-        const int row_index = m_CurrentBuildIndex / MATRIX_NDIM;  // NOLINT
-        const int col_index = m_CurrentBuildIndex % MATRIX_NDIM;  // NOLINT
+        const uint32_t row_index = m_CurrentBuildIndex / MATRIX_NDIM;  // NOLINT
+        const uint32_t col_index = m_CurrentBuildIndex % MATRIX_NDIM;  // NOLINT
         m_MatrixRef[col_index][row_index] = next_coeff;
         ++m_CurrentBuildIndex;
         return *this;
@@ -275,7 +275,7 @@ class Mat4CommaInitializer {
     /// Mutable reference to the matrix we're currently constructing
     MatrixType& m_MatrixRef;
     /// Index of the current coefficient being built
-    int32_t m_CurrentBuildIndex = MATRIX_FIRST_INDEX;
+    uint32_t m_CurrentBuildIndex = MATRIX_FIRST_INDEX;
 };
 
 template <typename T,

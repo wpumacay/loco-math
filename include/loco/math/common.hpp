@@ -102,9 +102,9 @@ struct VecCommaInitializer {
     /// Number of scalar dimensions of the vector
     static constexpr uint32_t VECTOR_NDIM = V::VECTOR_NDIM;
     /// Index of the first vector entry on its storage buffer|array
-    static constexpr int32_t VECTOR_FIRST_INDEX = 0;
+    static constexpr uint32_t VECTOR_FIRST_INDEX = 0;
     /// Index of the last vector entry on its storage buffer|array
-    static constexpr int32_t VECTOR_LAST_INDEX = VECTOR_NDIM - 1;
+    static constexpr uint32_t VECTOR_LAST_INDEX = VECTOR_NDIM - 1;
 
     /// Type alias for the float|scalar type in use
     using T = typename V::ElementType;
@@ -154,7 +154,7 @@ struct VecCommaInitializer {
     /// Mutable reference to the vector we're currently constructing
     VectorType& m_VectorRef;
     /// Index of the current coefficient being 'built'
-    int32_t m_CurrentBuildIndex = VECTOR_FIRST_INDEX;
+    uint32_t m_CurrentBuildIndex = VECTOR_FIRST_INDEX;
 };
 
 }  // namespace math

@@ -3,9 +3,6 @@
 #include <loco/math/all.hpp>
 #include <type_traits>
 
-#define ERROR_1 "Wrong number of bytes in internal storage"
-#define ERROR_2 "Wrong alignment of internal storage"
-
 template <typename T>
 auto run_example_vec2() -> void {
     using Vec2 = loco::math::Vector2<T>;
@@ -13,8 +10,10 @@ auto run_example_vec2() -> void {
     // Checking size and alignment (we won't do SIMD aligned load|store)
     constexpr int EXPECTED_SIZE = 2 * sizeof(T);
     constexpr int EXPECTED_ALIGNMENT = 2 * sizeof(T);
-    static_assert(EXPECTED_SIZE == Vec2::num_bytes_size(), ERROR_1);
-    static_assert(EXPECTED_ALIGNMENT == Vec2::num_bytes_alignment(), ERROR_2);
+    static_assert(EXPECTED_SIZE == Vec2::num_bytes_size(),
+                  "Wrong number of bytes in internal storage");
+    static_assert(EXPECTED_ALIGNMENT == Vec2::num_bytes_alignment(),
+                  "Wrong alignment of internal storage");
 
     // Just note which scalar type we're using
     if (std::is_same<T, float>()) {

@@ -29,7 +29,8 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
     SECTION("Vector comparison ==, !=") {
         Vector3 v_1(1.0, 2.0, 3.0);  // NOLINT
         Vector3 v_2(1.0, 2.0, 3.0);  // NOLINT
-        Vector3 v_3(1.1, 2.1, 3.1);  // NOLINT
+        Vector3 v_3(static_cast<T>(1.1), static_cast<T>(2.1),
+                    static_cast<T>(3.1));
 
         REQUIRE(v_1 == v_2);
         REQUIRE(v_2 != v_3);
@@ -160,7 +161,7 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
 
         auto v_norm = loco::math::norm(v);
 
-        REQUIRE(std::abs(v_norm - 1.0) < EPSILON);
+        REQUIRE(std::abs(v_norm - static_cast<T>(1.0)) < EPSILON);
         REQUIRE(std::abs(v.x() - val_xnorm) < EPSILON);
         REQUIRE(std::abs(v.y() - val_ynorm) < EPSILON);
         REQUIRE(std::abs(v.z() - val_znorm) < EPSILON);
@@ -180,7 +181,7 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
 
         auto vn_norm = loco::math::norm(vn);
 
-        REQUIRE(std::abs(vn_norm - 1.0) < EPSILON);
+        REQUIRE(std::abs(vn_norm - static_cast<T>(1.0)) < EPSILON);
         REQUIRE(std::abs(vn.x() - val_xnorm) < EPSILON);
         REQUIRE(std::abs(vn.y() - val_ynorm) < EPSILON);
         REQUIRE(std::abs(vn.z() - val_znorm) < EPSILON);
@@ -216,19 +217,19 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
             auto v_ki = loco::math::cross(v_k, v_i);
 
             // i x j = k
-            REQUIRE(std::abs(v_ij.x() - 0.0) < EPSILON);
-            REQUIRE(std::abs(v_ij.y() - 0.0) < EPSILON);
-            REQUIRE(std::abs(v_ij.z() - 1.0) < EPSILON);
+            REQUIRE(std::abs(v_ij.x() - static_cast<T>(0.0)) < EPSILON);
+            REQUIRE(std::abs(v_ij.y() - static_cast<T>(0.0)) < EPSILON);
+            REQUIRE(std::abs(v_ij.z() - static_cast<T>(1.0)) < EPSILON);
 
             // j x k = i
-            REQUIRE(std::abs(v_jk.x() - 1.0) < EPSILON);
-            REQUIRE(std::abs(v_jk.y() - 0.0) < EPSILON);
-            REQUIRE(std::abs(v_jk.z() - 0.0) < EPSILON);
+            REQUIRE(std::abs(v_jk.x() - static_cast<T>(1.0)) < EPSILON);
+            REQUIRE(std::abs(v_jk.y() - static_cast<T>(0.0)) < EPSILON);
+            REQUIRE(std::abs(v_jk.z() - static_cast<T>(0.0)) < EPSILON);
 
             // k x i = j
-            REQUIRE(std::abs(v_ki.x() - 0.0) < EPSILON);
-            REQUIRE(std::abs(v_ki.y() - 1.0) < EPSILON);
-            REQUIRE(std::abs(v_ki.z() - 0.0) < EPSILON);
+            REQUIRE(std::abs(v_ki.x() - static_cast<T>(0.0)) < EPSILON);
+            REQUIRE(std::abs(v_ki.y() - static_cast<T>(1.0)) < EPSILON);
+            REQUIRE(std::abs(v_ki.z() - static_cast<T>(0.0)) < EPSILON);
         }
 
         // Checking a fixed case (a.cross(b) + c)
@@ -238,9 +239,9 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
             Vector3 v_c(7.0, 8.0, 9.0);  // NOLINT
 
             auto result = loco::math::cross(v_a, v_b) + v_c;
-            REQUIRE(std::abs(result.x() - 4.0) < EPSILON);   // NOLINT
-            REQUIRE(std::abs(result.y() - 14.0) < EPSILON);  // NOLINT
-            REQUIRE(std::abs(result.z() - 6.0) < EPSILON);   // NOLINT
+            REQUIRE(std::abs(result.x() - static_cast<T>(4.0)) < EPSILON);
+            REQUIRE(std::abs(result.y() - static_cast<T>(14.0)) < EPSILON);
+            REQUIRE(std::abs(result.z() - static_cast<T>(6.0)) < EPSILON);
         }
     }
 }

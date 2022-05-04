@@ -2,13 +2,13 @@
 #include <cmath>
 #include <loco/math/all.hpp>
 
-template <typename T>
-constexpr T RANGE_MIN = -10.0;
-template <typename T>
-constexpr T RANGE_MAX = 10.0;
+static constexpr double RANGE_MIN = -10.0;
+static constexpr double RANGE_MAX = 10.0;
 
 // NOLINTNEXTLINE
-#define GenRandom(T, N) GENERATE(take(N, random(RANGE_MIN<T>, RANGE_MAX<T>)));
+#define GenRandom(T, N) \
+    GENERATE(take(      \
+        N, random(static_cast<T>(RANGE_MIN), static_cast<T>(RANGE_MAX))));
 
 // clang-format off
 template <typename T>
@@ -55,7 +55,7 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
                    loco::math::float32_t, loco::math::float64_t) {
     using T = TestType;
     using Matrix4 = loco::math::Matrix4<T>;
-    using Vector4 = loco::math::Vector4<T>;
+    // using Vector4 = loco::math::Vector4<T>;
 
     SECTION("Matrix comparison ==, !=") {
         // clang-format off
@@ -64,7 +64,10 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
                     0.0, 0.0, 3.0, 0.0,
                     0.0, 0.0, 0.0, 4.0);
         Matrix4 m_2(1.0, 2.0, 3.0, 4.0);
-        Matrix4 m_3(1.1, 2.1, 3.1, 4.1);
+        Matrix4 m_3(static_cast<T>(1.1),
+                    static_cast<T>(2.1),
+                    static_cast<T>(3.1),
+                    static_cast<T>(4.1));
         // clang-format on
         REQUIRE(m_1 == m_2);
         REQUIRE(m_2 != m_3);
@@ -151,8 +154,8 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
         auto scale_1 = GenRandom(T, 1);
         auto scale_2 = GenRandom(T, 1);
 
-        auto mat_scaled_1 = scale_1 * m_a;
-        auto mat_scaled_2 = m_b * scale_2;
+        auto mat_scaled_1 = static_cast<double>(scale_1) * m_a;
+        auto mat_scaled_2 = m_b * static_cast<double>(scale_2);
 
         // clang-format off
         FuncAllClose<T>(mat_scaled_1,

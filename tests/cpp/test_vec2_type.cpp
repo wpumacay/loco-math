@@ -52,9 +52,6 @@ TEMPLATE_TEST_CASE("Vector2 class (vec2_t) constructors", "[vec2_t][template]",
         auto val_y =
             GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
                                             static_cast<T>(RANGE_MAX))));
-        auto val_z =
-            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                            static_cast<T>(RANGE_MAX))));
 
         Vector2 v_1(val_x, val_y);
         Vector2 v_2 = {val_x, val_y};

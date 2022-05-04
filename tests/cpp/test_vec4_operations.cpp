@@ -28,9 +28,10 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
     constexpr T EPSILON = static_cast<T>(loco::math::EPS);
 
     SECTION("Vector comparison ==, !=") {
-        Vector4 v_1(1.0, 2.0, 3.0, 4.0);  // NOLINT
-        Vector4 v_2(1.0, 2.0, 3.0, 4.0);  // NOLINT
-        Vector4 v_3(1.1, 2.1, 3.1, 4.1);  // NOLINT
+        Vector4 v_1(1.0, 2.0, 3.0, 4.0);                        // NOLINT
+        Vector4 v_2(1.0, 2.0, 3.0, 4.0);                        // NOLINT
+        Vector4 v_3(static_cast<T>(1.1), static_cast<T>(2.1),   // NOLINT
+                    static_cast<T>(3.1), static_cast<T>(4.1));  // NOLINT
 
         REQUIRE(v_1 == v_2);
         REQUIRE(v_2 != v_3);

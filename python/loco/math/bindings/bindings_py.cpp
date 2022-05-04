@@ -26,10 +26,10 @@ extern void bindings_vector4(py::module& m, const std::string& className);
 }  // namespace loco
 
 // NOLINTNEXTLINE @todo(wilbert): check how other projects handle this part
-PYBIND11_MODULE(math, m) {
-    // loco::math::bindings_vector3<float32_t>(m, "Vector3f");
-    // loco::math::bindings_vector3<float64_t>(m, "Vector3d");
-
-    // loco::math::bindings_vector4<float32_t>(m, "Vector4f");
-    // loco::math::bindings_vector4<float64_t>(m, "Vector4d");
-}
+// PYBIND11_MODULE(math, m) {
+//     // loco::math::bindings_vector3<float32_t>(m, "Vector3f");
+//     // loco::math::bindings_vector3<float64_t>(m, "Vector3d");
+//
+//     // loco::math::bindings_vector4<float32_t>(m, "Vector4f");
+//     // loco::math::bindings_vector4<float64_t>(m, "Vector4d");
+// }

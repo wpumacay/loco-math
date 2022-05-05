@@ -56,6 +56,7 @@ TEMPLATE_TEST_CASE("Vector2 class (vec2_t) constructors", "[vec2_t][template]",
         Vector2 v_1(val_x, val_y);
         Vector2 v_2 = {val_x, val_y};
         Vector2 v_3;
+        // cppcheck-suppress constStatement
         v_3 << val_x, val_y;
 
         FuncAllClose(v_1, val_x, val_y);

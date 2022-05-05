@@ -59,6 +59,7 @@ struct Vector2 {
         m_Elements[1] = y;
     }
 
+    // cppcheck-suppress noExplicitConstructor
     /// Constructs a vector from an initializer list of the form {x, y}
     Vector2(const std::initializer_list<Scalar_T>& values) {
         assert(values.size() == Vector2<Scalar_T>::VECTOR_NDIM);
@@ -116,10 +117,10 @@ struct Vector2 {
     }
 
     /// Returns the number of dimensions of the vector (Vector2 <-> 2 scalars)
-    constexpr auto ndim() const -> uint32_t { return VECTOR_NDIM; }
+    static constexpr auto ndim() -> uint32_t { return VECTOR_NDIM; }
 
     /// Returns the number of scalars used by the storage of the vector
-    constexpr auto buffer_size() const -> uint32_t { return BUFFER_SIZE; }
+    static constexpr auto buffer_size() -> uint32_t { return BUFFER_SIZE; }
 
     /// Returns the size (in bytes) of the vector
     static constexpr auto num_bytes_size() -> uint32_t { return sizeof(Type); }

@@ -33,6 +33,7 @@ auto run_example_vec4() -> void {
     Vec4 vec_e(1.0, 2.0, 3.0, 4.0);
     Vec4 vec_f = {2.0, 4.0, 6.0, 8.0};
     Vec4 vec_g;
+    // cppcheck-suppress constStatement
     vec_g << 1.0, 2.0, 3.0, 4.0;
 
     // Send the sample vectors to the standard output stream

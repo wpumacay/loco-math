@@ -115,7 +115,8 @@ struct VecCommaInitializer {
 
     /// Creates a comma-initializer for the given vector and initial coeff.
     // NOLINTNEXTLINE(runtime/references)
-    explicit VecCommaInitializer(VectorType& vec, T coeff0) : m_VectorRef(vec) {
+    explicit VecCommaInitializer(VectorType& vec, const T& coeff0)
+        : m_VectorRef(vec) {
         // Append first coefficient to the vector
         m_VectorRef[m_CurrentBuildIndex++] = coeff0;
     }
@@ -138,7 +139,7 @@ struct VecCommaInitializer {
     // -------------------------------------------------------------------------
 
     /// Appends the given coefficient to the vector managed by this initializer
-    auto operator,(T next_coeff) -> Type& {
+    auto operator,(const T& next_coeff) -> Type& {
         assert(m_CurrentBuildIndex <= VECTOR_LAST_INDEX);
         m_VectorRef[m_CurrentBuildIndex++] = next_coeff;
         return *this;

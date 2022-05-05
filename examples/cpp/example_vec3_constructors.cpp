@@ -32,6 +32,7 @@ auto run_example_vec3() -> void {
     Vec3 vec_d(1.0, 2.0, 3.0);
     Vec3 vec_e = {2.0, 4.0, 6.0};
     Vec3 vec_f;
+    // cppcheck-suppress constStatement
     vec_f << 1.0, 2.0, 3.0;
 
     // Send the sample vectors to the standard output stream

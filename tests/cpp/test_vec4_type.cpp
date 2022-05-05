@@ -95,6 +95,7 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) constructors", "[vec4_t][template]",
         Vector4 v_1(val_x, val_y, val_z, val_w);
         Vector4 v_2 = {val_x, val_y, val_z, val_w};
         Vector4 v_3;
+        // cppcheck-suppress constStatement
         v_3 << val_x, val_y, val_z, val_w;
 
         FuncAllClose<T>(v_1, val_x, val_y, val_z, val_w);

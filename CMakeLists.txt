@@ -37,13 +37,18 @@ loco_initialize_project()
 
 # -------------------------------------
 # Setup C/C++ static-analyzers
-# ~~~
-# if(LOCOMATH_IS_ROOT_PROJECT)
-#   loco_setup_cppcheck()
-#   loco_setup_cpplint()
-#   loco_setup_clang_tidy()
-# endif()
-# ~~~
+if(LOCOMATH_IS_ROOT_PROJECT)
+  # @hack: If using tests, suppress warnings from catch2
+  if(LOCOMATH_BUILD_TESTS)
+    set(CATCH2_EXCLUDE_PATH
+        ${CMAKE_SOURCE_DIR}/third_party/catch2/source/single_include/catch2/)
+    loco_setup_cppcheck(EXTRA_ARGS --suppress=*:${CATCH2_EXCLUDE_PATH}*)
+  else()
+    loco_setup_cppcheck()
+  endif()
+  loco_setup_cpplint()
+  loco_setup_clang_tidy()
+endif()
 
 # -------------------------------------
 # Get the required third-party dependencies

@@ -136,7 +136,7 @@ class Matrix4 {
 
     /// Returns a printable string-representation of the matrix
     auto toString() const -> std::string {
-        auto& data = m_Elements;
+        const auto& data = m_Elements;
         std::stringstream sstr_result;
 
         sstr_result << "( " << data[0][0] << ", " << data[1][0] << ", "
@@ -152,21 +152,21 @@ class Matrix4 {
     }
 
     /// Returns the number of rows
-    constexpr auto rows() const -> uint32_t { return MATRIX_NDIM; }
+    static constexpr auto rows() -> uint32_t { return MATRIX_NDIM; }
 
     /// Returns the number of columns
-    constexpr auto cols() const -> uint32_t { return MATRIX_NDIM; }
+    static constexpr auto cols() -> uint32_t { return MATRIX_NDIM; }
 
     /// Returns the number of elements in the matrix
-    constexpr auto size() const -> uint32_t {
+    static constexpr auto size() -> uint32_t {
         return MATRIX_NDIM * MATRIX_NDIM;
     }
 
     /// Returns the dimnension of the matrix
-    constexpr auto ndim() const -> uint32_t { return MATRIX_NDIM; }
+    static constexpr auto ndim() -> uint32_t { return MATRIX_NDIM; }
 
     /// Returns the number of scalars used by the storage of the matrix
-    constexpr auto buffer_size() const -> uint32_t { return BUFFER_SIZE; }
+    static constexpr auto buffer_size() -> uint32_t { return BUFFER_SIZE; }
 
     /// Returns the size (in bytes) of the matrix
     static constexpr auto num_bytes_size() -> uint32_t { return sizeof(Type); }

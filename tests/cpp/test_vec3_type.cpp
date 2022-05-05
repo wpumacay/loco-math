@@ -72,6 +72,7 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) constructors", "[vec3_t][template]",
         Vector3 v_1(val_x, val_y, val_z);
         Vector3 v_2 = {val_x, val_y, val_z};
         Vector3 v_3;
+        // cppcheck-suppress constStatement
         v_3 << val_x, val_y, val_z;
 
         FuncAllClose(v_1, val_x, val_y, val_z);

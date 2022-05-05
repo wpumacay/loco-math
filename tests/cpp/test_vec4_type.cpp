@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 #include <cmath>
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 #include <type_traits>
 
 constexpr int N_SAMPLES = 10;
@@ -8,9 +8,9 @@ constexpr double RANGE_MIN = -10.0;
 constexpr double RANGE_MAX = 10.0;
 
 template <typename T>
-auto FuncAllClose(const tiny::math::Vector4<T>& vec, T x, T y, T z, T w)
+auto FuncAllClose(const loco::math::Vector4<T>& vec, T x, T y, T z, T w)
     -> void {
-    constexpr T EPSILON = tiny::math::EPS<T>;
+    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
     REQUIRE(std::abs(vec.x() - x) < EPSILON);
     REQUIRE(std::abs(vec.y() - y) < EPSILON);
     REQUIRE(std::abs(vec.z() - z) < EPSILON);
@@ -19,9 +19,9 @@ auto FuncAllClose(const tiny::math::Vector4<T>& vec, T x, T y, T z, T w)
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector4 class (vec4_t) constructors", "[vec4_t][template]",
-                   tiny::math::float32_t, tiny::math::float64_t) {
+                   loco::math::float32_t, loco::math::float64_t) {
     using T = TestType;
-    using Vector4 = tiny::math::Vector4<T>;
+    using Vector4 = loco::math::Vector4<T>;
 
     // Checking size and alignment (we pad by 1 scalar to keep the alignment)
     constexpr int EXPECTED_SIZE = 4 * sizeof(T);
@@ -95,6 +95,7 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) constructors", "[vec4_t][template]",
         Vector4 v_1(val_x, val_y, val_z, val_w);
         Vector4 v_2 = {val_x, val_y, val_z, val_w};
         Vector4 v_3;
+        // cppcheck-suppress constStatement
         v_3 << val_x, val_y, val_z, val_w;
 
         FuncAllClose<T>(v_1, val_x, val_y, val_z, val_w);

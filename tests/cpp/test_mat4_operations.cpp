@@ -1,61 +1,61 @@
 #include <catch2/catch.hpp>
 #include <cmath>
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 
-template <typename T>
-constexpr T RANGE_MIN = -10.0;
-template <typename T>
-constexpr T RANGE_MAX = 10.0;
+static constexpr double RANGE_MIN = -10.0;
+static constexpr double RANGE_MAX = 10.0;
 
 // NOLINTNEXTLINE
-#define GenRandom(T, N) GENERATE(take(N, random(RANGE_MIN<T>, RANGE_MAX<T>)));
+#define GenRandom(T, N) \
+    GENERATE(take(      \
+        N, random(static_cast<T>(RANGE_MIN), static_cast<T>(RANGE_MAX))));
 
 // clang-format off
 template <typename T>
-auto FuncAllClose(const tiny::math::Matrix4<T>& mat,
+auto FuncAllClose(const loco::math::Matrix4<T>& mat,
                   T x00, T x01, T x02, T x03,
                   T x10, T x11, T x12, T x13,
                   T x20, T x21, T x22, T x23,
                   T x30, T x31, T x32, T x33) -> void {
     const auto& cols = mat.elements();
 
-    REQUIRE(std::abs(cols[0][0] - x00) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[0][1] - x10) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[0][2] - x20) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[0][3] - x30) < tiny::math::EPS<T>);
+    REQUIRE(std::abs(cols[0][0] - x00) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[0][1] - x10) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[0][2] - x20) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[0][3] - x30) < static_cast<T>(loco::math::EPS));
 
-    REQUIRE(std::abs(cols[1][0] - x01) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[1][1] - x11) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[1][2] - x21) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[1][3] - x31) < tiny::math::EPS<T>);
+    REQUIRE(std::abs(cols[1][0] - x01) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[1][1] - x11) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[1][2] - x21) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[1][3] - x31) < static_cast<T>(loco::math::EPS));
 
-    REQUIRE(std::abs(cols[2][0] - x02) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[2][1] - x12) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[2][2] - x22) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[2][3] - x32) < tiny::math::EPS<T>);
+    REQUIRE(std::abs(cols[2][0] - x02) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[2][1] - x12) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[2][2] - x22) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[2][3] - x32) < static_cast<T>(loco::math::EPS));
 
-    REQUIRE(std::abs(cols[3][0] - x03) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[3][1] - x13) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[3][2] - x23) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(cols[3][3] - x33) < tiny::math::EPS<T>);
+    REQUIRE(std::abs(cols[3][0] - x03) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[3][1] - x13) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[3][2] - x23) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(cols[3][3] - x33) < static_cast<T>(loco::math::EPS));
 }
 // clang-format on
 
 template <typename T>
-auto FuncAllClose(const tiny::math::Vector4<T>& vec, T x0, T x1, T x2, T x3)
+auto FuncAllClose(const loco::math::Vector4<T>& vec, T x0, T x1, T x2, T x3)
     -> void {
-    REQUIRE(std::abs(vec[0] - x0) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(vec[1] - x1) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(vec[2] - x2) < tiny::math::EPS<T>);
-    REQUIRE(std::abs(vec[3] - x3) < tiny::math::EPS<T>);
+    REQUIRE(std::abs(vec[0] - x0) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(vec[1] - x1) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(vec[2] - x2) < static_cast<T>(loco::math::EPS));
+    REQUIRE(std::abs(vec[3] - x3) < static_cast<T>(loco::math::EPS));
 }
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
-                   tiny::math::float32_t, tiny::math::float64_t) {
+                   loco::math::float32_t, loco::math::float64_t) {
     using T = TestType;
-    using Matrix4 = tiny::math::Matrix4<T>;
-    using Vector4 = tiny::math::Vector4<T>;
+    using Matrix4 = loco::math::Matrix4<T>;
+    // using Vector4 = loco::math::Vector4<T>;
 
     SECTION("Matrix comparison ==, !=") {
         // clang-format off
@@ -64,7 +64,10 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
                     0.0, 0.0, 3.0, 0.0,
                     0.0, 0.0, 0.0, 4.0);
         Matrix4 m_2(1.0, 2.0, 3.0, 4.0);
-        Matrix4 m_3(1.1, 2.1, 3.1, 4.1);
+        Matrix4 m_3(static_cast<T>(1.1),
+                    static_cast<T>(2.1),
+                    static_cast<T>(3.1),
+                    static_cast<T>(4.1));
         // clang-format on
         REQUIRE(m_1 == m_2);
         REQUIRE(m_2 != m_3);
@@ -151,8 +154,8 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
         auto scale_1 = GenRandom(T, 1);
         auto scale_2 = GenRandom(T, 1);
 
-        auto mat_scaled_1 = scale_1 * m_a;
-        auto mat_scaled_2 = m_b * scale_2;
+        auto mat_scaled_1 = static_cast<double>(scale_1) * m_a;
+        auto mat_scaled_2 = m_b * static_cast<double>(scale_2);
 
         // clang-format off
         FuncAllClose<T>(mat_scaled_1,
@@ -245,7 +248,7 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
     //        // clang-format on
     //    }
     SECTION("Element-wise matrix product") {
-        auto mat_elmwise = tiny::math::hadamard(m_a, m_b);
+        auto mat_elmwise = loco::math::hadamard(m_a, m_b);
         // clang-format off
         FuncAllClose<T>(mat_elmwise,
             x00 * y00, x01 * y01, x02 * y02, x03 * y03,

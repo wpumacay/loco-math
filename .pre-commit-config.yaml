@@ -44,4 +44,4 @@ repos:
         args: [--template=gcc, --std=c++11,
                --enable=style,performance,warning,portability, --inline-suppr,
                --suppress=internalAstError, --suppress=unmatchedSuppression,
-               --inconclusive, -ithird_party]
+               --inconclusive]

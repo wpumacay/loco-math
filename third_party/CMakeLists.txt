@@ -9,7 +9,7 @@
 # https://github.com/jeffamstutz/superbuild_ospray/blob/main/macros.cmake
 # ~~~
 
-if(NOT TINYMATH_IS_ROOT_PROJECT)
+if(NOT LOCOMATH_IS_ROOT_PROJECT)
   return()
 endif()
 
@@ -27,9 +27,9 @@ loco_configure_git_dependency(
     BUILD_MODE ${CMAKE_BUILD_TYPE}
     BUILD_ARGS
       -DPYBIND11_TEST=OFF
-    DISCARD_UNLESS TINYMATH_BUILD_PYTHON_BINDINGS)
+    DISCARD_UNLESS LOCOMATH_BUILD_PYTHON_BINDINGS)
 
-if(NOT pybind11_FOUND)
+if(LOCOMATH_BUILD_PYTHON_BINDINGS AND (NOT pybind11_FOUND))
   loco_message("Requested Python bindings, but couldn't find Pybind11 :("
                LOG_LEVEL FATAL_ERROR)
 endif()
@@ -46,9 +46,9 @@ loco_configure_git_dependency(
       -DCATCH_INSTALL_DOCS=OFF
       -DCATCH_INSTALL_EXTRAS=OFF
       -DCATCH_DEVELOPMENT_BUILD=OFF
-    DISCARD_UNLESS TINYMATH_BUILD_TESTS)
+    DISCARD_UNLESS LOCOMATH_BUILD_TESTS)
 
-if(NOT TARGET Catch2::Catch2)
+if(LOCOMATH_BUILD_TESTS AND (NOT TARGET Catch2::Catch2))
   loco_message("Requested Catch2 support, but couldn't find Catch2 :("
                LOG_LEVEL FATAL_ERROR)
 endif()

@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 #include <cmath>
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 
 /*
  * @todo(wilbert): replace GENERATE of fixed values with random values + seed
@@ -21,16 +21,17 @@ constexpr auto FuncCompareEqual(T xa, T ya, T za, T xb, T yb, T zb, T wa, T wb,
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
-                   tiny::math::float32_t, tiny::math::float64_t) {
+                   loco::math::float32_t, loco::math::float64_t) {
     using T = TestType;
-    using Vector4 = tiny::math::Vector4<T>;
+    using Vector4 = loco::math::Vector4<T>;
 
-    constexpr T EPSILON = tiny::math::EPS<T>;
+    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
 
     SECTION("Vector comparison ==, !=") {
-        Vector4 v_1(1.0, 2.0, 3.0, 4.0);  // NOLINT
-        Vector4 v_2(1.0, 2.0, 3.0, 4.0);  // NOLINT
-        Vector4 v_3(1.1, 2.1, 3.1, 4.1);  // NOLINT
+        Vector4 v_1(1.0, 2.0, 3.0, 4.0);                        // NOLINT
+        Vector4 v_2(1.0, 2.0, 3.0, 4.0);                        // NOLINT
+        Vector4 v_3(static_cast<T>(1.1), static_cast<T>(2.1),   // NOLINT
+                    static_cast<T>(3.1), static_cast<T>(4.1));  // NOLINT
 
         REQUIRE(v_1 == v_2);
         REQUIRE(v_2 != v_3);
@@ -162,7 +163,7 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
 
         auto dot = val_x_a * val_x_b + val_y_a * val_y_b + val_z_a * val_z_b +
                    val_w_a * val_w_b;
-        auto v_dot = tiny::math::dot(v_a, v_b);
+        auto v_dot = loco::math::dot(v_a, v_b);
 
         REQUIRE(std::abs(v_dot - dot) < EPSILON);
     }

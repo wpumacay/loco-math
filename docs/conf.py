@@ -1,3 +1,4 @@
+# pylint: skip-file
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -17,8 +18,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'TinyMath'
-copyright = '2020, Wilbert Santos Pumacay Huallpa'
+project = 'LocoMath'
+copyright = '2022, Wilbert Santos Pumacay Huallpa'
 author = 'Wilbert Santos Pumacay Huallpa'
 
 
@@ -51,4 +52,4 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 # Breathe configuration
-breathe_default_project = "TinyMath"
+breathe_default_project = "LocoMath"

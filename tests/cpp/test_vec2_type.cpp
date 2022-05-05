@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 #include <cmath>
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 #include <type_traits>
 
 constexpr size_t N_SAMPLES = 10;
@@ -8,17 +8,17 @@ constexpr double RANGE_MIN = -10.0;
 constexpr double RANGE_MAX = 10.0;
 
 template <typename T>
-auto FuncAllClose(const tiny::math::Vector2<T>& vec, T x, T y) -> void {
-    constexpr T EPSILON = tiny::math::EPS<T>;
+auto FuncAllClose(const loco::math::Vector2<T>& vec, T x, T y) -> void {
+    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
     REQUIRE(std::abs(vec.x() - x) < EPSILON);
     REQUIRE(std::abs(vec.y() - y) < EPSILON);
 }
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector2 class (vec2_t) constructors", "[vec2_t][template]",
-                   tiny::math::float32_t, tiny::math::float64_t) {
+                   loco::math::float32_t, loco::math::float64_t) {
     using T = TestType;
-    using Vector2 = tiny::math::Vector2<T>;
+    using Vector2 = loco::math::Vector2<T>;
 
     // Checking size and alignment (we won't do SIMD aligned load|store)
     constexpr int EXPECTED_SIZE = 2 * sizeof(T);
@@ -52,13 +52,11 @@ TEMPLATE_TEST_CASE("Vector2 class (vec2_t) constructors", "[vec2_t][template]",
         auto val_y =
             GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
                                             static_cast<T>(RANGE_MAX))));
-        auto val_z =
-            GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                            static_cast<T>(RANGE_MAX))));
 
         Vector2 v_1(val_x, val_y);
         Vector2 v_2 = {val_x, val_y};
         Vector2 v_3;
+        // cppcheck-suppress constStatement
         v_3 << val_x, val_y;
 
         FuncAllClose(v_1, val_x, val_y);

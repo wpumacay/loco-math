@@ -1,20 +1,19 @@
 #include <iomanip>
 #include <iostream>
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 #include <type_traits>
-
-#define ERROR_1 "Wrong number of bytes in internal storage"
-#define ERROR_2 "Wrong alignment of internal storage"
 
 template <typename T>
 auto run_example_vec4() -> void {
-    using Vec4 = tiny::math::Vector4<T>;
+    using Vec4 = loco::math::Vector4<T>;
 
     // Checking size and alignment (we pad by 1 scalar to keep the alignment)
     constexpr int EXPECTED_SIZE = 4 * sizeof(T);
     constexpr int EXPECTED_ALIGNMENT = 4 * sizeof(T);
-    static_assert(EXPECTED_SIZE == Vec4::num_bytes_size(), ERROR_1);
-    static_assert(EXPECTED_ALIGNMENT == Vec4::num_bytes_alignment(), ERROR_2);
+    static_assert(EXPECTED_SIZE == Vec4::num_bytes_size(),
+                  "Wrong number of bytes in internal storage");
+    static_assert(EXPECTED_ALIGNMENT == Vec4::num_bytes_alignment(),
+                  "Wrong alignment of internal storage");
 
     // Just note which scalar type we're using
     if (std::is_same<T, float>()) {
@@ -34,6 +33,7 @@ auto run_example_vec4() -> void {
     Vec4 vec_e(1.0, 2.0, 3.0, 4.0);
     Vec4 vec_f = {2.0, 4.0, 6.0, 8.0};
     Vec4 vec_g;
+    // cppcheck-suppress constStatement
     vec_g << 1.0, 2.0, 3.0, 4.0;
 
     // Send the sample vectors to the standard output stream

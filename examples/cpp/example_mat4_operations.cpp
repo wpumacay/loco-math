@@ -1,11 +1,11 @@
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 #include <type_traits>
 
 template <typename T, typename = typename std::enable_if<
-                          tiny::math::IsScalar<T>::value>::type>
+                          loco::math::IsScalar<T>::value>::type>
 auto run_operations_mat4() -> void {
-    using Mat4 = tiny::math::Matrix4<T>;
-    using Vec4 = tiny::math::Vector4<T>;
+    using Mat4 = loco::math::Matrix4<T>;
+    using Vec4 = loco::math::Vector4<T>;
 
     // Preamble (show the type we're currently working with)
     if (std::is_same<T, float>()) {
@@ -33,7 +33,7 @@ auto run_operations_mat4() -> void {
     Mat4 mat_scale_1 = 2.5 * mat_a;
     Mat4 mat_scale_2 = mat_b * 0.25;
     Mat4 mat_matmul = mat_a * mat_b;
-    Mat4 mat_hadamard = tiny::math::hadamard(mat_a, mat_b);
+    Mat4 mat_hadamard = loco::math::hadamard(mat_a, mat_b);
     Vec4 vec_matvecmul = mat_a * vec;
 
     std::cout << "a: " << '\n' << mat_a.toString() << '\n';

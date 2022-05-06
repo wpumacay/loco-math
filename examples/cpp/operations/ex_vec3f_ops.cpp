@@ -1,21 +1,21 @@
 #include <iostream>
-#include <tinymath/tinymath.hpp>
+#include <loco/math/all.hpp>
 
-using Vector3f = tiny::math::Vector3<float>;
+using Vector3f = loco::math::Vector3<float>;
 
-TM_NEVER_INLINE auto check_operator_add() -> float {
+LM_NEVER_INLINE auto check_operator_add() -> float {
     Vector3f vec_a;
     Vector3f vec_b;
     std::cin >> vec_a;
     std::cin >> vec_b;
-#ifndef TINYMATH_COMPILER_MSVC
+#ifndef LOCOMATH_COMPILER_MSVC
     __asm__(
         "check_operator_add_start:;"
         "nop;");
 #endif
     // Use operator+ (check the dissassembly)
     auto vec_sum = vec_a + vec_b;
-#ifndef TINYMATH_COMPILER_MSVC
+#ifndef LOCOMATH_COMPILER_MSVC
     __asm__(
         "check_operator_add_end:;"
         "nop;");
@@ -23,19 +23,19 @@ TM_NEVER_INLINE auto check_operator_add() -> float {
     return vec_sum[0] + vec_sum[1] + vec_sum[2];
 }
 
-TM_NEVER_INLINE auto check_operator_sub() -> float {
+LM_NEVER_INLINE auto check_operator_sub() -> float {
     Vector3f vec_a;
     Vector3f vec_b;
     std::cin >> vec_a;
     std::cin >> vec_b;
-#ifndef TINYMATH_COMPILER_MSVC
+#ifndef LOCOMATH_COMPILER_MSVC
     __asm__(
         "check_operator_sub_start:;"
         "nop;");
 #endif
     // Use operator- (check the dissassembly)
     auto vec_sub = vec_a - vec_b;
-#ifndef TINYMATH_COMPILER_MSVC
+#ifndef LOCOMATH_COMPILER_MSVC
     __asm__(
         "check_operator_sub_end:;"
         "nop;");
@@ -43,19 +43,19 @@ TM_NEVER_INLINE auto check_operator_sub() -> float {
     return vec_sub[0] + vec_sub[1] + vec_sub[2];
 }
 
-TM_NEVER_INLINE auto check_operator_hadamard() -> float {
+LM_NEVER_INLINE auto check_operator_hadamard() -> float {
     Vector3f vec_a;
     Vector3f vec_b;
     std::cin >> vec_a;
     std::cin >> vec_b;
-#ifndef TINYMATH_COMPILER_MSVC
+#ifndef LOCOMATH_COMPILER_MSVC
     __asm__(
         "check_operator_hadamard_start:;"
         "nop;");
 #endif
     // Use operator- (check the dissassembly)
     auto vec_hm = vec_a * vec_b;
-#ifndef TINYMATH_COMPILER_MSVC
+#ifndef LOCOMATH_COMPILER_MSVC
     __asm__(
         "check_operator_hadamard_end:;"
         "nop;");
@@ -64,8 +64,8 @@ TM_NEVER_INLINE auto check_operator_hadamard() -> float {
 }
 
 auto main() -> int {
-    auto foo_add = check_operator_add();
-    auto foo_sub = check_operator_sub();
-    auto foo_hmd = check_operator_hadamard();
+    check_operator_add();
+    check_operator_sub();
+    check_operator_hadamard();
     return 0;
 }

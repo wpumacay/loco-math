@@ -20,10 +20,6 @@
 namespace loco {
 namespace math {
 
-// Forward declare comma-initializer for matrix4-types
-template <typename Scalar_T>
-class Mat4CommaInitializer;
-
 /// \class Matrix4
 ///
 /// \brief Class representation of a 4 by 4 matrix of real-valued entries
@@ -130,8 +126,8 @@ class Matrix4 {
     }
 
     /// Returns a comma-initializer to construct the matrix via its coefficients
-    auto operator<<(Scalar_T coeff) -> Mat4CommaInitializer<Scalar_T> {
-        return Mat4CommaInitializer<Scalar_T>(*this, coeff);
+    auto operator<<(Scalar_T coeff) -> MatCommaInitializer<Type> {
+        return MatCommaInitializer<Type>(*this, coeff);
     }
 
     /// Returns a printable string-representation of the matrix
@@ -192,90 +188,6 @@ class Matrix4 {
  private:
     /// The buffer where all data lies (as an array of 4 column vectors)
     alignas(sizeof(Scalar_T) * BUFFER_SIZE) BufferType m_Elements;
-};
-
-/// \class Mat4CommaInitializer
-///
-/// \brief Helper class used during comma-initialization of mat4-types
-///
-/// \tparam Scalar_T Type of scalar used for the 4d matrices being constructed
-///
-/// This is a helper class used for operations of the form `v << 1.0, 2.0,...;`,
-/// which require to concatenate a comma-initializer after using the `<<`
-/// operator. This is based on Eigen's comma-initializer implementation.
-///
-/// \code
-///     Matrix4d mat;
-///     mat << 1.0,  2.0,  3.0,  4.0,
-///            5.0,  6.0,  7.0,  8.0,
-///            9.0,  10.0, 11.0, 12.0,
-///            13.0, 14.0, 15.0, 16.0;
-/// \endcode
-template <typename Scalar_T>
-class Mat4CommaInitializer {
- public:
-    /// Number of scalar dimensions of the vector
-    constexpr static uint32_t MATRIX_NDIM = Matrix4<Scalar_T>::MATRIX_NDIM;
-    /// Index of the first vector entry
-    constexpr static uint32_t MATRIX_FIRST_INDEX = 0;
-    /// Index of the last vector entry
-    constexpr static uint32_t MATRIX_LAST_INDEX = MATRIX_NDIM * MATRIX_NDIM - 1;
-
-    /// Type of this comma-initializer
-    using Type = Mat4CommaInitializer<Scalar_T>;
-    /// Matrix type currently in use
-    using MatrixType = Matrix4<Scalar_T>;
-
-    /// Constructs a comma-initializer for the given vector and initial coeff.
-    // NOLINTNEXTLINE(runtime/references)
-    explicit Mat4CommaInitializer(MatrixType& vec, Scalar_T coeff0)
-        : m_MatrixRef(vec) {
-        // Append first entry of the matrix
-        m_MatrixRef[0][0] = coeff0;
-        ++m_CurrentBuildIndex;
-    }
-
-    /// Constructs a comma-initializer by copying from another one
-    Mat4CommaInitializer(const Mat4CommaInitializer<Scalar_T>& other) = default;
-
-    /// Copies the contents of a given comma-initializer
-    auto operator=(const Mat4CommaInitializer<Scalar_T>& rhs)
-        -> Mat4CommaInitializer<Scalar_T>& = default;
-
-    /// Constructs a comma-initializer by moving the ownership of another one
-    Mat4CommaInitializer(Mat4CommaInitializer<Scalar_T>&& other) noexcept =
-        default;
-
-    /// Moves the contents of a given comma-initializer
-    auto operator=(Mat4CommaInitializer<Scalar_T>&& rhs) noexcept
-        -> Mat4CommaInitializer<Scalar_T>& = default;
-
-    /// Destroys and terminates the operations of the initializer
-    ~Mat4CommaInitializer() { _finished(); }
-
-    /// Appends the given coefficient to the initializer for building the vec3
-    auto operator,(Scalar_T next_coeff) -> Type& {
-        assert(m_CurrentBuildIndex <= MATRIX_LAST_INDEX);
-        // Get the indices of the current (col, row) we're dealing with (notice
-        // that the current index grows in row-major order, unlike our layout)
-        const uint32_t row_index = m_CurrentBuildIndex / MATRIX_NDIM;  // NOLINT
-        const uint32_t col_index = m_CurrentBuildIndex % MATRIX_NDIM;  // NOLINT
-        m_MatrixRef[col_index][row_index] = next_coeff;
-        ++m_CurrentBuildIndex;
-        return *this;
-    }
-
- private:
-    /// Terminates the operations of the initializer and returns the built vec3
-    LM_INLINE auto _finished() -> void {
-        assert(m_CurrentBuildIndex == (MATRIX_LAST_INDEX + 1));
-    }
-
- private:
-    /// Mutable reference to the matrix we're currently constructing
-    MatrixType& m_MatrixRef;
-    /// Index of the current coefficient being built
-    uint32_t m_CurrentBuildIndex = MATRIX_FIRST_INDEX;
 };
 
 template <typename T,

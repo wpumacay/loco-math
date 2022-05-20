@@ -91,7 +91,8 @@ struct CpuHasAVX : public std::integral_constant<bool,
 ///
 /// This is a helper class used for operations of the form `v << 1, 2, 3, ...;`,
 /// which require to concatenate a comma-initializer after using the `<<`
-/// operator. This is based on Eigen's comma-initializer implementation.
+/// operator. This is based on Eigen's comma-initializer implementation for
+/// vector types.
 ///
 /// \code
 ///     Vector3d vec;
@@ -156,6 +157,91 @@ struct VecCommaInitializer {
     VectorType& m_VectorRef;
     /// Index of the current coefficient being 'built'
     uint32_t m_CurrentBuildIndex = VECTOR_FIRST_INDEX;
+};
+
+/// \class MatCommaInitializer
+///
+/// \brief Helper class used during comma-initialization of matrix-types
+///
+/// \tparam V Type of matrix related to this comma initializer
+///
+/// This is a helper class used for operations of the form `m << 1.0, 2.0,...;`,
+/// which require to concatenate a comma-initializer after using the `<<`
+/// operator. This is based on Eigen's comma-initializer implementation for
+/// matrix types.
+///
+/// \code
+///     Matrix4d mat;
+///     mat << 1.0,  2.0,  3.0,  4.0,
+///            5.0,  6.0,  7.0,  8.0,
+///            9.0,  10.0, 11.0, 12.0,
+///            13.0, 14.0, 15.0, 16.0;
+/// \endcode
+template <typename M>
+struct MatCommaInitializer {
+    /// Number of scalar dimensions of the vector
+    constexpr static uint32_t MATRIX_NDIM = M::MATRIX_NDIM;
+    /// Index of the first vector entry
+    constexpr static uint32_t MATRIX_FIRST_INDEX = 0;
+    /// Index of the last vector entry
+    constexpr static uint32_t MATRIX_LAST_INDEX = MATRIX_NDIM * MATRIX_NDIM - 1;
+
+    /// Type alias for the float|scalar type in use
+    using T = typename M::ElementType;
+    /// Type alias for this comma-initializer
+    using Type = MatCommaInitializer<M>;
+    /// Type alias for the vector type linked to this initializer
+    using MatrixType = M;
+
+    /// Constructs a comma-initializer for the given vector and initial coeff.
+    // NOLINTNEXTLINE(runtime/references)
+    explicit MatCommaInitializer(MatrixType& vec, const T& coeff0)
+        : m_MatrixRef(vec) {
+        // Append first entry of the matrix
+        m_MatrixRef[0][0] = coeff0;
+        ++m_CurrentBuildIndex;
+    }
+
+    // Follow RAII and the 'Rule of 5' (use defaults though) -------------------
+
+    MatCommaInitializer(const MatCommaInitializer<M>& other) = default;
+
+    auto operator=(const MatCommaInitializer<M>& rhs)
+        -> MatCommaInitializer<M>& = default;
+
+    MatCommaInitializer(MatCommaInitializer<M>&& other) noexcept = default;
+
+    auto operator=(MatCommaInitializer<M>&& rhs) noexcept
+        -> MatCommaInitializer<M>& = default;
+
+    /// Release any resources and terminate the initializer's operation
+    ~MatCommaInitializer() { _finished(); }
+
+    // -------------------------------------------------------------------------
+
+    /// Appends the given coefficient to the initializer for building the vec3
+    auto operator,(const T& next_coeff) -> Type& {
+        assert(m_CurrentBuildIndex <= MATRIX_LAST_INDEX);
+        // Get the indices of the current (col, row) we're dealing with (notice
+        // that the current index grows in row-major order, unlike our layout)
+        const uint32_t row_index = m_CurrentBuildIndex / MATRIX_NDIM;  // NOLINT
+        const uint32_t col_index = m_CurrentBuildIndex % MATRIX_NDIM;  // NOLINT
+        m_MatrixRef[col_index][row_index] = next_coeff;
+        ++m_CurrentBuildIndex;
+        return *this;
+    }
+
+ private:
+    /// Terminates the operations of the initializer and returns the built vec3
+    LM_INLINE auto _finished() -> void {
+        assert(m_CurrentBuildIndex == (MATRIX_LAST_INDEX + 1));
+    }
+
+ private:
+    /// Mutable reference to the matrix we're currently constructing
+    MatrixType& m_MatrixRef;
+    /// Index of the current coefficient being built
+    uint32_t m_CurrentBuildIndex = MATRIX_FIRST_INDEX;
 };
 
 }  // namespace math

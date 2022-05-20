@@ -174,49 +174,5 @@ class Vector4 {
                                                                      0};
 };
 
-/// \brief Prints the given 4d vector to the given output stream
-///
-/// \tparam T Type of scalar used by the 4d vector operand
-///
-/// \param[in,out] output_stream The output stream to write the vector to
-/// \param[in] src The vector we want to print to the output stream
-/// \returns A reference to the modified output stream (to concatenate calls)
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
-auto operator<<(std::ostream& output_stream, const Vector4<T>& src)
-    -> std::ostream& {
-    output_stream << "(" << src.x() << ", " << src.y() << ", " << src.z()
-                  << ", " << src.w() << ")";
-    return output_stream;
-}
-
-/// \brief Reads a 4d vector from the given input stream
-///
-/// \tparam T Type of scalar used by the 4d vector operand
-///
-/// \param[in,out] input_stream The input stream from which to read the vector
-/// \param[out] dst The vector in which to place the read values
-/// \returns A reference to the modified input stream (to concatenate calls)
-template <typename T,
-          typename std::enable_if<IsScalar<T>::value>::type* = nullptr>
-auto operator>>(std::istream& input_stream, Vector4<T>& dst) -> std::istream& {
-    // Based on ignition-math implementation https://bit.ly/3iqAVgS
-    T x{};
-    T y{};
-    T z{};
-    T w{};
-
-    input_stream.setf(std::ios_base::skipws);
-    input_stream >> x >> y >> z >> w;
-    if (!input_stream.fail()) {
-        dst.x() = x;
-        dst.y() = y;
-        dst.z() = z;
-        dst.w() = w;
-    }
-
-    return input_stream;
-}
-
 }  // namespace math
 }  // namespace loco

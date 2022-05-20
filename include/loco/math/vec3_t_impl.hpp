@@ -5,6 +5,7 @@
 #include <loco/math/impl/vec3_t_scalar_impl.hpp>
 #include <loco/math/impl/vec3_t_sse_impl.hpp>
 #include <loco/math/impl/vec3_t_avx_impl.hpp>
+#include "loco/math/vec2_t_impl.hpp"
 // clang-format on
 
 namespace loco {
@@ -257,6 +258,46 @@ template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
 LM_INLINE auto operator!=(const Vector3<T>& lhs, const Vector3<T>& rhs)
     -> bool {
     return !scalar::kernel_compare_eq_vec3<T>(lhs.elements(), rhs.elements());
+}
+
+/// \brief Prints the given 3d vector to the given output stream
+///
+/// \tparam T Type of scalar used by the 3d vector operand
+///
+/// \param[in,out] output_stream The output stream to write the vector to
+/// \param[in] src The vector we want to print to the output stream
+/// \returns A reference to the modified output stream (to concatenate calls)
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
+auto operator<<(std::ostream& output_stream, const Vector3<T>& src)
+    -> std::ostream& {
+    output_stream << "(" << src.x() << ", " << src.y() << ", " << src.z()
+                  << ")";
+    return output_stream;
+}
+
+/// \brief Reads a 3d vector from the given input stream
+///
+/// \tparam T Type of scalar used by the 3d vector operand
+///
+/// \param[in,out] input_stream The input stream from which to read the vector
+/// \param[out] dst The vector in which to place the read values
+/// \returns A reference to the modified input stream (to concatenate calls)
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
+auto operator>>(std::istream& input_stream, Vector3<T>& dst) -> std::istream& {
+    // Based on ignition-math implementation https://bit.ly/3iqAVgS
+    T x{};
+    T y{};
+    T z{};
+
+    input_stream.setf(std::ios_base::skipws);
+    input_stream >> x >> y >> z;
+    if (!input_stream.fail()) {
+        dst.x() = x;
+        dst.y() = y;
+        dst.z() = z;
+    }
+
+    return input_stream;
 }
 
 }  // namespace math

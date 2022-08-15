@@ -18,6 +18,7 @@ if(NOT TARGET Catch2::Catch2)
 endif()
 
 include(CTest)
+include(Catch)
 
 add_executable(
   LocoMathCppTests
@@ -31,3 +32,5 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_type.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_operations.cpp)
 target_link_libraries(LocoMathCppTests PRIVATE loco::math Catch2::Catch2)
+# Discover tets and pick an integer as the random seed
+catch_discover_tests(LocoMathCppTests)

@@ -65,3 +65,6 @@ jobs:
 
     - name: Build C++ Project
       run: cmake --build build --config ${{matrix.build-type}}
+
+    - name: Running C++ Tests
+      run: ctest --test-dir build/tests/cpp

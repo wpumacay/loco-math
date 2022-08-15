@@ -28,6 +28,11 @@ loco_find_or_fetch_dependency(
     -DCATCH_DEVELOPMENT_BUILD=OFF
   EXCLUDE_FROM_ALL)
 
+# Add custom scripts for test-case registration to the module path
+if (catch2_POPULATED)
+  list(APPEND CMAKE_MODULE_PATH "${catch2_SOURCE_DIR}/contrib")
+endif()
+
 # ------------------------------------------------------------------------------
 # Pybind11 is used for generating Python bindings for this project's C++ API.
 # Notice that we're using a forked version in which usage of unique-ptr is

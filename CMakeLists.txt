@@ -16,7 +16,7 @@ include(${loco_cmake_SOURCE_DIR}/Index.cmake)
 # Define our project :)
 project(
   LocoMath
-  VERSION 0.4.0
+  VERSION 0.4.1
   DESCRIPTION "A basic math library for vectors and matrices"
   HOMEPAGE_URL "https://github.com/wpumacay/loco_math"
   LANGUAGES C CXX)
@@ -36,15 +36,17 @@ option(LOCOMATH_BUILD_EXAMPLES "Build C++ examples" ON)
 loco_initialize_project()
 
 # -------------------------------------
-# Get the required third-party dependencies
-add_subdirectory(third_party)
+# Allow the usage of our helper macros and functions
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
+# -------------------------------------
+# Bring our dependencies accordingly
+include(LocoMathDependencies)
 
 # cmake-format: off
 # -------------------------------------
 # Setup the main C++ target `LocoMathCpp`
-add_library(LocoMathCpp INTERFACE)
-loco_setup_target(
-  LocoMathCpp
+loco_create_target(LocoMathCpp INTERFACE
   SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/common.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/vec2_t.hpp
@@ -100,6 +102,26 @@ add_subdirectory(tests/cpp)
 # -------------------------------------
 # Add Python bindings to the build process
 add_subdirectory(python/loco/math/bindings)
+
+# -------------------------------------
+# Build the required documentation accordingly
+if(LOCOUTILS_BUILD_DOCS)
+  # cmake-format: off
+  # -------------------------------------
+  # Setup documentation for our target
+  loco_setup_cppdocs(LocoUtilsCpp
+    DOXYGEN_FILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in
+    DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Doxygen
+    DOXYGEN_GENERATE_HTML FALSE
+    DOXYGEN_GENERATE_LATEX FALSE
+    DOXYGEN_GENERATE_XML TRUE
+    DOXYGEN_QUIET TRUE
+    SPHINX_FILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in
+    SPHINX_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Sphinx
+    SPHINX_BREATHE_PROJECT LocoUtilsCpp
+    SPHINX_DOXYGEN_XML_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Doxygen/xml)
+  # cmake-format: on
+endif()
 
 # -------------------------------------
 # Show the properties of our main target

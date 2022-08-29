@@ -1,10 +1,8 @@
 #pragma once
 
-// clang-format off
 #include <loco/math/vec2_t.hpp>
 #include <loco/math/impl/vec2_t_scalar_impl.hpp>
 #include <loco/math/impl/vec2_t_sse_impl.hpp>
-// clang-format on
 
 namespace loco {
 namespace math {
@@ -243,14 +241,14 @@ auto operator<<(std::ostream& output_stream, const Vector2<T>& src)
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 auto operator>>(std::istream& input_stream, Vector2<T>& dst) -> std::istream& {
     // Based on ignition-math implementation https://bit.ly/3iqAVgS
-    T x{};
-    T y{};
+    T x_val{};
+    T y_val{};
 
     input_stream.setf(std::ios_base::skipws);
-    input_stream >> x >> y;
+    input_stream >> x_val >> y_val;
     if (!input_stream.fail()) {
-        dst.x() = x;
-        dst.y() = y;
+        dst.x() = x_val;
+        dst.y() = y_val;
     }
 
     return input_stream;

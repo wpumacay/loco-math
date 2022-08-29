@@ -1,6 +1,5 @@
 #pragma once
 
-// clang-format off
 #include <ios>
 #include <array>
 #include <cassert>
@@ -13,7 +12,6 @@
 #include <type_traits>
 
 #include <loco/math/common.hpp>
-// clang-format on
 
 namespace loco {
 namespace math {
@@ -48,15 +46,15 @@ struct Vector2 {
     Vector2() = default;
 
     /// Constructs a vector of the form (x, x)
-    explicit Vector2(Scalar_T x) {
-        m_Elements[0] = x;
-        m_Elements[1] = x;
+    explicit Vector2(Scalar_T x_coord) {
+        m_Elements[0] = x_coord;
+        m_Elements[1] = x_coord;
     }
 
     /// Constructs a vector of the form (x, y)
-    explicit Vector2(Scalar_T x, Scalar_T y) {
-        m_Elements[0] = x;
-        m_Elements[1] = y;
+    explicit Vector2(Scalar_T x_coord, Scalar_T y_coord) {
+        m_Elements[0] = x_coord;
+        m_Elements[1] = y_coord;
     }
 
     // cppcheck-suppress noExplicitConstructor

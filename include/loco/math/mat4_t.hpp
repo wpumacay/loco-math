@@ -1,6 +1,5 @@
 #pragma once
 
-// clang-format off
 #include <iomanip>
 #include <ios>
 #include <array>
@@ -15,7 +14,6 @@
 #include <type_traits>
 
 #include <loco/math/vec4_t.hpp>
-// clang-format on
 
 namespace loco {
 namespace math {
@@ -82,11 +80,11 @@ class Matrix4 {
     }
 
     /// Creates a diagonal matrix using the given diagonal elements
-    explicit Matrix4(Scalar_T d0, Scalar_T d1, Scalar_T d2, Scalar_T d3) {
-        m_Elements[0][0] = d0;
-        m_Elements[1][1] = d1;
-        m_Elements[2][2] = d2;
-        m_Elements[3][3] = d3;
+    explicit Matrix4(Scalar_T x00, Scalar_T x11, Scalar_T x22, Scalar_T x33) {
+        m_Elements[0][0] = x00;
+        m_Elements[1][1] = x11;
+        m_Elements[2][2] = x22;
+        m_Elements[3][3] = x33;
     }
 
     /// Creates a matrix using the given columns

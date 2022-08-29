@@ -1,6 +1,5 @@
 #pragma once
 
-// clang-format off
 #include <ios>
 #include <array>
 #include <cassert>
@@ -13,7 +12,6 @@
 #include <type_traits>
 
 #include <loco/math/common.hpp>
-// clang-format on
 
 namespace loco {
 namespace math {
@@ -47,26 +45,26 @@ class Vector3 {
     Vector3() = default;
 
     /// Constructs a vector of the form (x, x, x)
-    explicit Vector3(Scalar_T x) {
-        m_Elements[0] = x;
-        m_Elements[1] = x;
-        m_Elements[2] = x;
+    explicit Vector3(Scalar_T x_coord) {
+        m_Elements[0] = x_coord;
+        m_Elements[1] = x_coord;
+        m_Elements[2] = x_coord;
         m_Elements[3] = 0;
     }
 
     /// Constructs a vector of the form (x, y, y)
-    explicit Vector3(Scalar_T x, Scalar_T y) {
-        m_Elements[0] = x;
-        m_Elements[1] = y;
-        m_Elements[2] = y;
+    explicit Vector3(Scalar_T x_coord, Scalar_T y_coord) {
+        m_Elements[0] = x_coord;
+        m_Elements[1] = y_coord;
+        m_Elements[2] = y_coord;
         m_Elements[3] = 0;
     }
 
     /// Constructs a vector of the form (x, y, z)
-    explicit Vector3(Scalar_T x, Scalar_T y, Scalar_T z) {
-        m_Elements[0] = x;
-        m_Elements[1] = y;
-        m_Elements[2] = z;
+    explicit Vector3(Scalar_T x_coord, Scalar_T y_coord, Scalar_T z_coord) {
+        m_Elements[0] = x_coord;
+        m_Elements[1] = y_coord;
+        m_Elements[2] = z_coord;
         m_Elements[3] = 0;
     }
 

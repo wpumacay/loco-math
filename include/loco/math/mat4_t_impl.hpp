@@ -1,11 +1,9 @@
 #pragma once
 
-// clang-format off
 #include <loco/math/mat4_t.hpp>
 #include <loco/math/impl/mat4_t_scalar_impl.hpp>
 #include <loco/math/impl/mat4_t_sse_impl.hpp>
 #include <loco/math/impl/mat4_t_avx_impl.hpp>
-// clang-format on
 
 namespace loco {
 namespace math {
@@ -180,25 +178,35 @@ auto operator>>(std::istream& input_stream, Matrix4<T>& dst) -> std::istream& {
     // Based on ignition-math implementation https://bit.ly/3MPgPcW
     input_stream.setf(std::ios_base::skipws);
     // Temporary place to store the inputs given by the user
-    std::array<T, Matrix4<T>::BUFFER_SIZE> d;
+    std::array<T, Matrix4<T>::BUFFER_SIZE> mat;
     // clang-format off
     // Get these many items/elements from the input stream
-    input_stream >> d[0]  >> d[1]  >> d[2]  >> d[3]   // NOLINT
-                 >> d[4]  >> d[5]  >> d[6]  >> d[7]   // NOLINT
-                 >> d[8]  >> d[9]  >> d[10] >> d[11]  // NOLINT
-                 >> d[12] >> d[13] >> d[14] >> d[15]; // NOLINT
+    input_stream >> mat[0]  >> mat[1]  >> mat[2]  >> mat[3]   // NOLINT
+                 >> mat[4]  >> mat[5]  >> mat[6]  >> mat[7]   // NOLINT
+                 >> mat[8]  >> mat[9]  >> mat[10] >> mat[11]  // NOLINT
+                 >> mat[12] >> mat[13] >> mat[14] >> mat[15]; // NOLINT
     // clang-format on
     if (!input_stream.fail()) {
-        // clang-format off
         // NOLINTNEXTLINE
-        dst(0,0) = d[0];  dst(0,1) = d[1];  dst(0,2) = d[2];  dst(0,3) = d[3];
-        // NOLINTNEXTLINE
-        dst(1,0) = d[4];  dst(1,1) = d[5];  dst(1,2) = d[6];  dst(1,3) = d[7];
-        // NOLINTNEXTLINE
-        dst(2,0) = d[8];  dst(2,1) = d[9];  dst(2,2) = d[10]; dst(2,3) = d[11];
-        // NOLINTNEXTLINE
-        dst(3,0) = d[12]; dst(3,1) = d[13]; dst(3,2) = d[14]; dst(3,3) = d[15];
-        // clang-format on
+        dst(0, 0) = mat[0];  // NOLINT
+        dst(0, 1) = mat[1];  // NOLINT
+        dst(0, 2) = mat[2];  // NOLINT
+        dst(0, 3) = mat[3];  // NOLINT
+
+        dst(1, 0) = mat[4];  // NOLINT
+        dst(1, 1) = mat[5];  // NOLINT
+        dst(1, 2) = mat[6];  // NOLINT
+        dst(1, 3) = mat[7];  // NOLINT
+
+        dst(2, 0) = mat[8];   // NOLINT
+        dst(2, 1) = mat[9];   // NOLINT
+        dst(2, 2) = mat[10];  // NOLINT
+        dst(2, 3) = mat[11];  // NOLINT
+
+        dst(3, 0) = mat[12];  // NOLINT
+        dst(3, 1) = mat[13];  // NOLINT
+        dst(3, 2) = mat[14];  // NOLINT
+        dst(3, 3) = mat[15];  // NOLINT
     }
     return input_stream;
 }

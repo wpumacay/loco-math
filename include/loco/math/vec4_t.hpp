@@ -1,6 +1,5 @@
 #pragma once
 
-// clang-format off
 #include <ios>
 #include <array>
 #include <cassert>
@@ -13,7 +12,6 @@
 #include <type_traits>
 
 #include <loco/math/common.hpp>
-// clang-format on
 
 namespace loco {
 namespace math {
@@ -47,35 +45,36 @@ class Vector4 {
     Vector4() = default;
 
     /// Constructs a vector of the form (x, x, x, x)
-    explicit Vector4(Scalar_T x) {
-        m_Elements[0] = x;
-        m_Elements[1] = x;
-        m_Elements[2] = x;
-        m_Elements[3] = x;
+    explicit Vector4(Scalar_T x_coord) {
+        m_Elements[0] = x_coord;
+        m_Elements[1] = x_coord;
+        m_Elements[2] = x_coord;
+        m_Elements[3] = x_coord;
     }
 
     /// Constructs a vector of the form (x, y, y, y)
-    explicit Vector4(Scalar_T x, Scalar_T y) {
-        m_Elements[0] = x;
-        m_Elements[1] = y;
-        m_Elements[2] = y;
-        m_Elements[3] = y;
+    explicit Vector4(Scalar_T x_coord, Scalar_T y_coord) {
+        m_Elements[0] = x_coord;
+        m_Elements[1] = y_coord;
+        m_Elements[2] = y_coord;
+        m_Elements[3] = y_coord;
     }
 
     /// Constructs a vector of the form (x, y, z, z)
-    explicit Vector4(Scalar_T x, Scalar_T y, Scalar_T z) {
-        m_Elements[0] = x;
-        m_Elements[1] = y;
-        m_Elements[2] = z;
-        m_Elements[3] = z;
+    explicit Vector4(Scalar_T x_coord, Scalar_T y_coord, Scalar_T z_coord) {
+        m_Elements[0] = x_coord;
+        m_Elements[1] = y_coord;
+        m_Elements[2] = z_coord;
+        m_Elements[3] = z_coord;
     }
 
     /// Constructs a vector of the form (x, y, z, w)
-    explicit Vector4(Scalar_T x, Scalar_T y, Scalar_T z, Scalar_T w) {
-        m_Elements[0] = x;
-        m_Elements[1] = y;
-        m_Elements[2] = z;
-        m_Elements[3] = w;
+    explicit Vector4(Scalar_T x_coord, Scalar_T y_coord, Scalar_T z_coord,
+                     Scalar_T w_coord) {
+        m_Elements[0] = x_coord;
+        m_Elements[1] = y_coord;
+        m_Elements[2] = z_coord;
+        m_Elements[3] = w_coord;
     }
 
     // cppcheck-suppress noExplicitConstructor

@@ -101,7 +101,7 @@ add_subdirectory(tests/cpp)
 
 # -------------------------------------
 # Add Python bindings to the build process
-add_subdirectory(python/loco/math/bindings)
+add_subdirectory(python/math)
 
 # -------------------------------------
 # Build the required documentation accordingly

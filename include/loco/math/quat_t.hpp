@@ -47,10 +47,10 @@ class Quaternion {
     /// Constructs a real-valued quaternion
     /// \param real Real-value part of the quaternion
     explicit Quaternion(Scalar_T real) {
-        m_Elements[0] = static_cast<Scalar_T>(0.0F);
+        m_Elements[0] = real;
         m_Elements[1] = static_cast<Scalar_T>(0.0F);
         m_Elements[2] = static_cast<Scalar_T>(0.0F);
-        m_Elements[3] = real;
+        m_Elements[3] = static_cast<Scalar_T>(0.0F);
     }
 
     /// Constructs a quaternion given its 4 entries
@@ -58,12 +58,12 @@ class Quaternion {
     /// \param y_val Value of the second imaginary component
     /// \param z_val Value of the third imaginary component
     /// \param w_val Value of the real-valued component
-    explicit Quaternion(Scalar_T x_val, Scalar_T y_val, Scalar_T z_val,
-                        Scalar_T w_val) {
-        m_Elements[0] = x_val;
-        m_Elements[1] = y_val;
-        m_Elements[2] = z_val;
-        m_Elements[3] = w_val;
+    explicit Quaternion(Scalar_T w_val, Scalar_T x_val, Scalar_T y_val,
+                        Scalar_T z_val) {
+        m_Elements[0] = w_val;
+        m_Elements[1] = x_val;
+        m_Elements[2] = y_val;
+        m_Elements[3] = z_val;
     }
 
     /// Constructs a quaternion given an angle and an axis
@@ -73,10 +73,10 @@ class Quaternion {
         const Scalar_T half_angle = 0.5 * angle;         // NOLINT
         const Scalar_T sin_half = std::sin(half_angle);  // NOLINT
         const Scalar_T cos_half = std::cos(half_angle);  // NOLINT
-        m_Elements[0] = axis.x() * sin_half;
+        m_Elements[0] = cos_half;
         m_Elements[1] = axis.x() * sin_half;
         m_Elements[2] = axis.x() * sin_half;
-        m_Elements[3] = cos_half;
+        m_Elements[3] = axis.x() * sin_half;
     }
 
     // cppcheck-suppress noExplicitConstructor
@@ -88,29 +88,29 @@ class Quaternion {
         std::copy(values.begin(), values.end(), m_Elements.data());
     }
 
+    /// Returns a mutable reference to the real w-component
+    auto w() -> Scalar_T& { return m_Elements[0]; }
+
     /// Returns a mutable reference to the imaginary x-component
-    auto x() -> Scalar_T& { return m_Elements[0]; }
+    auto x() -> Scalar_T& { return m_Elements[1]; }
 
     /// Returns a mutable reference to the imaginary y-component
-    auto y() -> Scalar_T& { return m_Elements[1]; }
+    auto y() -> Scalar_T& { return m_Elements[2]; }
 
     /// Returns a mutable reference to the imaginary z-component
-    auto z() -> Scalar_T& { return m_Elements[2]; }
-
-    /// Returns a mutable reference to the real w-component
-    auto w() -> Scalar_T& { return m_Elements[3]; }
-
-    /// Returns an unmutable reference to the imaginary x-component
-    auto x() const -> const Scalar_T& { return m_Elements[0]; }
-
-    /// Returns an unmutable reference to the imaginary y-component
-    auto y() const -> const Scalar_T& { return m_Elements[1]; }
-
-    /// Returns an unmutable reference to the imaginary z-component
-    auto z() const -> const Scalar_T& { return m_Elements[2]; }
+    auto z() -> Scalar_T& { return m_Elements[3]; }
 
     /// Returns an unmutable reference to the real w-component
-    auto w() const -> const Scalar_T& { return m_Elements[3]; }
+    auto w() const -> const Scalar_T& { return m_Elements[0]; }
+
+    /// Returns an unmutable reference to the imaginary x-component
+    auto x() const -> const Scalar_T& { return m_Elements[1]; }
+
+    /// Returns an unmutable reference to the imaginary y-component
+    auto y() const -> const Scalar_T& { return m_Elements[2]; }
+
+    /// Returns an unmutable reference to the imaginary z-component
+    auto z() const -> const Scalar_T& { return m_Elements[3]; }
 
     /// Returns a mutable reference to the storage of the quaternion
     auto elements() -> BufferType& { return m_Elements; }
@@ -128,14 +128,14 @@ class Quaternion {
     auto toString() const -> std::string {
         std::stringstream str_result;
         if (std::is_same<ElementType, float>()) {
-            str_result << "Quaternionf(" << x() << ", " << y() << ", " << z()
-                       << ", " << w() << ")";
+            str_result << "Quaternionf(" << w() << ", " << x() << ", " << y()
+                       << ", " << z() << ")";
         } else if (std::is_same<ElementType, double>()) {
-            str_result << "Quaterniond(" << x() << ", " << y() << ", " << z()
-                       << ", " << w() << ")";
+            str_result << "Quaterniond(" << w() << ", " << x() << ", " << y()
+                       << ", " << z() << ")";
         } else {
-            str_result << "QuaternionX(" << x() << ", " << y() << ", " << z()
-                       << ", " << w() << ")";
+            str_result << "QuaternionX(" << w() << ", " << x() << ", " << y()
+                       << ", " << z() << ")";
         }
         return str_result.str();
     }
@@ -155,8 +155,8 @@ class Quaternion {
     }
 
  private:
-    /// Storage of the quaternion's entries in   (x, y, z, w) order
-    alignas(BUFFER_SIZE) BufferType m_Elements = {0, 0, 0, 1};
+    /// Storage of the quaternion's entries in   (w, x, y, z) order
+    alignas(BUFFER_SIZE) BufferType m_Elements = {1, 0, 0, 0};
 };
 
 }  // namespace math

@@ -14,4 +14,5 @@ if(NOT TARGET loco::math)
 endif()
 
 pybind11_add_module(_math ${CMAKE_CURRENT_SOURCE_DIR}/bindings_py.cpp)
+target_include_directories(_math PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(_math PRIVATE loco::math)

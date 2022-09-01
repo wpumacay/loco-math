@@ -11,6 +11,55 @@ namespace math {
 template <typename T>
 using SFINAE_VEC4_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 
+template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+LM_INLINE auto squareNorm(const Vector4<T>& vec) -> T {
+#if defined(LOCOMATH_AVX_ENABLED)
+    return avx::kernel_length_square_vec4<T>(vec.elements());
+#elif defined(LOCOMATH_SSE_ENABLED)
+    return sse::kernel_length_square_vec4<T>(vec.elements());
+#else
+    return scalar::kernel_length_square_vec4<T>(vec.elements());
+#endif
+}
+
+/// \brief Returns the norm-2 of the vector
+template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+LM_INLINE auto norm(const Vector4<T>& vec) -> T {
+#if defined(LOCOMATH_AVX_ENABLED)
+    return avx::kernel_length_vec4<T>(vec.elements());
+#elif defined(LOCOMATH_SSE_ENABLED)
+    return sse::kernel_length_vec4<T>(vec.elements());
+#else
+    return std::sqrt(scalar::kernel_length_square_vec4<T>(vec.elements()));
+#endif
+}
+
+/// \brief Returns a normalized version of this vector
+template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+LM_INLINE auto normalize(const Vector4<T>& vec) -> Vector4<T> {
+    Vector4<T> vec_normalized = vec;
+#if defined(LOCOMATH_AVX_ENABLED)
+    avx::kernel_normalize_in_place_vec4<T>(vec_normalized.elements());
+#elif defined(LOCOMATH_SSE_ENABLED)
+    sse::kernel_normalize_in_place_vec4<T>(vec_normalized.elements());
+#else
+    scalar::kernel_normalize_in_place_vec4<T>(vec_normalized.elements());
+#endif
+    return vec_normalized;
+}
+
+/// \brief Normalizes in-place the given vector
+template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+LM_INLINE auto normalize_in_place(Vector4<T>& vec) -> void {  // NOLINT
+#if defined(LOCOMATH_AVX_ENABLED)
+    avx::kernel_normalize_in_place_vec4<T>(vec.elements());
+#elif defined(LOCOMATH_SSE_ENABLED)
+    sse::kernel_normalize_in_place_vec4<T>(vec.elements());
+#else
+    scalar::kernel_normalize_in_place_vec4<T>(vec.elements());
+#endif
+}
+
 /// \brief Returns the dot-product of the given two vectors
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 LM_INLINE auto dot(const Vector4<T>& lhs, const Vector4<T>& rhs) -> T {

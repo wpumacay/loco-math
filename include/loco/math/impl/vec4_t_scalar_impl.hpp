@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <loco/math/vec4_t.hpp>
 
 namespace loco {
@@ -43,6 +44,23 @@ LM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
                                     const Vec4Buffer<T>& rhs) -> void {
     for (uint32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
         dst[i] = lhs[i] * rhs[i];
+    }
+}
+
+template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_square_vec4(const Vec4Buffer<T>& vec) -> T {
+    T accum = static_cast<T>(0.0);
+    for (uint32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
+        accum += vec[i] * vec[i];
+    }
+    return accum;
+}
+
+template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
+LM_INLINE auto kernel_normalize_in_place_vec4(Vec4Buffer<T>& vec) -> void {
+    auto length = std::sqrt(kernel_length_square_vec4<T>(vec));
+    for (uint32_t i = 0; i < Vector4<T>::VECTOR_NDIM; ++i) {
+        vec[i] /= length;
     }
 }
 

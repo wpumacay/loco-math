@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/pytypes.h>
@@ -34,16 +32,9 @@ auto bindings_vector3(py::module& m, const char* class_name) -> void {
             PROPERTY(x)
             PROPERTY(y)
             PROPERTY(z)
-            GET_SET_ITEM(Class::VECTOR_NDIM, T)
-            .def(py::self + py::self)
-            .def(py::self - py::self)
-            .def(py::self * py::self)
-            .def("__mul__", [](const Class& self, T scale) -> Class {
-                return self * scale;
-            })
-            .def("__rmul__", [](const Class& self, T scale) -> Class {
-                return self * scale;
-            })
+            OPERATORS(T)
+            METHODS(T)
+            GETSET_ITEM(Class::VECTOR_NDIM, T)
             // clant-format on
             .def("__repr__", [](const Class& self) -> py::str {
                 return py::str("Vector3{}(x={}, y={}, z={})")
@@ -51,7 +42,7 @@ auto bindings_vector3(py::module& m, const char* class_name) -> void {
                             self.y(), self.z());
             });
     }
-}  // namespace math
+}
 
 }  // namespace math
 }  // namespace loco

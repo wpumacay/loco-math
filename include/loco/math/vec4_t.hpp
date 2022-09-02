@@ -33,6 +33,8 @@ class Vector4 {
     constexpr static uint32_t BUFFER_SIZE = 4;
     /// Number of scalar dimensions of the vector
     constexpr static uint32_t VECTOR_SIZE = 4;
+    /// Number of dimensions of this vector (as in np.array.ndim)
+    static constexpr uint32_t VECTOR_NDIM = 1;
 
     /// Typename of the vector
     using Type = Vector4<Scalar_T>;

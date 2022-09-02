@@ -29,7 +29,7 @@
 namespace loco {
 namespace math {
 
-static constexpr double PI = 3.141592653589793;
+static constexpr double PI = 3.141592653589793;  // NOLINT
 static constexpr double EPS = 1e-6;
 
 using float32_t = float;
@@ -101,11 +101,11 @@ struct CpuHasAVX : public std::integral_constant<bool,
 template <typename V>
 struct VecCommaInitializer {
     /// Number of scalar dimensions of the vector
-    static constexpr uint32_t VECTOR_NDIM = V::VECTOR_NDIM;
+    static constexpr uint32_t VECTOR_SIZE = V::VECTOR_SIZE;
     /// Index of the first vector entry on its storage buffer|array
     static constexpr uint32_t VECTOR_FIRST_INDEX = 0;
     /// Index of the last vector entry on its storage buffer|array
-    static constexpr uint32_t VECTOR_LAST_INDEX = VECTOR_NDIM - 1;
+    static constexpr uint32_t VECTOR_LAST_INDEX = VECTOR_SIZE - 1;
 
     /// Type alias for the float|scalar type in use
     using T = typename V::ElementType;

@@ -10,6 +10,7 @@
 #include <string>
 #include <algorithm>
 #include <type_traits>
+#include <utility>
 
 #include <loco/math/common.hpp>
 
@@ -32,8 +33,12 @@ template <typename Scalar_T>
 struct Vector2 {
     /// Number of scalars used in the storage of the vector
     static constexpr uint32_t BUFFER_SIZE = 2;
-    /// Number of scalar dimensions of the vector
+    /// Number of scalars contained by the vector
     static constexpr uint32_t VECTOR_SIZE = 2;
+    /// Number of dimensions of this vector (as in numpy.ndarray.ndim)
+    static constexpr uint32_t VECTOR_NDIM = 1;
+    /// Shape of the vector (as in numpy.ndarray.shape)
+    static constexpr std::pair<uint32_t, uint32_t> VECTOR_SHAPE = {1, 4};
 
     /// Type alias of the vector
     using Type = Vector2<Scalar_T>;

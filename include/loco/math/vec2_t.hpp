@@ -33,7 +33,7 @@ struct Vector2 {
     /// Number of scalars used in the storage of the vector
     static constexpr uint32_t BUFFER_SIZE = 2;
     /// Number of scalar dimensions of the vector
-    static constexpr uint32_t VECTOR_NDIM = 2;
+    static constexpr uint32_t VECTOR_SIZE = 2;
 
     /// Type alias of the vector
     using Type = Vector2<Scalar_T>;
@@ -60,7 +60,7 @@ struct Vector2 {
     // cppcheck-suppress noExplicitConstructor
     /// Constructs a vector from an initializer list of the form {x, y}
     Vector2(const std::initializer_list<Scalar_T>& values) {
-        assert(values.size() == Vector2<Scalar_T>::VECTOR_NDIM);
+        assert(values.size() == Vector2<Scalar_T>::VECTOR_SIZE);
         std::copy(values.begin(), values.end(), m_Elements.data());
     }
 
@@ -115,7 +115,7 @@ struct Vector2 {
     }
 
     /// Returns the number of dimensions of the vector (Vector2 <-> 2 scalars)
-    static constexpr auto ndim() -> uint32_t { return VECTOR_NDIM; }
+    static constexpr auto size() -> uint32_t { return VECTOR_SIZE; }
 
     /// Returns the number of scalars used by the storage of the vector
     static constexpr auto buffer_size() -> uint32_t { return BUFFER_SIZE; }

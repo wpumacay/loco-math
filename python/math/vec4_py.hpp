@@ -28,6 +28,7 @@ auto bindings_vector4(py::module& m, const char* class_name) -> void {
             .def(py::init<T>())
             .def(py::init<T, T>())
             .def(py::init<T, T, T>())
+            .def(py::init<T, T, T, T>())
             // clang-format off
             PROPERTY(x)
             PROPERTY(y)

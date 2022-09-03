@@ -12,6 +12,11 @@
 
 namespace py = pybind11;
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#endif
+
 namespace loco {
 namespace math {
 
@@ -30,14 +35,23 @@ auto bindings_vector4(py::module& m, const char* class_name) -> void {
             .def(py::init<T, T, T>())
             .def(py::init<T, T, T, T>())
             // clang-format off
+            BUFFER_PROTOCOL(T)
             PROPERTY(x)
             PROPERTY(y)
             PROPERTY(z)
             PROPERTY(w)
             OPERATORS(T)
             METHODS(T)
-            GETSET_ITEM(Class::VECTOR_NDIM, T)
+            GETSET_ITEM(Class::VECTOR_SIZE, T)
             // clant-format on
+            // NOLINTNEXTLINE
+            .def_property_readonly("ndim", [](const Class& self) {
+                return Class::VECTOR_NDIM;
+            })
+            // NOLINTNEXTLINE
+            .def_property_readonly("shape", [](const Class& self) {
+                return Class::VECTOR_SHAPE;
+            })
             .def("__repr__", [](const Class& self) -> py::str {
                 return py::str("Vector4{}(x={}, y={}, z={}, w={})")
                     .format((IsFloat32<T>::value ? "f" : "d"), self.x(),
@@ -45,6 +59,10 @@ auto bindings_vector4(py::module& m, const char* class_name) -> void {
             });
     }
 }
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
 }  // namespace math
 }  // namespace loco

@@ -38,7 +38,8 @@ struct Vector2 {
     /// Number of dimensions of this vector (as in numpy.ndarray.ndim)
     static constexpr uint32_t VECTOR_NDIM = 1;
     /// Shape of the vector (as in numpy.ndarray.shape)
-    static constexpr std::pair<uint32_t, uint32_t> VECTOR_SHAPE = {1, 4};
+    static constexpr std::pair<uint32_t, uint32_t> VECTOR_SHAPE = {1,
+                                                                   VECTOR_SIZE};
 
     /// Type alias of the vector
     using Type = Vector2<Scalar_T>;

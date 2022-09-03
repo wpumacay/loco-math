@@ -5,6 +5,43 @@
 #include <loco/math/common.hpp>
 
 // clang-format off
+#define BUFFER_PROTOCOL(Type)                                               \
+    .def(py::init([](const py::buffer& buff) -> Class {                     \
+        py::buffer_info info = buff.request();                              \
+        if (IsFloat32<Type>::value &&                                       \
+            (info.format != py::format_descriptor<Type>::format())) {       \
+            throw std::runtime_error(                                       \
+                "Incompatible format: expected float (float32) array");     \
+        }                                                                   \
+        if (IsFloat64<Type>::value &&                                       \
+            (info.format != py::format_descriptor<Type>::format())) {       \
+            throw std::runtime_error(                                       \
+                "Incompatible format: expected double (float64) array");    \
+        }                                                                   \
+        bool is_valid_shape = true;                                         \
+        if (info.ndim == 1) {                                               \
+            is_valid_shape = (info.shape[0] == Class::VECTOR_SIZE);         \
+        } else if (info.ndim == 2) {                                        \
+            is_valid_shape = (info.shape[0] == Class::VECTOR_SIZE ||        \
+                              info.shape[1] == Class::VECTOR_SIZE);         \
+        } else {                                                            \
+            is_valid_shape = false;                                         \
+        }                                                                   \
+        if (!is_valid_shape) {                                              \
+            throw std::runtime_error(                                       \
+                "Incompatible shape: expected (, n), (1, n), (n, 1)");      \
+        }                                                                   \
+        Class vec;                                                          \
+        memcpy(vec.data(), info.ptr, sizeof(T) * Class::VECTOR_SIZE);       \
+        return vec;                                                         \
+    }))                                                                     \
+    .def_buffer([](Class& self) -> py::buffer_info {                        \
+        return py::buffer_info(self.data(), sizeof(Type),                   \
+                               py::format_descriptor<T>::format(), 1,       \
+                               {Class::VECTOR_SIZE}, {sizeof(T)});          \
+    })
+
+
 #define PROPERTY(var) .def_property(#var,   \
     [](const Class& self) -> T              \
         {                                   \

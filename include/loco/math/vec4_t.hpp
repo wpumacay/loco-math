@@ -10,7 +10,6 @@
 #include <string>
 #include <algorithm>
 #include <type_traits>
-#include <utility>
 
 #include <loco/math/common.hpp>
 
@@ -36,9 +35,6 @@ class Vector4 {
     constexpr static uint32_t VECTOR_SIZE = 4;
     /// Number of dimensions of this vector (as in np.array.ndim)
     static constexpr uint32_t VECTOR_NDIM = 1;
-    /// Shape of the vector (as in numpy.ndarray.shape)
-    static constexpr std::pair<uint32_t, uint32_t> VECTOR_SHAPE = {1,
-                                                                   VECTOR_SIZE};
 
     /// Typename of the vector
     using Type = Vector4<Scalar_T>;

@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <utility>
 
 #include <pybind11/buffer_info.h>
 #include <pybind11/pybind11.h>
@@ -52,7 +53,7 @@ auto bindings_vector2(py::module& m, const char* class_name) -> void {
             })
             // NOLINTNEXTLINE
             .def_property_readonly("shape", [](const Class& self) {
-                return Class::VECTOR_SHAPE;
+                return std::pair<uint32_t, uint32_t>(1, Class::VECTOR_SIZE);
             })
             .def("__repr__", [](const Class& self) -> py::str {
                 return py::str("Vector2{}(x={}, y={})")

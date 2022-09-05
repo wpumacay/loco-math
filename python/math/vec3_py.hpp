@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstring>
+#include <stdexcept>
+#include <utility>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/pytypes.h>
@@ -48,7 +52,7 @@ auto bindings_vector3(py::module& m, const char* class_name) -> void {
             })
             // NOLINTNEXTLINE
             .def_property_readonly("shape", [](const Class& self) {
-                return Class::VECTOR_SHAPE;
+                return std::pair<uint32_t, uint32_t>(1, Class::VECTOR_SIZE);
             })
             .def("__repr__", [](const Class& self) -> py::str {
                 return py::str("Vector3{}(x={}, y={}, z={})")

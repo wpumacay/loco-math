@@ -1,11 +1,6 @@
 # ~~~
 # CMake configuration for C++ examples
 # ~~~
-
-if(NOT LOCOMATH_BUILD_EXAMPLES)
-  return()
-endif()
-
 if(NOT TARGET loco::math)
   loco_message("Examples require the [loco::math] target to be defined"
                LOG_LEVEL WARNING)

@@ -93,23 +93,29 @@ add_library(loco::math ALIAS LocoMathCpp)
 
 # -------------------------------------
 # Add C++ examples to the build process
-add_subdirectory(examples/cpp)
+if(LOCOMATH_BUILD_EXAMPLES)
+  add_subdirectory(examples/cpp)
+endif()
 
 # -------------------------------------
 # Add C++ tests to the build process
-add_subdirectory(tests/cpp)
+if(LOCOMATH_BUILD_TESTS)
+  add_subdirectory(tests/cpp)
+endif()
 
 # -------------------------------------
 # Add Python bindings to the build process
-add_subdirectory(python/math)
+if(LOCOMATH_BUILD_PYTHON_BINDINGS)
+  add_subdirectory(python/math)
+endif()
 
 # -------------------------------------
 # Build the required documentation accordingly
-if(LOCOUTILS_BUILD_DOCS)
+if(LOCOMATH_BUILD_DOCS)
   # cmake-format: off
   # -------------------------------------
   # Setup documentation for our target
-  loco_setup_cppdocs(LocoUtilsCpp
+  loco_setup_cppdocs(LocoMathCpp
     DOXYGEN_FILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in
     DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Doxygen
     DOXYGEN_GENERATE_HTML FALSE

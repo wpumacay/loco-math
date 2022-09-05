@@ -1,10 +1,6 @@
 # ~~~
 # CMake configuration for C++ unittests
 # ~~~
-if(NOT LOCOMATH_BUILD_TESTS)
-  return()
-endif()
-
 if(NOT TARGET loco::math)
   loco_message("Unittests require target [loco::math], but wasn't found"
                LOG_LEVEL WARNING)

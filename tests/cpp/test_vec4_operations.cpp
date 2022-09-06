@@ -147,6 +147,72 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
         REQUIRE(std::abs(v_2.w() - (val_w * scale)) < EPSILON);
     }
 
+    SECTION("Vector length") {
+        auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);   // NOLINT
+        auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);   // NOLINT
+        auto val_z = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);   // NOLINT
+        auto val_w = GENERATE(as<T>{}, 4.0, 6.0, 8.0, 10.0);  // NOLINT
+        Vector4 v(val_x, val_y, val_z, val_w);
+
+        auto length_square =
+            val_x * val_x + val_y * val_y + val_z * val_z + val_w * val_w;
+        auto length = std::sqrt(length_square);
+
+        auto v_length_square = loco::math::squareNorm(v);
+        auto v_length = loco::math::norm(v);
+
+        REQUIRE(std::abs(v_length_square - length_square) < EPSILON);
+        REQUIRE(std::abs(v_length - length) < EPSILON);
+    }
+
+    SECTION("Vector normalization (in place)") {
+        auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);   // NOLINT
+        auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);   // NOLINT
+        auto val_z = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);   // NOLINT
+        auto val_w = GENERATE(as<T>{}, 4.0, 6.0, 8.0, 10.0);  // NOLINT
+        Vector4 v(val_x, val_y, val_z, val_w);
+        loco::math::normalize_in_place(v);
+
+        auto norm = std::sqrt(val_x * val_x + val_y * val_y + val_z * val_z +
+                              val_w * val_w);
+        auto val_xnorm = val_x / norm;
+        auto val_ynorm = val_y / norm;
+        auto val_znorm = val_z / norm;
+        auto val_wnorm = val_w / norm;
+
+        auto v_norm = loco::math::norm(v);
+
+        REQUIRE(std::abs(v_norm - static_cast<T>(1.0)) < EPSILON);
+        REQUIRE(std::abs(v.x() - val_xnorm) < EPSILON);
+        REQUIRE(std::abs(v.y() - val_ynorm) < EPSILON);
+        REQUIRE(std::abs(v.z() - val_znorm) < EPSILON);
+        REQUIRE(std::abs(v.w() - val_wnorm) < EPSILON);
+    }
+
+    SECTION("Vector normalization (out-of place)") {
+        auto val_x = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);   // NOLINT
+        auto val_y = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);   // NOLINT
+        auto val_z = GENERATE(as<T>{}, 3.0, 5.0, 7.0, 9.0);   // NOLINT
+        auto val_w = GENERATE(as<T>{}, 4.0, 6.0, 8.0, 10.0);  // NOLINT
+        Vector4 v(val_x, val_y, val_z, val_w);
+        auto vn = loco::math::normalize(v);
+
+        auto norm = std::sqrt(val_x * val_x + val_y * val_y + val_z * val_z +
+                              val_w * val_w);
+        auto val_xnorm = val_x / norm;
+        auto val_ynorm = val_y / norm;
+        auto val_znorm = val_z / norm;
+        auto val_wnorm = val_w / norm;
+
+        auto vn_norm = loco::math::norm(vn);
+
+        REQUIRE(std::abs(vn_norm - static_cast<T>(1.0)) < EPSILON);
+        REQUIRE(std::abs(vn.x() - val_xnorm) < EPSILON);
+        REQUIRE(std::abs(vn.y() - val_ynorm) < EPSILON);
+        REQUIRE(std::abs(vn.z() - val_znorm) < EPSILON);
+        REQUIRE(std::abs(vn.w() - val_wnorm) < EPSILON);
+    }
+
     SECTION("Vector dot-product") {
         auto val_x_a = GENERATE(as<T>{}, 1.0, 2.0, 3.0, 4.0);   // NOLINT
         auto val_y_a = GENERATE(as<T>{}, 2.0, 4.0, 6.0, 8.0);   // NOLINT

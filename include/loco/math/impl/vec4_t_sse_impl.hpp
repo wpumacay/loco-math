@@ -1,5 +1,7 @@
 #pragma once
 
+#include <emmintrin.h>
+#include "loco/math/common.hpp"
 #if defined(LOCOMATH_SSE_ENABLED)
 
 #include <smmintrin.h>
@@ -128,6 +130,66 @@ LM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
     auto xmm_rhs_hi = _mm_load_pd(rhs.data() + 2);
     _mm_store_pd(dst.data(), _mm_mul_pd(xmm_lhs_lo, xmm_rhs_lo));
     _mm_store_pd(dst.data() + 2, _mm_mul_pd(xmm_lhs_hi, xmm_rhs_hi));
+}
+
+template <typename T, SFINAE_VEC4_F32_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_square_vec4(const Vec4Buffer<T>& vec) -> T {
+    // Implementation based on this post: https://bit.ly/3FyZF0n
+    auto xmm_v = _mm_load_ps(vec.data());
+    return _mm_cvtss_f32(_mm_dp_ps(xmm_v, xmm_v, 0xf1));
+}
+
+template <typename T, SFINAE_VEC4_F64_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_square_vec4(const Vec4Buffer<T>& vec) -> T {
+    // Implementation based on this post: https://bit.ly/3FyZF0n
+    auto xmm_v_lo = _mm_load_pd(vec.data());
+    auto xmm_v_hi = _mm_load_pd(vec.data() + 2);
+    auto xmm_square_sum_lo = _mm_dp_pd(xmm_v_lo, xmm_v_lo, 0x31);
+    auto xmm_square_sum_hi = _mm_dp_pd(xmm_v_hi, xmm_v_hi, 0x31);
+    auto xmm_square_sum = _mm_add_pd(xmm_square_sum_lo, xmm_square_sum_hi);
+    return _mm_cvtsd_f64(xmm_square_sum);
+}
+
+template <typename T, SFINAE_VEC4_F32_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_vec4(const Vec4Buffer<T>& vec) -> T {
+    // Implementation based on this post: https://bit.ly/3FyZF0n
+    auto xmm_v = _mm_load_ps(vec.data());
+    return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm_v, xmm_v, 0xf1)));
+}
+
+template <typename T, SFINAE_VEC4_F64_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_vec4(const Vec4Buffer<T>& vec) -> T {
+    // Implementation based on this post: https://bit.ly/3FyZF0n
+    auto xmm_v_lo = _mm_load_pd(vec.data());
+    auto xmm_v_hi = _mm_load_pd(vec.data() + 2);
+    auto xmm_square_sum_lo = _mm_dp_pd(xmm_v_lo, xmm_v_lo, 0x31);
+    auto xmm_square_sum_hi = _mm_dp_pd(xmm_v_hi, xmm_v_hi, 0x31);
+    auto xmm_square_sum = _mm_add_pd(xmm_square_sum_lo, xmm_square_sum_hi);
+    return _mm_cvtsd_f64(_mm_sqrt_sd(xmm_square_sum, xmm_square_sum));
+}
+
+template <typename T, SFINAE_VEC4_F32_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_normalize_in_place_vec4(Vec4Buffer<T>& vec) -> void {
+    // Implementation based on this post: https://bit.ly/3FyZF0n
+    auto xmm_v = _mm_load_ps(vec.data());
+    auto xmm_sums = _mm_dp_ps(xmm_v, xmm_v, 0xff);
+    auto xmm_sqrt_sums = _mm_sqrt_ps(xmm_sums);
+    auto xmm_v_norm = _mm_div_ps(xmm_v, xmm_sqrt_sums);
+    _mm_store_ps(vec.data(), xmm_v_norm);
+}
+
+template <typename T, SFINAE_VEC4_F64_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_normalize_in_place_vec4(Vec4Buffer<T>& vec) -> void {
+    // Implementation based on this post: https://bit.ly/3FyZF0n
+    auto xmm_v_lo = _mm_load_pd(vec.data());
+    auto xmm_v_hi = _mm_load_pd(vec.data() + 2);
+    auto xmm_sums_lo = _mm_dp_pd(xmm_v_lo, xmm_v_lo, 0x33);
+    auto xmm_sums_hi = _mm_dp_pd(xmm_v_hi, xmm_v_hi, 0x33);
+    auto xmm_sqrt_sums = _mm_sqrt_pd(_mm_add_pd(xmm_sums_lo, xmm_sums_hi));
+    auto xmm_v_norm_lo = _mm_div_pd(xmm_v_lo, xmm_sqrt_sums);
+    auto xmm_v_norm_hi = _mm_div_pd(xmm_v_hi, xmm_sqrt_sums);
+    _mm_store_pd(vec.data(), xmm_v_norm_lo);
+    _mm_store_pd(vec.data(), xmm_v_norm_hi);
 }
 
 template <typename T, SFINAE_VEC4_F32_SSE_GUARD<T> = nullptr>

@@ -1,0 +1,19 @@
+#include <string>
+
+#include <pybind11/pybind11.h>
+
+#include <vec2_py.hpp>
+#include <vec3_py.hpp>
+#include <vec4_py.hpp>
+
+namespace py = pybind11;
+
+// NOLINTNEXTLINE
+PYBIND11_MODULE(_math, m) {
+    loco::math::bindings_vector2<loco::math::float32_t>(m, "Vector2f");
+    loco::math::bindings_vector2<loco::math::float64_t>(m, "Vector2d");
+    loco::math::bindings_vector3<loco::math::float32_t>(m, "Vector3f");
+    loco::math::bindings_vector3<loco::math::float64_t>(m, "Vector3d");
+    loco::math::bindings_vector4<loco::math::float32_t>(m, "Vector4f");
+    loco::math::bindings_vector4<loco::math::float64_t>(m, "Vector4d");
+}

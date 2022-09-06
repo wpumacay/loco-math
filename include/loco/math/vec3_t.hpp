@@ -32,7 +32,9 @@ class Vector3 {
     /// Number of scalars used in the storage of the vector
     constexpr static uint32_t BUFFER_SIZE = 4;
     /// Number of scalar dimensions of the vector
-    constexpr static uint32_t VECTOR_NDIM = 3;
+    constexpr static uint32_t VECTOR_SIZE = 3;
+    /// Number of dimensions of this vector (as in np.array.ndim)
+    static constexpr uint32_t VECTOR_NDIM = 1;
 
     /// Typename of the vector
     using Type = Vector3<Scalar_T>;
@@ -72,7 +74,7 @@ class Vector3 {
     /// COnstructs a vector from an initializer list of the form {x, y, z}
     Vector3(const std::initializer_list<Scalar_T>& values) {
         // Complain in case we don't receive exactly 3 values
-        assert(values.size() == Vector3<Scalar_T>::VECTOR_NDIM);
+        assert(values.size() == Vector3<Scalar_T>::VECTOR_SIZE);
         // Just copy the whole data from the initializer list
         std::copy(values.begin(), values.end(), m_Elements.data());
     }
@@ -137,7 +139,7 @@ class Vector3 {
     }
 
     /// Returns the number of dimensions of the vector (Vector3 <-> 3 scalars)
-    static constexpr auto ndim() -> uint32_t { return VECTOR_NDIM; }
+    static constexpr auto size() -> uint32_t { return VECTOR_SIZE; }
 
     /// Returns the number of scalars used by the storage of the vector
     static constexpr auto buffer_size() -> uint32_t { return BUFFER_SIZE; }

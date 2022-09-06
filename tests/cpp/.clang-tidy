@@ -13,7 +13,8 @@ Checks: >
         -cppcoreguidelines-avoid-magic-numbers,
         -readability-redundant-access-specifiers,
         -readability-magic-numbers,
-        -readability-function-cognitive-complexity
+        -readability-function-cognitive-complexity,
+        -readability-identifier-length
 
 WarningsAsErrors: ''
 FormatStyle: none

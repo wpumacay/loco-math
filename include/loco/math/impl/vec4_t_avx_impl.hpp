@@ -1,5 +1,6 @@
 #pragma once
 
+#include <xmmintrin.h>
 #if defined(LOCOMATH_AVX_ENABLED)
 
 #include <immintrin.h>
@@ -108,6 +109,76 @@ LM_INLINE auto kernel_hadamard_vec4(Vec4Buffer<T>& dst,
     auto ymm_lhs = _mm256_load_pd(lhs.data());
     auto ymm_rhs = _mm256_load_pd(rhs.data());
     _mm256_store_pd(dst.data(), _mm256_mul_pd(ymm_lhs, ymm_rhs));
+}
+
+template <typename T, SFINAE_VEC4_F32_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_square_vec4(const Vec4Buffer<T>& vec) -> T {
+    auto xmm_v = _mm_load_ps(vec.data());
+    return _mm_cvtss_f32(_mm_dp_ps(xmm_v, xmm_v, 0xf1));
+}
+
+template <typename T, SFINAE_VEC4_F64_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_square_vec4(const Vec4Buffer<T>& vec) -> T {
+    // Implementation based on this post: https://bit.ly/3lt3ts4
+    // Instruction-sets required (AVX, SSE2)
+    // -------------------------
+    // AVX:_mm256_load_pd,_mm256_mul_pd,_mm256_hadd_pd,_mm256_extractf128_pd
+    // SSE2: _mm_add_pd, _mm_sqrt_pd, _mm_cvtsd_f64
+    auto ymm_v = _mm256_load_pd(vec.data());
+    auto ymm_prod = _mm256_mul_pd(ymm_v, ymm_v);
+    auto ymm_hsum = _mm256_hadd_pd(ymm_prod, ymm_prod);
+    auto xmm_lo_sum = _mm256_extractf128_pd(ymm_hsum, 0);
+    auto xmm_hi_sum = _mm256_extractf128_pd(ymm_hsum, 1);
+    auto xmm_result = _mm_add_pd(xmm_lo_sum, xmm_hi_sum);
+    return _mm_cvtsd_f64(xmm_result);
+}
+
+template <typename T, SFINAE_VEC4_F32_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_vec4(const Vec4Buffer<T>& vec) -> T {
+    // Implementation based on this post: https://bit.ly/3FyZF0n
+    auto xmm_v = _mm_load_ps(vec.data());
+    return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm_v, xmm_v, 0xf1)));
+}
+
+template <typename T, SFINAE_VEC4_F64_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_vec4(const Vec4Buffer<T>& vec) -> T {
+    // Implementation based on this post: https://bit.ly/3lt3ts4
+    // Instruction-sets required (AVX, SSE2)
+    // -------------------------
+    // AVX: _mm256_load_pd,_mm256_mul_pd,_mm256_hadd_pd,_mm256_extractf128_pd
+    // SSE2: _mm_add_pd,_mm_sqrt_pd,_mm_cvtsd_f64
+    auto ymm_v = _mm256_load_pd(vec.data());
+    auto ymm_prod = _mm256_mul_pd(ymm_v, ymm_v);
+    auto ymm_hsum = _mm256_hadd_pd(ymm_prod, ymm_prod);
+    auto xmm_lo_sum = _mm256_extractf128_pd(ymm_hsum, 0);
+    auto xmm_hi_sum = _mm256_extractf128_pd(ymm_hsum, 1);
+    auto xmm_result = _mm_sqrt_pd(_mm_add_pd(xmm_lo_sum, xmm_hi_sum));
+    return _mm_cvtsd_f64(xmm_result);
+}
+
+template <typename T, SFINAE_VEC4_F32_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_normalize_in_place_vec4(Vec4Buffer<T>& vec) -> void {
+    // Implementation based on this post: https://bit.ly/3FyZF0n
+    auto xmm_v = _mm_load_ps(vec.data());
+    auto xmm_sums = _mm_dp_ps(xmm_v, xmm_v, 0xff);
+    auto xmm_r_sqrt_sums = _mm_sqrt_ps(xmm_sums);
+    auto xmm_v_norm = _mm_div_ps(xmm_v, xmm_r_sqrt_sums);
+    _mm_store_ps(vec.data(), xmm_v_norm);
+}
+
+template <typename T, SFINAE_VEC4_F64_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_normalize_in_place_vec4(Vec4Buffer<T>& vec) -> void {
+    auto ymm_v = _mm256_load_pd(vec.data());
+    auto ymm_prod = _mm256_mul_pd(ymm_v, ymm_v);
+    // Construct the sum of squares into each double of a 256-bit register
+    auto tmp_0 = _mm256_permute2f128_pd(ymm_prod, ymm_prod, 0x21);
+    auto tmp_1 = _mm256_hadd_pd(ymm_prod, tmp_0);
+    auto tmp_2 = _mm256_hadd_pd(tmp_1, tmp_1);  // here we have the {norm^2}
+    // Construct a register with the norm in each entry (rsqrt quite imprecise)
+    auto tmp_3 = _mm256_sqrt_pd(tmp_2);
+    // Normalize the vector and store the result back
+    auto ymm_normalized = _mm256_div_pd(ymm_v, tmp_3);
+    _mm256_store_pd(vec.data(), ymm_normalized);
 }
 
 template <typename T, SFINAE_VEC4_F32_AVX_GUARD<T> = nullptr>

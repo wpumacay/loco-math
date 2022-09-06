@@ -48,6 +48,15 @@ loco_find_or_fetch_dependency(
   TARGETS pybind11::headers
   BUILD_ARGS
     -DPYBIND11_TEST=OFF
+  PATCH_COMMAND
+    "${GIT_EXECUTABLE}"
+    "apply"
+    "-q"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/pybind11-fix-vs2022.patch"
+    "||"
+    "${CMAKE_COMMAND}"
+    "-E"
+    "true"
   EXCLUDE_FROM_ALL)
 
 # cmake-format: on

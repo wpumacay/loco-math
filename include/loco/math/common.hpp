@@ -180,11 +180,11 @@ struct VecCommaInitializer {
 template <typename M>
 struct MatCommaInitializer {
     /// Number of scalar dimensions of the vector
-    constexpr static uint32_t MATRIX_NDIM = M::MATRIX_NDIM;
+    constexpr static uint32_t MATRIX_SIZE = M::MATRIX_SIZE;
     /// Index of the first vector entry
     constexpr static uint32_t MATRIX_FIRST_INDEX = 0;
     /// Index of the last vector entry
-    constexpr static uint32_t MATRIX_LAST_INDEX = MATRIX_NDIM * MATRIX_NDIM - 1;
+    constexpr static uint32_t MATRIX_LAST_INDEX = MATRIX_SIZE * MATRIX_SIZE - 1;
 
     /// Type alias for the float|scalar type in use
     using T = typename M::ElementType;
@@ -224,8 +224,8 @@ struct MatCommaInitializer {
         assert(m_CurrentBuildIndex <= MATRIX_LAST_INDEX);
         // Get the indices of the current (col, row) we're dealing with (notice
         // that the current index grows in row-major order, unlike our layout)
-        const uint32_t row_index = m_CurrentBuildIndex / MATRIX_NDIM;  // NOLINT
-        const uint32_t col_index = m_CurrentBuildIndex % MATRIX_NDIM;  // NOLINT
+        const uint32_t row_index = m_CurrentBuildIndex / MATRIX_SIZE;  // NOLINT
+        const uint32_t col_index = m_CurrentBuildIndex % MATRIX_SIZE;  // NOLINT
         m_MatrixRef[col_index][row_index] = next_coeff;
         ++m_CurrentBuildIndex;
         return *this;

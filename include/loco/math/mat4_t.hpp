@@ -35,14 +35,14 @@ class Matrix4 {
     /// Number of scalars used in the storage of the matrix
     constexpr static uint32_t BUFFER_SIZE = 16;
     /// Number of dimensions of the matrix (square 4x4 matrix)
-    constexpr static uint32_t MATRIX_NDIM = 4;
+    constexpr static uint32_t MATRIX_SIZE = 4;
 
     /// Typename of the matrix
     using Type = Matrix4<Scalar_T>;
     /// Typename of the scalar used for the matrix entries (float, double, etc.)
     using ElementType = Scalar_T;
     /// Typename of the internal storage used by the matrix
-    using BufferType = std::array<Vector4<Scalar_T>, MATRIX_NDIM>;
+    using BufferType = std::array<Vector4<Scalar_T>, MATRIX_SIZE>;
     /// Typename of the columns of the matrix
     using ColumnType = Vector4<Scalar_T>;
 
@@ -102,6 +102,12 @@ class Matrix4 {
     /// Returns an unmutable reference to the underlying storage of the matrix
     auto elements() const -> const BufferType& { return m_Elements; }
 
+    /// Returns a pointer to the data of the underlying storage in use
+    auto data() -> Scalar_T* { return m_Elements[0].data(); }
+
+    /// Reeturns a const-pointer to the data of the underlying storage in use
+    auto data() const -> const Scalar_T* { return m_Elements[0].data(); }
+
     /// Gets a mutable reference to the column requested by the given index
     auto operator[](uint32_t col_index) -> ColumnType& {
         return m_Elements[col_index];
@@ -130,34 +136,38 @@ class Matrix4 {
 
     /// Returns a printable string-representation of the matrix
     auto toString() const -> std::string {
-        const auto& data = m_Elements;
+        const auto& data_elms = m_Elements;
         std::stringstream sstr_result;
 
-        sstr_result << "( " << data[0][0] << ", " << data[1][0] << ", "
-                    << data[2][0] << ", " << data[3][0] << "\n";
-        sstr_result << "  " << data[0][1] << ", " << data[1][1] << ", "
-                    << data[2][1] << ", " << data[3][1] << "\n";
-        sstr_result << "  " << data[0][2] << ", " << data[1][2] << ", "
-                    << data[2][2] << ", " << data[3][2] << "\n";
-        sstr_result << "  " << data[0][3] << ", " << data[1][3] << ", "
-                    << data[2][3] << ", " << data[3][3] << " )";
+        sstr_result << "( " << data_elms[0][0] << ", " << data_elms[1][0]
+                    << ", " << data_elms[2][0] << ", " << data_elms[3][0]
+                    << "\n";
+        sstr_result << "  " << data_elms[0][1] << ", " << data_elms[1][1]
+                    << ", " << data_elms[2][1] << ", " << data_elms[3][1]
+                    << "\n";
+        sstr_result << "  " << data_elms[0][2] << ", " << data_elms[1][2]
+                    << ", " << data_elms[2][2] << ", " << data_elms[3][2]
+                    << "\n";
+        sstr_result << "  " << data_elms[0][3] << ", " << data_elms[1][3]
+                    << ", " << data_elms[2][3] << ", " << data_elms[3][3]
+                    << " )";
 
         return sstr_result.str();
     }
 
     /// Returns the number of rows
-    static constexpr auto rows() -> uint32_t { return MATRIX_NDIM; }
+    static constexpr auto rows() -> uint32_t { return MATRIX_SIZE; }
 
     /// Returns the number of columns
-    static constexpr auto cols() -> uint32_t { return MATRIX_NDIM; }
+    static constexpr auto cols() -> uint32_t { return MATRIX_SIZE; }
 
     /// Returns the number of elements in the matrix
     static constexpr auto size() -> uint32_t {
-        return MATRIX_NDIM * MATRIX_NDIM;
+        return MATRIX_SIZE * MATRIX_SIZE;
     }
 
     /// Returns the dimnension of the matrix
-    static constexpr auto ndim() -> uint32_t { return MATRIX_NDIM; }
+    static constexpr auto ndim() -> uint32_t { return MATRIX_SIZE; }
 
     /// Returns the number of scalars used by the storage of the matrix
     static constexpr auto buffer_size() -> uint32_t { return BUFFER_SIZE; }

@@ -66,7 +66,7 @@ LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
     // So, we can send each column to an xmm register. Also, don't unroll the
     // loop, as it most likely be optimized by the compiler and unroll it for us
     // @todo(wilbert): check that the compiler does loop unrolling in this case
-    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j = _mm_load_ps(lhs[j].data());
         auto xmm_rhs_col_j = _mm_load_ps(rhs[j].data());
         _mm_store_ps(dst[j].data(), _mm_add_ps(xmm_lhs_col_j, xmm_rhs_col_j));
@@ -78,7 +78,7 @@ LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
     // [c0, c1, c2, c3] -> column-major order (in storage), each with 4 x f32
     // So, we can send only half of each column to an xmm register
-    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j_lo = _mm_load_pd(lhs[j].data());
         auto xmm_rhs_col_j_lo = _mm_load_pd(rhs[j].data());
         _mm_store_pd(dst[j].data(),
@@ -98,7 +98,7 @@ LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
-    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j = _mm_load_ps(lhs[j].data());
         auto xmm_rhs_col_j = _mm_load_ps(rhs[j].data());
         _mm_store_ps(dst[j].data(), _mm_sub_ps(xmm_lhs_col_j, xmm_rhs_col_j));
@@ -108,7 +108,7 @@ LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
-    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j_lo = _mm_load_pd(lhs[j].data());
         auto xmm_rhs_col_j_lo = _mm_load_pd(rhs[j].data());
         _mm_store_pd(dst[j].data(),
@@ -129,7 +129,7 @@ template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
                                  const Mat4Buffer<T>& mat) -> void {
     auto xmm_scale = _mm_set1_ps(scale);
-    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_mat_col_j = _mm_load_ps(mat[j].data());
         _mm_store_ps(dst[j].data(), _mm_mul_ps(xmm_scale, xmm_mat_col_j));
     }
@@ -140,7 +140,7 @@ LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
                                  const Mat4Buffer<T>& mat) -> void {
     auto xmm_scale_lo = _mm_set1_pd(scale);  // xmm = [scale(f64), scale(f64)]
     auto xmm_scale_hi = _mm_set1_pd(scale);  // xmm = [scale(f64), scale(f64)]
-    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_mat_col_j_lo = _mm_load_pd(mat[j].data());
         _mm_store_pd(dst[j].data(), _mm_mul_pd(xmm_scale_lo, xmm_mat_col_j_lo));
 
@@ -159,10 +159,10 @@ LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                   const Mat4Buffer<T>& rhs) -> void {
     // Use the "linear combination view" of the matrix-vector product, and apply
     // it along all column vectors of the right-hand side
-    for (uint32_t k = 0; k < Matrix4<T>::MATRIX_NDIM; ++k) {
+    for (uint32_t k = 0; k < Matrix4<T>::MATRIX_SIZE; ++k) {
         // Compute each resulting column, as in the  "matmul_vec" kernel
         auto xmm_result_col_k = _mm_setzero_ps();
-        for (uint32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+        for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
             //                              k=4            [      |     ]
             // A * v = (lhs * rhs)[:,k] = SUM   rhs[j,k] * |  lhs[:,j]  ]
             //                              k=0            [      |     ]
@@ -179,10 +179,10 @@ template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                   const Mat4Buffer<T>& rhs) -> void {
     // Use the same approach as the f32 version, but use lo-hi halves xmm regs.
-    for (uint32_t k = 0; k < Matrix4<T>::MATRIX_NDIM; ++k) {
+    for (uint32_t k = 0; k < Matrix4<T>::MATRIX_SIZE; ++k) {
         auto xmm_result_col_k_lo = _mm_setzero_pd();
         auto xmm_result_col_k_hi = _mm_setzero_pd();
-        for (uint32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+        for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
             auto xmm_scalar_rhs_jk = _mm_set1_pd(rhs[k][j]);
             auto xmm_lhs_col_j_lo = _mm_load_pd(lhs[j].data());
             xmm_result_col_k_lo =
@@ -217,7 +217,7 @@ LM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
     //
     // Each column A[:,j] contains 4xf32 of data, so it fits in a single xmm reg
     auto xmm_result = _mm_setzero_ps();
-    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_scalar_vj = _mm_set1_ps(vec[j]);
         auto xmm_mat_col_j = _mm_load_ps(mat[j].data());
         xmm_result =
@@ -243,7 +243,7 @@ LM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
     // lo-hi sections of 2xf64 each that fit into the xmm registers
     auto xmm_result_lo = _mm_setzero_pd();
     auto xmm_result_hi = _mm_setzero_pd();
-    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_scalar_vj = _mm_set1_pd(vec[j]);
         auto xmm_mat_col_j_lo = _mm_load_pd(mat[j].data());
         xmm_result_lo = _mm_add_pd(xmm_result_lo,
@@ -264,7 +264,7 @@ template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
                                     const Mat4Buffer<T>& lhs,
                                     const Mat4Buffer<T>& rhs) -> void {
-    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j = _mm_load_ps(lhs[j].data());
         auto xmm_rhs_col_j = _mm_load_ps(rhs[j].data());
         _mm_store_ps(dst[j].data(), _mm_mul_ps(xmm_lhs_col_j, xmm_rhs_col_j));
@@ -275,7 +275,7 @@ template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
                                     const Mat4Buffer<T>& lhs,
                                     const Mat4Buffer<T>& rhs) -> void {
-    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_NDIM; ++j) {
+    for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j_lo = _mm_load_pd(lhs[j].data());
         auto xmm_rhs_col_j_lo = _mm_load_pd(rhs[j].data());
         _mm_store_pd(dst[j].data(),

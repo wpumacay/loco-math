@@ -4,11 +4,13 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
+#include <pybind11/pytypes.h>
 
 #include <loco/math/vec2_t_impl.hpp>
 #include <loco/math/vec3_t_impl.hpp>
 #include <loco/math/vec4_t_impl.hpp>
 #include <string>
+#include "loco/math/common.hpp"
 
 namespace py = pybind11;
 
@@ -79,6 +81,38 @@ inline auto nparray_to_vec4(const py::array_t<T>& array_np) -> Vector4<T> {
 
     Vector4<T> vec;
     memcpy(vec.data(), array_buffer_info.ptr, sizeof(Vector4<T>));
+    return vec;
+}
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto buffer_to_vec4(const py::buffer& buff) -> Vector4<T> {
+    py::buffer_info info = buff.request();
+    if (IsFloat32<T>::value &&
+        (info.format != py::format_descriptor<T>::format())) {
+        throw std::runtime_error(
+            "Incompatible format: expected float (float32) array");
+    }
+    if (IsFloat64<T>::value &&
+        (info.format != py::format_descriptor<T>::format())) {
+        throw std::runtime_error(
+            "Incompatible format: expected double (float64) array");
+    }
+    // NOLINTNEXTLINE TODO(wilbert): cppcheck might be giving a false positive?
+    bool is_valid_shape;
+    if (info.ndim == 1) {
+        is_valid_shape = (info.shape[0] == Vector4<T>::VECTOR_SIZE);
+    } else if (info.ndim == 2) {
+        is_valid_shape = (info.shape[0] == Vector4<T>::VECTOR_SIZE ||
+                          info.shape[1] == Vector4<T>::VECTOR_SIZE);
+    } else {
+        is_valid_shape = false;
+    }
+    if (!is_valid_shape) {
+        throw std::runtime_error(
+            "Incompatible shape: expected (,n), (1,n), (n,1)");
+    }
+    Vector4<T> vec;
+    memcpy(vec.data(), info.ptr, sizeof(T) * Vector4<T>::VECTOR_SIZE);
     return vec;
 }
 

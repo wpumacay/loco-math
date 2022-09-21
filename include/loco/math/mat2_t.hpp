@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <loco/math/common.hpp>
 #include <loco/math/vec2_t.hpp>
 
 namespace loco {
@@ -155,12 +154,6 @@ class Matrix2 {
 
     /// Returns a 4x4 zero matrix of the current scalar type
     static auto Zeros() -> Type { return Matrix2<Scalar_T>(); }
-
-    static const Matrix2<Scalar_T> IDENTITY =
-        Matrix2<Scalar_T>(1.0, 0.0, 0.0, 1.0);
-
-    static const Matrix2<Scalar_T> ZEROS =
-        Matrix2<Scalar_T>(0.0, 0.0, 0.0, 0.0);
 
  private:
     /// The buffer where all data is stored (as an array of 2 column

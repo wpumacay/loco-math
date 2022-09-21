@@ -39,14 +39,14 @@ auto bindings_vector4(py::module& m, const char* class_name) -> void {
             .def(py::init<T, T, T>())
             .def(py::init<T, T, T, T>())
             // clang-format off
-            BUFFER_PROTOCOL(T)
-            PROPERTY(x)
-            PROPERTY(y)
-            PROPERTY(z)
-            PROPERTY(w)
-            OPERATORS(T)
-            METHODS(T)
-            GETSET_ITEM(Class::VECTOR_SIZE, T)
+            VECTOR_BUFFER_PROTOCOL(T)
+            VECTOR_PROPERTY(x)
+            VECTOR_PROPERTY(y)
+            VECTOR_PROPERTY(z)
+            VECTOR_PROPERTY(w)
+            VECTOR_OPERATORS(T)
+            VECTOR_METHODS(T)
+            VECTOR_GETSET_ITEM(Class::VECTOR_SIZE, T)
             // clant-format on
             // NOLINTNEXTLINE
             .def_property_readonly("ndim", [](const Class& self) {

@@ -40,12 +40,12 @@ auto bindings_vector2(py::module& m, const char* class_name) -> void {
             .def(py::init<T>())
             .def(py::init<T, T>())
             // clang-format off
-            BUFFER_PROTOCOL(T)
-            PROPERTY(x)
-            PROPERTY(y)
-            OPERATORS(T)
-            METHODS(T)
-            GETSET_ITEM(Class::VECTOR_SIZE, T)
+            VECTOR_BUFFER_PROTOCOL(T)
+            VECTOR_PROPERTY(x)
+            VECTOR_PROPERTY(y)
+            VECTOR_OPERATORS(T)
+            VECTOR_METHODS(T)
+            VECTOR_GETSET_ITEM(Class::VECTOR_SIZE, T)
             // clant-format on
             // NOLINTNEXTLINE
             .def_property_readonly("ndim", [](const Class& self) {

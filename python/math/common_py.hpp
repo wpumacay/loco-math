@@ -5,16 +5,16 @@
 #include <loco/math/common.hpp>
 
 // clang-format off
-#define BUFFER_PROTOCOL(Type)                                               \
+#define VECTOR_BUFFER_PROTOCOL(T)                                           \
     .def(py::init([](const py::buffer& buff) -> Class {                     \
         py::buffer_info info = buff.request();                              \
-        if (IsFloat32<Type>::value &&                                       \
-            (info.format != py::format_descriptor<Type>::format())) {       \
+        if (IsFloat32<T>::value &&                                          \
+            (info.format != py::format_descriptor<T>::format())) {          \
             throw std::runtime_error(                                       \
                 "Incompatible format: expected float (float32) array");     \
         }                                                                   \
-        if (IsFloat64<Type>::value &&                                       \
-            (info.format != py::format_descriptor<Type>::format())) {       \
+        if (IsFloat64<T>::value &&                                          \
+            (info.format != py::format_descriptor<T>::format())) {          \
             throw std::runtime_error(                                       \
                 "Incompatible format: expected double (float64) array");    \
         }                                                                   \
@@ -36,23 +36,61 @@
         return vec;                                                         \
     }))                                                                     \
     .def_buffer([](Class& self) -> py::buffer_info {                        \
-        return py::buffer_info(self.data(), sizeof(Type),                   \
-                               py::format_descriptor<T>::format(), 1,       \
+        return py::buffer_info(self.data(), sizeof(T),                      \
+                               py::format_descriptor<T>::format(),          \
+                               Class::VECTOR_NDIM,                          \
                                {Class::VECTOR_SIZE}, {sizeof(T)});          \
     })
 
+#define MATRIX_BUFFER_PROTOCOL(Size, T)                                     \
+    .def(py::init([](const py::buffer& buff) -> Class {                     \
+        py::buffer_info info = buff.request();                              \
+        if (IsFloat32<T>::value &&                                          \
+            (info.format != py::format_descriptor<T>::format())) {          \
+            throw std::runtime_error(                                       \
+                "Incompatible format: expected float (float32) array");     \
+        }                                                                   \
+        if (IsFloat64<T>::value &&                                          \
+            (info.format != py::format_descriptor<T>::format())) {          \
+            throw std::runtime_error(                                       \
+                "Incompatible format: expected double (float64) array");    \
+        }                                                                   \
+        Class mat;                                                          \
+        if (info.ndim == Class::MATRIX_NDIM) {                              \
+            if (info.shape[0] == Class::MATRIX_SIZE &&                      \
+                info.shape[1] == Class::MATRIX_SIZE) {                      \
+                memcpy(mat.data(), info.ptr,                                \
+                       sizeof(T) * Class::BUFFER_SIZE);                     \
+            } else {                                                        \
+                throw std::runtime_error(                                   \
+                    "Incompatible size: expected (" #Size ", " #Size ")");  \
+            }                                                               \
+        } else {                                                            \
+            throw std::runtime_error(                                       \
+                "Incompatible shape: expected (" #Size ", " #Size ")");     \
+        }                                                                   \
+        return mat;                                                         \
+    }))                                                                     \
+    .def_buffer([](Class& self) -> py::buffer_info {                        \
+        return py::buffer_info(self.data(), sizeof(T),                      \
+                               py::format_descriptor<T>::format(),          \
+                               Class::MATRIX_NDIM,                          \
+                               {Class::MATRIX_SIZE, Class::MATRIX_SIZE},    \
+                               {sizeof(T), sizeof(T) * Class::MATRIX_SIZE});\
+    })
 
-#define PROPERTY(var) .def_property(#var,   \
-    [](const Class& self) -> T              \
-        {                                   \
-            return self.var();              \
-        },                                  \
-    [](Class& self, T value)                \
-        {                                   \
-            self.var() = value;             \
+
+#define VECTOR_PROPERTY(var) .def_property(#var,    \
+    [](const Class& self) -> T                      \
+        {                                           \
+            return self.var();                      \
+        },                                          \
+    [](Class& self, T value)                        \
+        {                                           \
+            self.var() = value;                     \
         })
 
-#define GETSET_ITEM(Size, Type)                            \
+#define VECTOR_GETSET_ITEM(Size, Type)                      \
     .def("__getitem__",                                     \
     [](const Class& self, uint32_t index) -> Type           \
         {                                                   \
@@ -70,7 +108,7 @@
             self[index] = value;                            \
         })
 
-#define OPERATORS(Type)                                                 \
+#define VECTOR_OPERATORS(Type)                                          \
     .def(py::self + py::self)                                           \
     .def(py::self - py::self)                                           \
     .def(py::self * py::self)                                           \
@@ -87,7 +125,7 @@
         return lhs != rhs;                                              \
     })
 
-#define METHODS(Type)                                                   \
+#define VECTOR_METHODS(Type)                                            \
     .def("dot", [](const Class& self, const Class& other) -> Type {     \
         return dot(self, other);                                        \
     })                                                                  \

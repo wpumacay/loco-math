@@ -36,6 +36,8 @@ class Matrix4 {
     constexpr static uint32_t BUFFER_SIZE = 16;
     /// Number of dimensions of the matrix (square 4x4 matrix)
     constexpr static uint32_t MATRIX_SIZE = 4;
+    /// Number of dimensions of this matrix (as in numpy.ndarray.ndim)
+    static constexpr uint32_t MATRIX_NDIM = 2;
 
     /// Typename of the matrix
     using Type = Matrix4<Scalar_T>;

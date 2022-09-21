@@ -33,42 +33,10 @@ auto bindings_matrix4(py::module& m, const char* class_name) -> void {
         using Column = typename Matrix4<T>::ColumnType;
         py::class_<Class>(m, class_name, py::buffer_protocol())
             .def(py::init<>())
-            .def(py::init<T, T, T, T>())
-            .def(py::init<T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T>())
             .def(py::init<Column, Column, Column, Column>())
-            .def(py::init([](const py::buffer& buff) -> Class {
-                py::buffer_info info = buff.request();
-                if (IsFloat32<T>::value &&
-                    info.format != py::format_descriptor<T>::format()) {
-                    throw std::runtime_error(
-                        "Incompatible format: expected float (float32) array");
-                }
-                if (IsFloat64<T>::value &&
-                    info.format != py::format_descriptor<T>::format()) {
-                    throw std::runtime_error(
-                        "Incompatible format: expected double (float64) array");
-                }
-                Class mat;
-                if (info.ndim == 2) {
-                    if (info.shape[0] == 4 && info.shape[1] == 4) {
-                        memcpy(mat.data(), info.ptr,
-                               sizeof(T) * Class::BUFFER_SIZE);
-                    } else {
-                        throw std::runtime_error(
-                            "Incompatible size: expected (4, 4)");
-                    }
-                } else {
-                    throw std::runtime_error(
-                        "Incompatible shape: expected (4, 4)");
-                }
-                return mat;
-            }))
-            .def_buffer([](Class& self) -> py::buffer_info {
-                return py::buffer_info(
-                    self.data(), sizeof(T), py::format_descriptor<T>::format(),
-                    2, {Class::MATRIX_SIZE, Class::MATRIX_SIZE},
-                    {sizeof(T), sizeof(T) * Class::MATRIX_SIZE});
-            })
+            // clang-format off
+            MATRIX_BUFFER_PROTOCOL(Class::MATRIX_SIZE, T)
+            // clang-format on
             .def("__getitem__",
                  [](const Class& self, uint32_t index) -> Column {
                      if (index >= Class::MATRIX_SIZE) {

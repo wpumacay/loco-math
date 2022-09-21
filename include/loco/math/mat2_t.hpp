@@ -39,6 +39,8 @@ class Matrix2 {
     static constexpr uint32_t BUFFER_SIZE = 4;
     /// Number of dimensions of the matrix (square 2x2 matrix)
     static constexpr uint32_t MATRIX_SIZE = 2;
+    /// Number of dimensions of this matrix (as in numpy.ndarray.ndim)
+    static constexpr uint32_t MATRIX_NDIM = 2;
 
     /// Typename of the matrix
     using Type = Matrix2<Scalar_T>;

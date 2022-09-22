@@ -35,30 +35,10 @@ auto bindings_matrix4(py::module& m, const char* class_name) -> void {
             .def(py::init<>())
             .def(py::init<Column, Column, Column, Column>())
             // clang-format off
-            MATRIX_BUFFER_PROTOCOL(Class::MATRIX_SIZE, T)
+            MATRIX_BUFFER_PROTOCOL(4, T)
+            // cppcheck-suppress constParameter
+            MATRIX_GETSET_ITEM(4, T)
             // clang-format on
-            .def("__getitem__",
-                 [](const Class& self, uint32_t index) -> Column {
-                     if (index >= Class::MATRIX_SIZE) {
-                         throw py::index_error();
-                     }
-                     return self[index];
-                 })
-            .def("__setitem__",
-                 [](Class& self, uint32_t index,
-                    const py::buffer& buff) -> void {
-                     if (index >= Class::MATRIX_SIZE) {
-                         throw py::index_error();
-                     }
-                     self[index] = buffer_to_vec4<T>(buff);
-                 })
-            .def("__getitem__",
-                 [](const Class& self, uint32_t row_index, uint32_t col_index)
-                     -> T { return self(row_index, col_index); })
-            .def("__setitem__",
-                 // cppcheck-suppress constParameter
-                 [](Class& self, uint32_t row_index, uint32_t col_index,
-                    T value) -> void { self(row_index, col_index) = value; })
             .def("__repr__", [](const Class& self) -> py::str {
                 return py::str(
                            "Matrix4{}([[{},\t{},\t{},\t{}],\n[{},\t{},\t{},\t{}"

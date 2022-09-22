@@ -32,6 +32,8 @@ auto bindings_matrix2(py::module& m, const char* class_name) -> void {
         .def(py::init<Column, Column>())
         // clang-format off
         MATRIX_BUFFER_PROTOCOL(2, T)
+        // cppcheck-suppress constParameter
+        MATRIX_GETSET_ITEM(2, T)
         // clang-format on
         .def("__repr__", [](const Class& self) -> py::str {
             return py::str("Matrix2{}(\n[{},\t{},\n {},\t{}])")

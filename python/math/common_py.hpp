@@ -3,6 +3,7 @@
 #include <pybind11/pybind11.h>
 
 #include <loco/math/common.hpp>
+#include <conversions_py.hpp>
 
 // clang-format off
 #define VECTOR_BUFFER_PROTOCOL(T)                                           \
@@ -106,6 +107,40 @@
                 throw py::index_error();                    \
             }                                               \
             self[index] = value;                            \
+        })
+
+#define MATRIX_GETSET_ITEM(Size, Type)                                      \
+    .def("__getitem__",                                                     \
+    [](const Class& self, uint32_t index) -> Column                         \
+        {                                                                   \
+            if (index >= Size) {                                            \
+                throw py::index_error();                                    \
+            }                                                               \
+            return self[index];                                             \
+        })                                                                  \
+    .def("__getitem__",                                                     \
+    [](const Class& self, uint32_t row_index, uint32_t col_index) -> Type   \
+        {                                                                   \
+            if (row_index >= Size || col_index >= Size) {                   \
+                throw py::index_error();                                    \
+            }                                                               \
+            return self(row_index, col_index);                              \
+        })                                                                  \
+    .def("__setitem__",                                                     \
+    [](Class& self, uint32_t index, const py::buffer& buff) -> void         \
+        {                                                                   \
+            if (index >= Size) {                                            \
+                throw py::index_error();                                    \
+            }                                                               \
+            self[index] = buffer_to_vec##Size<Type>(buff);                  \
+        })                                                                  \
+    .def("__setitem__",                                                     \
+    [](Class& self, uint32_t row_index, uint32_t col_index, Type value)     \
+        {                                                                   \
+            if (row_index >= Size || col_index >= Size) {                   \
+                throw py::index_error();                                    \
+            }                                                               \
+            self(row_index, col_index) = value;                             \
         })
 
 #define VECTOR_OPERATORS(Type)                                          \

@@ -180,9 +180,6 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
         auto val_znorm = val_z / norm;
         auto val_wnorm = val_w / norm;
 
-        auto v_norm = loco::math::norm(v);
-
-        REQUIRE(std::abs(v_norm - static_cast<T>(1.0)) < EPSILON);
         REQUIRE(std::abs(v.x() - val_xnorm) < EPSILON);
         REQUIRE(std::abs(v.y() - val_ynorm) < EPSILON);
         REQUIRE(std::abs(v.z() - val_znorm) < EPSILON);
@@ -204,9 +201,6 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
         auto val_znorm = val_z / norm;
         auto val_wnorm = val_w / norm;
 
-        auto vn_norm = loco::math::norm(vn);
-
-        REQUIRE(std::abs(vn_norm - static_cast<T>(1.0)) < EPSILON);
         REQUIRE(std::abs(vn.x() - val_xnorm) < EPSILON);
         REQUIRE(std::abs(vn.y() - val_ynorm) < EPSILON);
         REQUIRE(std::abs(vn.z() - val_znorm) < EPSILON);

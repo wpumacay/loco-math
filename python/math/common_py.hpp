@@ -160,6 +160,11 @@
         return lhs != rhs;                                              \
     })
 
+#define MATRIX_OPERATORS(Type)                                          \
+    .def("__mul__", [](const Class& self, Type scale) -> Class {        \
+        return self * scale;                                            \
+    })
+
 #define VECTOR_METHODS(Type)                                            \
     .def("dot", [](const Class& self, const Class& other) -> Type {     \
         return dot(self, other);                                        \

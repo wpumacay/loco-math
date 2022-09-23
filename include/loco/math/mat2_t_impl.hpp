@@ -1,11 +1,9 @@
 #pragma once
 
-#include <istream>
 #include <loco/math/mat2_t.hpp>
 #include <loco/math/impl/mat2_t_scalar_impl.hpp>
 #include <loco/math/impl/mat2_t_sse_impl.hpp>
 #include <loco/math/impl/mat2_t_avx_impl.hpp>
-#include <ostream>
 
 namespace loco {
 namespace math {
@@ -42,16 +40,18 @@ LM_INLINE auto operator-(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
 }
 
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto operator*(T scale, const Matrix2<T>& mat) -> Matrix2<T> {
+LM_INLINE auto operator*(double scale, const Matrix2<T>& mat) -> Matrix2<T> {
     Matrix2<T> dst;
-    scalar::kernel_scale_mat2(dst.elements(), scale, mat.elements());
+    scalar::kernel_scale_mat2(dst.elements(), static_cast<T>(scale),
+                              mat.elements());
     return dst;
 }
 
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto operator*(const Matrix2<T>& mat, T scale) -> Matrix2<T> {
+LM_INLINE auto operator*(const Matrix2<T>& mat, double scale) -> Matrix2<T> {
     Matrix2<T> dst;
-    scalar::kernel_scale_mat2(dst.elements(), scale, mat.elements());
+    scalar::kernel_scale_mat2(dst.elements(), static_cast<T>(scale),
+                              mat.elements());
     return dst;
 }
 
@@ -67,8 +67,10 @@ LM_INLINE auto operator*(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Matrix2<T>& lhs_mat, const Vector2<T>& rhs_vec)
     -> Vector2<T> {
-    return scalar::kernel_matmul_vec_mat2<T>(lhs_mat.elements(),
-                                             rhs_vec.elements());
+    Vector2<T> dst;
+    scalar::kernel_matmul_vec_mat2<T>(dst.elements(), lhs_mat.elements(),
+                                      rhs_vec.elements());
+    return dst;
 }
 
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>

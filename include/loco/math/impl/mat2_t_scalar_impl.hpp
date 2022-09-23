@@ -11,7 +11,7 @@ namespace math {
 namespace scalar {
 
 template <typename T>
-using Mat2Buffer = typename Matrix2<T>::BufferTYpe;
+using Mat2Buffer = typename Matrix2<T>::BufferType;
 
 template <typename T>
 using Vec2Buffer = typename Vector2<T>::BufferType;
@@ -73,10 +73,11 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT2_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_vec_mat2(const Mat2Buffer<T>& mat,
-                                      const Vec2Buffer<T>& vec) -> Vector2<T> {
-    // Express as a linear combination of the columns of the matrix
-    return vec[0] * mat[0] + vec[1] * mat[1];
+LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
+                                      const Mat2Buffer<T>& mat,
+                                      const Vec2Buffer<T>& vec) -> void {
+    dst[0] = mat[0][0] * vec[0] + mat[1][0] * vec[1];
+    dst[1] = mat[0][1] * vec[0] + mat[1][1] * vec[1];
 }
 
 template <typename T, SFINAE_MAT2_SCALAR_GUARD<T> = nullptr>

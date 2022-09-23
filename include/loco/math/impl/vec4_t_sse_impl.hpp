@@ -189,7 +189,7 @@ LM_INLINE auto kernel_normalize_in_place_vec4(Vec4Buffer<T>& vec) -> void {
     auto xmm_v_norm_lo = _mm_div_pd(xmm_v_lo, xmm_sqrt_sums);
     auto xmm_v_norm_hi = _mm_div_pd(xmm_v_hi, xmm_sqrt_sums);
     _mm_store_pd(vec.data(), xmm_v_norm_lo);
-    _mm_store_pd(vec.data(), xmm_v_norm_hi);
+    _mm_store_pd(vec.data() + 2, xmm_v_norm_hi);
 }
 
 template <typename T, SFINAE_VEC4_F32_SSE_GUARD<T> = nullptr>

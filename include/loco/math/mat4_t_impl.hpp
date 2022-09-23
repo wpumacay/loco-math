@@ -109,20 +109,18 @@ LM_INLINE auto operator*(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
 template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Matrix4<T>& lhs_mat, const Vector4<T>& rhs_vec)
     -> Vector4<T> {
-#if defined(LOCOMATH_AVX_ENABLED)
     Vector4<T> dst;
+#if defined(LOCOMATH_AVX_ENABLED)
     avx::kernel_matmul_vec_mat4<T>(dst.elements(), lhs_mat.elements(),
                                    rhs_vec.elements());
-    return dst;
 #elif defined(LOCOMATH_SSE_ENABLED)
-    Vector4<T> dst;
     sse::kernel_matmul_vec_mat4<T>(dst.elements(), lhs_mat.elements(),
                                    rhs_vec.elements());
-    return dst;
 #else
-    return scalar::kernel_matmul_vec_mat4<T>(lhs_mat.elements(),
-                                             rhs_vec.elements());
+    scalar::kernel_matmul_vec_mat4<T>(dst.elements(), lhs_mat.elements(),
+                                      rhs_vec.elements());
 #endif
+    return dst;
 }
 
 /// \brief Returns the element-wise product of the two given matrices

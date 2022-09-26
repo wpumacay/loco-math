@@ -57,16 +57,32 @@ LM_INLINE auto operator-(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
 LM_INLINE auto operator*(double scale, const Matrix2<T>& mat) -> Matrix2<T> {
     Matrix2<T> dst;
-    scalar::kernel_scale_mat2(dst.elements(), static_cast<T>(scale),
+#if defined(LOCOMATH_AVX_ENABLED)
+    sse::kernel_scale_mat2<T>(dst.elements(), static_cast<T>(scale),
                               mat.elements());
+#elif defined(LOCOMATH_SSE_ENABLED)
+    sse::kernel_scale_mat2<T>(dst.elements(), static_cast<T>(scale),
+                              mat.elements());
+#else
+    scalar::kernel_scale_mat2<T>(dst.elements(), static_cast<T>(scale),
+                                 mat.elements());
+#endif
     return dst;
 }
 
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Matrix2<T>& mat, double scale) -> Matrix2<T> {
     Matrix2<T> dst;
-    scalar::kernel_scale_mat2(dst.elements(), static_cast<T>(scale),
+#if defined(LOCOMATH_AVX_ENABLED)
+    sse::kernel_scale_mat2<T>(dst.elements(), static_cast<T>(scale),
                               mat.elements());
+#elif defined(LOCOMATH_SSE_ENABLED)
+    sse::kernel_scale_mat2<T>(dst.elements(), static_cast<T>(scale),
+                              mat.elements());
+#else
+    scalar::kernel_scale_mat2<T>(dst.elements(), static_cast<T>(scale),
+                                 mat.elements());
+#endif
     return dst;
 }
 

@@ -126,6 +126,36 @@ LM_INLINE auto kernel_sub_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
     _mm_store_pd(static_cast<double*>(dst[1].data()), xmm_mat_result_col1);
 }
 
+// ***************************************************************************//
+//                Dispatch SSE-kernel for matrix-scalar product               //
+// ***************************************************************************//
+
+template <typename T, SFINAE_MAT2_F32_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
+                                 const Mat2Buffer<T>& src) -> void {
+    // All matrix entries fit into single xmm register, so just scale it by
+    // another xmm register that has the scale
+    auto xmm_src = _mm_load_ps(static_cast<const float*>(src[0].data()));
+    auto xmm_scale = _mm_set1_ps(scale);
+    auto xmm_result = _mm_mul_ps(xmm_src, xmm_scale);
+    _mm_store_ps(static_cast<float*>(dst[0].data()), xmm_result);
+}
+
+template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
+                                 const Mat2Buffer<T>& src) -> void {
+    // Same approach as previous case, but one column at a time
+    auto xmm_src_col0 = _mm_load_pd(static_cast<const double*>(src[0].data()));
+    auto xmm_src_col1 = _mm_load_pd(static_cast<const double*>(src[1].data()));
+    auto xmm_scale = _mm_set1_pd(scale);
+
+    auto xmm_result_col0 = _mm_mul_pd(xmm_src_col0, xmm_scale);
+    auto xmm_result_col1 = _mm_mul_pd(xmm_src_col1, xmm_scale);
+
+    _mm_store_pd(static_cast<double*>(dst[0].data()), xmm_result_col0);
+    _mm_store_pd(static_cast<double*>(dst[1].data()), xmm_result_col1);
+}
+
 }  // namespace sse
 }  // namespace math
 }  // namespace loco

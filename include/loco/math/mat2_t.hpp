@@ -18,9 +18,6 @@
 namespace loco {
 namespace math {
 
-template <typename T>
-using SFINAE_MAT2_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
-
 /// \class Matrix2
 ///
 /// \brief Class representation of a 2 by 2 matrix of real-valued entries
@@ -32,7 +29,7 @@ using SFINAE_MAT2_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 /// same scalar type. The resulting storage is column major and aligned in a way
 /// that allows the use of aligned versions of some SIMD instructions (when
 /// using either SSE or AVX instrinsics).
-template <typename Scalar_T, SFINAE_MAT2_GUARD<Scalar_T> = nullptr>
+template <typename Scalar_T>
 class Matrix2 {
  public:
     /// Number of scalars used for the storage of this matrix

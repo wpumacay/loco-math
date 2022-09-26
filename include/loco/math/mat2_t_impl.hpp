@@ -8,6 +8,9 @@
 namespace loco {
 namespace math {
 
+template <typename T>
+using SFINAE_MAT2_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
+
 /// Returns the tranpose of the given matrix
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
 LM_INLINE auto transpose(const Matrix2<T>& mat) -> Matrix2<T> {

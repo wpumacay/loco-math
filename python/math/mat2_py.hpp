@@ -32,6 +32,7 @@ auto bindings_matrix2(py::module& m, const char* class_name) -> void {
         .def(py::init<Column, Column>())
         // clang-format off
         MATRIX_BUFFER_PROTOCOL(2, T)
+        MATRIX_OPERATORS(T)
         // cppcheck-suppress constParameter
         MATRIX_GETSET_ITEM(2, T)
         // clang-format on

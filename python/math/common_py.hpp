@@ -160,10 +160,26 @@
         return lhs != rhs;                                              \
     })
 
-#define MATRIX_OPERATORS(Type)                                          \
-    .def("__mul__", [](const Class& self, Type scale) -> Class {        \
-        return self * scale;                                            \
+#define MATRIX_OPERATORS(Type)                                              \
+    .def(py::self + py::self)                                               \
+    .def(py::self - py::self)                                               \
+    .def(py::self * py::self)                                               \
+    .def("__mul__", [](const Class& self, Type scale) -> Class {            \
+        return self * static_cast<double>(scale);                           \
+    })                                                                      \
+    .def("__rmul__", [](const Class& self, Type scale) -> Class {           \
+        return static_cast<double>(scale) * self;                           \
+    })                                                                      \
+    .def("__mul__", [](const Class& self, const Column& rhs) -> Column {    \
+        return self * rhs;                                                  \
+    })                                                                      \
+    .def("__eq__", [](const Class& lhs, const Class& rhs) -> bool {         \
+        return lhs == rhs;                                                  \
+    })                                                                      \
+    .def("__neq__", [](const Class& lhs, const Class& rhs) -> bool {        \
+        return lhs != rhs;                                                  \
     })
+
 
 #define VECTOR_METHODS(Type)                                            \
     .def("dot", [](const Class& self, const Class& other) -> Type {     \

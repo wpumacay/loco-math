@@ -108,8 +108,16 @@ template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
 LM_INLINE auto hadamard(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
+#if defined(LOCOMATH_AVX_ENABLED)
+    sse::kernel_hadamard_mat2<T>(dst.elements(), lhs.elements(),
+                                 rhs.elements());
+#elif defined(LOCOMATH_SSE_ENABLED)
+    sse::kernel_hadamard_mat2<T>(dst.elements(), lhs.elements(),
+                                 rhs.elements());
+#else
     scalar::kernel_hadamard_mat2<T>(dst.elements(), lhs.elements(),
                                     rhs.elements());
+#endif
     return dst;
 }
 

@@ -157,6 +157,54 @@ LM_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
 }
 
 // ***************************************************************************//
+//                Dispatch SSE-kernel for matrix-matrix product               //
+// ***************************************************************************//
+
+template <typename T, SFINAE_MAT2_F32_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
+                                  const Mat2Buffer<T>& rhs) -> void {
+    auto xmm_mat_lhs = _mm_load_ps(static_cast<const float*>(lhs[0].data()));
+    auto xmm_mat_rhs = _mm_load_ps(static_cast<const float*>(rhs[0].data()));
+    // We proceed by shuffling the vectors and aligning everything such that the
+    // resulting product comes naturally as the matmul operation
+    auto xmm_rhs_mix_0 = _mm_shuffle_ps(xmm_mat_rhs, xmm_mat_rhs, 0xa0);
+    auto xmm_rhs_mix_1 = _mm_shuffle_ps(xmm_mat_rhs, xmm_mat_rhs, 0xf5);
+    auto xmm_lhs_mix_0 = _mm_shuffle_ps(xmm_mat_lhs, xmm_mat_lhs, 0x44);
+    auto xmm_lhs_mix_1 = _mm_shuffle_ps(xmm_mat_lhs, xmm_mat_lhs, 0xee);
+
+    auto xmm_result_mix_0 = _mm_mul_ps(xmm_lhs_mix_0, xmm_rhs_mix_0);
+    auto xmm_result_mix_1 = _mm_mul_ps(xmm_lhs_mix_1, xmm_rhs_mix_1);
+    auto xmm_result = _mm_add_ps(xmm_result_mix_0, xmm_result_mix_1);
+    _mm_store_ps(static_cast<float*>(dst[0].data()), xmm_result);
+}
+
+template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
+                                  const Mat2Buffer<T>& rhs) -> void {
+    auto xmm_mat_lhs_col0 =
+        _mm_load_pd(static_cast<const double*>(lhs[0].data()));
+    auto xmm_mat_lhs_col1 =
+        _mm_load_pd(static_cast<const double*>(lhs[1].data()));
+    // Take the column-space view of the  matmul (generating first column)
+    auto xmm_scalar_rhs_00 = _mm_set1_pd(rhs[0][0]);
+    auto xmm_scalar_rhs_10 = _mm_set1_pd(rhs[0][1]);
+    auto xmm_scaled_lhs_col0 = _mm_mul_pd(xmm_scalar_rhs_00, xmm_mat_lhs_col0);
+    auto xmm_scaled_lhs_col1 = _mm_mul_pd(xmm_scalar_rhs_10, xmm_mat_lhs_col1);
+    auto xmm_result_col0 = _mm_add_pd(xmm_scaled_lhs_col0, xmm_scaled_lhs_col1);
+
+    // Take the column-space view of the matmul (generating second column)
+    auto xmm_scalar_rhs_01 = _mm_set1_pd(rhs[1][0]);
+    auto xmm_scalar_rhs_11 = _mm_set1_pd(rhs[1][1]);
+    xmm_scaled_lhs_col0 = _mm_mul_pd(xmm_scalar_rhs_01, xmm_mat_lhs_col0);
+    xmm_scaled_lhs_col1 = _mm_mul_pd(xmm_scalar_rhs_11, xmm_mat_lhs_col1);
+    auto xmm_result_col1 = _mm_add_pd(xmm_scaled_lhs_col0, xmm_scaled_lhs_col1);
+
+    // Store our results :D (one column at a time)
+    _mm_store_pd(static_cast<double*>(dst[0].data()), xmm_result_col0);
+    _mm_store_pd(static_cast<double*>(dst[1].data()), xmm_result_col1);
+}
+
+// ***************************************************************************//
 //             Dispatch SSE-kernel for matrix element-wise product            //
 // ***************************************************************************//
 

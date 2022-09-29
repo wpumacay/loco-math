@@ -1,5 +1,6 @@
 #pragma once
 
+#include "loco/math/impl/mat2_t_scalar_impl.hpp"
 #if defined(LOCOMATH_SSE_ENABLED)
 
 #include <emmintrin.h>
@@ -202,6 +203,36 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
     // Store our results :D (one column at a time)
     _mm_store_pd(static_cast<double*>(dst[0].data()), xmm_result_col0);
     _mm_store_pd(static_cast<double*>(dst[1].data()), xmm_result_col1);
+}
+
+// ***************************************************************************//
+//                Dispatch SSE-kernel for matrix-vector product               //
+// ***************************************************************************//
+
+template <typename T, SFINAE_MAT2_F32_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
+                                      const Mat2Buffer<T>& mat,
+                                      const Vec2Buffer<T>& vec) -> void {
+    // SORRY, can't come up with a way to do it for the moment :(. Will use
+    // scalar version instead TODO(wilbert)
+    dst[0] = mat[0][0] * vec[0] + mat[1][0] * vec[1];
+    dst[1] = mat[0][1] * vec[0] + mat[1][1] * vec[1];
+}
+
+template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
+                                      const Mat2Buffer<T>& mat,
+                                      const Vec2Buffer<T>& vec) -> void {
+    auto xmm_mat_col0 = _mm_load_pd(static_cast<const double*>(mat[0].data()));
+    auto xmm_mat_col1 = _mm_load_pd(static_cast<const double*>(mat[1].data()));
+
+    auto xmm_vec_scalar_0 = _mm_set1_pd(vec[0]);
+    auto xmm_vec_scalar_1 = _mm_set1_pd(vec[1]);
+
+    auto xmm_mat_scaled_col0 = _mm_mul_pd(xmm_vec_scalar_0, xmm_mat_col0);
+    auto xmm_mat_scaled_col1 = _mm_mul_pd(xmm_vec_scalar_1, xmm_mat_col1);
+    auto xmm_result = _mm_add_pd(xmm_mat_scaled_col0, xmm_mat_scaled_col1);
+    _mm_store_pd(static_cast<double*>(dst[0].data()), xmm_result);
 }
 
 // ***************************************************************************//

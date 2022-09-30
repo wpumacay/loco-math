@@ -167,7 +167,21 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
     auto xmm_mat_lhs = _mm_load_ps(static_cast<const float*>(lhs[0].data()));
     auto xmm_mat_rhs = _mm_load_ps(static_cast<const float*>(rhs[0].data()));
     // We proceed by shuffling the vectors and aligning everything such that the
-    // resulting product comes naturally as the matmul operation
+    // resulting products comes naturally as the matmul operation.
+    // We have loaded on the xmm registers (lhs = a, rhs = b):
+    //      [a00,a10,a01,a11]
+    //      [b00,b10,b01,b11] (recall we use column-major)
+    //
+    // We need to shuffle in this way both lhs and rhs
+    //      [b00,b10,b01,b11]
+    //        /           \
+    // [b00,b00,b01,b01]  [b10,b10,b11,b11]
+    //         x                  x
+    // [a00,a10,a00,a10]  [a01,a11,a01,a11]
+    //          \                /
+
+    //           \              /
+    //           [matmul result]
     auto xmm_rhs_mix_0 = _mm_shuffle_ps(xmm_mat_rhs, xmm_mat_rhs, 0xa0);
     auto xmm_rhs_mix_1 = _mm_shuffle_ps(xmm_mat_rhs, xmm_mat_rhs, 0xf5);
     auto xmm_lhs_mix_0 = _mm_shuffle_ps(xmm_mat_lhs, xmm_mat_lhs, 0x44);
@@ -232,7 +246,7 @@ LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
     auto xmm_mat_scaled_col0 = _mm_mul_pd(xmm_vec_scalar_0, xmm_mat_col0);
     auto xmm_mat_scaled_col1 = _mm_mul_pd(xmm_vec_scalar_1, xmm_mat_col1);
     auto xmm_result = _mm_add_pd(xmm_mat_scaled_col0, xmm_mat_scaled_col1);
-    _mm_store_pd(static_cast<double*>(dst[0].data()), xmm_result);
+    _mm_store_pd(static_cast<double*>(dst.data()), xmm_result);
 }
 
 // ***************************************************************************//

@@ -196,6 +196,36 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
 }
 
 // ***************************************************************************//
+//                Dispatch SSE-kernel for matrix-vector product               //
+// ***************************************************************************//
+
+template <typename T, SFINAE_MAT2_F32_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
+                                      const Mat2Buffer<T>& mat,
+                                      const Vec2Buffer<T>& vec) -> void {
+    // TODO(wilbert): Sorry, couldn't figure out a way to exploit xmm-128 or
+    // ymm-256 bit registers. Will use the scalar version at the moment
+    dst[0] = mat[0][0] * vec[0] + mat[1][0] * vec[1];
+    dst[1] = mat[0][1] * vec[0] + mat[1][1] * vec[1];
+}
+
+template <typename T, SFINAE_MAT2_F64_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
+                                      const Mat2Buffer<T>& mat,
+                                      const Vec2Buffer<T>& vec) -> void {
+    auto xmm_mat_col0 = _mm_load_pd(static_cast<const double*>(mat[0].data()));
+    auto xmm_mat_col1 = _mm_load_pd(static_cast<const double*>(mat[1].data()));
+
+    auto xmm_vec_scalar0 = _mm_set1_pd(vec[0]);
+    auto xmm_vec_scalar1 = _mm_set1_pd(vec[1]);
+
+    auto xmm_mat_scaled_col0 = _mm_mul_pd(xmm_vec_scalar0, xmm_mat_col0);
+    auto xmm_mat_scaled_col1 = _mm_mul_pd(xmm_vec_scalar1, xmm_mat_col1);
+    auto xmm_result = _mm_add_pd(xmm_mat_scaled_col0, xmm_mat_scaled_col1);
+    _mm_store_pd(static_cast<double*>(dst.data()), xmm_result);
+}
+
+// ***************************************************************************//
 //             Dispatch SSE-kernel for matrix element-wise product            //
 // ***************************************************************************//
 

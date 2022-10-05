@@ -57,6 +57,8 @@ loco_create_target(LocoMathCpp INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/vec4_t_impl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/quat_t.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/quat_t_impl.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/mat2_t.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/mat2_t_impl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/mat4_t.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/mat4_t_impl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/impl/vec2_t_scalar_impl.hpp
@@ -70,6 +72,9 @@ loco_create_target(LocoMathCpp INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/impl/quat_t_scalar_impl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/impl/quat_t_sse_impl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/impl/quat_t_avx_impl.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/impl/mat2_t_scalar_impl.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/impl/mat2_t_sse_impl.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/impl/mat2_t_avx_impl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/impl/mat4_t_scalar_impl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/impl/mat4_t_sse_impl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/loco/math/impl/mat4_t_avx_impl.hpp

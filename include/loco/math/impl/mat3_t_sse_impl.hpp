@@ -173,6 +173,58 @@ LM_INLINE auto kernel_scale_mat3(Mat3Buffer<T>& dst, T scale,
 //                Dispatch SSE-kernel for matrix-matrix product               //
 // ***************************************************************************//
 
+template <typename T, SFINAE_MAT3_SSE_F32_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
+                                  const Mat3Buffer<T>& rhs) -> void {
+    // Use the "linear combination view" of the matrix-vector product, and apply
+    // it along all column vectors of the right-hand side
+    for (uint32_t k = 0; k < Matrix3<T>::MATRIX_SIZE; ++k) {
+        // Compute each resulting column, as in the  "matmul_vec" kernel
+        auto xmm_result_col_k = _mm_setzero_ps();
+        for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
+            //                              k=4            [      |     ]
+            // A * v = (lhs * rhs)[:,k] = SUM   rhs[j,k] * |  lhs[:,j]  ]
+            //                              k=0            [      |     ]
+            auto xmm_scalar_rhs_jk = _mm_set1_ps(rhs[k][j]);
+            auto xmm_lhs_col_j =
+                _mm_load_ps(static_cast<const float*>(lhs[j].data()));
+            auto xmm_lhs_col_scaled_j =
+                _mm_mul_ps(xmm_scalar_rhs_jk, xmm_lhs_col_j);
+            xmm_result_col_k =
+                _mm_add_ps(xmm_result_col_k, xmm_lhs_col_scaled_j);
+        }
+        _mm_store_ps(static_cast<float*>(dst[k].data()), xmm_result_col_k);
+    }
+}
+
+template <typename T, SFINAE_MAT3_SSE_F64_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
+                                  const Mat3Buffer<T>& rhs) -> void {
+    // Use the same approach as the f32 version, but use lo-hi halves xmm regs.
+    for (uint32_t k = 0; k < Matrix3<T>::MATRIX_SIZE; ++k) {
+        auto xmm_result_col_k_lo = _mm_setzero_pd();
+        auto xmm_result_col_k_hi = _mm_setzero_pd();
+        for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
+            auto xmm_scalar_rhs_jk = _mm_set1_pd(rhs[k][j]);
+            auto xmm_lhs_col_j_lo =
+                _mm_load_pd(static_cast<const double*>(lhs[j].data()));
+            auto xmm_lhs_col_j_hi =
+                _mm_load_pd(static_cast<const double*>(lhs[j].data() + 2));
+            auto xmm_lhs_col_scaled_j_lo =
+                _mm_mul_pd(xmm_scalar_rhs_jk, xmm_lhs_col_j_lo);
+            auto xmm_lhs_col_scaled_j_hi =
+                _mm_mul_pd(xmm_scalar_rhs_jk, xmm_lhs_col_j_hi);
+            xmm_result_col_k_lo =
+                _mm_add_pd(xmm_result_col_k_lo, xmm_lhs_col_scaled_j_lo);
+            xmm_result_col_k_hi =
+                _mm_add_pd(xmm_result_col_k_hi, xmm_lhs_col_scaled_j_hi);
+        }
+        _mm_store_pd(static_cast<double*>(dst[k].data()), xmm_result_col_k_lo);
+        _mm_store_pd(static_cast<double*>(dst[k].data() + 2),
+                     xmm_result_col_k_hi);
+    }
+}
+
 // ***************************************************************************//
 //                Dispatch SSE-kernel for matrix-vector product               //
 // ***************************************************************************//

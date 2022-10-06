@@ -66,12 +66,12 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
     auto x01 = GenRandom(T, 2);
     auto x02 = GenRandom(T, 2);
 
-    auto x10 = GenRandom(T, 1);
-    auto x11 = GenRandom(T, 1);
-    auto x12 = GenRandom(T, 1);
+    auto x10 = GenRandom(T, 2);
+    auto x11 = GenRandom(T, 2);
+    auto x12 = GenRandom(T, 2);
 
-    auto x20 = GenRandom(T, 1);
-    auto x21 = GenRandom(T, 1);
+    auto x20 = GenRandom(T, 2);
+    auto x21 = GenRandom(T, 2);
     auto x22 = GenRandom(T, 1);
 
     // clang-format off
@@ -85,12 +85,12 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
     auto y01 = GenRandom(T, 2);
     auto y02 = GenRandom(T, 2);
 
-    auto y10 = GenRandom(T, 1);
-    auto y11 = GenRandom(T, 1);
-    auto y12 = GenRandom(T, 1);
+    auto y10 = GenRandom(T, 2);
+    auto y11 = GenRandom(T, 2);
+    auto y12 = GenRandom(T, 2);
 
-    auto y20 = GenRandom(T, 1);
-    auto y21 = GenRandom(T, 1);
+    auto y20 = GenRandom(T, 2);
+    auto y21 = GenRandom(T, 2);
     auto y22 = GenRandom(T, 1);
 
     // clang-format off

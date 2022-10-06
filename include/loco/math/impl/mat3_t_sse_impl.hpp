@@ -229,6 +229,67 @@ LM_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
 //                Dispatch SSE-kernel for matrix-vector product               //
 // ***************************************************************************//
 
+template <typename T, SFINAE_MAT3_SSE_F32_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_vec_mat3(Vec3Buffer<T>& dst,
+                                      const Mat3Buffer<T>& mat,
+                                      const Vec3Buffer<T>& vec) -> void {
+    // Use the "linear combination view" of the matrix-vector product
+    //         [ |  |  |  |  ]
+    // A * v = | a0 a1 a2 a3 | * [v0,v1,v2,v3]^T
+    //         [ |  |  |  |  ]
+    //
+    //             [ |]       [ |]        [ |]        [ |]
+    // A * v = v0 *|a0]+ v1 * |a1] + v2 * |a2] + v3 * |a3]
+    //             [ |]       [ |]        [ |]        [ |]
+    //
+    // Each column A[:,j] contains 4xf32 of data, so it fits in a single xmm reg
+    // Notice that we're considering the padding, which makes vec3 a vec4 kinda
+    auto xmm_result = _mm_setzero_ps();
+    for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
+        auto xmm_vec_scalar_j = _mm_set1_ps(vec[j]);
+        auto xmm_mat_col_j =
+            _mm_load_ps(static_cast<const float*>(mat[j].data()));
+        auto xmm_mat_col_scaled_j = _mm_mul_ps(xmm_vec_scalar_j, xmm_mat_col_j);
+        xmm_result = _mm_add_ps(xmm_result, xmm_mat_col_scaled_j);
+    }
+    _mm_store_ps(static_cast<float*>(dst.data()), xmm_result);
+}
+
+template <typename T, SFINAE_MAT3_SSE_F64_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_vec_mat3(Vec3Buffer<T>& dst,
+                                      const Mat3Buffer<T>& mat,
+                                      const Vec3Buffer<T>& vec) -> void {
+    // Use the "linear combination view" of the matrix-vector product
+    //         [ |  |  |  |  ]
+    // A * v = | a0 a1 a2 a3 | * [v0,v1,v2,v3]^T
+    //         [ |  |  |  |  ]
+    //
+    //             [ |]       [ |]        [ |]        [ |]
+    // A * v = v0 *|a0]+ v1 * |a1] + v2 * |a2] + v3 * |a3]
+    //             [ |]       [ |]        [ |]        [ |]
+    //
+    // Each column A[:,j] contains 4xf64 of data, so we have to split again into
+    // lo-hi sections of 2xf64 each that fit into the xmm registers
+    auto xmm_result_lo = _mm_setzero_pd();
+    auto xmm_result_hi = _mm_setzero_pd();
+    for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
+        auto xmm_vec_scalar_j = _mm_set1_pd(vec[j]);
+        auto xmm_mat_col_j_lo =
+            _mm_load_pd(static_cast<const double*>(mat[j].data()));
+        auto xmm_mat_col_j_hi =
+            _mm_load_pd(static_cast<const double*>(mat[j].data() + 2));
+        auto xmm_mat_col_j_scaled_lo =
+            _mm_mul_pd(xmm_vec_scalar_j, xmm_mat_col_j_lo);
+        auto xmm_mat_col_j_scaled_hi =
+            _mm_mul_pd(xmm_vec_scalar_j, xmm_mat_col_j_hi);
+
+        xmm_result_lo = _mm_add_pd(xmm_result_lo, xmm_mat_col_j_scaled_lo);
+        xmm_result_hi = _mm_add_pd(xmm_result_hi, xmm_mat_col_j_scaled_hi);
+    }
+    _mm_store_pd(static_cast<double*>(dst.data()), xmm_result_lo);
+    _mm_store_pd(static_cast<double*>(dst.data() + 2), xmm_result_hi);
+}
+
 // ***************************************************************************//
 //             Dispatch SSE-kernel for matrix element-wise product            //
 // ***************************************************************************//

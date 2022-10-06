@@ -18,6 +18,7 @@ set(LOCOMATH_EXAMPLES_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/example_mat2_constructors.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_mat2_operations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_mat3_constructors.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/example_mat3_operations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_mat4_constructors.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_mat4_operations.cpp
     # Examples used to check each op assembly listing

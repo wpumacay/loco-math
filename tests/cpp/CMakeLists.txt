@@ -28,6 +28,7 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat2_type.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat2_operations.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat3_type.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_mat3_operations.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_type.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_operations.cpp)
 target_link_libraries(LocoMathCppTests PRIVATE loco::math Catch2::Catch2)

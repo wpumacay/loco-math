@@ -14,7 +14,7 @@ template <typename T>
 using Mat3Buffer = typename Matrix3<T>::BufferType;
 
 template <typename T>
-using Vec3Buffer = typename Matrix3<T>::ColumnType;
+using Vec3Buffer = typename Vector3<T>::BufferType;
 
 template <typename T>
 using SFINAE_MAT3_SCALAR_GUARD =
@@ -101,6 +101,7 @@ LM_INLINE auto kernel_compare_eq_mat3(const Mat3Buffer<T>& lhs,
             }
         }
     }
+    return true;
 }
 
 }  // namespace scalar

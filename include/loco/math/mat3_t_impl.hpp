@@ -44,14 +44,16 @@ LM_INLINE auto operator-(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto operator*(double scale, const Matrix3<T>& mat) -> Matrix3<T> {
     Matrix3<T> dst;
-    scalar::kernel_scale_mat3<T>(dst.elements(), scale, mat.elements());
+    scalar::kernel_scale_mat3<T>(dst.elements(), static_cast<T>(scale),
+                                 mat.elements());
     return dst;
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Matrix3<T>& mat, double scale) -> Matrix3<T> {
     Matrix3<T> dst;
-    scalar::kernel_scale_mat3<T>(dst.elements(), scale, mat.elements());
+    scalar::kernel_scale_mat3<T>(dst.elements(), static_cast<T>(scale),
+                                 mat.elements());
     return dst;
 }
 
@@ -67,7 +69,7 @@ LM_INLINE auto operator*(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Matrix3<T>& lhs_mat, const Vector3<T>& rhs_vec)
     -> Vector3<T> {
-    Matrix3<T> dst;
+    Vector3<T> dst;
     scalar::kernel_matmul_vec_mat3<T>(dst.elements(), lhs_mat.elements(),
                                       rhs_vec.elements());
     return dst;

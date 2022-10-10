@@ -30,7 +30,6 @@ auto bindings_matrix3(py::module& m, const char* class_name) -> void {
     using Column = typename Matrix3<T>::ColumnType;
     py::class_<Class>(m, class_name, py::buffer_protocol())
         .def(py::init<>())
-        .def(py::init<Column, Column, Column>())
         // clang-format off
         MATRIX_BUFFER_PROTOCOL(3, T)
         MATRIX_OPERATORS(T)

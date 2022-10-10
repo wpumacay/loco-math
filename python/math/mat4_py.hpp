@@ -33,7 +33,6 @@ auto bindings_matrix4(py::module& m, const char* class_name) -> void {
         using Column = typename Matrix4<T>::ColumnType;
         py::class_<Class>(m, class_name, py::buffer_protocol())
             .def(py::init<>())
-            .def(py::init<Column, Column, Column, Column>())
             // clang-format off
             MATRIX_BUFFER_PROTOCOL(4, T)
             MATRIX_OPERATORS(T)

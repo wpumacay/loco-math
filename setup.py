@@ -182,7 +182,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX :: Linux",
     ],
-    packages=find_packages(),
     zip_safe=False,
     install_requires=required_packages,
     package_data={},

@@ -45,7 +45,7 @@ auto bindings_vector2(py::module& m, const char* class_name) -> void {
             VECTOR_PROPERTY(y)
             VECTOR_OPERATORS(T)
             VECTOR_METHODS(T)
-            VECTOR_GETSET_ITEM(Class::VECTOR_SIZE, T)
+            VECTOR_GETSET_ITEM(2, T)
             // clant-format on
             // NOLINTNEXTLINE
             .def_property_readonly("ndim", [](const Class& self) {
@@ -53,7 +53,7 @@ auto bindings_vector2(py::module& m, const char* class_name) -> void {
             })
             // NOLINTNEXTLINE
             .def_property_readonly("shape", [](const Class& self) {
-                return std::pair<uint32_t, uint32_t>(1, Class::VECTOR_SIZE);
+                return std::pair<uint32_t, uint32_t>(1, 2);
             })
             .def("__repr__", [](const Class& self) -> py::str {
                 return py::str("Vector2{}(x={}, y={})")

@@ -119,6 +119,40 @@ LM_INLINE auto kernel_sub_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
     }
 }
 
+// ***************************************************************************//
+//                Dispatch AVX-kernel for matrix-scalar product               //
+// ***************************************************************************//
+
+template <typename T, SFINAE_MAT3_F32_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_scale_mat3(Mat3Buffer<T>& dst, T scale,
+                                 const Mat3Buffer<T>& src) -> void {
+    // Similarly, scale 8xf32 (ymm) and then 4xf32 (xmm)
+    auto ymm_scale = _mm256_set1_ps(scale);
+    auto ymm_mat_cols_01 =
+        _mm256_load_ps(static_cast<const float*>(src[0].data()));
+    auto ymm_mat_scaled_cols_01 = _mm256_mul_ps(ymm_scale, ymm_mat_cols_01);
+
+    auto xmm_scale = _mm_set1_ps(scale);
+    auto xmm_mat_col_2 = _mm_load_ps(static_cast<const float*>(src[2].data()));
+    auto xmm_mat_scaled_col_2 = _mm_mul_ps(xmm_scale, xmm_mat_col_2);
+
+    _mm256_store_ps(static_cast<float*>(dst[0].data()), ymm_mat_scaled_cols_01);
+    _mm_store_ps(static_cast<float*>(dst[2].data()), xmm_mat_scaled_col_2);
+}
+
+template <typename T, SFINAE_MAT3_F64_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_scale_mat3(Mat3Buffer<T>& dst, T scale,
+                                 const Mat3Buffer<T>& src) -> void {
+    auto ymm_scale = _mm256_set1_pd(scale);
+    for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
+        auto ymm_mat_col_j =
+            _mm256_load_pd(static_cast<const double*>(src[j].data()));
+        auto ymm_mat_scaled_col_j = _mm256_mul_pd(ymm_scale, ymm_mat_col_j);
+        _mm256_store_pd(static_cast<double*>(dst[j].data()),
+                        ymm_mat_scaled_col_j);
+    }
+}
+
 }  // namespace avx
 }  // namespace math
 }  // namespace loco

@@ -57,7 +57,7 @@ template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto operator*(double scale, const Matrix3<T>& mat) -> Matrix3<T> {
     Matrix3<T> dst;
 #if defined(LOCOMATH_AVX_ENABLED)
-    sse::kernel_scale_mat3(dst.elements(), static_cast<T>(scale),
+    avx::kernel_scale_mat3(dst.elements(), static_cast<T>(scale),
                            mat.elements());
 #elif defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_scale_mat3<T>(dst.elements(), static_cast<T>(scale),
@@ -73,7 +73,7 @@ template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Matrix3<T>& mat, double scale) -> Matrix3<T> {
     Matrix3<T> dst;
 #if defined(LOCOMATH_AVX_ENABLED)
-    sse::kernel_scale_mat3(dst.elements(), static_cast<T>(scale),
+    avx::kernel_scale_mat3(dst.elements(), static_cast<T>(scale),
                            mat.elements());
 #elif defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_scale_mat3<T>(dst.elements(), static_cast<T>(scale),

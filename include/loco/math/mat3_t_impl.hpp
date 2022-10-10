@@ -44,7 +44,7 @@ LM_INLINE auto operator-(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
     -> Matrix3<T> {
     Matrix3<T> dst;
 #if defined(LOCOMATH_AVX_ENABLED)
-    sse::kernel_sub_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
+    avx::kernel_sub_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
 #elif defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_sub_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else

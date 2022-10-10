@@ -84,6 +84,41 @@ LM_INLINE auto kernel_add_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
     }
 }
 
+// ***************************************************************************//
+//                 Dispatch AVX-kernel for matrix substraction                //
+// ***************************************************************************//
+
+template <typename T, SFINAE_MAT3_F32_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_sub_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
+                               const Mat3Buffer<T>& rhs) -> void {
+    // Proceed the same way we used the addition kernel
+    auto ymm_lhs_cols_01 =
+        _mm256_load_ps(static_cast<const float*>(lhs[0].data()));
+    auto ymm_rhs_cols_01 =
+        _mm256_load_ps(static_cast<const float*>(rhs[0].data()));
+    auto ymm_sum_cols_01 = _mm256_sub_ps(ymm_lhs_cols_01, ymm_rhs_cols_01);
+
+    auto xmm_lhs_col_2 = _mm_load_ps(static_cast<const float*>(lhs[2].data()));
+    auto xmm_rhs_col_2 = _mm_load_ps(static_cast<const float*>(rhs[2].data()));
+    auto xmm_sum_col_2 = _mm_sub_ps(xmm_lhs_col_2, xmm_rhs_col_2);
+
+    _mm256_store_ps(static_cast<float*>(dst[0].data()), ymm_sum_cols_01);
+    _mm_store_ps(static_cast<float*>(dst[2].data()), xmm_sum_col_2);
+}
+
+template <typename T, SFINAE_MAT3_F64_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_sub_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
+                               const Mat3Buffer<T>& rhs) -> void {
+    for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
+        auto ymm_lhs_col_j =
+            _mm256_load_pd(static_cast<const double*>(lhs[j].data()));
+        auto ymm_rhs_col_j =
+            _mm256_load_pd(static_cast<const double*>(rhs[j].data()));
+        auto ymm_sum_cols_j = _mm256_sub_pd(ymm_lhs_col_j, ymm_rhs_col_j);
+        _mm256_store_pd(static_cast<double*>(dst[j].data()), ymm_sum_cols_j);
+    }
+}
+
 }  // namespace avx
 }  // namespace math
 }  // namespace loco

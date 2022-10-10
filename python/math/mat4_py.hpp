@@ -33,6 +33,9 @@ auto bindings_matrix4(py::module& m, const char* class_name) -> void {
         using Column = typename Matrix4<T>::ColumnType;
         py::class_<Class>(m, class_name, py::buffer_protocol())
             .def(py::init<>())
+            .def(py::init<T, T, T, T>())
+            .def(py::init<T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T>())
+            .def(py::init<Column, Column, Column, Column>())
             // clang-format off
             MATRIX_BUFFER_PROTOCOL(4, T)
             MATRIX_OPERATORS(T)
@@ -40,15 +43,17 @@ auto bindings_matrix4(py::module& m, const char* class_name) -> void {
             MATRIX_GETSET_ITEM(4, T)
             // clang-format on
             .def("__repr__", [](const Class& self) -> py::str {
-                return py::str(
-                           "Matrix4{}([[{},\t{},\t{},\t{}],\n[{},\t{},\t{},\t{}"
-                           "],\n"
-                           "[{},\t{},\t{},\t{}],\n[{},\t{},\t{},\t{}]")
-                    .format((IsFloat32<T>::value ? "f" : "d"), self(0, 0),
-                            self(0, 1), self(0, 2), self(0, 3), self(1, 0),
-                            self(1, 1), self(1, 2), self(1, 3), self(2, 0),
-                            self(2, 1), self(2, 2), self(2, 3), self(3, 0),
-                            self(3, 1), self(3, 2), self(3, 3));
+                // clang-format off
+                return py::str("Matrix4{}([[{},\t{},\t{},\t{}],\n"
+                               "          [{},\t{},\t{},\t{}],\n"
+                               "          [{},\t{},\t{},\t{}],\n"
+                               "          [{},\t{},\t{},\t{}]])")
+                    .format((IsFloat32<T>::value ? "f" : "d"),
+                            self(0, 0), self(0, 1), self(0, 2), self(0, 3),
+                            self(1, 0), self(1, 1), self(1, 2), self(1, 3),
+                            self(2, 0), self(2, 1), self(2, 2), self(2, 3),
+                            self(3, 0), self(3, 1), self(3, 2), self(3, 3));
+                // clang-format on
             });
     }
 }

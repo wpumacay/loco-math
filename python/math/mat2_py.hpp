@@ -28,7 +28,10 @@ auto bindings_matrix2(py::module& m, const char* class_name) -> void {
     using Class = Matrix2<T>;
     using Column = typename Matrix2<T>::ColumnType;
     py::class_<Class>(m, class_name, py::buffer_protocol())
-        .def(py::init())
+        .def(py::init<>())
+        .def(py::init<T, T>())
+        .def(py::init<T, T, T, T>())
+        .def(py::init<Column, Column>())
         // clang-format off
         MATRIX_BUFFER_PROTOCOL(2, T)
         MATRIX_OPERATORS(T)
@@ -36,9 +39,13 @@ auto bindings_matrix2(py::module& m, const char* class_name) -> void {
         MATRIX_GETSET_ITEM(2, T)
         // clang-format on
         .def("__repr__", [](const Class& self) -> py::str {
-            return py::str("Matrix2{}(\n[{},\t{},\n {},\t{}])")
-                .format(IsFloat32<T>::value ? "f" : "d", self(0, 0), self(0, 1),
+            // clang-format off
+            return py::str("Matrix2{}([[{},\t{}],\n"
+                           "          [{},\t{}]])")
+                .format(IsFloat32<T>::value ? "f" : "d",
+                        self(0, 0), self(0, 1),
                         self(1, 0), self(1, 1));
+            // clang-format on
         });
 }
 

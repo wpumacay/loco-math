@@ -30,6 +30,9 @@ auto bindings_matrix3(py::module& m, const char* class_name) -> void {
     using Column = typename Matrix3<T>::ColumnType;
     py::class_<Class>(m, class_name, py::buffer_protocol())
         .def(py::init<>())
+        .def(py::init<T, T, T>())
+        .def(py::init<T, T, T, T, T, T, T, T, T>())
+        .def(py::init<Column, Column, Column>())
         // clang-format off
         MATRIX_BUFFER_PROTOCOL(3, T)
         MATRIX_OPERATORS(T)
@@ -38,9 +41,9 @@ auto bindings_matrix3(py::module& m, const char* class_name) -> void {
         // clang-format on
         .def("__repr__", [](const Class& self) -> py::str {
             // clang-format off
-            return py::str("Matrix3{}([[{},{},{}],\n"
-                           "          [{},{},{}],\n"
-                           "          [{},{},{}]]")
+            return py::str("Matrix3{}([[{},\t{},\t{}],\n"
+                           "          [{},\t{},\t{}],\n"
+                           "          [{},\t{},\t{}]])")
                 .format(IsFloat32<T>::value ? "f" : "d",
                     self(0, 0), self(0, 1), self(0, 2),
                     self(1, 0), self(1, 1), self(1, 2),

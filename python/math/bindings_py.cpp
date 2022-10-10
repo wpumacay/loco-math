@@ -12,7 +12,7 @@
 namespace py = pybind11;
 
 // NOLINTNEXTLINE
-PYBIND11_MODULE(_math, m) {
+PYBIND11_MODULE(lmath, m) {
     loco::math::bindings_vector2<loco::math::float32_t>(m, "Vector2f");
     loco::math::bindings_vector2<loco::math::float64_t>(m, "Vector2d");
     loco::math::bindings_vector3<loco::math::float32_t>(m, "Vector3f");

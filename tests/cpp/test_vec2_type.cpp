@@ -1,7 +1,8 @@
 #include <catch2/catch.hpp>
-#include <cmath>
-#include <loco/math/all.hpp>
 #include <type_traits>
+#include <cmath>
+
+#include <loco/math/vec2_t_impl.hpp>
 
 constexpr size_t N_SAMPLES = 10;
 constexpr double RANGE_MIN = -10.0;

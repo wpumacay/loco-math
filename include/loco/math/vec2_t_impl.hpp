@@ -123,12 +123,14 @@ LM_INLINE auto operator-(const Vector2<T>& lhs, const Vector2<T>& rhs)
 /// \param[in] scale Scalar value by which to scale the second operand
 /// \param[in] vec Vector in 3d-space which we want to scale
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-LM_INLINE auto operator*(T scale, const Vector2<T>& vec) -> Vector2<T> {
+LM_INLINE auto operator*(double scale, const Vector2<T>& vec) -> Vector2<T> {
     Vector2<T> dst;
 #if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
-    sse::kernel_scale_vec2<T>(dst.elements(), scale, vec.elements());
+    sse::kernel_scale_vec2<T>(dst.elements(), static_cast<T>(scale),
+                              vec.elements());
 #else
-    scalar::kernel_scale_vec2<T>(dst.elements(), scale, vec.elements());
+    scalar::kernel_scale_vec2<T>(dst.elements(), static_cast<T>(scale),
+                                 vec.elements());
 #endif
     return dst;
 }
@@ -146,12 +148,14 @@ LM_INLINE auto operator*(T scale, const Vector2<T>& vec) -> Vector2<T> {
 /// \param[in] vec Vector in 3d-space which we want to scale
 /// \param[in] scale Scalar value by which to scale the first operand
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
-LM_INLINE auto operator*(const Vector2<T>& vec, T scale) -> Vector2<T> {
+LM_INLINE auto operator*(const Vector2<T>& vec, double scale) -> Vector2<T> {
     Vector2<T> dst;
 #if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
-    sse::kernel_scale_vec2<T>(dst.elements(), scale, vec.elements());
+    sse::kernel_scale_vec2<T>(dst.elements(), static_cast<T>(scale),
+                              vec.elements());
 #else
-    scalar::kernel_scale_vec2(dst.elements(), scale, vec.elements());
+    scalar::kernel_scale_vec2(dst.elements(), static_cast<T>(scale),
+                              vec.elements());
 #endif
     return dst;
 }

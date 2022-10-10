@@ -137,14 +137,17 @@ LM_INLINE auto operator-(const Vector4<T>& lhs, const Vector4<T>& rhs)
 /// \param[in] scale Scalar value by which to scale the second operand
 /// \param[in] vec Vector in 4d-space which we want to scale
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
-LM_INLINE auto operator*(T scale, const Vector4<T>& vec) -> Vector4<T> {
+LM_INLINE auto operator*(double scale, const Vector4<T>& vec) -> Vector4<T> {
     Vector4<T> dst;
 #if defined(LOCOMATH_AVX_ENABLED)
-    avx::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
+    avx::kernel_scale_vec4<T>(dst.elements(), static_cast<T>(scale),
+                              vec.elements());
 #elif defined(LOCOMATH_SSE_ENABLED)
-    sse::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
+    sse::kernel_scale_vec4<T>(dst.elements(), static_cast<T>(scale),
+                              vec.elements());
 #else
-    scalar::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
+    scalar::kernel_scale_vec4<T>(dst.elements(), static_cast<T>(scale),
+                                 vec.elements());
 #endif
     return dst;
 }
@@ -162,14 +165,17 @@ LM_INLINE auto operator*(T scale, const Vector4<T>& vec) -> Vector4<T> {
 /// \param[in] vec Vector in 4d-space which we want to scale
 /// \param[in] scale Scalar value by which to scale the first operand
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
-LM_INLINE auto operator*(const Vector4<T>& vec, T scale) -> Vector4<T> {
+LM_INLINE auto operator*(const Vector4<T>& vec, double scale) -> Vector4<T> {
     Vector4<T> dst;
 #if defined(LOCOMATH_AVX_ENABLED)
-    avx::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
+    avx::kernel_scale_vec4<T>(dst.elements(), static_cast<T>(scale),
+                              vec.elements());
 #elif defined(LOCOMATH_SSE_ENABLED)
-    sse::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
+    sse::kernel_scale_vec4<T>(dst.elements(), static_cast<T>(scale),
+                              vec.elements());
 #else
-    scalar::kernel_scale_vec4<T>(dst.elements(), scale, vec.elements());
+    scalar::kernel_scale_vec4<T>(dst.elements(), static_cast<T>(scale),
+                                 vec.elements());
 #endif
     return dst;
 }

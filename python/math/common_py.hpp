@@ -148,10 +148,10 @@
     .def(py::self - py::self)                                           \
     .def(py::self * py::self)                                           \
     .def("__mul__", [](const Class& self, Type scale) -> Class {        \
-        return self * scale;                                            \
+        return self * static_cast<double>(scale);                       \
     })                                                                  \
     .def("__rmul__", [](const Class& self, Type scale) -> Class {       \
-        return scale * self;                                            \
+        return static_cast<double>(scale) * self;                       \
     })                                                                  \
     .def("__eq__", [](const Class& lhs, const Class& rhs) -> bool {     \
         return lhs == rhs;                                              \

@@ -1,5 +1,6 @@
 #include <catch2/catch.hpp>
-#include <loco/math/all.hpp>
+
+#include <loco/math/vec2_t_impl.hpp>
 
 template <typename T>
 constexpr auto FuncClose(T a, T b, T eps) -> bool {
@@ -99,8 +100,8 @@ TEMPLATE_TEST_CASE("Vector2 class (vec2_t) core Operations", "[vec2_t][ops]",
         auto scale = GENERATE(as<T>{}, 0.25, 0.50, 0.75, 1.0);  // NOLINT
 
         Vector2 v(val_x, val_y);
-        auto v_1 = scale * v;
-        auto v_2 = v * scale;
+        auto v_1 = static_cast<double>(scale) * v;
+        auto v_2 = v * static_cast<double>(scale);
 
         REQUIRE(std::abs(v_1.x() - (val_x * scale)) < EPSILON);
         REQUIRE(std::abs(v_1.y() - (val_y * scale)) < EPSILON);

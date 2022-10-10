@@ -1,9 +1,10 @@
-#include <loco/math/all.hpp>
 #include <type_traits>
+
+#include <loco/math/vec2_t_impl.hpp>
 
 template <typename T, typename = typename std::enable_if<
                           loco::math::IsScalar<T>::value>::type>
-auto run_operations_vec2() -> void {
+LM_NEVER_INLINE auto run_operations_vec2() -> void {
     using Vec2 = loco::math::Vector2<T>;
 
     // Preamble (show the type we're currently working with)
@@ -18,8 +19,8 @@ auto run_operations_vec2() -> void {
 
     Vec2 vec_sum = vec_a + vec_b;
     Vec2 vec_diff = vec_a - vec_b;
-    Vec2 vec_scale_1 = static_cast<T>(2.5) * vec_a;
-    Vec2 vec_scale_2 = vec_b * static_cast<T>(0.25);
+    Vec2 vec_scale_1 = 2.5 * vec_a;
+    Vec2 vec_scale_2 = vec_b * 0.25;
     Vec2 vec_mul = vec_a * vec_b;
 
     std::cout << "a: " << '\n' << vec_a.toString() << '\n';

@@ -1,7 +1,8 @@
 #include <catch2/catch.hpp>
-#include <cmath>
-#include <loco/math/all.hpp>
 #include <type_traits>
+#include <cmath>
+
+#include <loco/math/mat4_t_impl.hpp>
 
 constexpr int N_SAMPLES = 4;
 constexpr double RANGE_MIN = -10.0;

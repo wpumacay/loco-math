@@ -1,9 +1,10 @@
-#include <loco/math/all.hpp>
 #include <type_traits>
+
+#include <loco/math/mat4_t_impl.hpp>
 
 template <typename T, typename = typename std::enable_if<
                           loco::math::IsScalar<T>::value>::type>
-auto run_operations_mat4() -> void {
+LM_NEVER_INLINE auto run_operations_mat4() -> void {
     using Mat4 = loco::math::Matrix4<T>;
     using Vec4 = loco::math::Vector4<T>;
 

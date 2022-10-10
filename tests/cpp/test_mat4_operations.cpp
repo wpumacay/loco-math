@@ -1,6 +1,7 @@
 #include <catch2/catch.hpp>
 #include <cmath>
-#include <loco/math/all.hpp>
+
+#include <loco/math/mat4_t_impl.hpp>
 
 static constexpr double RANGE_MIN = -10.0;
 static constexpr double RANGE_MAX = 10.0;

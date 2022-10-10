@@ -15,7 +15,6 @@
 #include <loco/math/vec2_t_impl.hpp>
 
 #include <common_py.hpp>
-#include "loco/math/common.hpp"
 
 namespace py = pybind11;
 

@@ -1,6 +1,6 @@
 #include <iomanip>
 #include <iostream>
-#include <loco/math/all.hpp>
+#include <loco/math/vec3_t_impl.hpp>
 #include <type_traits>
 
 template <typename T>

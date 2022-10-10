@@ -8,7 +8,7 @@
 
 template <typename T, typename = typename std::enable_if<
                           loco::math::IsScalar<T>::value>::type>
-auto run_operations_mat4() -> void {
+LM_NEVER_INLINE auto run_operations_mat2() -> void {
     using Mat2 = loco::math::Matrix2<T>;
     using Vec2 = loco::math::Vector2<T>;
 
@@ -51,8 +51,8 @@ auto run_operations_mat4() -> void {
 }
 
 auto main() -> int {
-    run_operations_mat4<float>();
-    run_operations_mat4<double>();
+    run_operations_mat2<float>();
+    run_operations_mat2<double>();
     return 0;
 }
 

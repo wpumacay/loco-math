@@ -1,5 +1,6 @@
 #include <catch2/catch.hpp>
-#include <loco/math/all.hpp>
+
+#include <loco/math/vec3_t_impl.hpp>
 
 /*
  * @todo(wilbert): replace GENERATE of fixed values with random values + seed
@@ -119,8 +120,8 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
         auto scale = GENERATE(as<T>{}, 0.25, 0.50, 0.75, 1.0);  // NOLINT
 
         Vector3 v(val_x, val_y, val_z);
-        auto v_1 = scale * v;
-        auto v_2 = v * scale;
+        auto v_1 = static_cast<double>(scale) * v;
+        auto v_2 = v * static_cast<double>(scale);
 
         REQUIRE(std::abs(v_1.x() - (val_x * scale)) < EPSILON);
         REQUIRE(std::abs(v_1.y() - (val_y * scale)) < EPSILON);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <xmmintrin.h>
 #if defined(LOCOMATH_AVX_ENABLED)
 
 #include <immintrin.h>
@@ -156,6 +157,39 @@ LM_INLINE auto kernel_scale_mat3(Mat3Buffer<T>& dst, T scale,
 // ***************************************************************************//
 //                Dispatch AVX-kernel for matrix-matrix product               //
 // ***************************************************************************//
+
+template <typename T, SFINAE_MAT3_F32_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
+                                  const Mat3Buffer<T>& rhs) -> void {
+    for (uint32_t k = 0; k < Matrix3<T>::MATRIX_SIZE; ++k) {
+        auto xmm_result_col_k = _mm_setzero_ps();
+        for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
+            auto xmm_scalar_rhs_jk = _mm_set1_ps(rhs[k][j]);
+            auto xmm_lhs_col_j =
+                _mm_load_ps(static_cast<const float*>(lhs[j].data()));
+            xmm_result_col_k = _mm_add_ps(
+                xmm_result_col_k, _mm_mul_ps(xmm_scalar_rhs_jk, xmm_lhs_col_j));
+        }
+        _mm_store_ps(static_cast<float*>(dst[k].data()), xmm_result_col_k);
+    }
+}
+
+template <typename T, SFINAE_MAT3_F64_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
+                                  const Mat3Buffer<T>& rhs) -> void {
+    for (uint32_t k = 0; k < Matrix3<T>::MATRIX_SIZE; ++k) {
+        auto ymm_result_col_k = _mm256_setzero_pd();
+        for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
+            auto ymm_scalar_rhs_jk = _mm256_set1_pd(rhs[k][j]);
+            auto ymm_lhs_col_j =
+                _mm256_load_pd(static_cast<const double*>(lhs[j].data()));
+            ymm_result_col_k =
+                _mm256_add_pd(ymm_result_col_k,
+                              _mm256_mul_pd(ymm_scalar_rhs_jk, ymm_lhs_col_j));
+        }
+        _mm256_store_pd(static_cast<double*>(dst[k].data()), ymm_result_col_k);
+    }
+}
 
 // ***************************************************************************//
 //                Dispatch AVX-kernel for matrix-vector product               //

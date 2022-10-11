@@ -195,6 +195,36 @@ LM_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
 //                Dispatch AVX-kernel for matrix-vector product               //
 // ***************************************************************************//
 
+template <typename T, SFINAE_MAT3_F32_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_vec_mat3(Vec3Buffer<T>& dst,
+                                      const Mat3Buffer<T>& mat,
+                                      const Vec3Buffer<T>& vec) -> void {
+    auto xmm_result = _mm_setzero_ps();
+    for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
+        auto xmm_vec_scalar_j = _mm_set1_ps(vec[j]);
+        auto xmm_mat_col_j =
+            _mm_load_ps(static_cast<const float*>(mat[j].data()));
+        xmm_result =
+            _mm_add_ps(xmm_result, _mm_mul_ps(xmm_vec_scalar_j, xmm_mat_col_j));
+    }
+    _mm_store_ps(static_cast<float*>(dst.data()), xmm_result);
+}
+
+template <typename T, SFINAE_MAT3_F64_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_matmul_vec_mat3(Vec3Buffer<T>& dst,
+                                      const Mat3Buffer<T>& mat,
+                                      const Vec3Buffer<T>& vec) -> void {
+    auto ymm_result = _mm256_setzero_pd();
+    for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
+        auto ymm_vec_scalar_j = _mm256_set1_pd(vec[j]);
+        auto ymm_mat_col_j =
+            _mm256_load_pd(static_cast<const double*>(mat[j].data()));
+        ymm_result = _mm256_add_pd(
+            ymm_result, _mm256_mul_pd(ymm_vec_scalar_j, ymm_mat_col_j));
+    }
+    _mm256_store_pd(static_cast<double*>(dst.data()), ymm_result);
+}
+
 // ***************************************************************************//
 //             Dispatch AVX-kernel for matrix element-wise product            //
 // ***************************************************************************//

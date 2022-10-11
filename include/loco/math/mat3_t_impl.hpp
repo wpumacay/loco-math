@@ -105,7 +105,7 @@ LM_INLINE auto operator*(const Matrix3<T>& lhs_mat, const Vector3<T>& rhs_vec)
     -> Vector3<T> {
     Vector3<T> dst;
 #if defined(LOCOMATH_AVX_ENABLED)
-    sse::kernel_matmul_vec_mat3<T>(dst.elements(), lhs_mat.elements(),
+    avx::kernel_matmul_vec_mat3<T>(dst.elements(), lhs_mat.elements(),
                                    rhs_vec.elements());
 #elif defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_matmul_vec_mat3<T>(dst.elements(), lhs_mat.elements(),

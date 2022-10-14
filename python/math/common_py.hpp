@@ -93,20 +93,20 @@
 
 #define VECTOR_GETSET_ITEM(Size, Type)                      \
     .def("__getitem__",                                     \
-    [](const Class& self, uint32_t index) -> Type           \
+    [](const Class& self, int32_t index) -> Type            \
         {                                                   \
-            if (index >= Size) {                            \
+            if (index >= Size || index <= 0) {              \
                 throw py::index_error();                    \
             }                                               \
             return self[static_cast<uint32_t>(index)];      \
         })                                                  \
     .def("__setitem__",                                     \
-    [](Class& self, uint32_t index, Type value) -> void     \
+    [](Class& self, int32_t index, Type value) -> void      \
         {                                                   \
-            if (index >= Size) {                            \
+            if (index >= Size || index <= 0) {              \
                 throw py::index_error();                    \
             }                                               \
-            self[index] = value;                            \
+            self[static_cast<uint32_t>(index)] = value;     \
         })
 
 #define MATRIX_GETSET_ITEM(Size, Type)                                      \

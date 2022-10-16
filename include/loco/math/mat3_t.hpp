@@ -168,7 +168,7 @@ class Matrix3 {
  private:
     /// The buffer where all data is stored (as an array of 3 column
     /// vectors)
-    alignas(sizeof(Scalar_T) * ALIGN_SIZE) BufferType m_Elements;
+    BufferType m_Elements;
 };
 
 }  // namespace math

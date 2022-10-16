@@ -36,14 +36,6 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) constructors", "[mat3_t][template]",
     using Matrix3 = loco::math::Matrix3<T>;
     using Vector3 = loco::math::Vector3<T>;
 
-    // Checking size and alignment (storage is an array of column vectors)
-    // Notice the huge 16byte padding. As we're aligning to 16*4, the size
-    // also grows by padding stuff after the last vec3 column of the matrix
-    constexpr int EXPECTED_SIZE = 16 * sizeof(T);
-    constexpr int EXPECTED_ALIGNMENT = 16 * sizeof(T);
-    static_assert(Matrix3::num_bytes_size() == EXPECTED_SIZE, "");
-    static_assert(Matrix3::num_bytes_alignment() == EXPECTED_ALIGNMENT, "");
-
     // Checking all exposed constructors
     SECTION("Default constructor") {
         Matrix3 mat;

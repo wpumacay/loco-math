@@ -153,9 +153,8 @@ class Vector3 {
     }
 
  private:
-    /// Storage of the vector's scalars (we pad by 1 due to SIMD-alignment)
-    alignas(sizeof(Scalar_T) * BUFFER_SIZE) BufferType m_Elements = {0, 0, 0,
-                                                                     0};
+    /// Storage of the vector's scalars (we pad by 1 due to SIMD usage)
+    BufferType m_Elements = {0, 0, 0, 0};
 };
 
 }  // namespace math

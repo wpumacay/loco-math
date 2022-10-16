@@ -52,101 +52,101 @@ using SFINAE_VEC3_F64_SSE_GUARD =
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_add_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
                                const Vec3Buffer<T>& rhs) -> void {
-    auto xmm_lhs = _mm_load_ps(lhs.data());
-    auto xmm_rhs = _mm_load_ps(rhs.data());
+    auto xmm_lhs = _mm_loadu_ps(lhs.data());
+    auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_result = _mm_add_ps(xmm_lhs, xmm_rhs);
-    _mm_store_ps(dst.data(), xmm_result);
+    _mm_storeu_ps(dst.data(), xmm_result);
 }
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_add_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
                                const Vec3Buffer<T>& rhs) -> void {
-    auto xmm_lhs_lo = _mm_load_pd(lhs.data());
-    auto xmm_lhs_hi = _mm_load_pd(lhs.data() + 2);
-    auto xmm_rhs_lo = _mm_load_pd(rhs.data());
-    auto xmm_rhs_hi = _mm_load_pd(rhs.data() + 2);
+    auto xmm_lhs_lo = _mm_loadu_pd(lhs.data());
+    auto xmm_lhs_hi = _mm_loadu_pd(lhs.data() + 2);
+    auto xmm_rhs_lo = _mm_loadu_pd(rhs.data());
+    auto xmm_rhs_hi = _mm_loadu_pd(rhs.data() + 2);
     auto xmm_result_lo = _mm_add_pd(xmm_lhs_lo, xmm_rhs_lo);
     auto xmm_result_hi = _mm_add_pd(xmm_lhs_hi, xmm_rhs_hi);
-    _mm_store_pd(dst.data(), xmm_result_lo);
-    _mm_store_pd(dst.data() + 2, xmm_result_hi);
+    _mm_storeu_pd(dst.data(), xmm_result_lo);
+    _mm_storeu_pd(dst.data() + 2, xmm_result_hi);
 }
 
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_sub_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
                                const Vec3Buffer<T>& rhs) -> void {
-    auto xmm_lhs = _mm_load_ps(lhs.data());
-    auto xmm_rhs = _mm_load_ps(rhs.data());
+    auto xmm_lhs = _mm_loadu_ps(lhs.data());
+    auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_result = _mm_sub_ps(xmm_lhs, xmm_rhs);
-    _mm_store_ps(dst.data(), xmm_result);
+    _mm_storeu_ps(dst.data(), xmm_result);
 }
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_sub_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
                                const Vec3Buffer<T>& rhs) -> void {
-    auto xmm_lhs_lo = _mm_load_pd(lhs.data());
-    auto xmm_lhs_hi = _mm_load_pd(lhs.data() + 2);
-    auto xmm_rhs_lo = _mm_load_pd(rhs.data());
-    auto xmm_rhs_hi = _mm_load_pd(rhs.data() + 2);
+    auto xmm_lhs_lo = _mm_loadu_pd(lhs.data());
+    auto xmm_lhs_hi = _mm_loadu_pd(lhs.data() + 2);
+    auto xmm_rhs_lo = _mm_loadu_pd(rhs.data());
+    auto xmm_rhs_hi = _mm_loadu_pd(rhs.data() + 2);
     auto xmm_result_lo = _mm_sub_pd(xmm_lhs_lo, xmm_rhs_lo);
     auto xmm_result_hi = _mm_sub_pd(xmm_lhs_hi, xmm_rhs_hi);
-    _mm_store_pd(dst.data(), xmm_result_lo);
-    _mm_store_pd(dst.data() + 2, xmm_result_hi);
+    _mm_storeu_pd(dst.data(), xmm_result_lo);
+    _mm_storeu_pd(dst.data() + 2, xmm_result_hi);
 }
 
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_scale_vec3(Vec3Buffer<T>& dst, T scale,
                                  const Vec3Buffer<T>& vec) -> void {
     auto xmm_scale = _mm_set1_ps(scale);
-    auto xmm_vector = _mm_load_ps(vec.data());
+    auto xmm_vector = _mm_loadu_ps(vec.data());
     auto xmm_result = _mm_mul_ps(xmm_scale, xmm_vector);
-    _mm_store_ps(dst.data(), xmm_result);
+    _mm_storeu_ps(dst.data(), xmm_result);
 }
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_scale_vec3(Vec3Buffer<T>& dst, T scale,
                                  const Vec3Buffer<T>& vec) -> void {
     auto xmm_scale = _mm_set1_pd(scale);
-    auto xmm_vector_lo = _mm_load_pd(vec.data());
-    auto xmm_vector_hi = _mm_load_pd(vec.data() + 2);
+    auto xmm_vector_lo = _mm_loadu_pd(vec.data());
+    auto xmm_vector_hi = _mm_loadu_pd(vec.data() + 2);
     auto xmm_result_lo = _mm_mul_pd(xmm_scale, xmm_vector_lo);
     auto xmm_result_hi = _mm_mul_pd(xmm_scale, xmm_vector_hi);
-    _mm_store_pd(dst.data(), xmm_result_lo);
-    _mm_store_pd(dst.data() + 2, xmm_result_hi);
+    _mm_storeu_pd(dst.data(), xmm_result_lo);
+    _mm_storeu_pd(dst.data() + 2, xmm_result_hi);
 }
 
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_hadamard_vec3(Vec3Buffer<T>& dst,
                                     const Vec3Buffer<T>& lhs,
                                     const Vec3Buffer<T>& rhs) -> void {
-    auto xmm_lhs = _mm_load_ps(lhs.data());
-    auto xmm_rhs = _mm_load_ps(rhs.data());
-    _mm_store_ps(dst.data(), _mm_mul_ps(xmm_lhs, xmm_rhs));
+    auto xmm_lhs = _mm_loadu_ps(lhs.data());
+    auto xmm_rhs = _mm_loadu_ps(rhs.data());
+    _mm_storeu_ps(dst.data(), _mm_mul_ps(xmm_lhs, xmm_rhs));
 }
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_hadamard_vec3(Vec3Buffer<T>& dst,
                                     const Vec3Buffer<T>& lhs,
                                     const Vec3Buffer<T>& rhs) -> void {
-    auto xmm_lhs_lo = _mm_load_pd(lhs.data());
-    auto xmm_lhs_hi = _mm_load_pd(lhs.data() + 2);
-    auto xmm_rhs_lo = _mm_load_pd(rhs.data());
-    auto xmm_rhs_hi = _mm_load_pd(rhs.data() + 2);
-    _mm_store_pd(dst.data(), _mm_mul_pd(xmm_lhs_lo, xmm_rhs_lo));
-    _mm_store_pd(dst.data() + 2, _mm_mul_pd(xmm_lhs_hi, xmm_rhs_hi));
+    auto xmm_lhs_lo = _mm_loadu_pd(lhs.data());
+    auto xmm_lhs_hi = _mm_loadu_pd(lhs.data() + 2);
+    auto xmm_rhs_lo = _mm_loadu_pd(rhs.data());
+    auto xmm_rhs_hi = _mm_loadu_pd(rhs.data() + 2);
+    _mm_storeu_pd(dst.data(), _mm_mul_pd(xmm_lhs_lo, xmm_rhs_lo));
+    _mm_storeu_pd(dst.data() + 2, _mm_mul_pd(xmm_lhs_hi, xmm_rhs_hi));
 }
 
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_length_square_vec3(const Vec3Buffer<T>& vec) -> T {
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    auto xmm_v = _mm_load_ps(vec.data());
+    auto xmm_v = _mm_loadu_ps(vec.data());
     return _mm_cvtss_f32(_mm_dp_ps(xmm_v, xmm_v, 0x71));
 }
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_length_square_vec3(const Vec3Buffer<T>& vec) -> T {
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    auto xmm_v_lo = _mm_load_pd(vec.data());
-    auto xmm_v_hi = _mm_load_pd(vec.data() + 2);
+    auto xmm_v_lo = _mm_loadu_pd(vec.data());
+    auto xmm_v_hi = _mm_loadu_pd(vec.data() + 2);
     auto xmm_square_sum_lo = _mm_dp_pd(xmm_v_lo, xmm_v_lo, 0x31);
     auto xmm_square_sum_hi = _mm_dp_pd(xmm_v_hi, xmm_v_hi, 0x31);
     auto xmm_square_sum = _mm_add_pd(xmm_square_sum_lo, xmm_square_sum_hi);
@@ -156,15 +156,15 @@ LM_INLINE auto kernel_length_square_vec3(const Vec3Buffer<T>& vec) -> T {
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_length_vec3(const Vec3Buffer<T>& vec) -> T {
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    auto xmm_v = _mm_load_ps(vec.data());
+    auto xmm_v = _mm_loadu_ps(vec.data());
     return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm_v, xmm_v, 0x71)));
 }
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_length_vec3(const Vec3Buffer<T>& vec) -> T {
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    auto xmm_v_01 = _mm_load_pd(vec.data());
-    auto xmm_v_23 = _mm_load_pd(vec.data() + 2);
+    auto xmm_v_01 = _mm_loadu_pd(vec.data());
+    auto xmm_v_23 = _mm_loadu_pd(vec.data() + 2);
     auto xmm_square_sum_01 = _mm_dp_pd(xmm_v_01, xmm_v_01, 0x31);
     auto xmm_square_sum_23 = _mm_dp_pd(xmm_v_23, xmm_v_23, 0x31);
     auto xmm_square_sum = _mm_add_pd(xmm_square_sum_01, xmm_square_sum_23);
@@ -174,32 +174,32 @@ LM_INLINE auto kernel_length_vec3(const Vec3Buffer<T>& vec) -> T {
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_normalize_in_place_vec3(Vec3Buffer<T>& vec) -> void {
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    auto xmm_v = _mm_load_ps(vec.data());
+    auto xmm_v = _mm_loadu_ps(vec.data());
     auto xmm_sums = _mm_dp_ps(xmm_v, xmm_v, 0x7f);
     auto xmm_r_sqrt_sums = _mm_sqrt_ps(xmm_sums);
     auto xmm_v_norm = _mm_div_ps(xmm_v, xmm_r_sqrt_sums);
-    _mm_store_ps(vec.data(), xmm_v_norm);
+    _mm_storeu_ps(vec.data(), xmm_v_norm);
 }
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_normalize_in_place_vec3(Vec3Buffer<T>& vec) -> void {
     // Implementation based on this post: https://bit.ly/3FyZF0n
-    auto xmm_v_01 = _mm_load_pd(vec.data());
-    auto xmm_v_23 = _mm_load_pd(vec.data() + 2);
+    auto xmm_v_01 = _mm_loadu_pd(vec.data());
+    auto xmm_v_23 = _mm_loadu_pd(vec.data() + 2);
     auto xmm_sums_01 = _mm_dp_pd(xmm_v_01, xmm_v_01, 0x33);
     auto xmm_sums_23 = _mm_dp_pd(xmm_v_23, xmm_v_23, 0x33);
     auto xmm_r_sqrt_sums = _mm_sqrt_pd(_mm_add_pd(xmm_sums_01, xmm_sums_23));
     auto xmm_v_norm_01 = _mm_div_pd(xmm_v_01, xmm_r_sqrt_sums);
     auto xmm_v_norm_23 = _mm_div_pd(xmm_v_23, xmm_r_sqrt_sums);
-    _mm_store_pd(vec.data(), xmm_v_norm_01);
-    _mm_store_pd(vec.data() + 2, xmm_v_norm_23);
+    _mm_storeu_pd(vec.data(), xmm_v_norm_01);
+    _mm_storeu_pd(vec.data() + 2, xmm_v_norm_23);
 }
 
 template <typename T, SFINAE_VEC3_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_dot_vec3(const Vec3Buffer<T>& lhs,
                                const Vec3Buffer<T>& rhs) -> T {
-    auto xmm_lhs = _mm_load_ps(lhs.data());
-    auto xmm_rhs = _mm_load_ps(rhs.data());
+    auto xmm_lhs = _mm_loadu_ps(lhs.data());
+    auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_cond_prod = _mm_dp_ps(xmm_lhs, xmm_rhs, 0x71);
     return _mm_cvtss_f32(xmm_cond_prod);
 }
@@ -207,10 +207,10 @@ LM_INLINE auto kernel_dot_vec3(const Vec3Buffer<T>& lhs,
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_dot_vec3(const Vec3Buffer<T>& lhs,
                                const Vec3Buffer<T>& rhs) -> T {
-    auto xmm_lhs_01 = _mm_load_pd(lhs.data());
-    auto xmm_lhs_23 = _mm_load_pd(lhs.data() + 2);
-    auto xmm_rhs_01 = _mm_load_pd(rhs.data());
-    auto xmm_rhs_23 = _mm_load_pd(rhs.data() + 2);
+    auto xmm_lhs_01 = _mm_loadu_pd(lhs.data());
+    auto xmm_lhs_23 = _mm_loadu_pd(lhs.data() + 2);
+    auto xmm_rhs_01 = _mm_loadu_pd(rhs.data());
+    auto xmm_rhs_23 = _mm_loadu_pd(rhs.data() + 2);
     auto xmm_dot_01 = _mm_dp_pd(xmm_lhs_01, xmm_rhs_01, 0x31);
     auto xmm_dot_23 = _mm_dp_pd(xmm_lhs_23, xmm_rhs_23, 0x31);
     return _mm_cvtsd_f64(_mm_add_pd(xmm_dot_01, xmm_dot_23));
@@ -227,8 +227,8 @@ LM_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
     //            a[2] * b[0] - a[0] * b[2],
     //            a[0] * b[1] - a[1] * b[0],
     //                        0            ]
-    auto vec_a = _mm_load_ps(lhs.data());  // a = {a[0], a[1], a[2], a[3]=0}
-    auto vec_b = _mm_load_ps(rhs.data());  // b = {b[0], b[1], b[2], b[3]=0}
+    auto vec_a = _mm_loadu_ps(lhs.data());  // a = {a[0], a[1], a[2], a[3]=0}
+    auto vec_b = _mm_loadu_ps(rhs.data());  // b = {b[0], b[1], b[2], b[3]=0}
     // tmp_0 = {a[1], a[2], a[0], 0}
     auto tmp_0 = _mm_shuffle_ps(
         vec_a, vec_a,
@@ -245,8 +245,8 @@ LM_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
     auto tmp_3 = _mm_shuffle_ps(
         vec_b, vec_b,
         static_cast<int>(loco::math::ShuffleMask<3, 0, 2, 1>::value));
-    _mm_store_ps(dst.data(), _mm_sub_ps(_mm_mul_ps(tmp_0, tmp_1),
-                                        _mm_mul_ps(tmp_2, tmp_3)));
+    _mm_storeu_ps(dst.data(), _mm_sub_ps(_mm_mul_ps(tmp_0, tmp_1),
+                                         _mm_mul_ps(tmp_2, tmp_3)));
 }
 
 template <typename T, SFINAE_VEC3_F64_SSE_GUARD<T> = nullptr>

@@ -7,14 +7,6 @@ template <typename T>
 auto run_example_vec3() -> void {
     using Vec3 = loco::math::Vector3<T>;
 
-    // Checking size and alignment (we pad by 1 scalar to keep the alignment)
-    constexpr int EXPECTED_SIZE = 4 * sizeof(T);
-    constexpr int EXPECTED_ALIGNMENT = 4 * sizeof(T);
-    static_assert(EXPECTED_SIZE == Vec3::num_bytes_size(),
-                  "Wrong number of bytes in internal storage");
-    static_assert(EXPECTED_ALIGNMENT == Vec3::num_bytes_alignment(),
-                  "Wrong alignment of internal storage");
-
     // Just note which scalar type we're using
     if (std::is_same<T, float>()) {
         std::cout << "Checking out Vector3<float> types *****************\n";

@@ -22,13 +22,6 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) constructors", "[vec3_t][template]",
     using T = TestType;
     using Vector3 = loco::math::Vector3<T>;
 
-    // Checking size and alignment (we pad by 1 scalar to keep the alignment)
-    constexpr int EXPECTED_SIZE = 4 * sizeof(T);
-    constexpr int EXPECTED_ALIGNMENT = 4 * sizeof(T);
-    static_assert(std::is_floating_point<T>(), "");
-    static_assert(EXPECTED_SIZE == Vector3::num_bytes_size(), "");
-    static_assert(EXPECTED_ALIGNMENT == Vector3::num_bytes_alignment(), "");
-
     // Checking the correctness of the constructors
 
     SECTION("Default constructor") {

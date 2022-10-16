@@ -197,7 +197,7 @@ class Matrix4 {
 
  private:
     /// The buffer where all data lies (as an array of 4 column vectors)
-    alignas(sizeof(Scalar_T) * BUFFER_SIZE) BufferType m_Elements;
+    BufferType m_Elements;
 };
 
 }  // namespace math

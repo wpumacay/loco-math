@@ -156,7 +156,7 @@ class Quaternion {
 
  private:
     /// Storage of the quaternion's entries in   (w, x, y, z) order
-    alignas(BUFFER_SIZE) BufferType m_Elements = {1, 0, 0, 0};
+    BufferType m_Elements = {1, 0, 0, 0};
 };
 
 }  // namespace math

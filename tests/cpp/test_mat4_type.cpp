@@ -46,12 +46,6 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) constructors", "[mat4_t][template]",
     using Matrix4 = loco::math::Matrix4<T>;
     using Vector4 = loco::math::Vector4<T>;
 
-    // Checking size and alignment (storage is an array of column vectors)
-    constexpr int EXPECTED_SIZE = 16 * sizeof(T);
-    constexpr int EXPECTED_ALIGNMENT = 16 * sizeof(T);
-    static_assert(Matrix4::num_bytes_size() == EXPECTED_SIZE, "");
-    static_assert(Matrix4::num_bytes_alignment() == EXPECTED_ALIGNMENT, "");
-
     // Checking all exposed constructors
     SECTION("Default constructor") {
         Matrix4 mat;

@@ -67,9 +67,9 @@ LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
     // loop, as it most likely be optimized by the compiler and unroll it for us
     // @todo(wilbert): check that the compiler does loop unrolling in this case
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
-        auto xmm_lhs_col_j = _mm_load_ps(lhs[j].data());
-        auto xmm_rhs_col_j = _mm_load_ps(rhs[j].data());
-        _mm_store_ps(dst[j].data(), _mm_add_ps(xmm_lhs_col_j, xmm_rhs_col_j));
+        auto xmm_lhs_col_j = _mm_loadu_ps(lhs[j].data());
+        auto xmm_rhs_col_j = _mm_loadu_ps(rhs[j].data());
+        _mm_storeu_ps(dst[j].data(), _mm_add_ps(xmm_lhs_col_j, xmm_rhs_col_j));
     }
 }
 
@@ -79,15 +79,15 @@ LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
     // [c0, c1, c2, c3] -> column-major order (in storage), each with 4 x f32
     // So, we can send only half of each column to an xmm register
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
-        auto xmm_lhs_col_j_lo = _mm_load_pd(lhs[j].data());
-        auto xmm_rhs_col_j_lo = _mm_load_pd(rhs[j].data());
-        _mm_store_pd(dst[j].data(),
-                     _mm_add_pd(xmm_lhs_col_j_lo, xmm_rhs_col_j_lo));
+        auto xmm_lhs_col_j_lo = _mm_loadu_pd(lhs[j].data());
+        auto xmm_rhs_col_j_lo = _mm_loadu_pd(rhs[j].data());
+        _mm_storeu_pd(dst[j].data(),
+                      _mm_add_pd(xmm_lhs_col_j_lo, xmm_rhs_col_j_lo));
 
-        auto xmm_lhs_col_j_hi = _mm_load_pd(lhs[j].data() + 2);
-        auto xmm_rhs_col_j_hi = _mm_load_pd(rhs[j].data() + 2);
-        _mm_store_pd(dst[j].data() + 2,
-                     _mm_add_pd(xmm_lhs_col_j_hi, xmm_rhs_col_j_hi));
+        auto xmm_lhs_col_j_hi = _mm_loadu_pd(lhs[j].data() + 2);
+        auto xmm_rhs_col_j_hi = _mm_loadu_pd(rhs[j].data() + 2);
+        _mm_storeu_pd(dst[j].data() + 2,
+                      _mm_add_pd(xmm_lhs_col_j_hi, xmm_rhs_col_j_hi));
     }
 }
 
@@ -99,9 +99,9 @@ template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
-        auto xmm_lhs_col_j = _mm_load_ps(lhs[j].data());
-        auto xmm_rhs_col_j = _mm_load_ps(rhs[j].data());
-        _mm_store_ps(dst[j].data(), _mm_sub_ps(xmm_lhs_col_j, xmm_rhs_col_j));
+        auto xmm_lhs_col_j = _mm_loadu_ps(lhs[j].data());
+        auto xmm_rhs_col_j = _mm_loadu_ps(rhs[j].data());
+        _mm_storeu_ps(dst[j].data(), _mm_sub_ps(xmm_lhs_col_j, xmm_rhs_col_j));
     }
 }
 
@@ -109,15 +109,15 @@ template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
                                const Mat4Buffer<T>& rhs) -> void {
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
-        auto xmm_lhs_col_j_lo = _mm_load_pd(lhs[j].data());
-        auto xmm_rhs_col_j_lo = _mm_load_pd(rhs[j].data());
-        _mm_store_pd(dst[j].data(),
-                     _mm_sub_pd(xmm_lhs_col_j_lo, xmm_rhs_col_j_lo));
+        auto xmm_lhs_col_j_lo = _mm_loadu_pd(lhs[j].data());
+        auto xmm_rhs_col_j_lo = _mm_loadu_pd(rhs[j].data());
+        _mm_storeu_pd(dst[j].data(),
+                      _mm_sub_pd(xmm_lhs_col_j_lo, xmm_rhs_col_j_lo));
 
-        auto xmm_lhs_col_j_hi = _mm_load_pd(lhs[j].data() + 2);
-        auto xmm_rhs_col_j_hi = _mm_load_pd(rhs[j].data() + 2);
-        _mm_store_pd(dst[j].data() + 2,
-                     _mm_sub_pd(xmm_lhs_col_j_hi, xmm_rhs_col_j_hi));
+        auto xmm_lhs_col_j_hi = _mm_loadu_pd(lhs[j].data() + 2);
+        auto xmm_rhs_col_j_hi = _mm_loadu_pd(rhs[j].data() + 2);
+        _mm_storeu_pd(dst[j].data() + 2,
+                      _mm_sub_pd(xmm_lhs_col_j_hi, xmm_rhs_col_j_hi));
     }
 }
 
@@ -130,8 +130,8 @@ LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
                                  const Mat4Buffer<T>& mat) -> void {
     auto xmm_scale = _mm_set1_ps(scale);
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
-        auto xmm_mat_col_j = _mm_load_ps(mat[j].data());
-        _mm_store_ps(dst[j].data(), _mm_mul_ps(xmm_scale, xmm_mat_col_j));
+        auto xmm_mat_col_j = _mm_loadu_ps(mat[j].data());
+        _mm_storeu_ps(dst[j].data(), _mm_mul_ps(xmm_scale, xmm_mat_col_j));
     }
 }
 
@@ -141,12 +141,13 @@ LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
     auto xmm_scale_lo = _mm_set1_pd(scale);  // xmm = [scale(f64), scale(f64)]
     auto xmm_scale_hi = _mm_set1_pd(scale);  // xmm = [scale(f64), scale(f64)]
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
-        auto xmm_mat_col_j_lo = _mm_load_pd(mat[j].data());
-        _mm_store_pd(dst[j].data(), _mm_mul_pd(xmm_scale_lo, xmm_mat_col_j_lo));
+        auto xmm_mat_col_j_lo = _mm_loadu_pd(mat[j].data());
+        _mm_storeu_pd(dst[j].data(),
+                      _mm_mul_pd(xmm_scale_lo, xmm_mat_col_j_lo));
 
-        auto xmm_mat_col_j_hi = _mm_load_pd(mat[j].data() + 2);
-        _mm_store_pd(dst[j].data() + 2,
-                     _mm_mul_pd(xmm_scale_hi, xmm_mat_col_j_hi));
+        auto xmm_mat_col_j_hi = _mm_loadu_pd(mat[j].data() + 2);
+        _mm_storeu_pd(dst[j].data() + 2,
+                      _mm_mul_pd(xmm_scale_hi, xmm_mat_col_j_hi));
     }
 }
 
@@ -167,11 +168,11 @@ LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
             // A * v = (lhs * rhs)[:,k] = SUM   rhs[j,k] * |  lhs[:,j]  ]
             //                              k=0            [      |     ]
             auto xmm_scalar_rhs_jk = _mm_set1_ps(rhs[k][j]);
-            auto xmm_lhs_col_j = _mm_load_ps(lhs[j].data());
+            auto xmm_lhs_col_j = _mm_loadu_ps(lhs[j].data());
             xmm_result_col_k = _mm_add_ps(
                 xmm_result_col_k, _mm_mul_ps(xmm_scalar_rhs_jk, xmm_lhs_col_j));
         }
-        _mm_store_ps(dst[k].data(), xmm_result_col_k);
+        _mm_storeu_ps(dst[k].data(), xmm_result_col_k);
     }
 }
 
@@ -184,17 +185,17 @@ LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
         auto xmm_result_col_k_hi = _mm_setzero_pd();
         for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
             auto xmm_scalar_rhs_jk = _mm_set1_pd(rhs[k][j]);
-            auto xmm_lhs_col_j_lo = _mm_load_pd(lhs[j].data());
+            auto xmm_lhs_col_j_lo = _mm_loadu_pd(lhs[j].data());
             xmm_result_col_k_lo =
                 _mm_add_pd(xmm_result_col_k_lo,
                            _mm_mul_pd(xmm_scalar_rhs_jk, xmm_lhs_col_j_lo));
-            auto xmm_lhs_col_j_hi = _mm_load_pd(lhs[j].data() + 2);
+            auto xmm_lhs_col_j_hi = _mm_loadu_pd(lhs[j].data() + 2);
             xmm_result_col_k_hi =
                 _mm_add_pd(xmm_result_col_k_hi,
                            _mm_mul_pd(xmm_scalar_rhs_jk, xmm_lhs_col_j_hi));
         }
-        _mm_store_pd(dst[k].data(), xmm_result_col_k_lo);
-        _mm_store_pd(dst[k].data() + 2, xmm_result_col_k_hi);
+        _mm_storeu_pd(dst[k].data(), xmm_result_col_k_lo);
+        _mm_storeu_pd(dst[k].data() + 2, xmm_result_col_k_hi);
     }
 }
 
@@ -219,11 +220,11 @@ LM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
     auto xmm_result = _mm_setzero_ps();
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_scalar_vj = _mm_set1_ps(vec[j]);
-        auto xmm_mat_col_j = _mm_load_ps(mat[j].data());
+        auto xmm_mat_col_j = _mm_loadu_ps(mat[j].data());
         xmm_result =
             _mm_add_ps(xmm_result, _mm_mul_ps(xmm_scalar_vj, xmm_mat_col_j));
     }
-    _mm_store_ps(dst.data(), xmm_result);
+    _mm_storeu_ps(dst.data(), xmm_result);
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
@@ -245,15 +246,15 @@ LM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
     auto xmm_result_hi = _mm_setzero_pd();
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_scalar_vj = _mm_set1_pd(vec[j]);
-        auto xmm_mat_col_j_lo = _mm_load_pd(mat[j].data());
+        auto xmm_mat_col_j_lo = _mm_loadu_pd(mat[j].data());
         xmm_result_lo = _mm_add_pd(xmm_result_lo,
                                    _mm_mul_pd(xmm_scalar_vj, xmm_mat_col_j_lo));
-        auto xmm_mat_col_j_hi = _mm_load_pd(mat[j].data() + 2);
+        auto xmm_mat_col_j_hi = _mm_loadu_pd(mat[j].data() + 2);
         xmm_result_hi = _mm_add_pd(xmm_result_hi,
                                    _mm_mul_pd(xmm_scalar_vj, xmm_mat_col_j_hi));
     }
-    _mm_store_pd(dst.data(), xmm_result_lo);
-    _mm_store_pd(dst.data() + 2, xmm_result_hi);
+    _mm_storeu_pd(dst.data(), xmm_result_lo);
+    _mm_storeu_pd(dst.data() + 2, xmm_result_hi);
 }
 
 // ***************************************************************************//
@@ -265,9 +266,9 @@ LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
                                     const Mat4Buffer<T>& lhs,
                                     const Mat4Buffer<T>& rhs) -> void {
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
-        auto xmm_lhs_col_j = _mm_load_ps(lhs[j].data());
-        auto xmm_rhs_col_j = _mm_load_ps(rhs[j].data());
-        _mm_store_ps(dst[j].data(), _mm_mul_ps(xmm_lhs_col_j, xmm_rhs_col_j));
+        auto xmm_lhs_col_j = _mm_loadu_ps(lhs[j].data());
+        auto xmm_rhs_col_j = _mm_loadu_ps(rhs[j].data());
+        _mm_storeu_ps(dst[j].data(), _mm_mul_ps(xmm_lhs_col_j, xmm_rhs_col_j));
     }
 }
 
@@ -276,15 +277,15 @@ LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
                                     const Mat4Buffer<T>& lhs,
                                     const Mat4Buffer<T>& rhs) -> void {
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
-        auto xmm_lhs_col_j_lo = _mm_load_pd(lhs[j].data());
-        auto xmm_rhs_col_j_lo = _mm_load_pd(rhs[j].data());
-        _mm_store_pd(dst[j].data(),
-                     _mm_mul_pd(xmm_lhs_col_j_lo, xmm_rhs_col_j_lo));
+        auto xmm_lhs_col_j_lo = _mm_loadu_pd(lhs[j].data());
+        auto xmm_rhs_col_j_lo = _mm_loadu_pd(rhs[j].data());
+        _mm_storeu_pd(dst[j].data(),
+                      _mm_mul_pd(xmm_lhs_col_j_lo, xmm_rhs_col_j_lo));
 
-        auto xmm_lhs_col_j_hi = _mm_load_pd(lhs[j].data() + 2);
-        auto xmm_rhs_col_j_hi = _mm_load_pd(rhs[j].data() + 2);
-        _mm_store_pd(dst[j].data() + 2,
-                     _mm_mul_pd(xmm_lhs_col_j_hi, xmm_rhs_col_j_hi));
+        auto xmm_lhs_col_j_hi = _mm_loadu_pd(lhs[j].data() + 2);
+        auto xmm_rhs_col_j_hi = _mm_loadu_pd(rhs[j].data() + 2);
+        _mm_storeu_pd(dst[j].data() + 2,
+                      _mm_mul_pd(xmm_lhs_col_j_hi, xmm_rhs_col_j_hi));
     }
 }
 

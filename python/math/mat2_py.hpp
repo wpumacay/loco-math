@@ -40,8 +40,8 @@ auto bindings_matrix2(py::module& m, const char* class_name) -> void {
         // clang-format on
         .def("__repr__", [](const Class& self) -> py::str {
             // clang-format off
-            return py::str("Matrix2{}([[{},\t{}],\n"
-                           "          [{},\t{}]])")
+            return py::str("Matrix2{}([[{},{}],\n"
+                           "          [{},{}]])")
                 .format(IsFloat32<T>::value ? "f" : "d",
                         self(0, 0), self(0, 1),
                         self(1, 0), self(1, 1));

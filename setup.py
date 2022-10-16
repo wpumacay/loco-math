@@ -60,6 +60,7 @@ class CMakeBuild(build_ext):
 
         cmake_args = [
             # Make sure we handle RPATH/RUNPATH properly
+            f"-DCMAKE_BUILD_TYPE={cfg}",
             "-DCMAKE_INSTALL_RPATH=$ORIGIN",
             "-DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=ON",
             "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=OFF",

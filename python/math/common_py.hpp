@@ -95,7 +95,7 @@
     .def("__getitem__",                                     \
     [](const Class& self, int32_t index) -> Type            \
         {                                                   \
-            if (index >= Size || index <= 0) {              \
+            if (index >= Size || index < 0) {               \
                 throw py::index_error();                    \
             }                                               \
             return self[static_cast<uint32_t>(index)];      \
@@ -103,7 +103,7 @@
     .def("__setitem__",                                     \
     [](Class& self, int32_t index, Type value) -> void      \
         {                                                   \
-            if (index >= Size || index <= 0) {              \
+            if (index >= Size || index < 0) {               \
                 throw py::index_error();                    \
             }                                               \
             self[static_cast<uint32_t>(index)] = value;     \

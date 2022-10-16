@@ -41,9 +41,9 @@ auto bindings_matrix3(py::module& m, const char* class_name) -> void {
         // clang-format on
         .def("__repr__", [](const Class& self) -> py::str {
             // clang-format off
-            return py::str("Matrix3{}([[{},\t{},\t{}],\n"
-                           "          [{},\t{},\t{}],\n"
-                           "          [{},\t{},\t{}]])")
+            return py::str("Matrix3{}([[{},{},{}],\n"
+                           "          [{},{},{}],\n"
+                           "          [{},{},{}]])")
                 .format(IsFloat32<T>::value ? "f" : "d",
                     self(0, 0), self(0, 1), self(0, 2),
                     self(1, 0), self(1, 1), self(1, 2),

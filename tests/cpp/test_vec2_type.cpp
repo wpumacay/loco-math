@@ -21,13 +21,6 @@ TEMPLATE_TEST_CASE("Vector2 class (vec2_t) constructors", "[vec2_t][template]",
     using T = TestType;
     using Vector2 = loco::math::Vector2<T>;
 
-    // Checking size and alignment (we won't do SIMD aligned load|store)
-    constexpr int EXPECTED_SIZE = 2 * sizeof(T);
-    constexpr int EXPECTED_ALIGNMENT = 2 * sizeof(T);
-    static_assert(std::is_floating_point<T>(), "");
-    static_assert(EXPECTED_SIZE == Vector2::num_bytes_size(), "");
-    static_assert(EXPECTED_ALIGNMENT == Vector2::num_bytes_alignment(), "");
-
     // Checking the correctness of the constructors
 
     SECTION("Default constructor") {

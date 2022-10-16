@@ -132,7 +132,7 @@ struct Vector2 {
 
  private:
     /// Storage of the vector's scalars
-    alignas(sizeof(Scalar_T) * BUFFER_SIZE) BufferType m_Elements = {0, 0};
+    BufferType m_Elements = {0, 0};
 };
 
 }  // namespace math

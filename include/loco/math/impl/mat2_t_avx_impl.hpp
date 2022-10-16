@@ -55,11 +55,11 @@ template <typename T, SFINAE_MAT2_F32_AVX_GUARD<T> = nullptr>
 LM_INLINE auto kernel_add_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
                                const Mat2Buffer<T>& rhs) -> void {
     // [c0,c1] both columns (2x2 f32) fit into a single xmm register
-    auto xmm_mat_lhs = _mm_load_ps(static_cast<const float*>(lhs[0].data()));
-    auto xmm_mat_rhs = _mm_load_ps(static_cast<const float*>(rhs[0].data()));
+    auto xmm_mat_lhs = _mm_loadu_ps(static_cast<const float*>(lhs[0].data()));
+    auto xmm_mat_rhs = _mm_loadu_ps(static_cast<const float*>(rhs[0].data()));
 
     auto xmm_result = _mm_add_ps(xmm_mat_lhs, xmm_mat_rhs);
-    _mm_store_ps(static_cast<float*>(dst[0].data()), xmm_result);
+    _mm_storeu_ps(static_cast<float*>(dst[0].data()), xmm_result);
 }
 
 template <typename T, SFINAE_MAT2_F64_AVX_GUARD<T> = nullptr>
@@ -67,12 +67,12 @@ LM_INLINE auto kernel_add_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
                                const Mat2Buffer<T>& rhs) -> void {
     // [c0, c1] both columns (2x2 f64) fit into a single ymm register
     auto ymm_mat_lhs =
-        _mm256_load_pd(static_cast<const double*>(lhs[0].data()));
+        _mm256_loadu_pd(static_cast<const double*>(lhs[0].data()));
     auto ymm_mat_rhs =
-        _mm256_load_pd(static_cast<const double*>(rhs[0].data()));
+        _mm256_loadu_pd(static_cast<const double*>(rhs[0].data()));
 
     auto ymm_result = _mm256_add_pd(ymm_mat_lhs, ymm_mat_rhs);
-    _mm256_store_pd(static_cast<double*>(dst[0].data()), ymm_result);
+    _mm256_storeu_pd(static_cast<double*>(dst[0].data()), ymm_result);
 }
 
 // ***************************************************************************//
@@ -82,23 +82,23 @@ LM_INLINE auto kernel_add_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
 template <typename T, SFINAE_MAT2_F32_AVX_GUARD<T> = nullptr>
 LM_INLINE auto kernel_sub_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
                                const Mat2Buffer<T>& rhs) -> void {
-    auto xmm_mat_lhs = _mm_load_ps(static_cast<const float*>(lhs[0].data()));
-    auto xmm_mat_rhs = _mm_load_ps(static_cast<const float*>(rhs[0].data()));
+    auto xmm_mat_lhs = _mm_loadu_ps(static_cast<const float*>(lhs[0].data()));
+    auto xmm_mat_rhs = _mm_loadu_ps(static_cast<const float*>(rhs[0].data()));
 
     auto xmm_result = _mm_sub_ps(xmm_mat_lhs, xmm_mat_rhs);
-    _mm_store_ps(static_cast<float*>(dst[0].data()), xmm_result);
+    _mm_storeu_ps(static_cast<float*>(dst[0].data()), xmm_result);
 }
 
 template <typename T, SFINAE_MAT2_F64_AVX_GUARD<T> = nullptr>
 LM_INLINE auto kernel_sub_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
                                const Mat2Buffer<T>& rhs) -> void {
     auto ymm_mat_lhs =
-        _mm256_load_pd(static_cast<const double*>(lhs[0].data()));
+        _mm256_loadu_pd(static_cast<const double*>(lhs[0].data()));
     auto ymm_mat_rhs =
-        _mm256_load_pd(static_cast<const double*>(rhs[0].data()));
+        _mm256_loadu_pd(static_cast<const double*>(rhs[0].data()));
 
     auto ymm_result = _mm256_sub_pd(ymm_mat_lhs, ymm_mat_rhs);
-    _mm256_store_pd(static_cast<double*>(dst[0].data()), ymm_result);
+    _mm256_storeu_pd(static_cast<double*>(dst[0].data()), ymm_result);
 }
 
 // ***************************************************************************//
@@ -109,20 +109,20 @@ template <typename T, SFINAE_MAT2_F32_AVX_GUARD<T> = nullptr>
 LM_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
                                  const Mat2Buffer<T>& src) -> void {
     auto xmm_scale = _mm_set1_ps(scale);
-    auto xmm_mat = _mm_load_ps(static_cast<const float*>(src[0].data()));
+    auto xmm_mat = _mm_loadu_ps(static_cast<const float*>(src[0].data()));
 
     auto xmm_mat_scaled = _mm_mul_ps(xmm_scale, xmm_mat);
-    _mm_store_ps(static_cast<float*>(dst[0].data()), xmm_mat_scaled);
+    _mm_storeu_ps(static_cast<float*>(dst[0].data()), xmm_mat_scaled);
 }
 
 template <typename T, SFINAE_MAT2_F64_AVX_GUARD<T> = nullptr>
 LM_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
                                  const Mat2Buffer<T>& src) -> void {
     auto ymm_scale = _mm256_set1_pd(scale);
-    auto ymm_mat = _mm256_load_pd(static_cast<const double*>(src[0].data()));
+    auto ymm_mat = _mm256_loadu_pd(static_cast<const double*>(src[0].data()));
 
     auto ymm_mat_scaled = _mm256_mul_pd(ymm_scale, ymm_mat);
-    _mm256_store_pd(static_cast<double*>(dst[0].data()), ymm_mat_scaled);
+    _mm256_storeu_pd(static_cast<double*>(dst[0].data()), ymm_mat_scaled);
 }
 
 // ***************************************************************************//
@@ -133,8 +133,8 @@ template <typename T, SFINAE_MAT2_F32_AVX_GUARD<T> = nullptr>
 LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
                                   const Mat2Buffer<T>& rhs) -> void {
     // Use the same kernel as in SSE for f32 case :)
-    auto xmm_mat_lhs = _mm_load_ps(static_cast<const float*>(lhs[0].data()));
-    auto xmm_mat_rhs = _mm_load_ps(static_cast<const float*>(rhs[0].data()));
+    auto xmm_mat_lhs = _mm_loadu_ps(static_cast<const float*>(lhs[0].data()));
+    auto xmm_mat_rhs = _mm_loadu_ps(static_cast<const float*>(rhs[0].data()));
     // We proceed by shuffling the vectors and aligning everything such that the
     // resulting products comes naturally as the matmul operation.
     // We have loaded on the xmm registers (lhs = a, rhs = b):
@@ -158,7 +158,7 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
     auto xmm_result_mix_0 = _mm_mul_ps(xmm_lhs_mix_0, xmm_rhs_mix_0);
     auto xmm_result_mix_1 = _mm_mul_ps(xmm_lhs_mix_1, xmm_rhs_mix_1);
     auto xmm_result = _mm_add_ps(xmm_result_mix_0, xmm_result_mix_1);
-    _mm_store_ps(static_cast<float*>(dst[0].data()), xmm_result);
+    _mm_storeu_ps(static_cast<float*>(dst[0].data()), xmm_result);
 }
 
 template <typename T, SFINAE_MAT2_F64_AVX_GUARD<T> = nullptr>
@@ -166,9 +166,9 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
                                   const Mat2Buffer<T>& rhs) -> void {
     // Use the same approach as in SSE, but use AVX instructions instead
     auto ymm_mat_lhs =
-        _mm256_load_pd(static_cast<const double*>(lhs[0].data()));
+        _mm256_loadu_pd(static_cast<const double*>(lhs[0].data()));
     auto ymm_mat_rhs =
-        _mm256_load_pd(static_cast<const double*>(rhs[0].data()));
+        _mm256_loadu_pd(static_cast<const double*>(rhs[0].data()));
     // We proceed by shuffling the vectors and aligning everything such that the
     // resulting products comes naturally as the matmul operation.
     // We have loaded on the xmm registers (lhs = a, rhs = b):
@@ -192,7 +192,7 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
     auto ymm_result_mix_0 = _mm256_mul_pd(ymm_lhs_mix_0, ymm_rhs_mix_0);
     auto ymm_result_mix_1 = _mm256_mul_pd(ymm_lhs_mix_1, ymm_rhs_mix_1);
     auto ymm_result = _mm256_add_pd(ymm_result_mix_0, ymm_result_mix_1);
-    _mm256_store_pd(static_cast<double*>(dst[0].data()), ymm_result);
+    _mm256_storeu_pd(static_cast<double*>(dst[0].data()), ymm_result);
 }
 
 // ***************************************************************************//
@@ -213,8 +213,8 @@ template <typename T, SFINAE_MAT2_F64_AVX_GUARD<T> = nullptr>
 LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
                                       const Mat2Buffer<T>& mat,
                                       const Vec2Buffer<T>& vec) -> void {
-    auto xmm_mat_col0 = _mm_load_pd(static_cast<const double*>(mat[0].data()));
-    auto xmm_mat_col1 = _mm_load_pd(static_cast<const double*>(mat[1].data()));
+    auto xmm_mat_col0 = _mm_loadu_pd(static_cast<const double*>(mat[0].data()));
+    auto xmm_mat_col1 = _mm_loadu_pd(static_cast<const double*>(mat[1].data()));
 
     auto xmm_vec_scalar0 = _mm_set1_pd(vec[0]);
     auto xmm_vec_scalar1 = _mm_set1_pd(vec[1]);
@@ -222,7 +222,7 @@ LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
     auto xmm_mat_scaled_col0 = _mm_mul_pd(xmm_vec_scalar0, xmm_mat_col0);
     auto xmm_mat_scaled_col1 = _mm_mul_pd(xmm_vec_scalar1, xmm_mat_col1);
     auto xmm_result = _mm_add_pd(xmm_mat_scaled_col0, xmm_mat_scaled_col1);
-    _mm_store_pd(static_cast<double*>(dst.data()), xmm_result);
+    _mm_storeu_pd(static_cast<double*>(dst.data()), xmm_result);
 }
 
 // ***************************************************************************//
@@ -233,10 +233,10 @@ template <typename T, SFINAE_MAT2_F32_AVX_GUARD<T> = nullptr>
 LM_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
                                     const Mat2Buffer<T>& lhs,
                                     const Mat2Buffer<T>& rhs) -> void {
-    auto xmm_mat_lhs = _mm_load_ps(static_cast<const float*>(lhs[0].data()));
-    auto xmm_mat_rhs = _mm_load_ps(static_cast<const float*>(rhs[0].data()));
+    auto xmm_mat_lhs = _mm_loadu_ps(static_cast<const float*>(lhs[0].data()));
+    auto xmm_mat_rhs = _mm_loadu_ps(static_cast<const float*>(rhs[0].data()));
     auto xmm_result = _mm_mul_ps(xmm_mat_lhs, xmm_mat_rhs);
-    _mm_store_ps(static_cast<float*>(dst[0].data()), xmm_result);
+    _mm_storeu_ps(static_cast<float*>(dst[0].data()), xmm_result);
 }
 
 template <typename T, SFINAE_MAT2_F64_AVX_GUARD<T> = nullptr>
@@ -244,11 +244,11 @@ LM_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
                                     const Mat2Buffer<T>& lhs,
                                     const Mat2Buffer<T>& rhs) -> void {
     auto ymm_mat_lhs =
-        _mm256_load_pd(static_cast<const double*>(lhs[0].data()));
+        _mm256_loadu_pd(static_cast<const double*>(lhs[0].data()));
     auto ymm_mat_rhs =
-        _mm256_load_pd(static_cast<const double*>(rhs[0].data()));
+        _mm256_loadu_pd(static_cast<const double*>(rhs[0].data()));
     auto ymm_result = _mm256_mul_pd(ymm_mat_lhs, ymm_mat_rhs);
-    _mm256_store_pd(static_cast<double*>(dst[0].data()), ymm_result);
+    _mm256_storeu_pd(static_cast<double*>(dst[0].data()), ymm_result);
 }
 
 }  // namespace avx

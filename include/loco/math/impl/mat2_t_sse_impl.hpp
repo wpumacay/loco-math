@@ -66,10 +66,10 @@ LM_INLINE auto kernel_add_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
     // For a matrix M = [m00  m01] all f32 entries fit into a single xmm
     //                  [m10  m11]
     // register, as follows: [m00 m10 m01 m11] (in column-major order). So just
-    auto xmm_mat_lhs = _mm_load_ps(static_cast<const float*>(lhs[0].data()));
-    auto xmm_mat_rhs = _mm_load_ps(static_cast<const float*>(rhs[0].data()));
+    auto xmm_mat_lhs = _mm_loadu_ps(static_cast<const float*>(lhs[0].data()));
+    auto xmm_mat_rhs = _mm_loadu_ps(static_cast<const float*>(rhs[0].data()));
     auto xmm_mat_result = _mm_add_ps(xmm_mat_lhs, xmm_mat_rhs);
-    _mm_store_ps(static_cast<float*>(dst[0].data()), xmm_mat_result);
+    _mm_storeu_ps(static_cast<float*>(dst[0].data()), xmm_mat_result);
 }
 
 template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
@@ -78,19 +78,19 @@ LM_INLINE auto kernel_add_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
     // Half a matrix (col0 or col1) enter in a single xmm_register, so we'll
     // handle the split accordingly
     auto xmm_mat_lhs_col0 =
-        _mm_load_pd(static_cast<const double*>(lhs[0].data()));
+        _mm_loadu_pd(static_cast<const double*>(lhs[0].data()));
     auto xmm_mat_rhs_col0 =
-        _mm_load_pd(static_cast<const double*>(rhs[0].data()));
+        _mm_loadu_pd(static_cast<const double*>(rhs[0].data()));
     auto xmm_mat_result_col0 = _mm_add_pd(xmm_mat_lhs_col0, xmm_mat_rhs_col0);
 
     auto xmm_mat_lhs_col1 =
-        _mm_load_pd(static_cast<const double*>(lhs[1].data()));
+        _mm_loadu_pd(static_cast<const double*>(lhs[1].data()));
     auto xmm_mat_rhs_col1 =
-        _mm_load_pd(static_cast<const double*>(rhs[1].data()));
+        _mm_loadu_pd(static_cast<const double*>(rhs[1].data()));
     auto xmm_mat_result_col1 = _mm_add_pd(xmm_mat_lhs_col1, xmm_mat_rhs_col1);
 
-    _mm_store_pd(static_cast<double*>(dst[0].data()), xmm_mat_result_col0);
-    _mm_store_pd(static_cast<double*>(dst[1].data()), xmm_mat_result_col1);
+    _mm_storeu_pd(static_cast<double*>(dst[0].data()), xmm_mat_result_col0);
+    _mm_storeu_pd(static_cast<double*>(dst[1].data()), xmm_mat_result_col1);
 }
 
 // ***************************************************************************//
@@ -101,10 +101,10 @@ template <typename T, SFINAE_MAT2_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_sub_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
                                const Mat2Buffer<T>& rhs) -> void {
     // Similar approach to matrix addition
-    auto xmm_mat_lhs = _mm_load_ps(static_cast<const float*>(lhs[0].data()));
-    auto xmm_mat_rhs = _mm_load_ps(static_cast<const float*>(rhs[0].data()));
+    auto xmm_mat_lhs = _mm_loadu_ps(static_cast<const float*>(lhs[0].data()));
+    auto xmm_mat_rhs = _mm_loadu_ps(static_cast<const float*>(rhs[0].data()));
     auto xmm_mat_result = _mm_sub_ps(xmm_mat_lhs, xmm_mat_rhs);
-    _mm_store_ps(static_cast<float*>(dst[0].data()), xmm_mat_result);
+    _mm_storeu_ps(static_cast<float*>(dst[0].data()), xmm_mat_result);
 }
 
 template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
@@ -112,19 +112,19 @@ LM_INLINE auto kernel_sub_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
                                const Mat2Buffer<T>& rhs) -> void {
     // Similar approach to matrix addition
     auto xmm_mat_lhs_col0 =
-        _mm_load_pd(static_cast<const double*>(lhs[0].data()));
+        _mm_loadu_pd(static_cast<const double*>(lhs[0].data()));
     auto xmm_mat_rhs_col0 =
-        _mm_load_pd(static_cast<const double*>(rhs[0].data()));
+        _mm_loadu_pd(static_cast<const double*>(rhs[0].data()));
     auto xmm_mat_lhs_col1 =
-        _mm_load_pd(static_cast<const double*>(lhs[1].data()));
+        _mm_loadu_pd(static_cast<const double*>(lhs[1].data()));
     auto xmm_mat_rhs_col1 =
-        _mm_load_pd(static_cast<const double*>(rhs[1].data()));
+        _mm_loadu_pd(static_cast<const double*>(rhs[1].data()));
 
     auto xmm_mat_result_col0 = _mm_sub_pd(xmm_mat_lhs_col0, xmm_mat_rhs_col0);
     auto xmm_mat_result_col1 = _mm_sub_pd(xmm_mat_lhs_col1, xmm_mat_rhs_col1);
 
-    _mm_store_pd(static_cast<double*>(dst[0].data()), xmm_mat_result_col0);
-    _mm_store_pd(static_cast<double*>(dst[1].data()), xmm_mat_result_col1);
+    _mm_storeu_pd(static_cast<double*>(dst[0].data()), xmm_mat_result_col0);
+    _mm_storeu_pd(static_cast<double*>(dst[1].data()), xmm_mat_result_col1);
 }
 
 // ***************************************************************************//
@@ -136,25 +136,25 @@ LM_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
                                  const Mat2Buffer<T>& src) -> void {
     // All matrix entries fit into single xmm register, so just scale it by
     // another xmm register that has the scale
-    auto xmm_src = _mm_load_ps(static_cast<const float*>(src[0].data()));
+    auto xmm_src = _mm_loadu_ps(static_cast<const float*>(src[0].data()));
     auto xmm_scale = _mm_set1_ps(scale);
     auto xmm_result = _mm_mul_ps(xmm_src, xmm_scale);
-    _mm_store_ps(static_cast<float*>(dst[0].data()), xmm_result);
+    _mm_storeu_ps(static_cast<float*>(dst[0].data()), xmm_result);
 }
 
 template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
                                  const Mat2Buffer<T>& src) -> void {
     // Same approach as previous case, but one column at a time
-    auto xmm_src_col0 = _mm_load_pd(static_cast<const double*>(src[0].data()));
-    auto xmm_src_col1 = _mm_load_pd(static_cast<const double*>(src[1].data()));
+    auto xmm_src_col0 = _mm_loadu_pd(static_cast<const double*>(src[0].data()));
+    auto xmm_src_col1 = _mm_loadu_pd(static_cast<const double*>(src[1].data()));
     auto xmm_scale = _mm_set1_pd(scale);
 
     auto xmm_result_col0 = _mm_mul_pd(xmm_src_col0, xmm_scale);
     auto xmm_result_col1 = _mm_mul_pd(xmm_src_col1, xmm_scale);
 
-    _mm_store_pd(static_cast<double*>(dst[0].data()), xmm_result_col0);
-    _mm_store_pd(static_cast<double*>(dst[1].data()), xmm_result_col1);
+    _mm_storeu_pd(static_cast<double*>(dst[0].data()), xmm_result_col0);
+    _mm_storeu_pd(static_cast<double*>(dst[1].data()), xmm_result_col1);
 }
 
 // ***************************************************************************//
@@ -164,8 +164,8 @@ LM_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
 template <typename T, SFINAE_MAT2_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
                                   const Mat2Buffer<T>& rhs) -> void {
-    auto xmm_mat_lhs = _mm_load_ps(static_cast<const float*>(lhs[0].data()));
-    auto xmm_mat_rhs = _mm_load_ps(static_cast<const float*>(rhs[0].data()));
+    auto xmm_mat_lhs = _mm_loadu_ps(static_cast<const float*>(lhs[0].data()));
+    auto xmm_mat_rhs = _mm_loadu_ps(static_cast<const float*>(rhs[0].data()));
     // We proceed by shuffling the vectors and aligning everything such that the
     // resulting products comes naturally as the matmul operation.
     // We have loaded on the xmm registers (lhs = a, rhs = b):
@@ -190,16 +190,16 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
     auto xmm_result_mix_0 = _mm_mul_ps(xmm_lhs_mix_0, xmm_rhs_mix_0);
     auto xmm_result_mix_1 = _mm_mul_ps(xmm_lhs_mix_1, xmm_rhs_mix_1);
     auto xmm_result = _mm_add_ps(xmm_result_mix_0, xmm_result_mix_1);
-    _mm_store_ps(static_cast<float*>(dst[0].data()), xmm_result);
+    _mm_storeu_ps(static_cast<float*>(dst[0].data()), xmm_result);
 }
 
 template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
                                   const Mat2Buffer<T>& rhs) -> void {
     auto xmm_mat_lhs_col0 =
-        _mm_load_pd(static_cast<const double*>(lhs[0].data()));
+        _mm_loadu_pd(static_cast<const double*>(lhs[0].data()));
     auto xmm_mat_lhs_col1 =
-        _mm_load_pd(static_cast<const double*>(lhs[1].data()));
+        _mm_loadu_pd(static_cast<const double*>(lhs[1].data()));
     // Take the column-space view of the  matmul (generating first column)
     auto xmm_scalar_rhs_00 = _mm_set1_pd(rhs[0][0]);
     auto xmm_scalar_rhs_10 = _mm_set1_pd(rhs[0][1]);
@@ -215,8 +215,8 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
     auto xmm_result_col1 = _mm_add_pd(xmm_scaled_lhs_col0, xmm_scaled_lhs_col1);
 
     // Store our results :D (one column at a time)
-    _mm_store_pd(static_cast<double*>(dst[0].data()), xmm_result_col0);
-    _mm_store_pd(static_cast<double*>(dst[1].data()), xmm_result_col1);
+    _mm_storeu_pd(static_cast<double*>(dst[0].data()), xmm_result_col0);
+    _mm_storeu_pd(static_cast<double*>(dst[1].data()), xmm_result_col1);
 }
 
 // ***************************************************************************//
@@ -237,8 +237,8 @@ template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
                                       const Mat2Buffer<T>& mat,
                                       const Vec2Buffer<T>& vec) -> void {
-    auto xmm_mat_col0 = _mm_load_pd(static_cast<const double*>(mat[0].data()));
-    auto xmm_mat_col1 = _mm_load_pd(static_cast<const double*>(mat[1].data()));
+    auto xmm_mat_col0 = _mm_loadu_pd(static_cast<const double*>(mat[0].data()));
+    auto xmm_mat_col1 = _mm_loadu_pd(static_cast<const double*>(mat[1].data()));
 
     auto xmm_vec_scalar_0 = _mm_set1_pd(vec[0]);
     auto xmm_vec_scalar_1 = _mm_set1_pd(vec[1]);
@@ -246,7 +246,7 @@ LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
     auto xmm_mat_scaled_col0 = _mm_mul_pd(xmm_vec_scalar_0, xmm_mat_col0);
     auto xmm_mat_scaled_col1 = _mm_mul_pd(xmm_vec_scalar_1, xmm_mat_col1);
     auto xmm_result = _mm_add_pd(xmm_mat_scaled_col0, xmm_mat_scaled_col1);
-    _mm_store_pd(static_cast<double*>(dst.data()), xmm_result);
+    _mm_storeu_pd(static_cast<double*>(dst.data()), xmm_result);
 }
 
 // ***************************************************************************//
@@ -257,10 +257,10 @@ template <typename T, SFINAE_MAT2_F32_SSE_GUARD<T> = nullptr>
 LM_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
                                     const Mat2Buffer<T>& lhs,
                                     const Mat2Buffer<T>& rhs) -> void {
-    auto xmm_mat_lhs = _mm_load_ps(static_cast<const float*>(lhs[0].data()));
-    auto xmm_mat_rhs = _mm_load_ps(static_cast<const float*>(rhs[0].data()));
+    auto xmm_mat_lhs = _mm_loadu_ps(static_cast<const float*>(lhs[0].data()));
+    auto xmm_mat_rhs = _mm_loadu_ps(static_cast<const float*>(rhs[0].data()));
     auto xmm_result = _mm_mul_ps(xmm_mat_lhs, xmm_mat_rhs);
-    _mm_store_ps(static_cast<float*>(dst[0].data()), xmm_result);
+    _mm_storeu_ps(static_cast<float*>(dst[0].data()), xmm_result);
 }
 
 template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
@@ -268,19 +268,19 @@ LM_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
                                     const Mat2Buffer<T>& lhs,
                                     const Mat2Buffer<T>& rhs) -> void {
     auto xmm_mat_lhs_col0 =
-        _mm_load_pd(static_cast<const double*>(lhs[0].data()));
+        _mm_loadu_pd(static_cast<const double*>(lhs[0].data()));
     auto xmm_mat_lhs_col1 =
-        _mm_load_pd(static_cast<const double*>(lhs[1].data()));
+        _mm_loadu_pd(static_cast<const double*>(lhs[1].data()));
     auto xmm_mat_rhs_col0 =
-        _mm_load_pd(static_cast<const double*>(rhs[0].data()));
+        _mm_loadu_pd(static_cast<const double*>(rhs[0].data()));
     auto xmm_mat_rhs_col1 =
-        _mm_load_pd(static_cast<const double*>(rhs[1].data()));
+        _mm_loadu_pd(static_cast<const double*>(rhs[1].data()));
 
     auto xmm_result_col0 = _mm_mul_pd(xmm_mat_lhs_col0, xmm_mat_rhs_col0);
     auto xmm_result_col1 = _mm_mul_pd(xmm_mat_lhs_col1, xmm_mat_rhs_col1);
 
-    _mm_store_pd(static_cast<double*>(dst[0].data()), xmm_result_col0);
-    _mm_store_pd(static_cast<double*>(dst[1].data()), xmm_result_col1);
+    _mm_storeu_pd(static_cast<double*>(dst[0].data()), xmm_result_col0);
+    _mm_storeu_pd(static_cast<double*>(dst[1].data()), xmm_result_col1);
 }
 
 }  // namespace sse

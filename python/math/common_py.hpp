@@ -60,8 +60,13 @@
         if (info.ndim == Class::MATRIX_NDIM) {                              \
             if (info.shape[0] == Class::MATRIX_SIZE &&                      \
                 info.shape[1] == Class::MATRIX_SIZE) {                      \
-                memcpy(mat.data(), info.ptr,                                \
-                       sizeof(T) * Class::BUFFER_SIZE);                     \
+                auto* src_data = static_cast<const T*>(info.ptr);           \
+                for (uint32_t j = 0; j < Class::MATRIX_SIZE; ++j) {         \
+                    for (uint32_t i = 0; i < Class::MATRIX_SIZE; ++i) {     \
+                        auto src_index = j + i * Class::MATRIX_SIZE;        \
+                        mat(i, j) = src_data[src_index];                    \
+                    }                                                       \
+                }                                                           \
             } else {                                                        \
                 throw std::runtime_error(                                   \
                     "Incompatible size: expected (" #Size ", " #Size ")");  \

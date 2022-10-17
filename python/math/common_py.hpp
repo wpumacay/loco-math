@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include <pybind11/pybind11.h>
 
 #include <loco/math/common.hpp>
@@ -116,35 +118,42 @@
 
 #define MATRIX_GETSET_ITEM(Size, Type)                                      \
     .def("__getitem__",                                                     \
-    [](const Class& self, uint32_t index) -> Column                         \
+    [](const Class& self, int32_t index) -> Column                          \
         {                                                                   \
-            if (index >= Size) {                                            \
+            if (index >= Size || index < 0) {                               \
                 throw py::index_error();                                    \
             }                                                               \
-            return self[index];                                             \
+            return self[static_cast<uint32_t>(index)];                      \
         })                                                                  \
     .def("__getitem__",                                                     \
-    [](const Class& self, uint32_t row_index, uint32_t col_index) -> Type   \
+    [](const Class& self, std::pair<int32_t, int32_t> accessor) -> Type     \
         {                                                                   \
-            if (row_index >= Size || col_index >= Size) {                   \
+            if (accessor.first >= Size || accessor.first < 0 ||             \
+                accessor.second >= Size || accessor.second < 0) {           \
                 throw py::index_error();                                    \
             }                                                               \
+            auto row_index = static_cast<uint32_t>(accessor.first);         \
+            auto col_index = static_cast<uint32_t>(accessor.second);        \
             return self(row_index, col_index);                              \
         })                                                                  \
     .def("__setitem__",                                                     \
-    [](Class& self, uint32_t index, const py::buffer& buff) -> void         \
+    [](Class& self, int32_t index, const py::buffer& buff) -> void          \
         {                                                                   \
-            if (index >= Size) {                                            \
+            if (index >= Size || index < 0) {                               \
                 throw py::index_error();                                    \
             }                                                               \
-            self[index] = buffer_to_vec##Size<Type>(buff);                  \
+            auto col_index = static_cast<uint32_t>(index);                  \
+            self[col_index] = buffer_to_vec##Size<Type>(buff);              \
         })                                                                  \
     .def("__setitem__",                                                     \
-    [](Class& self, uint32_t row_index, uint32_t col_index, Type value)     \
+    [](Class& self, std::pair<int32_t, int32_t> accessor, Type value)       \
         {                                                                   \
-            if (row_index >= Size || col_index >= Size) {                   \
+            if (accessor.first >= Size || accessor.first < 0 ||             \
+                accessor.second >= Size || accessor.second < 0) {           \
                 throw py::index_error();                                    \
             }                                                               \
+            auto row_index = static_cast<uint32_t>(accessor.first);         \
+            auto col_index = static_cast<uint32_t>(accessor.second);        \
             self(row_index, col_index) = value;                             \
         })
 

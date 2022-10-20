@@ -1,6 +1,11 @@
-#include <catch2/catch.hpp>
 #include <cmath>
+#include <catch2/catch.hpp>
 #include <loco/math/mat3_t_impl.hpp>
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wimplicit-float-conversion"
+#endif
 
 static constexpr double RANGE_MIN = -10.0;
 static constexpr double RANGE_MAX = 10.0;
@@ -209,4 +214,62 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
                 x20 * y20, x21 * y21, x22 * y22);
         // clang-format on
     }
+
+    SECTION("Matrix transposition") {
+        // clang-format off
+        // NOLINTNEXTLINE
+        FuncAllClose<T>(loco::math::transpose(m_a),
+            x00, x10, x20,
+            x01, x11, x21,
+            x02, x12, x22);
+        // NOLINTNEXTLINE
+        FuncAllClose<T>(loco::math::transpose(m_b),
+            y00, y10, y20,
+            y01, y11, y21,
+            y02, y12, y22);
+        // clang-format on
+    }
+
+    SECTION("Matrix trace") {
+        auto calc_trace_1 = loco::math::trace(m_a);
+        auto calc_trace_2 = loco::math::trace(m_b);
+        auto expected_trace_1 = x00 + x11 + x22;
+        auto expected_trace_2 = y00 + y11 + y22;
+
+        REQUIRE(std::abs(calc_trace_1 - expected_trace_1) <
+                static_cast<T>(loco::math::EPS));
+        REQUIRE(std::abs(calc_trace_2 - expected_trace_2) <
+                static_cast<T>(loco::math::EPS));
+    }
+
+    SECTION("Matrix determinant") {
+        // clang-format off
+        auto mat = Matrix3(6.0, 5.0, 9.0,
+                           0.0, 2.0, 0.0,
+                           5.0, 3.0, 6.0);
+        // clang-format on
+        auto calc_det = loco::math::determinant(mat);
+        auto expected_det = static_cast<T>(-18.0);
+        REQUIRE(std::abs(calc_det - expected_det) <
+                static_cast<T>(loco::math::EPS));
+    }
+
+    SECTION("Matrix inverse") {
+        // clang-format off
+        auto mat = Matrix3(6.0, 5.0, 9.0,
+                           0.0, 2.0, 0.0,
+                           5.0, 3.0, 6.0);
+        // clang-format on
+        auto inv_mat = loco::math::inverse(mat);
+        // clang-format off
+        FuncAllClose<T>(inv_mat,
+            -0.666667,  0.166667,       1.0, // NOLINT
+                  0.0,       0.5,       0.0, // NOLINT
+             0.555556, -0.388889, -0.666667); // NOLINT
+        // clang-format on
+    }
 }
+
+#if defined(__clang__)
+#pragma clang diagnostic pop  // NOLINT
+#endif

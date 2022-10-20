@@ -1,6 +1,11 @@
-#include <catch2/catch.hpp>
 #include <cmath>
+#include <catch2/catch.hpp>
 #include <loco/math/mat2_t_impl.hpp>
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wimplicit-float-conversion"
+#endif
 
 static constexpr double RANGE_MIN = -10.0;
 static constexpr double RANGE_MAX = 10.0;
@@ -115,4 +120,51 @@ TEMPLATE_TEST_CASE("Matrix2 class (mat2_t) core operations", "[mat2_t][ops]",
         auto mat_ewise = loco::math::hadamard(m_a, m_b);
         FuncAllClose<T>(mat_ewise, x00 * y00, x01 * y01, x10 * y10, x11 * y11);
     }
+
+    SECTION("Matrix transposition") {
+        // clang-format off
+        // NOLINTNEXTLINE
+        FuncAllClose<T>(loco::math::transpose(m_a),
+                        x00, x10,
+                        x01, x11);
+        // NOLINTNEXTLINE
+        FuncAllClose<T>(loco::math::transpose(m_b),
+                        y00, y10,
+                        y01, y11);
+        // clang-format on
+    }
+
+    SECTION("Matrix trace") {
+        auto calc_trace_1 = loco::math::trace(m_a);
+        auto calc_trace_2 = loco::math::trace(m_b);
+        auto expected_trace_1 = x00 + x11;
+        auto expected_trace_2 = y00 + y11;
+
+        REQUIRE(std::abs(calc_trace_1 - expected_trace_1) <
+                static_cast<T>(loco::math::EPS));
+        REQUIRE(std::abs(calc_trace_2 - expected_trace_2) <
+                static_cast<T>(loco::math::EPS));
+    }
+
+    SECTION("Matrix determinant") {
+        auto mat = Matrix2(5.0, 5.0, 4.0, 8.0);
+        auto calc_det = loco::math::determinant(mat);
+        auto expected_det = static_cast<T>(20.0);
+        REQUIRE(std::abs(calc_det - expected_det) <
+                static_cast<T>(loco::math::EPS));
+    }
+
+    SECTION("Matrix inverse") {
+        auto mat = Matrix2(5.0, 5.0, 4.0, 8.0);
+        auto inv_mat = loco::math::inverse(mat);
+        // clang-format off
+        FuncAllClose<T>(inv_mat,
+            0.4, -0.25, // NOLINT
+            -0.2, 0.25); //NOLINT
+        // clang-format on
+    }
 }
+
+#if defined(__clang__)
+#pragma clang diagnostic pop  // NOLINT
+#endif

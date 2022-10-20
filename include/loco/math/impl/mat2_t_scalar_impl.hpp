@@ -30,6 +30,37 @@ LM_INLINE auto kernel_transpose_inplace_mat2(Mat2Buffer<T>& cols) -> void {
 }
 
 template <typename T, SFINAE_MAT2_SCALAR_GUARD<T> = nullptr>
+LM_INLINE auto kernel_trace_mat2(const Mat2Buffer<T>& mat) -> T {
+    return mat[0][0] + mat[1][1];
+}
+
+template <typename T, SFINAE_MAT2_SCALAR_GUARD<T> = nullptr>
+LM_INLINE auto kernel_determinant_mat2(const Mat2Buffer<T>& mat) -> T {
+    auto m00 = mat[0][0];
+    auto m10 = mat[0][1];
+    auto m01 = mat[1][0];
+    auto m11 = mat[1][1];
+
+    return m00 * m11 - m10 * m01;
+}
+
+template <typename T, SFINAE_MAT2_SCALAR_GUARD<T> = nullptr>
+LM_INLINE auto kernel_inverse_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& src)
+    -> void {
+    auto m00 = src[0][0];
+    auto m01 = src[1][0];
+    auto m10 = src[0][1];
+    auto m11 = src[1][1];
+
+    auto det = m00 * m11 - m10 * m01;
+
+    dst[0][0] = m11 / det;
+    dst[0][1] = -m10 / det;
+    dst[1][0] = -m01 / det;
+    dst[1][1] = m00 / det;
+}
+
+template <typename T, SFINAE_MAT2_SCALAR_GUARD<T> = nullptr>
 LM_INLINE auto kernel_add_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
                                const Mat2Buffer<T>& rhs) -> void {
     for (uint32_t col = 0; col < Matrix2<T>::MATRIX_SIZE; ++col) {

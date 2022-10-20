@@ -1,7 +1,11 @@
-#include <catch2/catch.hpp>
 #include <cmath>
-
+#include <catch2/catch.hpp>
 #include <loco/math/mat4_t_impl.hpp>
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wimplicit-float-conversion"
+#endif
 
 static constexpr double RANGE_MIN = -10.0;
 static constexpr double RANGE_MAX = 10.0;
@@ -260,4 +264,67 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
             x30 * y30, x31 * y31, x32 * y32, x33 * y33);
         // clang-format on
     }
+
+    SECTION("Matrix transposition") {
+        // clang-format off
+        // NOLINTNEXTLINE
+        FuncAllClose<T>(loco::math::transpose(m_a),
+            x00, x10, x20, x30,
+            x01, x11, x21, x31,
+            x02, x12, x22, x32,
+            x03, x13, x23, x33);
+        // NOLINTNEXTLINE
+        FuncAllClose<T>(loco::math::transpose(m_b),
+            y00, y10, y20, y30,
+            y01, y11, y21, y31,
+            y02, y12, y22, y32,
+            y03, y13, y23, y33);
+        // clang-format on
+    }
+
+    SECTION("Matrix trace") {
+        auto calc_trace_1 = loco::math::trace(m_a);
+        auto calc_trace_2 = loco::math::trace(m_b);
+        auto expected_trace_1 = x00 + x11 + x22 + x33;
+        auto expected_trace_2 = y00 + y11 + y22 + y33;
+
+        REQUIRE(std::abs(calc_trace_1 - expected_trace_1) <
+                static_cast<T>(loco::math::EPS));
+        REQUIRE(std::abs(calc_trace_2 - expected_trace_2) <
+                static_cast<T>(loco::math::EPS));
+    }
+
+    SECTION("Matrix determinant") {
+        // clang-format off
+        auto mat = Matrix4(1.0, 1.0, 6.0, 7.0,
+                           0.0, 8.0, 9.0, 7.0,
+                           2.0, 7.0, 8.0, 9.0,
+                           6.0, 3.0, 4.0, 0.0);
+        // clang-format on
+        auto calc_det = loco::math::determinant(mat);
+        auto expected_det = static_cast<T>(885);
+        REQUIRE(std::abs(calc_det - expected_det) <
+                static_cast<T>(loco::math::EPS));
+    }
+
+    SECTION("Matrix inverse") {
+        // clang-format off
+        auto mat = Matrix4(1.0, 1.0, 6.0, 7.0,
+                           0.0, 8.0, 9.0, 7.0,
+                           2.0, 7.0, 8.0, 9.0,
+                           6.0, 3.0, 4.0, 0.0);
+        // clang-format on
+        auto inv_mat = loco::math::inverse(mat);
+        // clang-format off
+        FuncAllClose<T>(inv_mat,
+            -0.019209, -0.174011,  0.150282,  0.119774, // NOLINT
+            -0.232768, 0.0090395,  0.174011, -0.019209, // NOLINT
+              0.20339,  0.254237, -0.355932,  0.0847458, // NOLINT
+           0.00451977,  -0.19435,  0.258757, -0.0870056); // NOLINT
+        // clang-format on
+    }
 }
+
+#if defined(__clang__)
+#pragma clang diagnostic pop  // NOLINT
+#endif

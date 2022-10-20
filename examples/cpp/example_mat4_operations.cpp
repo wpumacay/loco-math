@@ -50,6 +50,24 @@ LM_NEVER_INLINE auto run_operations_mat4() -> void {
               << ((mat_a == mat_b) ? "True" : "False") << '\n';
     std::cout << "a != b: " << '\n'
               << ((mat_a != mat_b) ? "True" : "False") << '\n';
+
+    // clang-format off
+    // Just a random non-singular matrix
+    Mat4 mat_c(1.0, 1.0, 6.0, 7.0,
+               0.0, 8.0, 9.0, 7.0,
+               2.0, 7.0, 8.0, 9.0,
+               6.0, 3.0, 4.0, 0.0);
+    // clang-format on
+
+    auto mat_transpose = loco::math::transpose(mat_c);
+    auto mat_trace = loco::math::trace(mat_c);
+    auto mat_determinant = loco::math::determinant(mat_c);
+    auto mat_inverse = loco::math::inverse(mat_c);
+
+    std::cout << "c.T: " << '\n' << mat_transpose.toString() << '\n';
+    std::cout << "tr(c): " << mat_trace << '\n';
+    std::cout << "det(c): " << mat_determinant << '\n';
+    std::cout << "inv(c): " << '\n' << mat_inverse.toString() << '\n';
 }
 
 auto main() -> int {

@@ -212,4 +212,18 @@
         normalize_in_place(self);                                       \
     })
 
+#define MATRIX_METHODS(Type)                                            \
+    .def("transpose", [](const Class& self) -> Class {                  \
+        return transpose<Type>(self);                                   \
+    })                                                                  \
+    .def("trace", [](const Class& self) -> Type {                       \
+        return trace<Type>(self);                                       \
+    })                                                                  \
+    .def("determinant", [](const Class& self) -> Type {                 \
+        return determinant<Type>(self);                                 \
+    })                                                                  \
+    .def("inverse", [](const Class& self) -> Class {                    \
+        return inverse<Type>(self);                                     \
+    })
+
 // clang-format on

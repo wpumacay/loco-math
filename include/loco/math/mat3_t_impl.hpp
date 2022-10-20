@@ -14,7 +14,7 @@ using SFINAE_MAT3_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 
 /// Returns the tranpose of the given matrix
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto transpoe(const Matrix3<T>& mat) -> Matrix3<T> {
+LM_INLINE auto transpose(const Matrix3<T>& mat) -> Matrix3<T> {
     Matrix3<T> dst = mat;
     scalar::kernel_transpose_inplace_mat3<T>(dst.elements());
     return dst;
@@ -23,6 +23,26 @@ LM_INLINE auto transpoe(const Matrix3<T>& mat) -> Matrix3<T> {
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto tranposeInPlace(Matrix3<T>& mat) -> void {  // NOLINT
     scalar::kernel_transpose_inplace_mat3<T>(mat.elements());
+}
+
+/// Returns the trace (sum of diagonal elements) of the matrix
+template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
+LM_INLINE auto trace(const Matrix3<T>& mat) -> T {
+    return scalar::kernel_trace_mat3<T>(mat.elements());
+}
+
+/// Returns the determinant of the matrix
+template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
+LM_INLINE auto determinant(const Matrix3<T>& mat) -> T {
+    return scalar::kernel_determinant_mat3<T>(mat.elements());
+}
+
+/// Returns the inverse of the matrix
+template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
+LM_INLINE auto inverse(const Matrix3<T>& mat) -> Matrix3<T> {
+    Matrix3<T> dst;
+    scalar::kernel_inverse_mat3<T>(dst.elements(), mat.elements());
+    return dst;
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>

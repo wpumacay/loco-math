@@ -25,6 +25,26 @@ LM_INLINE auto transposeInPlace(Matrix4<T>& mat) -> void {  // NOLINT
     scalar::kernel_transpose_inplace_mat4<T>(mat.elements());
 }
 
+/// Returns the trace (sum of diagonal elements) of the matrix
+template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+LM_INLINE auto trace(const Matrix4<T>& mat) -> T {
+    return scalar::kernel_trace_mat4<T>(mat.elements());
+}
+
+/// Returns the determinant of the matrix
+template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+LM_INLINE auto determinant(const Matrix4<T>& mat) -> T {
+    return scalar::kernel_determinant_mat4<T>(mat.elements());
+}
+
+/// Returns the inverse of the matrix
+template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+LM_INLINE auto inverse(const Matrix4<T>& mat) -> Matrix4<T> {
+    Matrix4<T> dst;
+    scalar::kernel_inverse_mat4<T>(dst.elements(), mat.elements());
+    return dst;
+}
+
 /// \brief Returns the matrix-sum of the two given matrices
 template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
 LM_INLINE auto operator+(const Matrix4<T>& lhs, const Matrix4<T>& rhs)

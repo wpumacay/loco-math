@@ -36,6 +36,7 @@ auto bindings_matrix3(py::module& m, const char* class_name) -> void {
         // clang-format off
         MATRIX_BUFFER_PROTOCOL(3, T)
         MATRIX_OPERATORS(T)
+        MATRIX_METHODS(T)
         // cppcheck-suppress constParameter
         MATRIX_GETSET_ITEM(3, T)
         // clang-format on

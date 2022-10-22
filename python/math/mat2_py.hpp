@@ -39,6 +39,14 @@ auto bindings_matrix2(py::module& m, const char* class_name) -> void {
         // cppcheck-suppress constParameter
         MATRIX_GETSET_ITEM(2, T)
         // clang-format on
+        .def_static("Rotation", &Class::Rotation)
+        .def_static("Scale",
+                    [](T scale_x, T scale_y) -> Class {
+                        return Class::Scale(scale_x, scale_y);
+                    })
+        .def_static("Scale",
+                    [](Column scale) -> Class { return Class::Scale(scale); })
+        .def_static("Identity", &Class::Identity)
         .def("__repr__", [](const Class& self) -> py::str {
             // clang-format off
             return py::str("Matrix2{}([[{},{}],\n"

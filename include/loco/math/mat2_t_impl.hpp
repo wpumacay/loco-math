@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 #include <loco/math/mat2_t.hpp>
 #include <loco/math/impl/mat2_t_scalar_impl.hpp>
 #include <loco/math/impl/mat2_t_sse_impl.hpp>
@@ -7,6 +9,57 @@
 
 namespace loco {
 namespace math {
+
+// ***************************************************************************//
+//                       Factory functions implementation                     //
+// ***************************************************************************//
+
+template <typename T>
+auto Matrix2<T>::Rotation(T angle) -> Matrix2<T> {
+    auto cos_t = std::cos(angle);
+    auto sin_t = std::sin(angle);
+    // clang-format off
+    return Matrix2<T>(
+        cos_t, -sin_t,
+        sin_t,  cos_t);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix2<T>::Scale(T scale_x, T scale_y) -> Matrix2<T> {
+    // clang-format off
+    return Matrix2<T>(
+        scale_x, 0.0,
+        0.0, scale_y);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix2<T>::Scale(const Vector2<T>& scale) -> Matrix2<T> {
+    // clang-format off
+    return Matrix2<T>(
+        scale.x(), 0.0,
+        0.0, scale.y());
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix2<T>::Identity() -> Matrix2<T> {
+    // clang-format off
+    return Matrix2<T>(
+        1.0, 0.0,
+        0.0, 1.0);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix2<T>::Zeros() -> Matrix2<T> {
+    return Matrix2<T>();
+}
+
+// ***************************************************************************//
+//                       Matrix Methods implementation                        //
+// ***************************************************************************//
 
 template <typename T>
 using SFINAE_MAT2_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
@@ -44,6 +97,10 @@ LM_INLINE auto inverse(const Matrix2<T>& mat) -> Matrix2<T> {
     scalar::kernel_inverse_mat2<T>(dst.elements(), mat.elements());
     return dst;
 }
+
+// ***************************************************************************//
+//                     Matrix Operators implementation                        //
+// ***************************************************************************//
 
 /// Returns the matrix sum of the two given matrices
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>

@@ -121,6 +121,21 @@ class Matrix2 {
         return sstr_result.str();
     }
 
+    /// Creates a rotation matrix for the given angle
+    static auto Rotation(Scalar_T angle) -> Matrix2<Scalar_T>;
+
+    /// Creates a scale matrix with the two given scale parameters
+    static auto Scale(Scalar_T scale_x, Scalar_T scale_y) -> Matrix2<Scalar_T>;
+
+    /// Creates a scale matrix given scale parameters as a vec-2
+    static auto Scale(const Vector2<Scalar_T>& scale) -> Matrix2<Scalar_T>;
+
+    /// Returns a 4x4 identity matrix of the current scalar type
+    static auto Identity() -> Matrix2<Scalar_T>;
+
+    /// Returns a 4x4 zero matrix of the current scalar type
+    static auto Zeros() -> Matrix2<Scalar_T>;
+
     /// Returns the number of rows
     static constexpr auto rows() -> uint32_t { return MATRIX_SIZE; }
 
@@ -145,14 +160,6 @@ class Matrix2 {
     static constexpr auto num_bytes_alignment() -> uint32_t {
         return alignof(Type);
     }
-
-    /// Returns a 4x4 identity matrix of the current scalar type
-    static auto Identity() -> Type {
-        return Matrix2<Scalar_T>(1.0, 0.0, 0.0, 1.0);
-    }
-
-    /// Returns a 4x4 zero matrix of the current scalar type
-    static auto Zeros() -> Type { return Matrix2<Scalar_T>(); }
 
  private:
     /// The buffer where all data is stored (as an array of 2 column

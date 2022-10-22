@@ -140,6 +140,28 @@ class Matrix3 {
         return sstr_result.str();
     }
 
+    /// Creates a rotation matrix for the given angle around the X-axis
+    static auto RotationX(Scalar_T angle) -> Matrix3<Scalar_T>;
+
+    /// Creates a rotation matrix for the given angle around the Y-axis
+    static auto RotationY(Scalar_T angle) -> Matrix3<Scalar_T>;
+
+    /// Creates a rotation matrix for the given angle around the Z-axis
+    static auto RotationZ(Scalar_T angle) -> Matrix3<Scalar_T>;
+
+    /// Creates a scale matrix for the given separate scale arguments
+    static auto Scale(Scalar_T scale_x, Scalar_T scale_y, Scalar_T scale_z)
+        -> Matrix3<Scalar_T>;
+
+    /// Creates a scale matrix for the given scale arguments given as a vec-3
+    static auto Scale(const Vector3<Scalar_T>& scale) -> Matrix3<Scalar_T>;
+
+    /// Creates an Identity matrix
+    static auto Identity() -> Matrix3<Scalar_T>;
+
+    /// Creates a Zero matrix
+    static auto Zero() -> Matrix3<Scalar_T>;
+
     /// Returns the number of rows
     static constexpr auto rows() -> uint32_t { return MATRIX_SIZE; }
 

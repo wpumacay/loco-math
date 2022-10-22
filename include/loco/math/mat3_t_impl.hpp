@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cmath>
 #include <istream>
+
 #include <loco/math/mat3_t.hpp>
 #include <loco/math/impl/mat3_t_scalar_impl.hpp>
 #include <loco/math/impl/mat3_t_sse_impl.hpp>
@@ -8,6 +10,85 @@
 
 namespace loco {
 namespace math {
+
+// ***************************************************************************//
+//                       Factory functions implementation                     //
+// ***************************************************************************//
+
+template <typename T>
+auto Matrix3<T>::RotationX(T angle) -> Matrix3<T> {
+    auto cos_t = std::cos(angle);
+    auto sin_t = std::sin(angle);
+    // clang-format off
+    return Matrix3<T>(
+        1.0, 0.0, 0.0,
+        0.0, cos_t, -sin_t,
+        0.0, sin_t, cos_t);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix3<T>::RotationY(T angle) -> Matrix3<T> {
+    auto cos_t = std::cos(angle);
+    auto sin_t = std::sin(angle);
+    // clang-format off
+    return Matrix3<T>(
+        cos_t, 0.0, sin_t,
+          0.0, 1.0,   0.0,
+       -sin_t, 0.0, cos_t);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix3<T>::RotationZ(T angle) -> Matrix3<T> {
+    auto cos_t = std::cos(angle);
+    auto sin_t = std::sin(angle);
+    // clang-format off
+    return Matrix3<T>(
+        cos_t, -sin_t, 0.0,
+        sin_t,  cos_t, 0.0,
+          0.0,    0.0, 1.0);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix3<T>::Scale(T scale_x, T scale_y, T scale_z) -> Matrix3<T> {
+    // clang-format off
+    return Matrix3<T>(
+        scale_x,     0.0,     0.0,
+            0.0, scale_y,     0.0,
+            0.0,     0.0, scale_z);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix3<T>::Scale(const Vector3<T>& scale) -> Matrix3<T> {
+    // clang-format off
+    return Matrix3<T>(
+        scale.x(),       0.0,       0.0,
+              0.0, scale.y(),       0.0,
+              0.0,       0.0, scale.z());
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix3<T>::Identity() -> Matrix3<T> {
+    // clang-format off
+    return Matrix3<T>(
+        1.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 1.0);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix3<T>::Zero() -> Matrix3<T> {
+    return Matrix3<T>();
+}
+
+// ***************************************************************************//
+//                       Matrix Methods implementation                        //
+// ***************************************************************************//
 
 template <typename T>
 using SFINAE_MAT3_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;

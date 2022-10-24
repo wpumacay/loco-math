@@ -40,6 +40,17 @@ auto bindings_matrix3(py::module& m, const char* class_name) -> void {
         // cppcheck-suppress constParameter
         MATRIX_GETSET_ITEM(3, T)
         // clang-format on
+        .def_static("RotationX", &Class::RotationX)
+        .def_static("RotationY", &Class::RotationY)
+        .def_static("RotationZ", &Class::RotationZ)
+        .def_static("Scale",
+                    [](T scale_x, T scale_y, T scale_z) -> Class {
+                        return Class::Scale(scale_x, scale_y, scale_z);
+                    })
+        .def_static("Scale",
+                    [](Column scale) -> Class { return Class::Scale(scale); })
+        .def_static("Identity", &Class::Identity)
+        .def_static("Zeros", &Class::Zeros)
         .def("__repr__", [](const Class& self) -> py::str {
             // clang-format off
             return py::str("Matrix3{}([[{},{},{}],\n"

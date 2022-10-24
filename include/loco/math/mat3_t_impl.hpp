@@ -82,7 +82,7 @@ auto Matrix3<T>::Identity() -> Matrix3<T> {
 }
 
 template <typename T>
-auto Matrix3<T>::Zero() -> Matrix3<T> {
+auto Matrix3<T>::Zeros() -> Matrix3<T> {
     return Matrix3<T>();
 }
 

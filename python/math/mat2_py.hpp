@@ -47,6 +47,7 @@ auto bindings_matrix2(py::module& m, const char* class_name) -> void {
         .def_static("Scale",
                     [](Column scale) -> Class { return Class::Scale(scale); })
         .def_static("Identity", &Class::Identity)
+        .def_static("Zeros", &Class::Zeros)
         .def("__repr__", [](const Class& self) -> py::str {
             // clang-format off
             return py::str("Matrix2{}([[{},{}],\n"

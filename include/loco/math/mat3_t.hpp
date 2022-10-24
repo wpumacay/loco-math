@@ -160,7 +160,7 @@ class Matrix3 {
     static auto Identity() -> Matrix3<Scalar_T>;
 
     /// Creates a Zero matrix
-    static auto Zero() -> Matrix3<Scalar_T>;
+    static auto Zeros() -> Matrix3<Scalar_T>;
 
     /// Returns the number of rows
     static constexpr auto rows() -> uint32_t { return MATRIX_SIZE; }

@@ -17,7 +17,7 @@ using SFINAE_QUAT_SCALAR_GUARD =
 template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
 LM_INLINE auto kernel_add_quat(QuatBuffer<T>& dst, const QuatBuffer<T>& lhs,
                                const QuatBuffer<T>& rhs) -> void {
-    for (uint32_t i = 0; i < Quaternion<T>::QUAT_NDIM; ++i) {
+    for (uint32_t i = 0; i < Quaternion<T>::QUAT_SIZE; ++i) {
         dst[i] = lhs[i] + rhs[i];
     }
 }
@@ -25,7 +25,7 @@ LM_INLINE auto kernel_add_quat(QuatBuffer<T>& dst, const QuatBuffer<T>& lhs,
 template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
 LM_INLINE auto kernel_sub_quat(QuatBuffer<T>& dst, const QuatBuffer<T>& lhs,
                                const QuatBuffer<T>& rhs) -> void {
-    for (uint32_t i = 0; i < Quaternion<T>::QUAT_NDIM; ++i) {
+    for (uint32_t i = 0; i < Quaternion<T>::QUAT_SIZE; ++i) {
         dst[i] = lhs[i] - rhs[i];
     }
 }
@@ -33,9 +33,15 @@ LM_INLINE auto kernel_sub_quat(QuatBuffer<T>& dst, const QuatBuffer<T>& lhs,
 template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
 LM_INLINE auto kernel_scale_quat(QuatBuffer<T>& dst, T scale,
                                  const QuatBuffer<T>& quat) -> void {
-    for (uint32_t i = 0; i < Quaternion<T>::QUAT_NDIM; ++i) {
+    for (uint32_t i = 0; i < Quaternion<T>::QUAT_SIZE; ++i) {
         dst[i] = scale * quat[i];
     }
+}
+
+template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_square_quat(const QuatBuffer<T>& quat) -> T {
+    return quat[0] * quat[0] + quat[1] * quat[1] + quat[2] * quat[2] +
+           quat[3] * quat[3];
 }
 
 }  // namespace scalar

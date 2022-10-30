@@ -1,5 +1,6 @@
 #pragma once
 
+#include <emmintrin.h>
 #if defined(LOCOMATH_SSE_ENABLED)
 
 #include <smmintrin.h>
@@ -85,6 +86,40 @@ LM_INLINE auto kernel_scale_quat(QuatBuffer<T>& dst, T scale,
     auto xmm_result_hi = _mm_mul_pd(xmm_scale, xmm_quat_hi);
     _mm_storeu_pd(dst.data(), xmm_result_lo);
     _mm_storeu_pd(dst.data(), xmm_result_hi);
+}
+
+template <typename T, SFINAE_QUAT_F32_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_square_quat(const QuatBuffer<T>& quat) -> T {
+    auto xmm_q = _mm_loadu_ps(static_cast<const float*>(quat.data()));
+    auto xmm_square_sum = _mm_dp_ps(xmm_q, xmm_q, 0xf1);
+    return _mm_cvtss_f32(xmm_square_sum);
+}
+
+template <typename T, SFINAE_QUAT_F64_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_square_quat(const QuatBuffer<T>& quat) -> T {
+    auto xmm_q_lo = _mm_loadu_pd(static_cast<const double*>(quat.data()));
+    auto xmm_q_hi = _mm_loadu_pd(static_cast<const double*>(quat.data() + 2));
+    auto xmm_square_sum_lo = _mm_dp_pd(xmm_q_lo, xmm_q_lo, 0x31);
+    auto xmm_square_sum_hi = _mm_dp_pd(xmm_q_hi, xmm_q_hi, 0x31);
+    auto xmm_square_sum = _mm_add_pd(xmm_square_sum_lo, xmm_square_sum_hi);
+    return _mm_cvtsd_f64(xmm_square_sum);
+}
+
+template <typename T, SFINAE_QUAT_F32_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_quat(const QuatBuffer<T>& quat) -> T {
+    auto xmm_q = _mm_loadu_ps(static_cast<const float*>(quat.data()));
+    auto xmm_square_sum = _mm_dp_ps(xmm_q, xmm_q, 0xf1);
+    return _mm_cvtss_f32(_mm_sqrt_ss(xmm_square_sum));
+}
+
+template <typename T, SFINAE_QUAT_F64_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_quat(const QuatBuffer<T>& quat) -> T {
+    auto xmm_q_lo = _mm_loadu_pd(static_cast<const double*>(quat.data()));
+    auto xmm_q_hi = _mm_loadu_pd(static_cast<const double*>(quat.data() + 2));
+    auto xmm_square_sum_lo = _mm_dp_pd(xmm_q_lo, xmm_q_lo, 0x31);
+    auto xmm_square_sum_hi = _mm_dp_pd(xmm_q_hi, xmm_q_hi, 0x31);
+    auto xmm_square_sum = _mm_add_pd(xmm_square_sum_lo, xmm_square_sum_hi);
+    return _mm_cvtsd_f64(_mm_sqrt_sd(xmm_square_sum, xmm_square_sum));
 }
 
 }  // namespace sse

@@ -25,7 +25,7 @@ template <typename Scalar_T>
 class Quaternion {
  public:
     /// Number of scalar dimensions of the quaternion
-    constexpr static uint32_t QUAT_NDIM = 4;
+    constexpr static uint32_t QUAT_SIZE = 4;
     /// Number of scalars used in the storage of the vector
     constexpr static uint32_t BUFFER_COUNT = 4;
     /// Number of bytes allocated for the buffer of this quaternion
@@ -70,20 +70,20 @@ class Quaternion {
     /// \param angle The angle of rotation in the representation
     /// \param axis The 3d vector representing the rotation axis
     explicit Quaternion(Scalar_T angle, const Vec3& axis) {
-        const Scalar_T half_angle = 0.5 * angle;         // NOLINT
-        const Scalar_T sin_half = std::sin(half_angle);  // NOLINT
-        const Scalar_T cos_half = std::cos(half_angle);  // NOLINT
+        const auto half_angle = static_cast<Scalar_T>(0.5) * angle;  // NOLINT
+        const auto sin_half = std::sin(half_angle);                  // NOLINT
+        const auto cos_half = std::cos(half_angle);                  // NOLINT
         m_Elements[0] = cos_half;
         m_Elements[1] = axis.x() * sin_half;
-        m_Elements[2] = axis.x() * sin_half;
-        m_Elements[3] = axis.x() * sin_half;
+        m_Elements[2] = axis.y() * sin_half;
+        m_Elements[3] = axis.z() * sin_half;
     }
 
     // cppcheck-suppress noExplicitConstructor
     /// Constructs a quaternion from a given list of the form {x, y, z, w}
     Quaternion(const std::initializer_list<Scalar_T>& values) {
         // Complain in case we don't receive exactly 4 values
-        assert(values.size() == Quaternion<Scalar_T>::QUAT_NDIM);
+        assert(values.size() == Quaternion<Scalar_T>::QUAT_SIZE);
         // Just copy the whole data from the initializer list
         std::copy(values.begin(), values.end(), m_Elements.data());
     }
@@ -141,7 +141,7 @@ class Quaternion {
     }
 
     /// Returns the number of dimensions of the vector (Vector4 <-> 4 scalars)
-    static constexpr auto ndim() -> uint32_t { return QUAT_NDIM; }
+    static constexpr auto ndim() -> uint32_t { return QUAT_SIZE; }
 
     /// Returns the number of scalars used by the storage of the vector
     static constexpr auto buffer_count() -> uint32_t { return BUFFER_COUNT; }

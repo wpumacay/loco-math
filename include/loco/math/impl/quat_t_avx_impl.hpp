@@ -1,5 +1,8 @@
 #pragma once
 
+#include <emmintrin.h>
+#include <smmintrin.h>
+#include <xmmintrin.h>
 #if defined(LOCOMATH_AVX_ENABLED)
 
 #include <immintrin.h>
@@ -73,6 +76,42 @@ LM_INLINE auto kernel_scale_quat(QuatBuffer<T>& dst, T scale,
     auto ymm_quat = _mm256_loadu_pd(quat.data());
     auto ymm_result = _mm256_mul_pd(ymm_scale, ymm_quat);
     _mm256_storeu_pd(dst.data(), ymm_result);
+}
+
+template <typename T, SFINAE_QUAT_F32_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_square_quat(const QuatBuffer<T>& quat) -> T {
+    auto xmm_q = _mm_loadu_ps(static_cast<const float*>(quat.data()));
+    auto xmm_square_sum = _mm_dp_ps(xmm_q, xmm_q, 0xf1);
+    return _mm_cvtss_f32(xmm_square_sum);
+}
+
+template <typename T, SFINAE_QUAT_F64_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_square_quat(const QuatBuffer<T>& quat) -> T {
+    auto ymm_q = _mm256_loadu_pd(static_cast<const double*>(quat.data()));
+    auto ymm_prod = _mm256_mul_pd(ymm_q, ymm_q);
+    auto ymm_hsum = _mm256_hadd_pd(ymm_prod, ymm_prod);
+    auto xmm_sum_lo = _mm256_extractf128_pd(ymm_hsum, 0);
+    auto xmm_sum_hi = _mm256_extractf128_pd(ymm_hsum, 1);
+    auto xmm_square_sum = _mm_add_pd(xmm_sum_lo, xmm_sum_hi);
+    return _mm_cvtsd_f64(xmm_square_sum);
+}
+
+template <typename T, SFINAE_QUAT_F32_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_quat(const QuatBuffer<T>& quat) -> T {
+    auto xmm_q = _mm_loadu_ps(static_cast<const float*>(quat.data()));
+    auto xmm_square_sum = _mm_dp_ps(xmm_q, xmm_q, 0xf1);
+    return _mm_cvtss_f32(_mm_sqrt_ss(xmm_square_sum));
+}
+
+template <typename T, SFINAE_QUAT_F64_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_length_quat(const QuatBuffer<T>& quat) -> T {
+    auto ymm_q = _mm256_loadu_pd(static_cast<const double*>(quat.data()));
+    auto ymm_prod = _mm256_mul_pd(ymm_q, ymm_q);
+    auto ymm_hsum = _mm256_hadd_pd(ymm_prod, ymm_prod);
+    auto xmm_sum_lo = _mm256_extractf128_pd(ymm_hsum, 0);
+    auto xmm_sum_hi = _mm256_extractf128_pd(ymm_hsum, 1);
+    auto xmm_square_sum = _mm_add_pd(xmm_sum_lo, xmm_sum_hi);
+    return _mm_cvtsd_f64(_mm_sqrt_sd(xmm_square_sum, xmm_square_sum));
 }
 
 }  // namespace avx

@@ -1,19 +1,28 @@
 #include <catch2/catch.hpp>
-#include <cmath>
-#include <loco/math/mat2_t.hpp>
-#include <type_traits>
 
-constexpr int N_SAMPLES = 4;
+#include <loco/math/mat2_t.hpp>
+
 constexpr double RANGE_MIN = -10.0;
 constexpr double RANGE_MAX = 10.0;
 
+// NOLINTNEXTLINE
+#define GenRandomValue(Type, Nsamples)                           \
+    GENERATE(take(Nsamples, random(static_cast<Type>(RANGE_MIN), \
+                                   static_cast<Type>(RANGE_MAX))))
+
+template <typename T>
+constexpr auto FuncClose(T a, T b, T eps) -> bool {
+    return ((a - b) < eps) && ((a - b) > -eps);
+}
+
 template <typename T>
 auto FuncAllClose(const loco::math::Matrix2<T>& mat, T x00, T x01, T x10, T x11)
-    -> void {
-    REQUIRE(std::abs(mat(0, 0) - x00) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(mat(0, 1) - x01) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(mat(1, 0) - x10) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(mat(1, 1) - x11) < static_cast<T>(loco::math::EPS));
+    -> bool {
+    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+    return FuncClose(mat(0, 0), x00, EPSILON) &&
+           FuncClose(mat(0, 1), x01, EPSILON) &&
+           FuncClose(mat(1, 0), x10, EPSILON) &&
+           FuncClose(mat(1, 1), x11, EPSILON);
 }
 
 // NOLINTNEXTLINE
@@ -29,38 +38,30 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat2_t) constructors", "[mat2_t][template]",
         FuncAllClose<T>(mat, 0.0, 0.0, 0.0, 0.0);
     }
     SECTION("From all matrix entries") {
-        auto x00 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x01 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x10 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x11 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
+        auto x00 = GenRandomValue(T, 8);
+        auto x01 = GenRandomValue(T, 8);
+        auto x10 = GenRandomValue(T, 8);
+        auto x11 = GenRandomValue(T, 8);
+
         Matrix2 mat(x00, x01, x10, x11);
-        FuncAllClose<T>(mat, x00, x01, x10, x11);
+        REQUIRE(FuncAllClose<T>(mat, x00, x01, x10, x11));
     }
     SECTION("From diagonal entries") {
-        auto x00 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x11 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
+        auto x00 = GenRandomValue(T, 8);
+        auto x11 = GenRandomValue(T, 8);
+
         Matrix2 mat(x00, x11);
-        FuncAllClose<T>(mat, x00, 0.0, 0.0, x11);
+        REQUIRE(FuncAllClose<T>(mat, x00, 0.0, 0.0, x11));
     }
     SECTION("From column vectors") {
-        auto x00 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x01 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x10 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x11 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
+        auto x00 = GenRandomValue(T, 8);
+        auto x01 = GenRandomValue(T, 8);
+        auto x10 = GenRandomValue(T, 8);
+        auto x11 = GenRandomValue(T, 8);
         Vector2 col0(x00, x10);
         Vector2 col1(x01, x11);
 
         Matrix2 mat(col0, col1);
-        FuncAllClose<T>(mat, x00, x01, x10, x11);
+        REQUIRE(FuncAllClose<T>(mat, x00, x01, x10, x11));
     }
 }

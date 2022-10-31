@@ -1,4 +1,3 @@
-#include <cmath>
 #include <catch2/catch.hpp>
 #include <loco/math/mat2_t_impl.hpp>
 
@@ -23,18 +22,20 @@ static constexpr double SCALE_MAX = 10.0;
     GENERATE(take(Nsamples, random(static_cast<Type>(SCALE_MIN), \
                                    static_cast<Type>(SCALE_MAX))))
 
-// clang-format off
 template <typename T>
-auto CheckAllClose(const loco::math::Matrix2<T>& mat,
-                T x00, T x01,
-                T x10, T x11)
-    -> void {
-    REQUIRE(std::abs(mat(0, 0) - x00) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(mat(0, 1) - x01) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(mat(1, 0) - x10) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(mat(1, 1) - x11) < static_cast<T>(loco::math::EPS));
+constexpr auto FuncClose(T a, T b, T eps) -> bool {
+    return ((a - b) < eps) && ((a - b) > -eps);
 }
-// clang-format on
+
+template <typename T>
+auto FuncAllClose(const loco::math::Matrix2<T>& mat, T x00, T x01, T x10, T x11)
+    -> bool {
+    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+    return FuncClose(mat(0, 0), x00, EPSILON) &&
+           FuncClose(mat(0, 1), x01, EPSILON) &&
+           FuncClose(mat(1, 0), x10, EPSILON) &&
+           FuncClose(mat(1, 1), x11, EPSILON);
+}
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Matrix2 class (mat2_t) factory functions",
@@ -45,40 +46,36 @@ TEMPLATE_TEST_CASE("Matrix2 class (mat2_t) factory functions",
     using Vector2 = loco::math::Vector2<T>;
 
     SECTION("Rotation matrix") {
-        constexpr int NUM_SAMPLES = 100;
-        auto angle = GenRandomAngle(T, NUM_SAMPLES);
+        auto angle = GenRandomAngle(T, 100);
         auto rot_mat = Matrix2::Rotation(angle);
 
         // clang-format off
-        CheckAllClose<T>(rot_mat,
+        REQUIRE(FuncAllClose<T>(rot_mat,
             std::cos(angle), -std::sin(angle),
-            std::sin(angle), std::cos(angle));
+            std::sin(angle), std::cos(angle)));
         // clang-format on
     }
 
     SECTION("Scale matrix - from scalars") {
-        constexpr int NUM_SAMPLES = 100;
-        auto scale_x = GenRandomScale(T, NUM_SAMPLES);
-        auto scale_y = GenRandomScale(T, NUM_SAMPLES);
+        auto scale_x = GenRandomScale(T, 100);
+        auto scale_y = GenRandomScale(T, 100);
         auto scale_mat = Matrix2::Scale(scale_x, scale_y);
 
         // clang-format off
-        CheckAllClose<T>(scale_mat,
+        REQUIRE(FuncAllClose<T>(scale_mat,
             scale_x, 0.0,
-            0.0, scale_y);
+            0.0, scale_y));
         // clang-format on
     }
 
     SECTION("Scale matrix - from vec2") {
-        constexpr int NUM_SAMPLES = 100;
-        auto scale = Vector2(GenRandomScale(T, NUM_SAMPLES),
-                             GenRandomScale(T, NUM_SAMPLES));
+        auto scale = Vector2(GenRandomScale(T, 100), GenRandomScale(T, 100));
         auto scale_mat = Matrix2::Scale(scale);
 
         // clang-format off
-        CheckAllClose<T>(scale_mat,
+        REQUIRE(FuncAllClose<T>(scale_mat,
             scale.x(), 0.0,
-            0.0, scale.y());
+            0.0, scale.y()));
         // clang-format on
     }
 }

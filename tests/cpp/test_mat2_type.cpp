@@ -35,7 +35,7 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat2_t) constructors", "[mat2_t][template]",
     // Checking all exposed constructors
     SECTION("Default constructor") {
         Matrix2 mat;
-        FuncAllClose<T>(mat, 0.0, 0.0, 0.0, 0.0);
+        REQUIRE(FuncAllClose<T>(mat, 0.0, 0.0, 0.0, 0.0));
     }
     SECTION("From all matrix entries") {
         auto x00 = GenRandomValue(T, 8);

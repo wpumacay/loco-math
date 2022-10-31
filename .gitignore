@@ -18,6 +18,8 @@ Testing/
 
 # Exclude settings from editors|IDEs
 .vscode
+*.sublime-project
+*.sublime-workspace
 
 # Exclude temporary folders
 *.egg-info/

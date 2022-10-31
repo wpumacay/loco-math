@@ -1,12 +1,18 @@
 #include <catch2/catch.hpp>
-#include <type_traits>
-#include <cmath>
-
 #include <loco/math/mat4_t_impl.hpp>
 
-constexpr int N_SAMPLES = 4;
 constexpr double RANGE_MIN = -10.0;
 constexpr double RANGE_MAX = 10.0;
+
+// NOLINTNEXTLINE
+#define GenRandomValue(Type, Nsamples)                           \
+    GENERATE(take(Nsamples, random(static_cast<Type>(RANGE_MIN), \
+                                   static_cast<Type>(RANGE_MAX))));
+
+template <typename T>
+constexpr auto FuncClose(T a, T b, T eps) -> bool {
+    return ((a - b) < eps) && ((a - b) > -eps);
+}
 
 // clang-format off
 template <typename T>
@@ -14,28 +20,25 @@ auto FuncAllClose(const loco::math::Matrix4<T>& mat,
                   T x00, T x01, T x02, T x03,
                   T x10, T x11, T x12, T x13,
                   T x20, T x21, T x22, T x23,
-                  T x30, T x31, T x32, T x33) -> void {
-    const auto& cols = mat.elements();
+                  T x30, T x31, T x32, T x33) -> bool {
+    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
 
-    REQUIRE(std::abs(cols[0][0] - x00) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(cols[0][1] - x10) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(cols[0][2] - x20) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(cols[0][3] - x30) < static_cast<T>(loco::math::EPS));
-
-    REQUIRE(std::abs(cols[1][0] - x01) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(cols[1][1] - x11) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(cols[1][2] - x21) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(cols[1][3] - x31) < static_cast<T>(loco::math::EPS));
-
-    REQUIRE(std::abs(cols[2][0] - x02) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(cols[2][1] - x12) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(cols[2][2] - x22) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(cols[2][3] - x32) < static_cast<T>(loco::math::EPS));
-
-    REQUIRE(std::abs(cols[3][0] - x03) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(cols[3][1] - x13) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(cols[3][2] - x23) < static_cast<T>(loco::math::EPS));
-    REQUIRE(std::abs(cols[3][3] - x33) < static_cast<T>(loco::math::EPS));
+    return FuncClose<T>(mat(0, 0), x00, EPSILON) &&
+           FuncClose<T>(mat(0, 1), x01, EPSILON) &&
+           FuncClose<T>(mat(0, 2), x02, EPSILON) &&
+           FuncClose<T>(mat(0, 3), x03, EPSILON) &&
+           FuncClose<T>(mat(1, 0), x10, EPSILON) &&
+           FuncClose<T>(mat(1, 1), x11, EPSILON) &&
+           FuncClose<T>(mat(1, 2), x12, EPSILON) &&
+           FuncClose<T>(mat(1, 3), x13, EPSILON) &&
+           FuncClose<T>(mat(2, 0), x20, EPSILON) &&
+           FuncClose<T>(mat(2, 1), x21, EPSILON) &&
+           FuncClose<T>(mat(2, 2), x22, EPSILON) &&
+           FuncClose<T>(mat(2, 3), x23, EPSILON) &&
+           FuncClose<T>(mat(3, 0), x30, EPSILON) &&
+           FuncClose<T>(mat(3, 1), x31, EPSILON) &&
+           FuncClose<T>(mat(3, 2), x32, EPSILON) &&
+           FuncClose<T>(mat(3, 3), x33, EPSILON);
 }
 // clang-format on
 
@@ -50,55 +53,46 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) constructors", "[mat4_t][template]",
     SECTION("Default constructor") {
         Matrix4 mat;
         // clang-format off
-        FuncAllClose<T>(mat,
-            0.0, 0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0, 0.0);
+        REQUIRE(FuncAllClose<T>(mat,
+                0.0, 0.0, 0.0, 0.0,
+                0.0, 0.0, 0.0, 0.0,
+                0.0, 0.0, 0.0, 0.0,
+                0.0, 0.0, 0.0, 0.0));
         // clang-format on
     }
     SECTION("From all matrix entries") {
-        // @todo(wilbert): could create custom generator that fills the matrix
         // clang-format off
         Matrix4 mat(1.0,  2.0,  3.0,  4.0,
                     5.0,  6.0,  7.0,  8.0,
                     9.0,  10.0, 11.0, 12.0,
                     13.0, 14.0, 15.0, 16.0);
 
-        FuncAllClose<T>(mat,
-            1.0,  2.0,  3.0,  4.0,
-            5.0,  6.0,  7.0,  8.0,
-            9.0,  10.0, 11.0, 12.0,
-            13.0, 14.0, 15.0, 16.0);
+        REQUIRE(FuncAllClose<T>(mat,
+                1.0,  2.0,  3.0,  4.0,
+                5.0,  6.0,  7.0,  8.0,
+                9.0,  10.0, 11.0, 12.0,
+                13.0, 14.0, 15.0, 16.0));
         // clang-format on
     }
     SECTION("From diagonal entries") {
-        auto x00 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x11 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x22 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x33 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
+        auto x00 = GenRandomValue(T, 4);
+        auto x11 = GenRandomValue(T, 4);
+        auto x22 = GenRandomValue(T, 4);
+        auto x33 = GenRandomValue(T, 4);
         Matrix4 mat(x00, x11, x22, x33);
         // clang-format off
-        FuncAllClose<T>(mat,
-            x00, 0.0, 0.0, 0.0,
-            0.0, x11, 0.0, 0.0,
-            0.0, 0.0, x22, 0.0,
-            0.0, 0.0, 0.0, x33);
+        REQUIRE(FuncAllClose<T>(mat,
+                x00, 0.0, 0.0, 0.0,
+                0.0, x11, 0.0, 0.0,
+                0.0, 0.0, x22, 0.0,
+                0.0, 0.0, 0.0, x33));
         // clang-format on
     }
     SECTION("From column vectors") {
-        auto x00 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x11 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x22 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
-        auto x33 = GENERATE(take(N_SAMPLES, random(static_cast<T>(RANGE_MIN),
-                                                   static_cast<T>(RANGE_MAX))));
+        auto x00 = GenRandomValue(T, 4);
+        auto x11 = GenRandomValue(T, 4);
+        auto x22 = GenRandomValue(T, 4);
+        auto x33 = GenRandomValue(T, 4);
 
         Vector4 col0 = {x00, 2.0, 3.0, 4.0};
         Vector4 col1 = {5.0, x11, 7.0, 8.0};
@@ -107,11 +101,11 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) constructors", "[mat4_t][template]",
 
         Matrix4 mat(col0, col1, col2, col3);
         // clang-format off
-        FuncAllClose<T>(mat,
-            x00, 5.0, 9.0,  13.0,
-            2.0, x11, 10.0, 14.0,
-            3.0, 7.0, x22,  15.0,
-            4.0, 8.0, 12.0, x33);
+        REQUIRE(FuncAllClose<T>(mat,
+                x00, 5.0, 9.0,  13.0,
+                2.0, x11, 10.0, 14.0,
+                3.0, 7.0, x22,  15.0,
+                4.0, 8.0, 12.0, x33));
         // clang-format on
     }
 }

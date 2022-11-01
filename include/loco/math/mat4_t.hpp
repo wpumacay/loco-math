@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <type_traits>
 
+#include <loco/math/vec3_t.hpp>
 #include <loco/math/vec4_t.hpp>
 
 namespace loco {
@@ -157,6 +158,32 @@ class Matrix4 {
         return sstr_result.str();
     }
 
+    /// Creates a rotation matrix for the given angle around the X-axis
+    static auto RotationX(Scalar_T angle) -> Matrix4<Scalar_T>;
+
+    /// Creates a rotation matrix for the given angle around the Y-axis
+    static auto RotationY(Scalar_T angle) -> Matrix4<Scalar_T>;
+
+    /// Creates a rotation matrix for the given angle around the Z-axis
+    static auto RotationZ(Scalar_T angle) -> Matrix4<Scalar_T>;
+
+    /// Creates a scale matrix for the given separate scale arguments
+    static auto Scale(Scalar_T scale_x, Scalar_T scale_y, Scalar_T scale_z)
+        -> Matrix4<Scalar_T>;
+
+    /// Creates a scale matrix for the given scale arguments given as a vec3
+    static auto Scale(const Vector3<Scalar_T>& scale) -> Matrix4<Scalar_T>;
+
+    /// Creates a translation matrix from the given translation given as a vec3
+    static auto Translation(const Vector3<Scalar_T>& position)
+        -> Matrix4<Scalar_T>;
+
+    /// Returns a 4x4 identity matrix of the current scalar type
+    static auto Identity() -> Matrix4<Scalar_T>;
+
+    /// Returns a 4x4 zero matrix of the current scalar type
+    static auto Zeros() -> Matrix4<Scalar_T>;
+
     /// Returns the number of rows
     static constexpr auto rows() -> uint32_t { return MATRIX_SIZE; }
 
@@ -181,19 +208,6 @@ class Matrix4 {
     static constexpr auto num_bytes_alignment() -> uint32_t {
         return alignof(Type);
     }
-
-    /// Returns a 4x4 identity matrix of the current scalar type
-    static auto Identity() -> Type {
-        // clang-format off
-        return Matrix4<Scalar_T>(1.0, 0.0, 0.0, 0.0,
-                                 0.0, 1.0, 0.0, 0.0,
-                                 0.0, 0.0, 1.0, 0.0,
-                                 0.0, 0.0, 0.0, 1.0);
-        // clang-format on
-    }
-
-    /// Returns a 4x4 zero matrix of the current scalar type
-    static auto Zeros() -> Type { return Matrix4<Scalar_T>(); }
 
  private:
     /// The buffer where all data lies (as an array of 4 column vectors)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 #include <loco/math/mat4_t.hpp>
 #include <loco/math/impl/mat4_t_scalar_impl.hpp>
 #include <loco/math/impl/mat4_t_sse_impl.hpp>
@@ -7,6 +9,101 @@
 
 namespace loco {
 namespace math {
+
+// ***************************************************************************//
+//                       Factory functions implementation                     //
+// ***************************************************************************//
+
+template <typename T>
+auto Matrix4<T>::RotationX(T angle) -> Matrix4<T> {
+    auto cos_t = std::cos(angle);
+    auto sin_t = std::sin(angle);
+    // clang-format off
+    return Matrix4<T>(
+        1.0,   0.0,    0.0, 0.0,
+        0.0, cos_t, -sin_t, 0.0,
+        0.0, sin_t,  cos_t, 0.0,
+        0.0,   0.0,    0.0, 1.0);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix4<T>::RotationY(T angle) -> Matrix4<T> {
+    auto cos_t = std::cos(angle);
+    auto sin_t = std::sin(angle);
+    // clang-format off
+    return Matrix4<T>(
+        cos_t, 0.0, sin_t, 0.0,
+          0.0, 1.0,   0.0, 0.0,
+       -sin_t, 0.0, cos_t, 0.0,
+          0.0, 0.0,   0.0, 1.0);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix4<T>::RotationZ(T angle) -> Matrix4<T> {
+    auto cos_t = std::cos(angle);
+    auto sin_t = std::sin(angle);
+    // clang-format off
+    return Matrix4<T>(
+        cos_t, -sin_t, 0.0, 0.0,
+        sin_t,  cos_t, 0.0, 0.0,
+          0.0,    0.0, 1.0, 0.0,
+          0.0,    0.0, 0.0, 1.0);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix4<T>::Scale(T scale_x, T scale_y, T scale_z) -> Matrix4<T> {
+    // clang-format off
+    return Matrix4<T>(
+        scale_x,     0.0,     0.0, 0.0,
+            0.0, scale_y,     0.0, 0.0,
+            0.0,     0.0, scale_z, 0.0,
+            0.0,     0.0,     0.0, 1.0);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix4<T>::Scale(const Vector3<T>& scale) -> Matrix4<T> {
+    // clang-format off
+    return Matrix4<T>(
+        scale.x(),       0.0,       0.0, 0.0,
+              0.0, scale.y(),       0.0, 0.0,
+              0.0,       0.0, scale.z(), 0.0,
+              0.0,       0.0,       0.0, 1.0);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix4<T>::Translation(const Vector3<T>& position) -> Matrix4<T> {
+    // clang-format off
+    return Matrix4<T>(
+        1.0, 0.0, 0.0, position.x(),
+        0.0, 1.0, 0.0, position.y(),
+        0.0, 0.0, 1.0, position.z(),
+        0.0, 0.0, 0.0,          1.0);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix4<T>::Identity() -> Matrix4<T> {
+    // clang-format off
+    return Matrix4<T>(1.0, 0.0, 0.0, 0.0,
+                      0.0, 1.0, 0.0, 0.0,
+                      0.0, 0.0, 1.0, 0.0,
+                      0.0, 0.0, 0.0, 1.0);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix4<T>::Zeros() -> Matrix4<T> {
+    return Matrix4<T>();
+}
+
+// ***************************************************************************//
+//                       Matrix Methods implementation                        //
+// ***************************************************************************//
 
 template <typename T>
 using SFINAE_MAT4_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;

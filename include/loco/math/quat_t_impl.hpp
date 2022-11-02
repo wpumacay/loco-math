@@ -11,7 +11,7 @@ namespace math {
 template <typename T>
 using SFINAE_QUAT_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 
-/// Returns the square of the length of this quaternion
+/// Returns the square of the length of the given quaternion
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
 LM_INLINE auto squareNorm(const Quaternion<T>& quat) -> T {
 #if defined(LOCOMATH_AVX_ENABLED)
@@ -19,11 +19,11 @@ LM_INLINE auto squareNorm(const Quaternion<T>& quat) -> T {
 #elif defined(LOCOMATH_SSE_ENABLED)
     sse::kernel_length_square_quat<T>(quat.elements());
 #else
-    return scalar::kernel_length_square_quat<T>(quat.elements())
+    return scalar::kernel_length_square_quat<T>(quat.elements());
 #endif
 }
 
-/// Returns the length of this quaternion
+/// Returns the length of the given quaternion
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
 LM_INLINE auto norm(const Quaternion<T>& quat) -> T {
 #if defined(LOCOMATH_AVX_ENABLED)

@@ -114,6 +114,34 @@ LM_INLINE auto kernel_length_quat(const QuatBuffer<T>& quat) -> T {
     return _mm_cvtsd_f64(_mm_sqrt_sd(xmm_square_sum, xmm_square_sum));
 }
 
+template <typename T, SFINAE_QUAT_F32_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> void {
+    // Whole quaternion fits into a single xmm register, so use SSE instructions
+    auto xmm_v = _mm_loadu_ps(static_cast<const float*>(quat.data()));
+    auto xmm_squares_sum = _mm_dp_ps(xmm_v, xmm_v, 0xff);
+    auto xmm_lengths = _mm_sqrt_ps(xmm_squares_sum);
+    auto xmm_v_norm = _mm_div_ps(xmm_v, xmm_lengths);
+    _mm_storeu_ps(static_cast<float*>(quat.data()), xmm_v_norm);
+}
+
+template <typename T, SFINAE_QUAT_F64_AVX_GUARD<T> = nullptr>
+LM_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> void {
+    // Whole quaternion fits into a single ymm register, so use AVX instructions
+    // Note that we're not using _mm256_dp_ , as it does something different in
+    // this instruction set, compared to its SSE counterpart. That's why we're
+    // using permutations and half adds to obtain the same behaviour
+    auto ymm_v = _mm256_loadu_pd(static_cast<const double*>(quat.data()));
+    auto ymm_squares = _mm256_mul_pd(ymm_v, ymm_v);
+    // Construct the sum of squares into each double of a 256-bit register
+    auto ymm_tmp0 = _mm256_permute2f128_pd(ymm_squares, ymm_squares, 0x21);
+    auto ymm_tmp1 = _mm256_hadd_pd(ymm_squares, ymm_tmp0);
+    auto ymm_squares_sum = _mm256_hadd_pd(ymm_tmp1, ymm_tmp1);
+    // Compute the normalized vector
+    auto ymm_lengths = _mm256_sqrt_pd(ymm_squares_sum);
+    auto ymm_v_norm = _mm256_div_pd(ymm_v, ymm_lengths);
+    _mm256_storeu_pd(static_cast<double*>(quat.data()), ymm_v_norm);
+}
+
 }  // namespace avx
 }  // namespace math
 }  // namespace loco

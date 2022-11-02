@@ -1,7 +1,4 @@
 #include <catch2/catch.hpp>
-#include <type_traits>
-#include <cmath>
-
 #include <loco/math/quat_t_impl.hpp>
 
 #if defined(__clang__)
@@ -26,13 +23,18 @@ static constexpr double ANGLE_MAX = loco::math::PI;
                                    static_cast<Type>(ANGLE_MAX))))
 
 template <typename T>
-auto CheckAllClose(const loco::math::Quaternion<T>& quat, T w, T x, T y, T z)
-    -> void {
+constexpr auto FuncClose(T a, T b, T eps) -> bool {
+    return ((a - b) < eps) && ((a - b) > -eps);
+}
+
+template <typename T>
+auto FuncAllClose(const loco::math::Quaternion<T>& quat, T w, T x, T y, T z)
+    -> bool {
     constexpr T EPSILON = static_cast<T>(loco::math::EPS);
-    REQUIRE(std::abs(quat.w() - w) < EPSILON);
-    REQUIRE(std::abs(quat.x() - x) < EPSILON);
-    REQUIRE(std::abs(quat.y() - y) < EPSILON);
-    REQUIRE(std::abs(quat.z() - z) < EPSILON);
+    return FuncClose<T>(quat.w(), w, EPSILON) &&
+           FuncClose<T>(quat.x(), x, EPSILON) &&
+           FuncClose<T>(quat.y(), y, EPSILON) &&
+           FuncClose<T>(quat.z(), z, EPSILON);
 }
 
 // NOLINTNEXTLINE
@@ -45,7 +47,7 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) constructors",
 
     SECTION("Default constructor") {
         Quaternion q;
-        CheckAllClose<T>(q, 1.0, 0.0, 0.0, 0.0);
+        FuncAllClose<T>(q, 1.0, 0.0, 0.0, 0.0);
     }
 
     SECTION("From single scalar argument") {
@@ -53,7 +55,7 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) constructors",
         auto val_w = GenRandomValue(T, NUM_SAMPLES);
 
         Quaternion q(val_w);
-        CheckAllClose<T>(q, val_w, 0.0, 0.0, 0.0);
+        FuncAllClose<T>(q, val_w, 0.0, 0.0, 0.0);
     }
 
     SECTION("From four scalar arguments, and from initializer_list") {
@@ -65,8 +67,8 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) constructors",
 
         Quaternion q_1(val_w, val_x, val_y, val_z);
         Quaternion q_2 = {val_w, val_x, val_y, val_z};
-        CheckAllClose<T>(q_1, val_w, val_x, val_y, val_z);
-        CheckAllClose<T>(q_2, val_w, val_x, val_y, val_z);
+        FuncAllClose<T>(q_1, val_w, val_x, val_y, val_z);
+        FuncAllClose<T>(q_2, val_w, val_x, val_y, val_z);
     }
 
     SECTION("From axis-angle") {
@@ -93,10 +95,10 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) constructors",
         auto expected_z = v.z() * sin_half;  // NOLINT
 
         Quaternion q(val_angle, v);
-        CheckAllClose<T>(q, expected_w, expected_x, expected_y, expected_z);
+        FuncAllClose<T>(q, expected_w, expected_x, expected_y, expected_z);
     }
 }
 
 #if defined(__clang__)
-#pragma clang diagnostic pop
+#pragma clang diagnostic pop  // NOLINT
 #endif

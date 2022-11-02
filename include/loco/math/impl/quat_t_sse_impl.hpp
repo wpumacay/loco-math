@@ -122,6 +122,29 @@ LM_INLINE auto kernel_length_quat(const QuatBuffer<T>& quat) -> T {
     return _mm_cvtsd_f64(_mm_sqrt_sd(xmm_square_sum, xmm_square_sum));
 }
 
+template <typename T, SFINAE_QUAT_F32_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> void {
+    auto xmm_v = _mm_loadu_ps(static_cast<const float*>(quat.data()));
+    auto xmm_square_sums = _mm_dp_ps(xmm_v, xmm_v, 0xff);
+    auto xmm_lengths = _mm_sqrt_ps(xmm_square_sums);
+    auto xmm_v_norm = _mm_div_ps(xmm_v, xmm_lengths);
+    _mm_storeu_ps(static_cast<float*>(quat.data()), xmm_v_norm);
+}
+
+template <typename T, SFINAE_QUAT_F64_SSE_GUARD<T> = nullptr>
+LM_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> void {
+    auto xmm_v_lo = _mm_loadu_pd(static_cast<const double*>(quat.data()));
+    auto xmm_v_hi = _mm_loadu_pd(static_cast<const double*>(quat.data() + 2));
+    auto xmm_square_sums_lo = _mm_dp_pd(xmm_v_lo, xmm_v_lo, 0x33);
+    auto xmm_square_sums_hi = _mm_dp_pd(xmm_v_hi, xmm_v_hi, 0x33);
+    auto xmm_square_sums = _mm_add_pd(xmm_square_sums_lo, xmm_square_sums_hi);
+    auto xmm_lengths = _mm_sqrt_pd(xmm_square_sums);
+    auto xmm_v_norm_lo = _mm_div_pd(xmm_v_lo, xmm_lengths);
+    auto xmm_v_norm_hi = _mm_div_pd(xmm_v_hi, xmm_lengths);
+    _mm_storeu_pd(static_cast<double*>(quat.data()), xmm_v_norm_lo);
+    _mm_storeu_pd(static_cast<double*>(quat.data() + 2), xmm_v_norm_hi);
+}
+
 }  // namespace sse
 }  // namespace math
 }  // namespace loco

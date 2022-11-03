@@ -40,6 +40,25 @@ LM_INLINE auto kernel_scale_quat(QuatBuffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
+LM_INLINE auto kernel_quatmul_quat(QuatBuffer<T>& dst, const QuatBuffer<T>& lhs,
+                                   const QuatBuffer<T>& rhs) -> void {
+    auto a_w = lhs[0];
+    auto a_x = lhs[1];
+    auto a_y = lhs[2];
+    auto a_z = lhs[3];
+
+    auto b_w = rhs[0];
+    auto b_x = rhs[1];
+    auto b_y = rhs[2];
+    auto b_z = rhs[3];
+
+    dst[0] = a_w * b_w - a_x * b_x - a_y * b_y - a_z * b_z;
+    dst[1] = a_w * b_x + b_w * a_x + a_y * b_z - b_y * a_z;
+    dst[2] = a_w * b_y + b_w * a_y + a_z * b_x - b_z * a_x;
+    dst[3] = a_w * b_z + b_w * a_z + a_x * b_y - b_x * a_y;
+}
+
+template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
 LM_INLINE auto kernel_length_square_quat(const QuatBuffer<T>& quat) -> T {
     return quat[0] * quat[0] + quat[1] * quat[1] + quat[2] * quat[2] +
            quat[3] * quat[3];

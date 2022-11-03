@@ -130,6 +130,30 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         // clang-format on
     }
 
+    SECTION("Quaternion product") {
+        auto a_w = GenRandomValue(T, 2);
+        auto a_x = GenRandomValue(T, 2);
+        auto a_y = GenRandomValue(T, 2);
+        auto a_z = GenRandomValue(T, 2);
+
+        auto b_w = GenRandomValue(T, 2);
+        auto b_x = GenRandomValue(T, 2);
+        auto b_y = GenRandomValue(T, 2);
+        auto b_z = GenRandomValue(T, 2);
+
+        Quaternion q_a(a_w, a_x, a_y, a_z);
+        Quaternion q_b(b_w, b_x, b_y, b_z);
+        auto q_prod = q_a * q_b;
+
+        // clang-format off
+        REQUIRE(FuncAllClose<T>(q_prod,
+            a_w * b_w - a_x * b_x - a_y * b_y - a_z * b_z,
+            a_w * b_x + b_w * a_x + a_y * b_z - b_y * a_z,
+            a_w * b_y + b_w * a_y + a_z * b_x - b_z * a_x,
+            a_w * b_z + b_w * a_z + a_x * b_y - b_x * a_y));
+        // clang-format on
+    }
+
     SECTION("Quaternion scale (by single scalar)") {
         auto val_w = GenRandomValue(T, 4);
         auto val_x = GenRandomValue(T, 4);

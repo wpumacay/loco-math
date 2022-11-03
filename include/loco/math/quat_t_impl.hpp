@@ -124,6 +124,15 @@ LM_INLINE auto operator*(const Quaternion<T>& quat, double scale)
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+LM_INLINE auto operator*(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
+    -> Quaternion<T> {
+    Quaternion<T> dst;
+    scalar::kernel_quatmul_quat<T>(dst.elements(), lhs.elements(),
+                                   rhs.elements());
+    return dst;
+}
+
+template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
 LM_INLINE auto operator==(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     -> bool {
     return scalar::kernel_compare_eq_quat<T>(lhs.elements(), rhs.elements());

@@ -23,6 +23,11 @@ namespace py = pybind11;
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #endif
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4127)
+#endif
+
 namespace loco {
 namespace math {
 
@@ -47,11 +52,11 @@ auto bindings_vector2(py::module& m, const char* class_name) -> void {
             VECTOR_GETSET_ITEM(2, T)
             // clant-format on
             // NOLINTNEXTLINE
-            .def_property_readonly("ndim", [](const Class& self) {
+            .def_property_readonly("ndim", [](const Class&) {
                 return Class::VECTOR_NDIM;
             })
             // NOLINTNEXTLINE
-            .def_property_readonly("shape", [](const Class& self) {
+            .def_property_readonly("shape", [](const Class&) {
                 return std::pair<uint32_t, uint32_t>(1, 2);
             })
             .def("__repr__", [](const Class& self) -> py::str {
@@ -64,6 +69,10 @@ auto bindings_vector2(py::module& m, const char* class_name) -> void {
 
 #if defined(__clang__)
 #pragma clang diagnostic pop
+#endif
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
 #endif
 
 }  // namespace math

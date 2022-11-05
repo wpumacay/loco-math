@@ -17,6 +17,11 @@
 
 namespace py = pybind11;
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4127)
+#endif
+
 namespace loco {
 namespace math {
 
@@ -64,6 +69,10 @@ auto bindings_matrix3(py::module& m, const char* class_name) -> void {
             // clang-format on
         });
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 }  // namespace math
 }  // namespace loco

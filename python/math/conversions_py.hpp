@@ -14,6 +14,11 @@
 
 namespace py = pybind11;
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4127)
+#endif
+
 namespace loco {
 namespace math {
 
@@ -182,3 +187,7 @@ inline auto buffer_to_vec2(const py::buffer& buff) -> Vector2<T> {
 
 }  // namespace math
 }  // namespace loco
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif

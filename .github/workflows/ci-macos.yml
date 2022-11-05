@@ -21,6 +21,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Configure python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
     - name: Update CMake
       uses: jwlawson/actions-setup-cmake@v1.10
 

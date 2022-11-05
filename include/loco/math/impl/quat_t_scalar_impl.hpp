@@ -65,7 +65,7 @@ LM_INLINE auto kernel_length_square_quat(const QuatBuffer<T>& quat) -> T {
 }
 
 template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> T {
+LM_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> void {
     auto length = std::sqrt(kernel_length_square_quat<T>(quat));
     for (uint32_t i = 0; i < Quaternion<T>::QUAT_SIZE; ++i) {
         quat[i] /= length;

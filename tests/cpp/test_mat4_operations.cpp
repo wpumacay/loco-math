@@ -1,10 +1,12 @@
-#include <cmath>
 #include <catch2/catch.hpp>
 #include <loco/math/mat4_t_impl.hpp>
 
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wimplicit-float-conversion"
+#elif defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4305)
 #endif
 
 static constexpr double RANGE_MIN = -10.0;
@@ -330,4 +332,6 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
 
 #if defined(__clang__)
 #pragma clang diagnostic pop  // NOLINT
+#elif defined(_MSC_VER)
+#pragma warning(pop)
 #endif

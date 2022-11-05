@@ -4,6 +4,9 @@
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wimplicit-float-conversion"
+#elif defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4305)
 #endif
 
 static constexpr double RANGE_MIN = -10.0;
@@ -275,4 +278,6 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
 
 #if defined(__clang__)
 #pragma clang diagnostic pop  // NOLINT
+#elif defined(_MSC_VER)
+#pragma warning(pop)
 #endif

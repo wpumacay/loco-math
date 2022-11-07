@@ -1,17 +1,24 @@
-# tiny_math
+# TinyMath
 
-A basic math library for vectors and matrices (just for 2,3, and 4 dimensions)
+A small header-only math library for vectors and matrices
+
+## Build Status
+
+| Build   | Status
+| ------- | ------------------------------
+| Ubuntu  | [![ci-linux][0]][1]       |
+| Windows | [![ci-windows][2]][3]     |
+| MacOS   | [![ci-macos][4]][5]       |
 
 ## Yet another math library
 
-This library is intended mainly for test purposes (integration with PyPi, ReadTheDocs, CI, python-bindings, etc.).
-However, we currently use it as a replacement to other more complete libraries like [glm](https://glm.g-truc.net/0.9.9/index.html) 
-and [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) in some projects that make heavy use of C/C++  and 
-also require Python support through bindings.
+This library is designed to be a potential replacement to various other great
+libraries like `Eigen` and `glm`, but with a narrow focus on 2, 3, and 4
+dimensional vectors and matrices.
 
 ## Setup
 
-### C++
+### C++ setup
 
 Clone this package into your `third_party` dependencies:
 
@@ -20,20 +27,18 @@ Clone this package into your `third_party` dependencies:
 git clone https://github.com/wpumacay/tiny_math.git third_party/tiny_math
 ```
 
-The library is a template-based header-only library, so just include the headers in the `include` 
-folder, e.g. in your own `CMakeLists.txt`:
+There's a `CMake` target called `loco::math`. Just add the source directory in
+your `CMake` workflow, and use the given target as follows:
 
-```txt
-include_directories( third_party/tiny_math/include )
+```CMake
+# Add TinyMath as a third-party dependency
+add(PATH_TO_TINY_MATH)
+# ...
+# Link against the exposed loco::math target
+target_link_library(MY_LIBRARY PRIVATE loco::math)
 ```
 
-Alternatively, you can use the CMake target `tinymath_cpp_lib` as a dependency in your own target:
-
-```txt
-add_library( my_own_awesome_library tinymath_cpp_lib )
-```
-
-### Python
+### Python setup
 
 Use the provided `setup.py` file:
 
@@ -41,16 +46,10 @@ Use the provided `setup.py` file:
 python setup.py install
 ```
 
-Or via PyPi:
-
-```bash
-pip install wp-tinymath
-```
-
-And import the `tinymath` package in your python files:
+And import the types from the `lmath` package:
 
 ```python
-import tinymath as tm
+from lmath import Vector3f
 ```
 
 ## Usage
@@ -59,46 +58,53 @@ import tinymath as tm
 
 ```c++
 
-#include <vector_t.h>
-#include <matrix_t.h>
+#include <loco/math/vec3_t_impl.h>
+#include <loco/math/mat3_t_impl.h>
 
 int main()
 {
     // Create a vec3-float32 and show it on the console
-    tinymath::Vector3f _vec = { 1.0f, 2.0f, 3.0f };
-    std::cout << "vec: " << tinymath::toString( vec ) << std::endl;
+    loco::math::Vector3f vec = { 1.0f, 2.0f, 3.0f };
+    std::cout << "vec: " << vec << std::endl;
 
     // Create a mat3 float32, show its entries and its inverse
-    auto mat = tinymath::Matrix3f( { 3.0f, 9.0f, 3.0f,
+    auto mat = loco::math::Matrix3f( 3.0f, 9.0f, 3.0f,
                                      9.0f, 0.0f, 3.0f,
-                                     2.0f, 3.0f, 8.0f } );
+                                     2.0f, 3.0f, 8.0f );
 
     std::cout << "mat:" << std::endl;
-    std::cout << tinymath::toString( mat ) << std::endl;
+    std::cout << mat << std::endl;
     std::cout << "mat.inverse():" << std::endl;
-    std::cout << tinymath::toString( mat.inverse() ) << std::endl;
+    std::cout << loco::math::inverse( mat ) << std::endl;
 
     return 0;
 }
-
 ```
 
 ### Python
 
 ```python
-import tinymath as tm
+import numpy as np
+from lmath import Vector3f, Matrix3f
 
 # Create a vec3-float32 and show it on the console
-vec = tm.Vector3f( [1.0, 2.0, 3.0] )
-print( 'vec: {}'.format( vec ) )
+vec = Vector3f(np.array([1.0, 2.0, 3.0], dtype=np.float32))
+print(vec)
 
 # Create a mat3 float32, show its entries and its inverse
-mat = tm.Matrix3f( [ [ 3.0, 9.0, 3.0 ],
-                     [ 9.0, 0.0, 3.0 ],
-                     [ 2.0, 3.0, 8.0 ] ] );
+mat = Matrix3f(np.array([[ 3.0, 9.0, 3.0 ],
+                         [ 9.0, 0.0, 3.0 ],
+                         [ 2.0, 3.0, 8.0 ]], dtype=np.float32))
 
-print( "mat:" )
-print( mat )
-print( "mat.inverse():" )
-print( mat.inverse() )
+print(mat)
+print("inverse(): \n\r{}".format(mat.inverse()))
 ```
+
+---
+
+[0]: <https://github.com/wpumacay/loco_math/actions/workflows/ci-linux.yml/badge.svg> (ci-linux-badge)
+[1]: <https://github.com/wpumacay/loco_math/actions/workflows/ci-linux.yml> (ci-linux-status)
+[2]: <https://github.com/wpumacay/loco_math/actions/workflows/ci-windows.yml/badge.svg> (ci-windows-badge)
+[3]: <https://github.com/wpumacay/loco_math/actions/workflows/ci-windows.yml> (ci-windows-status)
+[4]: <https://github.com/wpumacay/loco_math/actions/workflows/ci-macos.yml/badge.svg> (ci-macos-badge)
+[5]: <https://github.com/wpumacay/loco_math/actions/workflows/ci-macos.yml> (ci-macos-status)

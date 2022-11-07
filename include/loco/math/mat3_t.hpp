@@ -14,6 +14,16 @@
 #include <type_traits>
 
 #include <loco/math/vec3_t.hpp>
+#include <loco/math/quat_t.hpp>
+
+namespace loco {
+namespace math {
+
+template <typename Scalar_T>
+class Quaternion;
+
+}  // namespace math
+}  // namespace loco
 
 namespace loco {
 namespace math {
@@ -139,6 +149,9 @@ class Matrix3 {
 
         return sstr_result.str();
     }
+
+    /// Creates a rotation matrix from the given quaternion
+    static auto FromQuaternion(Quaternion<Scalar_T> quat) -> Matrix3<Scalar_T>;
 
     /// Creates a rotation matrix for the given angle around the X-axis
     static auto RotationX(Scalar_T angle) -> Matrix3<Scalar_T>;

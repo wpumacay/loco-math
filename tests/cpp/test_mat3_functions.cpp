@@ -1,9 +1,11 @@
 #include <catch2/catch.hpp>
 #include <loco/math/mat3_t_impl.hpp>
+#include <loco/math/quat_t_impl.hpp>
 
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wimplicit-float-conversion"
+#pragma clang diagnostic ignored "-Wdouble-promotion"
 #endif
 
 static constexpr double ANGLE_MIN = -loco::math::PI;
@@ -21,6 +23,14 @@ static constexpr double SCALE_MAX = 10.0;
 #define GenRandomScale(Type, Nsamples)                           \
     GENERATE(take(Nsamples, random(static_cast<Type>(SCALE_MIN), \
                                    static_cast<Type>(SCALE_MAX))))
+
+static constexpr double RANGE_MIN = -1.0;
+static constexpr double RANGE_MAX = 1.0;
+
+// NOLINTNEXTLINE
+#define GenRandomValue(Type, Nsamples)                           \
+    GENERATE(take(Nsamples, random(static_cast<Type>(RANGE_MIN), \
+                                   static_cast<Type>(RANGE_MAX))))
 
 template <typename T>
 constexpr auto FuncClose(T a, T b, T eps) -> bool {
@@ -54,6 +64,43 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) factory functions",
     using T = TestType;
     using Matrix3 = loco::math::Matrix3<T>;
     using Vector3 = loco::math::Vector3<T>;
+    using Quaternion = loco::math::Quaternion<T>;
+
+    SECTION("Rotation matrix - from Quaternion") {
+        auto w = GenRandomValue(T, 4);
+        auto x = GenRandomValue(T, 4);
+        auto y = GenRandomValue(T, 4);
+        auto z = GenRandomValue(T, 4);
+
+        auto quat = Quaternion(w, x, y, z);
+        auto rot_mat = Matrix3::FromQuaternion(quat);
+
+        auto length = std::sqrt(w * w + x * x + y * y + z * z);
+        w /= length;
+        x /= length;
+        y /= length;
+        z /= length;
+
+        auto xx = x * x;
+        auto yy = y * y;
+        auto zz = z * z;
+        auto xy = x * y;
+        auto wz = w * z;
+        auto xz = x * z;
+        auto wy = w * y;
+        auto yz = y * z;
+        auto wx = w * x;
+
+        // clang-format off
+        REQUIRE(FuncAllClose<T>(rot_mat,
+        // NOLINTNEXTLINE
+        1.0 - 2.0 * (yy + zz),     2.0 * (xy - wz)   ,    2.0 * (xz + wy)   ,
+        // NOLINTNEXTLINE
+            2.0 * (xy + wz)  , 1.0 - 2.0 * (xx + zz) ,    2.0 * (yz - wx)   ,
+        // NOLINTNEXTLINE
+            2.0 * (xz - wy)  ,     2.0 * (yz + wx)   , 1.0 - 2.0 * (xx + yy)));
+        // clang-format on
+    }
 
     SECTION("Rotation matrix - X") {
         auto angle = GenRandomAngle(T, 100);
@@ -118,3 +165,7 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) factory functions",
         // clang-format on
     }
 }
+
+#if defined(__clang__)
+#pragma clang diagnostic pop  // NOLINT
+#endif

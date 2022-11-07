@@ -8,12 +8,44 @@
 #include <loco/math/impl/mat3_t_sse_impl.hpp>
 #include <loco/math/impl/mat3_t_avx_impl.hpp>
 
+#include <loco/math/quat_t_impl.hpp>
+
 namespace loco {
 namespace math {
 
 // ***************************************************************************//
 //                       Factory functions implementation                     //
 // ***************************************************************************//
+
+template <typename T>
+auto Matrix3<T>::FromQuaternion(Quaternion<T> quat) -> Matrix3<T> {
+    // Just in case, make sure the quaternion is normalized
+    normalize_in_place<T>(quat);
+
+    // TODO(wilbert): Should we get x, y, and z first, to avoid lots of accesses
+    auto xx = quat.x() * quat.x();
+    auto yy = quat.y() * quat.y();
+    auto zz = quat.z() * quat.z();
+    auto xy = quat.x() * quat.y();
+    auto wz = quat.w() * quat.z();
+    auto xz = quat.x() * quat.z();
+    auto wy = quat.w() * quat.y();
+    auto yz = quat.y() * quat.z();
+    auto wx = quat.w() * quat.x();
+
+    // clang-format off
+    return Matrix3<T>(
+        static_cast<T>(1.0) - static_cast<T>(2.0) * (yy + zz),
+        static_cast<T>(2.0) * (xy - wz),
+        static_cast<T>(2.0) * (xz + wy),
+        static_cast<T>(2.0) * (xy + wz),
+        static_cast<T>(1.0) - static_cast<T>(2.0) * (xx + zz),
+        static_cast<T>(2.0) * (yz - wx),
+        static_cast<T>(2.0) * (xz - wy),
+        static_cast<T>(2.0) * (yz + wx),
+        static_cast<T>(1.0) - static_cast<T>(2.0) * (xx + yy));
+    // clang-format on
+}
 
 template <typename T>
 auto Matrix3<T>::RotationX(T angle) -> Matrix3<T> {

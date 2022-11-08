@@ -4,7 +4,6 @@
 #include <stdexcept>
 #include <utility>
 
-#include <pybind11/attr.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/pytypes.h>
@@ -19,7 +18,7 @@ namespace py = pybind11;
 
 #if defined(_MSC_VER)
 #pragma warning(push)
-#pragma warning(disable:4127)
+#pragma warning(disable : 4127)
 #endif
 
 namespace loco {
@@ -45,6 +44,17 @@ auto bindings_matrix3(py::module& m, const char* class_name) -> void {
         // cppcheck-suppress constParameter
         MATRIX_GETSET_ITEM(3, T)
         // clang-format on
+        .def("flatten",
+             [](const Class& self) -> py::array_t<T> {
+                 auto array_np = py::array_t<T>(Class::BUFFER_SIZE);
+                 memcpy(array_np.request().ptr, self.data(),
+                        Class::BUFFER_SIZE * sizeof(T));
+                 return array_np;
+             })
+        .def_property_readonly("T",
+                               [](const Class& self) -> Class {
+                                   return loco::math::transpose<T>(self);
+                               })
         .def_static("RotationX", &Class::RotationX)
         .def_static("RotationY", &Class::RotationY)
         .def_static("RotationZ", &Class::RotationZ)
@@ -53,14 +63,16 @@ auto bindings_matrix3(py::module& m, const char* class_name) -> void {
                         return Class::Scale(scale_x, scale_y, scale_z);
                     })
         .def_static("Scale",
-                    [](Column scale) -> Class { return Class::Scale(scale); })
+                    [](const Vector3<T>& scale) -> Class {
+                        return Class::Scale(scale);
+                    })
         .def_static("Identity", &Class::Identity)
         .def_static("Zeros", &Class::Zeros)
         .def("__repr__", [](const Class& self) -> py::str {
             // clang-format off
             return py::str("Matrix3{}([[{},{},{}],\n"
-                           "          [{},{},{}],\n"
-                           "          [{},{},{}]])")
+                           "           [{},{},{}],\n"
+                           "           [{},{},{}]])")
                 .format(IsFloat32<T>::value ? "f" : "d",
                     self(0, 0), self(0, 1), self(0, 2),
                     self(1, 0), self(1, 1), self(1, 2),

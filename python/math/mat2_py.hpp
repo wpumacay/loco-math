@@ -18,7 +18,7 @@ namespace py = pybind11;
 
 #if defined(_MSC_VER)
 #pragma warning(push)
-#pragma warning(disable:4127)
+#pragma warning(disable : 4127)
 #endif
 
 namespace loco {
@@ -44,6 +44,17 @@ auto bindings_matrix2(py::module& m, const char* class_name) -> void {
         // cppcheck-suppress constParameter
         MATRIX_GETSET_ITEM(2, T)
         // clang-format on
+        .def("flatten",
+             [](const Class& self) -> py::array_t<T> {
+                 auto array_np = py::array_t<T>(Class::BUFFER_SIZE);
+                 memcpy(array_np.request().ptr, self.data(),
+                        Class::BUFFER_SIZE * sizeof(T));
+                 return array_np;
+             })
+        .def_property_readonly("T",
+                               [](const Class& self) -> Class {
+                                   return loco::math::transpose<T>(self);
+                               })
         .def_static("Rotation", &Class::Rotation)
         .def_static("Scale",
                     [](T scale_x, T scale_y) -> Class {

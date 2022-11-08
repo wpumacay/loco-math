@@ -10,13 +10,12 @@
 #include <loco/math/vec3_t_impl.hpp>
 #include <loco/math/vec4_t_impl.hpp>
 #include <string>
-#include "loco/math/common.hpp"
 
 namespace py = pybind11;
 
 #if defined(_MSC_VER)
 #pragma warning(push)
-#pragma warning(disable:4127)
+#pragma warning(disable : 4127)
 #endif
 
 namespace loco {

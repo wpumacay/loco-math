@@ -1,6 +1,5 @@
 #pragma once
 
-// clang-format off
 #include <ios>
 #include <array>
 #include <cmath>
@@ -14,9 +13,20 @@
 #include <type_traits>
 
 #include <loco/math/mat4_t.hpp>
+#include <loco/math/mat3_t.hpp>
 #include <loco/math/vec3_t.hpp>
 
-// clang-format on
+namespace loco {
+namespace math {
+
+template <typename Scalar_T>
+class Matrix3;
+
+template <typename Scalar_T>
+class Matrix4;
+
+}  // namespace math
+}  // namespace loco
 
 namespace loco {
 namespace math {
@@ -140,7 +150,29 @@ class Quaternion {
         return str_result.str();
     }
 
-    /// Returns the number of dimensions of the vector (Vector4 <-> 4 scalars)
+    /// Returns the quaternion associated with the given rotation around x-axis
+    static auto RotationX(Scalar_T angle) -> Quaternion<Scalar_T>;
+
+    /// Returns the quaternion associated with the given rotation around y-axis
+    static auto RotationY(Scalar_T angle) -> Quaternion<Scalar_T>;
+
+    /// Returns the quaternion associated with the given rotation around z-axis
+    static auto RotationZ(Scalar_T angle) -> Quaternion<Scalar_T>;
+
+    /// Returns the quaternion associated with the given axis and angle
+    static auto FromAxisAngle(Vector3<Scalar_T> axis, Scalar_T angle)
+        -> Quaternion<Scalar_T>;
+
+    /// Returns the quaternion associated with the given 3x3 rotation matrix
+    static auto FromRotationMatrix(Matrix3<Scalar_T> matrix)
+        -> Quaternion<Scalar_T>;
+
+    /// Returns the quaternion associated with the given 4x4 rotation matrix
+    static auto FromRotationMatrix(Matrix4<Scalar_T> matrix)
+        -> Quaternion<Scalar_T>;
+
+    /// Returns the number of dimensions of the vector (Vector4 <-> 4
+    /// scalars)
     static constexpr auto ndim() -> uint32_t { return QUAT_SIZE; }
 
     /// Returns the number of scalars used by the storage of the vector

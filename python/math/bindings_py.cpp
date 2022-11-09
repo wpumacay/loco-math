@@ -8,6 +8,7 @@
 #include <mat2_py.hpp>
 #include <mat3_py.hpp>
 #include <mat4_py.hpp>
+#include <quat_py.hpp>
 
 namespace py = pybind11;
 
@@ -25,4 +26,6 @@ PYBIND11_MODULE(lmath, m) {
     loco::math::bindings_matrix3<loco::math::float64_t>(m, "Matrix3d");
     loco::math::bindings_matrix4<loco::math::float32_t>(m, "Matrix4f");
     loco::math::bindings_matrix4<loco::math::float64_t>(m, "Matrix4d");
+    loco::math::bindings_quaternion<loco::math::float32_t>(m, "Quaternionf");
+    loco::math::bindings_quaternion<loco::math::float64_t>(m, "Quaterniond");
 }

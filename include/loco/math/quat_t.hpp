@@ -134,6 +134,14 @@ class Quaternion {
     /// Reeturns a const-pointer to the data of the underlying storage in use
     auto data() const -> const Scalar_T* { return m_Elements.data(); }
 
+    /// Returns a mutable reference to the requested entry of the quaternion
+    auto operator[](uint32_t index) -> Scalar_T& { return m_Elements[index]; }
+
+    /// Returns an unmutable reference to the requested entry of the quaternion
+    auto operator[](uint32_t index) const -> const Scalar_T& {
+        return m_Elements[index];
+    }
+
     /// Returns a printable string-representation of the vector
     auto toString() const -> std::string {
         std::stringstream str_result;

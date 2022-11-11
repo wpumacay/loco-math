@@ -289,6 +289,34 @@ LM_INLINE auto operator*(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+LM_INLINE auto conjugate(const Quaternion<T>& quat) -> Quaternion<T> {
+    Quaternion<T> dst = quat;
+    dst.x() = -dst.x();
+    dst.y() = -dst.y();
+    dst.z() = -dst.z();
+    return dst;
+}
+
+template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+LM_INLINE auto inverse(const Quaternion<T>& quat) -> Quaternion<T> {
+    auto q_conj = conjugate<T>(quat);
+    auto length_sq = squareNorm<T>(quat);
+    auto q_inv = q_conj * (1.0 / static_cast<double>(length_sq));
+    return q_inv;
+}
+
+template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+LM_INLINE auto rotate(const Quaternion<T>& quat, const Vector3<T>& vec)
+    -> Vector3<T> {
+    // We use the form f(p) = q * p * q ^-1
+    Quaternion<T> quat_p(static_cast<T>(0.0), vec.x(), vec.y(), vec.z());
+    auto quat_qinv = inverse(quat);
+    auto quat_qp = quat * quat_p;
+    auto quat_qpqinv = quat_qp * quat_qinv;
+    return Vector3<T>(quat_qpqinv.x(), quat_qpqinv.y(), quat_qpqinv.z());
+}
+
+template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
 LM_INLINE auto operator==(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     -> bool {
     return scalar::kernel_compare_eq_quat<T>(lhs.elements(), rhs.elements());

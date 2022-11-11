@@ -31,9 +31,6 @@ auto bindings_quaternion(py::module& m, const char* class_name) -> void {
         .def(py::init<>())
         .def(py::init<T>())
         .def(py::init<T, T, T, T>())
-        .def(py::init([](T angle, const py::array_t<T>& axis) -> Class {
-            return Quaternion<T>(angle, nparray_to_vec3<T>(axis));
-        }))
         .def(py::init([](const py::array_t<T>& array_np) -> Class {
             auto array_buffer_info = array_np.request();
             if (array_buffer_info.size != Quaternion<T>::QUAT_SIZE) {
@@ -141,6 +138,16 @@ auto bindings_quaternion(py::module& m, const char* class_name) -> void {
              [](const Class& self) -> Class { return normalize<T>(self); })
         .def("normalize_",
              [](Class& self) -> void { normalize_in_place<T>(self); })
+        .def(
+            "conjugate",
+            [](const Class& self) -> Class { return math::conjugate<T>(self); })
+        .def("inverse",
+             [](const Class& self) -> Class { return math::inverse<T>(self); })
+        .def(
+            "rotate",
+            [](const Class& self, const py::array_t<T>& arr_vec) -> Vector3<T> {
+                return math::rotate<T>(self, nparray_to_vec3<T>(arr_vec));
+            })
         .def("__repr__", [](const Class& self) -> py::str {
             return py::str("Quaternion{}({}, {}, {}, {})")
                 .format((IsFloat32<T>::value ? "f" : "d"), self[0], self[1],

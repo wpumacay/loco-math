@@ -222,7 +222,7 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         REQUIRE(FuncAllClose<T>(q, val_wnorm, val_xnorm, val_ynorm, val_znorm));
     }
 
-    SECTION("Vector normalization (out-of place)") {
+    SECTION("Quaternion normalization (out-of place)") {
         auto val_w = GenRandomValue(T, 4);
         auto val_x = GenRandomValue(T, 4);
         auto val_y = GenRandomValue(T, 4);
@@ -242,5 +242,34 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         REQUIRE(FuncClose<T>(qn_norm, 1.0, EPSILON));
         REQUIRE(
             FuncAllClose<T>(qn, val_wnorm, val_xnorm, val_ynorm, val_znorm));
+    }
+
+    SECTION("Quaternion conjugate") {
+        auto val_w = GenRandomValue(T, 4);
+        auto val_x = GenRandomValue(T, 4);
+        auto val_y = GenRandomValue(T, 4);
+        auto val_z = GenRandomValue(T, 4);
+        Quaternion q(val_w, val_x, val_y, val_z);
+
+        auto q_conj = math::conjugate<T>(q);
+        REQUIRE(FuncAllClose<T>(q_conj, val_w, -val_x, -val_y, -val_z));
+    }
+
+    SECTION("Quaternion inverse") {
+        auto val_w = GenRandomValue(T, 4);
+        auto val_x = GenRandomValue(T, 4);
+        auto val_y = GenRandomValue(T, 4);
+        auto val_z = GenRandomValue(T, 4);
+        Quaternion q(val_w, val_x, val_y, val_z);
+
+        auto length_sq =
+            val_w * val_w + val_x * val_x + val_y * val_y + val_z * val_z;
+        auto qinv_w = val_w / length_sq;
+        auto qinv_x = -val_x / length_sq;
+        auto qinv_y = -val_y / length_sq;
+        auto qinv_z = -val_z / length_sq;
+
+        auto q_inv = math::inverse<T>(q);
+        REQUIRE(FuncAllClose<T>(q_inv, qinv_w, qinv_x, qinv_y, qinv_z));
     }
 }

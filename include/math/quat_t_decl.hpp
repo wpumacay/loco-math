@@ -73,19 +73,6 @@ class Quaternion {
         m_Elements[3] = z_val;
     }
 
-    /// Constructs a quaternion given an angle and an axis
-    /// \param angle The angle of rotation in the representation
-    /// \param axis The 3d vector representing the rotation axis
-    explicit Quaternion(Scalar_T angle, const Vec3& axis) {
-        const auto half_angle = static_cast<Scalar_T>(0.5) * angle;  // NOLINT
-        const auto sin_half = std::sin(half_angle);                  // NOLINT
-        const auto cos_half = std::cos(half_angle);                  // NOLINT
-        m_Elements[0] = cos_half;
-        m_Elements[1] = axis.x() * sin_half;
-        m_Elements[2] = axis.y() * sin_half;
-        m_Elements[3] = axis.z() * sin_half;
-    }
-
     // cppcheck-suppress noExplicitConstructor
     /// Constructs a quaternion from a given list of the form {x, y, z, w}
     Quaternion(const std::initializer_list<Scalar_T>& values) {

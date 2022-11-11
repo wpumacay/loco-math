@@ -6,6 +6,7 @@
 #include <loco/math/impl/mat4_t_scalar_impl.hpp>
 #include <loco/math/impl/mat4_t_sse_impl.hpp>
 #include <loco/math/impl/mat4_t_avx_impl.hpp>
+#include "loco/math/common.hpp"
 
 namespace loco {
 namespace math {
@@ -83,6 +84,42 @@ auto Matrix4<T>::Translation(const Vector3<T>& position) -> Matrix4<T> {
         0.0, 1.0, 0.0, position.y(),
         0.0, 0.0, 1.0, position.z(),
         0.0, 0.0, 0.0,          1.0);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix4<T>::Perspective(T fov, T aspect, T near, T far) -> Matrix4<T> {
+    auto tmp_0 = static_cast<T>(1.0) /
+                 std::tan((fov / static_cast<T>(2.0)) *
+                          (static_cast<T>(PI) / static_cast<T>(180.0)));
+    auto tmp_1 = tmp_0 / aspect;
+    auto tmp_2 = near - far;
+    auto tmp_3 = (far + near) / tmp_2;
+    auto tmp_4 = static_cast<T>(2.0) * (far * near) / tmp_2;
+
+    // clang-format off
+    return Matrix4<T>(
+            tmp_1,  0.0 ,  0.0 ,  0.0 ,
+             0.0 , tmp_0,  0.0 ,  0.0 ,
+             0.0 ,  0.0 , tmp_3, tmp_4,
+             0.0 ,  0.0 , -1.0 ,  0.0);
+    // clang-format on
+}
+
+template <typename T>
+auto Matrix4<T>::Ortho(T width, T height, T near, T far) -> Matrix4<T> {
+    auto tmp_0 = static_cast<T>(2.0) / width;
+    auto tmp_1 = static_cast<T>(2.0) / height;
+    auto tmp_2 = near - far;
+    auto tmp_3 = static_cast<T>(2.0) / tmp_2;
+    auto tmp_4 = (far + near) / tmp_2;
+
+    // clang-format off
+    return Matrix4<T>(
+        tmp_0,  0.0  ,  0.0  ,  0.0  ,
+         0.0 , tmp_1 ,  0.0  ,  0.0  ,
+         0.0 ,  0.0  , tmp_3 , tmp_4 ,
+         0.0 ,  0.0  ,  0.0  ,  1.0);
     // clang-format on
 }
 

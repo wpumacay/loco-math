@@ -67,6 +67,8 @@ auto bindings_matrix4(py::module& m, const char* class_name) -> void {
                         return Class::Scale(scale);
                     })
         .def_static("Translation", &Class::Translation)
+        .def_static("Perspective", &Class::Perspective)
+        .def_static("Ortho", &Class::Ortho)
         .def_static("Identity", &Class::Identity)
         .def_static("Zeros", &Class::Zeros)
         .def("__repr__", [](const Class& self) -> py::str {

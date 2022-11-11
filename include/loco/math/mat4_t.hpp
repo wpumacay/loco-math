@@ -178,6 +178,14 @@ class Matrix4 {
     static auto Translation(const Vector3<Scalar_T>& position)
         -> Matrix4<Scalar_T>;
 
+    /// Creates a perspective projection matrix from the given configuration
+    static auto Perspective(Scalar_T fov, Scalar_T aspect, Scalar_T near,
+                            Scalar_T far) -> Matrix4<Scalar_T>;
+
+    /// Creates a orthographic projection matrix from the given configuration
+    static auto Ortho(Scalar_T width, Scalar_T height, Scalar_T near,
+                      Scalar_T far) -> Matrix4<Scalar_T>;
+
     /// Returns a 4x4 identity matrix of the current scalar type
     static auto Identity() -> Matrix4<Scalar_T>;
 

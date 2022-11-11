@@ -30,7 +30,6 @@
  *    @todo(wilbert): try using static_cast and pointer-arithmetic replacements
  */
 
-namespace loco {
 namespace math {
 namespace sse {
 
@@ -215,6 +214,5 @@ LM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
 
 }  // namespace sse
 }  // namespace math
-}  // namespace loco
 
 #endif  // LOCOMATH_SSE_ENABLED

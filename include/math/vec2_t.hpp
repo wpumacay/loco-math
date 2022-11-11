@@ -5,7 +5,6 @@
 #include <math/impl/vec2_t_scalar_impl.hpp>
 #include <math/impl/vec2_t_sse_impl.hpp>
 
-namespace loco {
 namespace math {
 
 template <typename T>
@@ -260,4 +259,3 @@ auto operator>>(std::istream& input_stream, Vector2<T>& dst) -> std::istream& {
 }
 
 }  // namespace math
-}  // namespace loco

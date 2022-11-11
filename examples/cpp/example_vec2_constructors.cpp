@@ -5,7 +5,7 @@
 
 template <typename T>
 auto run_example_vec2() -> void {
-    using Vec2 = loco::math::Vector2<T>;
+    using Vec2 = math::Vector2<T>;
 
     // Just note which scalar type we're using
     if (std::is_same<T, float>()) {

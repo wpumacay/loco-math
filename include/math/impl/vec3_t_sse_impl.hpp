@@ -34,7 +34,6 @@
  *    @todo(wilbert): try using static_cast and pointer-arithmetic replacements
  */
 
-namespace loco {
 namespace math {
 namespace sse {
 
@@ -231,20 +230,16 @@ LM_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
     auto vec_b = _mm_loadu_ps(rhs.data());  // b = {b[0], b[1], b[2], b[3]=0}
     // tmp_0 = {a[1], a[2], a[0], 0}
     auto tmp_0 = _mm_shuffle_ps(
-        vec_a, vec_a,
-        static_cast<int>(loco::math::ShuffleMask<3, 0, 2, 1>::value));
+        vec_a, vec_a, static_cast<int>(math::ShuffleMask<3, 0, 2, 1>::value));
     // tmp_1 = {b[2], b[0], b[1], 0}
     auto tmp_1 = _mm_shuffle_ps(
-        vec_b, vec_b,
-        static_cast<int>(loco::math::ShuffleMask<3, 1, 0, 2>::value));
+        vec_b, vec_b, static_cast<int>(math::ShuffleMask<3, 1, 0, 2>::value));
     // tmp_2 = {a[2], a[0], a[1], 0}
     auto tmp_2 = _mm_shuffle_ps(
-        vec_a, vec_a,
-        static_cast<int>(loco::math::ShuffleMask<3, 1, 0, 2>::value));
+        vec_a, vec_a, static_cast<int>(math::ShuffleMask<3, 1, 0, 2>::value));
     // tmp_3 = {b[1], b[2], b[0], 0}
     auto tmp_3 = _mm_shuffle_ps(
-        vec_b, vec_b,
-        static_cast<int>(loco::math::ShuffleMask<3, 0, 2, 1>::value));
+        vec_b, vec_b, static_cast<int>(math::ShuffleMask<3, 0, 2, 1>::value));
     _mm_storeu_ps(dst.data(), _mm_sub_ps(_mm_mul_ps(tmp_0, tmp_1),
                                          _mm_mul_ps(tmp_2, tmp_3)));
 }
@@ -261,6 +256,5 @@ LM_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
 
 }  // namespace sse
 }  // namespace math
-}  // namespace loco
 
 #endif  // LOCOMATH_SSE_ENABLED

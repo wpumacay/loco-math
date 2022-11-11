@@ -35,7 +35,6 @@
  *    view of matrices and vectors
  */
 
-namespace loco {
 namespace math {
 namespace avx {
 
@@ -266,6 +265,5 @@ LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
 
 }  // namespace avx
 }  // namespace math
-}  // namespace loco
 
 #endif  // LOCOMATH_AVX_ENABLED

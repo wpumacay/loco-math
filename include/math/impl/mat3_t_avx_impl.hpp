@@ -29,7 +29,6 @@
  *    We can only store full columns into the ymm registers
  */
 
-namespace loco {
 namespace math {
 namespace avx {
 
@@ -263,6 +262,5 @@ LM_INLINE auto kernel_hadamard_mat3(Mat3Buffer<T>& dst,
 
 }  // namespace avx
 }  // namespace math
-}  // namespace loco
 
 #endif  // LOCOMATH_AVX_ENABLED

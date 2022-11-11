@@ -23,9 +23,9 @@ constexpr auto FuncClose(T a, T b, T eps) -> bool {
 }
 
 template <typename T>
-auto FuncAllClose(const loco::math::Matrix2<T>& mat, T x00, T x01, T x10, T x11)
+auto FuncAllClose(const math::Matrix2<T>& mat, T x00, T x01, T x10, T x11)
     -> bool {
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+    constexpr T EPSILON = static_cast<T>(math::EPS);
     return FuncClose(mat(0, 0), x00, EPSILON) &&
            FuncClose(mat(0, 1), x01, EPSILON) &&
            FuncClose(mat(1, 0), x10, EPSILON) &&
@@ -33,18 +33,18 @@ auto FuncAllClose(const loco::math::Matrix2<T>& mat, T x00, T x01, T x10, T x11)
 }
 
 template <typename T>
-auto FuncAllClose(const loco::math::Vector2<T>& vec, T x, T y) -> bool {
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+auto FuncAllClose(const math::Vector2<T>& vec, T x, T y) -> bool {
+    constexpr T EPSILON = static_cast<T>(math::EPS);
     return FuncClose(vec.x(), x, EPSILON) && FuncClose(vec.y(), y, EPSILON);
 }
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Matrix2 class (mat2_t) core operations", "[mat2_t][ops]",
-                   loco::math::float32_t, loco::math::float64_t) {
+                   math::float32_t, math::float64_t) {
     using T = TestType;
-    using Matrix2 = loco::math::Matrix2<T>;
-    using Vector2 = loco::math::Vector2<T>;
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+    using Matrix2 = math::Matrix2<T>;
+    using Vector2 = math::Vector2<T>;
+    constexpr T EPSILON = static_cast<T>(math::EPS);
 
     SECTION("Matrix comparison ==, !=") {
         Matrix2 m_1(1.0, 0.0, 0.0, 2.0);
@@ -146,7 +146,7 @@ TEMPLATE_TEST_CASE("Matrix2 class (mat2_t) core operations", "[mat2_t][ops]",
     }
 
     SECTION("Element-wise matrix product") {
-        auto mat_ewise = loco::math::hadamard(m_a, m_b);
+        auto mat_ewise = math::hadamard(m_a, m_b);
 
         // clang-format off
         REQUIRE(FuncAllClose<T>(mat_ewise,
@@ -157,18 +157,18 @@ TEMPLATE_TEST_CASE("Matrix2 class (mat2_t) core operations", "[mat2_t][ops]",
 
     SECTION("Matrix transposition") {
         // clang-format off
-        REQUIRE(FuncAllClose<T>(loco::math::transpose(m_a),
+        REQUIRE(FuncAllClose<T>(math::transpose(m_a),
                         x00, x10,
                         x01, x11));
-        REQUIRE(FuncAllClose<T>(loco::math::transpose(m_b),
+        REQUIRE(FuncAllClose<T>(math::transpose(m_b),
                         y00, y10,
                         y01, y11));
         // clang-format on
     }
 
     SECTION("Matrix trace") {
-        auto calc_trace_1 = loco::math::trace(m_a);
-        auto calc_trace_2 = loco::math::trace(m_b);
+        auto calc_trace_1 = math::trace(m_a);
+        auto calc_trace_2 = math::trace(m_b);
         auto expected_trace_1 = x00 + x11;
         auto expected_trace_2 = y00 + y11;
 
@@ -178,7 +178,7 @@ TEMPLATE_TEST_CASE("Matrix2 class (mat2_t) core operations", "[mat2_t][ops]",
 
     SECTION("Matrix determinant") {
         auto mat = Matrix2(5.0, 5.0, 4.0, 8.0);
-        auto calc_det = loco::math::determinant(mat);
+        auto calc_det = math::determinant(mat);
         auto expected_det = static_cast<T>(20.0);
 
         REQUIRE(FuncClose<T>(calc_det, expected_det, EPSILON));
@@ -186,7 +186,7 @@ TEMPLATE_TEST_CASE("Matrix2 class (mat2_t) core operations", "[mat2_t][ops]",
 
     SECTION("Matrix inverse") {
         auto mat = Matrix2(5.0, 5.0, 4.0, 8.0);
-        auto inv_mat = loco::math::inverse(mat);
+        auto inv_mat = math::inverse(mat);
         // clang-format off
         REQUIRE(FuncAllClose<T>(inv_mat,
                         0.4, -0.25,   // NOLINT

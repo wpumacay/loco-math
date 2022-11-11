@@ -64,18 +64,18 @@ from lmath import Vector3f
 int main()
 {
     // Create a vec3-float32 and show it on the console
-    loco::math::Vector3f vec = { 1.0f, 2.0f, 3.0f };
+    math::Vector3f vec = { 1.0f, 2.0f, 3.0f };
     std::cout << "vec: " << vec << std::endl;
 
     // Create a mat3 float32, show its entries and its inverse
-    auto mat = loco::math::Matrix3f( 3.0f, 9.0f, 3.0f,
+    auto mat = math::Matrix3f( 3.0f, 9.0f, 3.0f,
                                      9.0f, 0.0f, 3.0f,
                                      2.0f, 3.0f, 8.0f );
 
     std::cout << "mat:" << std::endl;
     std::cout << mat << std::endl;
     std::cout << "mat.inverse():" << std::endl;
-    std::cout << loco::math::inverse( mat ) << std::endl;
+    std::cout << math::inverse( mat ) << std::endl;
 
     return 0;
 }

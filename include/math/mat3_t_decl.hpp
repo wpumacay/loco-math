@@ -15,16 +15,13 @@
 #include <math/vec3_t_decl.hpp>
 #include <math/quat_t_decl.hpp>
 
-namespace loco {
 namespace math {
 
 template <typename Scalar_T>
 class Quaternion;
 
 }  // namespace math
-}  // namespace loco
 
-namespace loco {
 namespace math {
 
 /// \class Matrix3
@@ -206,4 +203,3 @@ class Matrix3 {
 };
 
 }  // namespace math
-}  // namespace loco

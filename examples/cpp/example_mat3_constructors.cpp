@@ -5,7 +5,7 @@
 
 template <typename T>
 auto run_example_mat2() -> void {
-    using Mat3 = loco::math::Matrix3<T>;
+    using Mat3 = math::Matrix3<T>;
     using Vec3 = typename Mat3::ColumnType;
 
     // Checking size and alignment
@@ -69,8 +69,8 @@ auto main() -> int {
     constexpr int32_t PRINT_PRECISION = 7;
     std::cout << std::setprecision(PRINT_PRECISION);
 
-    run_example_mat2<loco::math::float32_t>();
-    run_example_mat2<loco::math::float64_t>();
+    run_example_mat2<math::float32_t>();
+    run_example_mat2<math::float64_t>();
 
     return 0;
 }

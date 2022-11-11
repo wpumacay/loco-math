@@ -18,7 +18,6 @@
 
 namespace py = pybind11;
 
-namespace loco {
 namespace math {
 
 template <typename T>
@@ -150,4 +149,3 @@ auto bindings_quaternion(py::module& m, const char* class_name) -> void {
 }
 
 }  // namespace math
-}  // namespace loco

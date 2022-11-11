@@ -15,9 +15,8 @@ constexpr auto FuncClose(T a, T b, T eps) -> bool {
 }
 
 template <typename T>
-auto FuncAllClose(const loco::math::Vector4<T>& vec, T x, T y, T z, T w)
-    -> bool {
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+auto FuncAllClose(const math::Vector4<T>& vec, T x, T y, T z, T w) -> bool {
+    constexpr T EPSILON = static_cast<T>(math::EPS);
     return FuncClose<T>(vec.x(), x, EPSILON) &&
            FuncClose<T>(vec.y(), y, EPSILON) &&
            FuncClose<T>(vec.z(), z, EPSILON) &&
@@ -26,9 +25,9 @@ auto FuncAllClose(const loco::math::Vector4<T>& vec, T x, T y, T z, T w)
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector4 class (vec4_t) constructors", "[vec4_t][template]",
-                   loco::math::float32_t, loco::math::float64_t) {
+                   math::float32_t, math::float64_t) {
     using T = TestType;
-    using Vector4 = loco::math::Vector4<T>;
+    using Vector4 = math::Vector4<T>;
 
     // Checking the correctness of the constructors
 

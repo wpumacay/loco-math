@@ -1,9 +1,9 @@
 #include <math/vec4_t.hpp>
 
-template <typename T, typename = typename std::enable_if<
-                          loco::math::IsScalar<T>::value>::type>
+template <typename T,
+          typename = typename std::enable_if<math::IsScalar<T>::value>::type>
 LM_NEVER_INLINE auto run_operations_vec4() -> void {
-    using Vec4 = loco::math::Vector4<T>;
+    using Vec4 = math::Vector4<T>;
 
     // Preamble (show the type we're currently working with)
     if (std::is_same<T, float>()) {
@@ -27,12 +27,12 @@ LM_NEVER_INLINE auto run_operations_vec4() -> void {
     std::cout << "a - b: " << '\n' << vec_diff.toString() << '\n';
     std::cout << "2.5 * a: " << '\n' << vec_scale_1.toString() << '\n';
     std::cout << "b * 0.25: " << '\n' << vec_scale_2.toString() << '\n';
-    std::cout << "a . b: " << '\n' << loco::math::dot(vec_a, vec_b) << '\n';
-    std::cout << "b . a: " << '\n' << loco::math::dot(vec_b, vec_a) << '\n';
-    std::cout << "|a|: " << '\n' << loco::math::norm(vec_a) << '\n';
-    std::cout << "|a|^2: " << '\n' << loco::math::squareNorm(vec_a) << '\n';
-    std::cout << "|b|: " << '\n' << loco::math::norm(vec_b) << '\n';
-    std::cout << "|b|^2: " << '\n' << loco::math::squareNorm(vec_b) << '\n';
+    std::cout << "a . b: " << '\n' << math::dot(vec_a, vec_b) << '\n';
+    std::cout << "b . a: " << '\n' << math::dot(vec_b, vec_a) << '\n';
+    std::cout << "|a|: " << '\n' << math::norm(vec_a) << '\n';
+    std::cout << "|a|^2: " << '\n' << math::squareNorm(vec_a) << '\n';
+    std::cout << "|b|: " << '\n' << math::norm(vec_b) << '\n';
+    std::cout << "|b|^2: " << '\n' << math::squareNorm(vec_b) << '\n';
     std::cout << "a * b: " << '\n' << vec_mul.toString() << '\n';
     std::cout << "a == b: " << '\n'
               << ((vec_a == vec_b) ? "True" : "False") << '\n';

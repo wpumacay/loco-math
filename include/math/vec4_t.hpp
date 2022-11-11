@@ -6,7 +6,6 @@
 #include <math/impl/vec4_t_sse_impl.hpp>
 #include <math/impl/vec4_t_avx_impl.hpp>
 
-namespace loco {
 namespace math {
 
 template <typename T>
@@ -288,4 +287,3 @@ auto operator>>(std::istream& input_stream, Vector4<T>& dst) -> std::istream& {
 }
 
 }  // namespace math
-}  // namespace loco

@@ -24,11 +24,11 @@ constexpr auto FuncClose(T a, T b, T eps) -> bool {
 
 // clang-format off
 template <typename T>
-auto FuncAllClose(const loco::math::Matrix3<T>& mat,
+auto FuncAllClose(const math::Matrix3<T>& mat,
                   T x00, T x01, T x02,
                   T x10, T x11, T x12,
                   T x20, T x21, T x22) -> bool {
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+    constexpr T EPSILON = static_cast<T>(math::EPS);
 
     return FuncClose<T>(mat(0, 0), x00, EPSILON) &&
            FuncClose<T>(mat(0, 1), x01, EPSILON) &&
@@ -43,8 +43,8 @@ auto FuncAllClose(const loco::math::Matrix3<T>& mat,
 // clang-format on
 
 template <typename T>
-auto FuncAllClose(const loco::math::Vector3<T>& vec, T x0, T x1, T x2) -> bool {
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+auto FuncAllClose(const math::Vector3<T>& vec, T x0, T x1, T x2) -> bool {
+    constexpr T EPSILON = static_cast<T>(math::EPS);
 
     return FuncClose<T>(vec[0], x0, EPSILON) &&
            FuncClose<T>(vec[1], x1, EPSILON) &&
@@ -53,12 +53,12 @@ auto FuncAllClose(const loco::math::Vector3<T>& vec, T x0, T x1, T x2) -> bool {
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
-                   loco::math::float32_t, loco::math::float64_t) {
+                   math::float32_t, math::float64_t) {
     using T = TestType;
-    using Matrix3 = loco::math::Matrix3<T>;
-    using Vector3 = loco::math::Vector3<T>;
+    using Matrix3 = math::Matrix3<T>;
+    using Vector3 = math::Vector3<T>;
 
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+    constexpr T EPSILON = static_cast<T>(math::EPS);
 
     SECTION("Matrix comparison ==, !=") {
         // clang-format off
@@ -215,7 +215,7 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
     }
 
     SECTION("Element-wise matrix product") {
-        auto mat_elmwise = loco::math::hadamard(m_a, m_b);
+        auto mat_elmwise = math::hadamard(m_a, m_b);
         // clang-format off
         REQUIRE(FuncAllClose<T>(mat_elmwise,
                 x00 * y00, x01 * y01, x02 * y02,
@@ -227,12 +227,12 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
     SECTION("Matrix transposition") {
         // clang-format off
         // NOLINTNEXTLINE
-        FuncAllClose<T>(loco::math::transpose(m_a),
+        FuncAllClose<T>(math::transpose(m_a),
             x00, x10, x20,
             x01, x11, x21,
             x02, x12, x22);
         // NOLINTNEXTLINE
-        FuncAllClose<T>(loco::math::transpose(m_b),
+        FuncAllClose<T>(math::transpose(m_b),
             y00, y10, y20,
             y01, y11, y21,
             y02, y12, y22);
@@ -240,8 +240,8 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
     }
 
     SECTION("Matrix trace") {
-        auto calc_trace_1 = loco::math::trace(m_a);
-        auto calc_trace_2 = loco::math::trace(m_b);
+        auto calc_trace_1 = math::trace(m_a);
+        auto calc_trace_2 = math::trace(m_b);
         auto expected_trace_1 = x00 + x11 + x22;
         auto expected_trace_2 = y00 + y11 + y22;
 
@@ -255,7 +255,7 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
                            0.0, 2.0, 0.0,
                            5.0, 3.0, 6.0);
         // clang-format on
-        auto calc_det = loco::math::determinant(mat);
+        auto calc_det = math::determinant(mat);
         auto expected_det = static_cast<T>(-18.0);
         REQUIRE(FuncClose<T>(calc_det, expected_det, EPSILON));
     }
@@ -266,7 +266,7 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
                            0.0, 2.0, 0.0,
                            5.0, 3.0, 6.0);
         // clang-format on
-        auto inv_mat = loco::math::inverse(mat);
+        auto inv_mat = math::inverse(mat);
         // clang-format off
         REQUIRE(FuncAllClose<T>(inv_mat,
             -0.666667,  0.166667,       1.0,

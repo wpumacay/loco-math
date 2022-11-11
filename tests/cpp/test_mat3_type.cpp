@@ -16,11 +16,11 @@ constexpr auto FuncClose(T a, T b, T eps) -> bool {
 
 // clang-format off
 template <typename T>
-auto FuncAllClose(const loco::math::Matrix3<T>& mat,
+auto FuncAllClose(const math::Matrix3<T>& mat,
                   T x00, T x01, T x02,
                   T x10, T x11, T x12,
                   T x20, T x21, T x22) -> bool {
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+    constexpr T EPSILON = static_cast<T>(math::EPS);
 
     return FuncClose<T>(mat(0, 0), x00, EPSILON) &&
            FuncClose<T>(mat(0, 1), x01, EPSILON) &&
@@ -36,10 +36,10 @@ auto FuncAllClose(const loco::math::Matrix3<T>& mat,
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) constructors", "[mat3_t][template]",
-                   loco::math::float32_t, loco::math::float64_t) {
+                   math::float32_t, math::float64_t) {
     using T = TestType;
-    using Matrix3 = loco::math::Matrix3<T>;
-    using Vector3 = loco::math::Vector3<T>;
+    using Matrix3 = math::Matrix3<T>;
+    using Vector3 = math::Vector3<T>;
 
     // Checking all exposed constructors
     SECTION("Default constructor") {

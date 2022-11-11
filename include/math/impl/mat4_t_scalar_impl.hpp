@@ -5,7 +5,6 @@
 
 #include <math/mat4_t_decl.hpp>
 
-namespace loco {
 namespace math {
 namespace scalar {
 
@@ -211,7 +210,7 @@ LM_INLINE auto kernel_compare_eq_mat4(const Mat4Buffer<T>& lhs,
     for (uint32_t col = 0; col < Matrix4<T>::MATRIX_SIZE; ++col) {
         for (uint32_t idx = 0; idx < Matrix4<T>::MATRIX_SIZE; ++idx) {
             if (std::abs(lhs[col][idx] - rhs[col][idx]) >
-                static_cast<T>(loco::math::EPS)) {
+                static_cast<T>(math::EPS)) {
                 return false;
             }
         }
@@ -221,4 +220,3 @@ LM_INLINE auto kernel_compare_eq_mat4(const Mat4Buffer<T>& lhs,
 
 }  // namespace scalar
 }  // namespace math
-}  // namespace loco

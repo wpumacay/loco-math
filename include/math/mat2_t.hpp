@@ -8,7 +8,6 @@
 #include <math/impl/mat2_t_sse_impl.hpp>
 #include <math/impl/mat2_t_avx_impl.hpp>
 
-namespace loco {
 namespace math {
 
 // ***************************************************************************//
@@ -253,4 +252,3 @@ auto operator>>(std::istream& input_stream, Matrix2<T>& dst) -> std::istream& {
 }
 
 }  // namespace math
-}  // namespace loco

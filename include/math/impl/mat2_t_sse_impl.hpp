@@ -37,7 +37,6 @@
  *    view of matrices and vectors
  */
 
-namespace loco {
 namespace math {
 namespace sse {
 
@@ -284,6 +283,5 @@ LM_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
 
 }  // namespace sse
 }  // namespace math
-}  // namespace loco
 
 #endif  // LOCOMATH_SSE_ENABLED

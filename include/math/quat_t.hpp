@@ -10,7 +10,6 @@
 
 #include <math/vec3_t.hpp>
 
-namespace loco {
 namespace math {
 
 // ***************************************************************************//
@@ -302,4 +301,3 @@ LM_INLINE auto operator!=(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
 }
 
 }  // namespace math
-}  // namespace loco

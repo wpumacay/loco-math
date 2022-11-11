@@ -1,8 +1,8 @@
 #include <catch2/catch.hpp>
 #include <math/mat4_t.hpp>
 
-static constexpr auto ANGLE_MIN = -loco::math::PI;
-static constexpr auto ANGLE_MAX = loco::math::PI;
+static constexpr auto ANGLE_MIN = -math::PI;
+static constexpr auto ANGLE_MAX = math::PI;
 
 // NOLINTNEXTLINE
 #define GenRandomAngle(Type, Nsamples)                           \
@@ -32,12 +32,12 @@ constexpr auto FuncClose(T a, T b, T eps) -> bool {
 
 // clang-format off
 template <typename T>
-auto FuncAllClose(const loco::math::Matrix4<T>& mat,
+auto FuncAllClose(const math::Matrix4<T>& mat,
                   T x00, T x01, T x02, T x03,
                   T x10, T x11, T x12, T x13,
                   T x20, T x21, T x22, T x23,
                   T x30, T x31, T x32, T x33) -> bool {
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+    constexpr T EPSILON = static_cast<T>(math::EPS);
 
     return FuncClose<T>(mat(0, 0), x00, EPSILON) &&
            FuncClose<T>(mat(0, 1), x01, EPSILON) &&
@@ -60,11 +60,10 @@ auto FuncAllClose(const loco::math::Matrix4<T>& mat,
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) factory functions",
-                   "[mat4_t][funcs]", loco::math::float32_t,
-                   loco::math::float64_t) {
+                   "[mat4_t][funcs]", math::float32_t, math::float64_t) {
     using T = TestType;
-    using Matrix4 = loco::math::Matrix4<T>;
-    using Vector3 = loco::math::Vector3<T>;
+    using Matrix4 = math::Matrix4<T>;
+    using Vector3 = math::Vector3<T>;
 
     SECTION("Rotation matrix -X") {
         auto angle = GenRandomAngle(T, 100);

@@ -3,7 +3,6 @@
 #include <cmath>
 #include <math/quat_t_decl.hpp>
 
-namespace loco {
 namespace math {
 namespace scalar {
 
@@ -74,7 +73,7 @@ LM_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> void {
 template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
 LM_INLINE auto kernel_compare_eq_quat(const QuatBuffer<T>& lhs,
                                       const QuatBuffer<T>& rhs) -> bool {
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+    constexpr T EPSILON = static_cast<T>(math::EPS);
     for (uint32_t i = 0; i < Quaternion<T>::QUAT_SIZE; ++i) {
         if (std::abs(lhs[i] - rhs[i]) >= EPSILON) {
             return false;
@@ -85,4 +84,3 @@ LM_INLINE auto kernel_compare_eq_quat(const QuatBuffer<T>& lhs,
 
 }  // namespace scalar
 }  // namespace math
-}  // namespace loco

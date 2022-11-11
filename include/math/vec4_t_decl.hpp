@@ -13,7 +13,6 @@
 
 #include <math/common.hpp>
 
-namespace loco {
 namespace math {
 
 /// \class Vector4
@@ -175,4 +174,3 @@ class Vector4 {
 };
 
 }  // namespace math
-}  // namespace loco

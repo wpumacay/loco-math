@@ -22,9 +22,8 @@ constexpr auto FuncCompareEqual(T xa, T ya, T za, T xb, T yb, T zb, T wa, T wb,
 }
 
 template <typename T>
-auto FuncAllClose(const loco::math::Vector4<T>& vec, T x, T y, T z, T w)
-    -> bool {
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+auto FuncAllClose(const math::Vector4<T>& vec, T x, T y, T z, T w) -> bool {
+    constexpr T EPSILON = static_cast<T>(math::EPS);
     return FuncClose<T>(vec.x(), x, EPSILON) &&
            FuncClose<T>(vec.y(), y, EPSILON) &&
            FuncClose<T>(vec.z(), z, EPSILON) &&
@@ -33,11 +32,11 @@ auto FuncAllClose(const loco::math::Vector4<T>& vec, T x, T y, T z, T w)
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
-                   loco::math::float32_t, loco::math::float64_t) {
+                   math::float32_t, math::float64_t) {
     using T = TestType;
-    using Vector4 = loco::math::Vector4<T>;
+    using Vector4 = math::Vector4<T>;
 
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+    constexpr T EPSILON = static_cast<T>(math::EPS);
 
     SECTION("Vector comparison ==, !=") {
         Vector4 v_1(1.0, 2.0, 3.0, 4.0);                        // NOLINT
@@ -180,13 +179,13 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
 
         auto length = std::sqrt(val_x * val_x + val_y * val_y + val_z * val_z +
                                 val_w * val_w);
-        auto v_length = loco::math::norm(v);
+        auto v_length = math::norm(v);
 
         // TODO(wilbert): should check with small generated values as well. Most
         // of the values returned by the generator are quite large (their
         // squares)
 
-        if (loco::math::IsFloat32<T>::value) {
+        if (math::IsFloat32<T>::value) {
             // Use larger delta, as we're losing precision quickly on f32
             REQUIRE(FuncClose<T>(v_length, length, static_cast<T>(1e-3)));
         } else {
@@ -200,7 +199,7 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
         auto val_z = GenRandomValue(T, 4);
         auto val_w = GenRandomValue(T, 4);
         Vector4 v(val_x, val_y, val_z, val_w);
-        loco::math::normalize_in_place(v);
+        math::normalize_in_place(v);
 
         auto norm = std::sqrt(val_x * val_x + val_y * val_y + val_z * val_z +
                               val_w * val_w);
@@ -209,7 +208,7 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
         auto val_znorm = val_z / norm;
         auto val_wnorm = val_w / norm;
 
-        auto v_norm = loco::math::norm(v);
+        auto v_norm = math::norm(v);
 
         REQUIRE(FuncClose<T>(v_norm, 1.0, EPSILON));
         REQUIRE(FuncAllClose<T>(v, val_xnorm, val_ynorm, val_znorm, val_wnorm));
@@ -221,7 +220,7 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
         auto val_z = GenRandomValue(T, 4);
         auto val_w = GenRandomValue(T, 4);
         Vector4 v(val_x, val_y, val_z, val_w);
-        auto vn = loco::math::normalize(v);
+        auto vn = math::normalize(v);
 
         auto norm = std::sqrt(val_x * val_x + val_y * val_y + val_z * val_z +
                               val_w * val_w);
@@ -230,7 +229,7 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
         auto val_znorm = val_z / norm;
         auto val_wnorm = val_w / norm;
 
-        auto vn_norm = loco::math::norm(vn);
+        auto vn_norm = math::norm(vn);
 
         REQUIRE(FuncClose<T>(vn_norm, 1.0, EPSILON));
         REQUIRE(
@@ -253,9 +252,9 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
 
         auto dot = val_x_a * val_x_b + val_y_a * val_y_b + val_z_a * val_z_b +
                    val_w_a * val_w_b;
-        auto v_dot = loco::math::dot(v_a, v_b);
+        auto v_dot = math::dot(v_a, v_b);
 
-        if (loco::math::IsFloat32<T>::value) {
+        if (math::IsFloat32<T>::value) {
             // Use larger delta, as we're losing precision quickly on f32
             REQUIRE(FuncClose<T>(v_dot, dot, static_cast<T>(1e-1)));
         } else {

@@ -10,7 +10,6 @@
 
 #include <math/quat_t.hpp>
 
-namespace loco {
 namespace math {
 
 // ***************************************************************************//
@@ -320,4 +319,3 @@ auto operator>>(std::istream& input_stream, Matrix3<T>& dst) -> std::istream& {
 }
 
 }  // namespace math
-}  // namespace loco

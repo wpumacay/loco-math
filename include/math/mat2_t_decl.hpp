@@ -15,7 +15,6 @@
 
 #include <math/vec2_t_decl.hpp>
 
-namespace loco {
 namespace math {
 
 /// \class Matrix2
@@ -168,4 +167,3 @@ class Matrix2 {
 };
 
 }  // namespace math
-}  // namespace loco

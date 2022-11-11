@@ -4,7 +4,6 @@
 
 #include <math/vec4_t_decl.hpp>
 
-namespace loco {
 namespace math {
 namespace scalar {
 
@@ -79,7 +78,7 @@ template <typename T, SFINAE_VEC4_SCALAR_GUARD<T> = nullptr>
 LM_INLINE auto kernel_compare_eq_vec4(const Vec4Buffer<T>& lhs,
                                       const Vec4Buffer<T>& rhs) -> bool {
     for (uint32_t i = 0; i < Vector4<T>::VECTOR_SIZE; ++i) {
-        if (std::abs(lhs[i] - rhs[i]) >= static_cast<T>(loco::math::EPS)) {
+        if (std::abs(lhs[i] - rhs[i]) >= static_cast<T>(math::EPS)) {
             return false;
         }
     }
@@ -88,4 +87,3 @@ LM_INLINE auto kernel_compare_eq_vec4(const Vec4Buffer<T>& lhs,
 
 }  // namespace scalar
 }  // namespace math
-}  // namespace loco

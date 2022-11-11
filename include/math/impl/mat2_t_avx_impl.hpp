@@ -27,7 +27,6 @@
  *    The whole matrix fits into a ymm register
  */
 
-namespace loco {
 namespace math {
 namespace avx {
 
@@ -251,6 +250,5 @@ LM_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
 
 }  // namespace avx
 }  // namespace math
-}  // namespace loco
 
 #endif  // LOCOMATH_AVX_ENABLED

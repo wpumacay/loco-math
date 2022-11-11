@@ -14,8 +14,8 @@ constexpr double RANGE_MAX = 10.0;
     GENERATE(take(Nsamples, random(static_cast<Type>(RANGE_MIN), \
                                    static_cast<Type>(RANGE_MAX))))
 
-static constexpr double ANGLE_MIN = -loco::math::PI;
-static constexpr double ANGLE_MAX = loco::math::PI;
+static constexpr double ANGLE_MIN = -math::PI;
+static constexpr double ANGLE_MAX = math::PI;
 
 // NOLINTNEXTLINE
 #define GenRandomAngle(Type, Nsamples)                           \
@@ -28,9 +28,8 @@ constexpr auto FuncClose(T a, T b, T eps) -> bool {
 }
 
 template <typename T>
-auto FuncAllClose(const loco::math::Quaternion<T>& quat, T w, T x, T y, T z)
-    -> bool {
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+auto FuncAllClose(const math::Quaternion<T>& quat, T w, T x, T y, T z) -> bool {
+    constexpr T EPSILON = static_cast<T>(math::EPS);
     return FuncClose<T>(quat.w(), w, EPSILON) &&
            FuncClose<T>(quat.x(), x, EPSILON) &&
            FuncClose<T>(quat.y(), y, EPSILON) &&
@@ -39,11 +38,10 @@ auto FuncAllClose(const loco::math::Quaternion<T>& quat, T w, T x, T y, T z)
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Quaternion class (quat_t) constructors",
-                   "[quat_t][template]", loco::math::float32_t,
-                   loco::math::float64_t) {
+                   "[quat_t][template]", math::float32_t, math::float64_t) {
     using T = TestType;
-    using Quaternion = loco::math::Quaternion<T>;
-    using Vector3 = loco::math::Vector3<T>;
+    using Quaternion = math::Quaternion<T>;
+    using Vector3 = math::Vector3<T>;
 
     SECTION("Default constructor") {
         Quaternion q;

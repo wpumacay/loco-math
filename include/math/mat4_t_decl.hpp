@@ -16,7 +16,6 @@
 #include <math/vec3_t_decl.hpp>
 #include <math/vec4_t_decl.hpp>
 
-namespace loco {
 namespace math {
 
 /// \class Matrix4
@@ -223,4 +222,3 @@ class Matrix4 {
 };
 
 }  // namespace math
-}  // namespace loco

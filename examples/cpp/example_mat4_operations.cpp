@@ -1,10 +1,10 @@
 #include <math/mat4_t.hpp>
 
-template <typename T, typename = typename std::enable_if<
-                          loco::math::IsScalar<T>::value>::type>
+template <typename T,
+          typename = typename std::enable_if<math::IsScalar<T>::value>::type>
 LM_NEVER_INLINE auto run_operations_mat4() -> void {
-    using Mat4 = loco::math::Matrix4<T>;
-    using Vec4 = loco::math::Vector4<T>;
+    using Mat4 = math::Matrix4<T>;
+    using Vec4 = math::Vector4<T>;
 
     // Preamble (show the type we're currently working with)
     if (std::is_same<T, float>()) {
@@ -32,7 +32,7 @@ LM_NEVER_INLINE auto run_operations_mat4() -> void {
     Mat4 mat_scale_1 = 2.5 * mat_a;
     Mat4 mat_scale_2 = mat_b * 0.25;
     Mat4 mat_matmul = mat_a * mat_b;
-    Mat4 mat_hadamard = loco::math::hadamard(mat_a, mat_b);
+    Mat4 mat_hadamard = math::hadamard(mat_a, mat_b);
     Vec4 vec_matvecmul = mat_a * vec;
 
     std::cout << "a: " << '\n' << mat_a.toString() << '\n';
@@ -57,10 +57,10 @@ LM_NEVER_INLINE auto run_operations_mat4() -> void {
                6.0, 3.0, 4.0, 0.0);
     // clang-format on
 
-    auto mat_transpose = loco::math::transpose(mat_c);
-    auto mat_trace = loco::math::trace(mat_c);
-    auto mat_determinant = loco::math::determinant(mat_c);
-    auto mat_inverse = loco::math::inverse(mat_c);
+    auto mat_transpose = math::transpose(mat_c);
+    auto mat_trace = math::trace(mat_c);
+    auto mat_determinant = math::determinant(mat_c);
+    auto mat_inverse = math::inverse(mat_c);
 
     std::cout << "c.T: " << '\n' << mat_transpose.toString() << '\n';
     std::cout << "tr(c): " << mat_trace << '\n';

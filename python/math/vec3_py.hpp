@@ -26,7 +26,6 @@ namespace py = pybind11;
 #pragma warning(disable : 4127)
 #endif
 
-namespace loco {
 namespace math {
 
 template <typename T>
@@ -76,4 +75,3 @@ auto bindings_vector3(py::module& m, const char* class_name) -> void {
 #endif
 
 }  // namespace math
-}  // namespace loco

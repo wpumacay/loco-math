@@ -16,7 +16,6 @@
 #include <math/mat3_t_decl.hpp>
 #include <math/vec3_t_decl.hpp>
 
-namespace loco {
 namespace math {
 
 template <typename Scalar_T>
@@ -26,9 +25,7 @@ template <typename Scalar_T>
 class Matrix4;
 
 }  // namespace math
-}  // namespace loco
 
-namespace loco {
 namespace math {
 
 template <typename Scalar_T>
@@ -200,4 +197,3 @@ class Quaternion {
 };
 
 }  // namespace math
-}  // namespace loco

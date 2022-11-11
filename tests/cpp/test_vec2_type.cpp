@@ -15,16 +15,16 @@ constexpr auto FuncClose(T a, T b, T eps) -> bool {
 }
 
 template <typename T>
-auto FuncAllClose(const loco::math::Vector2<T>& vec, T x, T y) -> bool {
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+auto FuncAllClose(const math::Vector2<T>& vec, T x, T y) -> bool {
+    constexpr T EPSILON = static_cast<T>(math::EPS);
     return FuncClose(vec.x(), x, EPSILON) && FuncClose(vec.y(), y, EPSILON);
 }
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector2 class (vec2_t) type", "[vec2_t][template]",
-                   loco::math::float32_t, loco::math::float64_t) {
+                   math::float32_t, math::float64_t) {
     using T = TestType;
-    using Vector2 = loco::math::Vector2<T>;
+    using Vector2 = math::Vector2<T>;
 
     SECTION("Default constructor") {
         Vector2 v;

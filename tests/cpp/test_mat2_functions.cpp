@@ -6,8 +6,8 @@
 #pragma clang diagnostic ignored "-Wimplicit-float-conversion"
 #endif
 
-static constexpr double ANGLE_MIN = -loco::math::PI;
-static constexpr double ANGLE_MAX = loco::math::PI;
+static constexpr double ANGLE_MIN = -math::PI;
+static constexpr double ANGLE_MAX = math::PI;
 
 // NOLINTNEXTLINE
 #define GenRandomAngle(Type, Nsamples)                           \
@@ -28,9 +28,9 @@ constexpr auto FuncClose(T a, T b, T eps) -> bool {
 }
 
 template <typename T>
-auto FuncAllClose(const loco::math::Matrix2<T>& mat, T x00, T x01, T x10, T x11)
+auto FuncAllClose(const math::Matrix2<T>& mat, T x00, T x01, T x10, T x11)
     -> bool {
-    constexpr T EPSILON = static_cast<T>(loco::math::EPS);
+    constexpr T EPSILON = static_cast<T>(math::EPS);
     return FuncClose(mat(0, 0), x00, EPSILON) &&
            FuncClose(mat(0, 1), x01, EPSILON) &&
            FuncClose(mat(1, 0), x10, EPSILON) &&
@@ -39,11 +39,10 @@ auto FuncAllClose(const loco::math::Matrix2<T>& mat, T x00, T x01, T x10, T x11)
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Matrix2 class (mat2_t) factory functions",
-                   "[mat2_t][funcs]", loco::math::float32_t,
-                   loco::math::float64_t) {
+                   "[mat2_t][funcs]", math::float32_t, math::float64_t) {
     using T = TestType;
-    using Matrix2 = loco::math::Matrix2<T>;
-    using Vector2 = loco::math::Vector2<T>;
+    using Matrix2 = math::Matrix2<T>;
+    using Vector2 = math::Vector2<T>;
 
     SECTION("Rotation matrix") {
         auto angle = GenRandomAngle(T, 100);

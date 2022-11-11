@@ -37,7 +37,6 @@
  * 3. Note that we're using the same SSE kernels for the AVX versions
  */
 
-namespace loco {
 namespace math {
 namespace sse {
 
@@ -200,6 +199,5 @@ LM_INLINE auto kernel_dot_vec2(const Vec2Buffer<T>& lhs,
 
 }  // namespace sse
 }  // namespace math
-}  // namespace loco
 
 #endif  // LOCOMATH_SSE_ENABLED || LOCOMATH_AVX_ENABLED

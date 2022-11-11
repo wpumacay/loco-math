@@ -23,7 +23,6 @@
  *    be to use `maskload` instead of `load` to avoid these out-of-bounds writes
  */
 
-namespace loco {
 namespace math {
 namespace avx {
 
@@ -204,6 +203,5 @@ LM_INLINE auto kernel_dot_vec4(const Vec4Buffer<T>& lhs,
 
 }  // namespace avx
 }  // namespace math
-}  // namespace loco
 
 #endif  // LOCOMATH_AVX_ENABLED

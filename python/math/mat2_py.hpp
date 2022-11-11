@@ -21,7 +21,6 @@ namespace py = pybind11;
 #pragma warning(disable : 4127)
 #endif
 
-namespace loco {
 namespace math {
 
 template <typename T>
@@ -51,10 +50,9 @@ auto bindings_matrix2(py::module& m, const char* class_name) -> void {
                         Class::BUFFER_SIZE * sizeof(T));
                  return array_np;
              })
-        .def_property_readonly("T",
-                               [](const Class& self) -> Class {
-                                   return loco::math::transpose<T>(self);
-                               })
+        .def_property_readonly(
+            "T",
+            [](const Class& self) -> Class { return math::transpose<T>(self); })
         .def_static("Rotation", &Class::Rotation)
         .def_static("Scale",
                     [](T scale_x, T scale_y) -> Class {
@@ -80,4 +78,3 @@ auto bindings_matrix2(py::module& m, const char* class_name) -> void {
 #endif
 
 }  // namespace math
-}  // namespace loco

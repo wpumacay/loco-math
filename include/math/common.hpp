@@ -26,7 +26,6 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace loco {
 namespace math {
 
 static constexpr double PI = 3.141592653589793;  // NOLINT
@@ -245,4 +244,3 @@ struct MatCommaInitializer {
 };
 
 }  // namespace math
-}  // namespace loco

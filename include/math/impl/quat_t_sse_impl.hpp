@@ -8,7 +8,6 @@
 
 #include <math/quat_t_decl.hpp>
 
-namespace loco {
 namespace math {
 namespace sse {
 
@@ -147,6 +146,5 @@ LM_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> void {
 
 }  // namespace sse
 }  // namespace math
-}  // namespace loco
 
 #endif  // LOCOMATH_SSE_ENABLED

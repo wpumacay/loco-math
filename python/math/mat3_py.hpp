@@ -9,7 +9,7 @@
 #include <pybind11/pytypes.h>
 #include <pybind11/numpy.h>
 
-#include <loco/math/mat3_t_impl.hpp>
+#include <math/mat3_t.hpp>
 
 #include <common_py.hpp>
 #include <conversions_py.hpp>

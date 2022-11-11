@@ -1,5 +1,4 @@
-#include <loco/math/vec3_t_impl.hpp>
-#include <type_traits>
+#include <math/vec3_t.hpp>
 
 template <typename T, typename = typename std::enable_if<
                           loco::math::IsScalar<T>::value>::type>

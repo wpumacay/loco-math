@@ -1,7 +1,7 @@
 #include <iomanip>
 #include <iostream>
-#include <loco/math/mat3_t.hpp>
-#include <type_traits>
+
+#include <math/mat3_t.hpp>
 
 template <typename T>
 auto run_example_mat2() -> void {

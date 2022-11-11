@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <loco/math/mat2_t_impl.hpp>
+#include <math/mat2_t.hpp>
 
 #if defined(__clang__)
 #pragma clang diagnostic push

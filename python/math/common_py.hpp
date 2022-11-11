@@ -4,8 +4,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include <loco/math/common.hpp>
-#include <conversions_py.hpp>
+#include <math/common.hpp>
 
 // clang-format off
 #define VECTOR_BUFFER_PROTOCOL(T)                                           \

@@ -10,7 +10,7 @@
 #include <pybind11/numpy.h>
 #include <pybind11/attr.h>
 
-#include <loco/math/vec3_t_impl.hpp>
+#include <math/vec3_t.hpp>
 
 #include <common_py.hpp>
 
@@ -23,7 +23,7 @@ namespace py = pybind11;
 
 #if defined(_MSC_VER)
 #pragma warning(push)
-#pragma warning(disable:4127)
+#pragma warning(disable : 4127)
 #endif
 
 namespace loco {

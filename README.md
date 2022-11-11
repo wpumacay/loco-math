@@ -58,8 +58,8 @@ from lmath import Vector3f
 
 ```c++
 
-#include <loco/math/vec3_t_impl.h>
-#include <loco/math/mat3_t_impl.h>
+#include <vec3_t.h>
+#include <mat3_t.h>
 
 int main()
 {

@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <loco/math/mat4_t_impl.hpp>
+#include <math/mat4_t.hpp>
 
 static constexpr auto ANGLE_MIN = -loco::math::PI;
 static constexpr auto ANGLE_MAX = loco::math::PI;

@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <loco/math/quat_t_impl.hpp>
+#include <math/quat_t.hpp>
 
 constexpr double RANGE_MIN = -10.0;
 constexpr double RANGE_MAX = 10.0;

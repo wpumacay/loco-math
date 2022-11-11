@@ -1,8 +1,7 @@
 #include <iomanip>
 #include <iostream>
-#include <type_traits>
 
-#include <loco/math/mat4_t_impl.hpp>
+#include <math/mat4_t.hpp>
 
 template <typename T>
 auto run_example_mat4() -> void {

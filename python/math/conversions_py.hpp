@@ -1,15 +1,15 @@
 #pragma once
 
+#include <string>
 #include <stdexcept>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pytypes.h>
 
-#include <loco/math/vec2_t_impl.hpp>
-#include <loco/math/vec3_t_impl.hpp>
-#include <loco/math/vec4_t_impl.hpp>
-#include <string>
+#include <math/vec2_t.hpp>
+#include <math/vec3_t.hpp>
+#include <math/vec4_t.hpp>
 
 namespace py = pybind11;
 

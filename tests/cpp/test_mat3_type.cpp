@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <loco/math/mat3_t.hpp>
+#include <math/mat3_t.hpp>
 
 constexpr double RANGE_MIN = -100.0;
 constexpr double RANGE_MAX = 100.0;

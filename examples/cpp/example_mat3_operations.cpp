@@ -1,5 +1,4 @@
-#include <loco/math/mat3_t_impl.hpp>
-#include <type_traits>
+#include <math/mat3_t.hpp>
 
 #if defined(__clang__)
 #pragma clang diagnostic push

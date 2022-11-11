@@ -1,7 +1,7 @@
 #include <iomanip>
 #include <iostream>
-#include <loco/math/vec4_t_impl.hpp>
-#include <type_traits>
+
+#include <math/vec4_t.hpp>
 
 template <typename T>
 auto run_example_vec4() -> void {

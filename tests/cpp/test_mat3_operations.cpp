@@ -1,12 +1,12 @@
 #include <catch2/catch.hpp>
-#include <loco/math/mat3_t_impl.hpp>
+#include <math/mat3_t.hpp>
 
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wimplicit-float-conversion"
 #elif defined(_MSC_VER)
 #pragma warning(push)
-#pragma warning(disable:4305)
+#pragma warning(disable : 4305)
 #endif
 
 static constexpr double RANGE_MIN = -10.0;

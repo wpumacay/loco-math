@@ -1,6 +1,4 @@
-#include <type_traits>
-
-#include <loco/math/mat4_t_impl.hpp>
+#include <math/mat4_t.hpp>
 
 template <typename T, typename = typename std::enable_if<
                           loco::math::IsScalar<T>::value>::type>

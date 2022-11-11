@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
-#include <loco/math/mat3_t_impl.hpp>
-#include <loco/math/quat_t_impl.hpp>
+#include <math/mat3_t.hpp>
+#include <math/quat_t.hpp>
 
 #if defined(__clang__)
 #pragma clang diagnostic push

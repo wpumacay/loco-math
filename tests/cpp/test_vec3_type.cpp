@@ -1,6 +1,5 @@
 #include <catch2/catch.hpp>
-
-#include <loco/math/vec3_t_impl.hpp>
+#include <math/vec3_t.hpp>
 
 constexpr double RANGE_MIN = -1000.0;
 constexpr double RANGE_MAX = 1000.0;

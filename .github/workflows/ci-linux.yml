@@ -15,9 +15,8 @@ jobs:
         os: [ubuntu-18.04, ubuntu-latest]
         compiler: [gcc, clang]
         build-type: [Release, Debug]
-        vectorization: [none, simd-sse, simd-avx, simd-full]
 
-    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • ${{matrix.compiler}}  • vectorization:[${{matrix.vectorization}}]"
+    name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • ${{matrix.compiler}}"
     runs-on: ${{matrix.os}}
 
     steps:
@@ -39,26 +38,6 @@ jobs:
         echo "Choosing LLVM/Clang as compiler"
         echo "CC=clang" >> $GITHUB_ENV
         echo "CXX=clang++" >> $GITHUB_ENV
-
-    - name: Configure Vectorization • [${{matrix.vectorization}}]
-      run: |
-        if [ "${{matrix.vectorization}}" = "none" ]; then
-          echo "SIMD_USE_SSE=OFF" >> $GITHUB_ENV
-          echo "SIMD_USE_AVX=OFF" >> $GITHUB_ENV
-          echo "No vectorization (just use scalar kernels)"
-        elif [ "${{matrix.vectorization}}" = "simd-sse" ]; then
-          echo "SIMD_USE_SSE=ON" >> $GITHUB_ENV
-          echo "Try to use SSE kernels if the CPU has support for this ISA"
-        elif [ "${{matrix.vectorization}}" = "simd-avx" ]; then
-          echo "SIMD_USE_AVX=ON" >> $GITHUB_ENV
-          echo "Try to use AVX kernels if the CPU has support for this ISA"
-        elif [ "${{matrix.vectorization}}" = "simd-full" ]; then
-          echo "SIMD_USE_SSE=ON" >> $GITHUB_ENV
-          echo "SIMD_USE_AVX=ON" >> $GITHUB_ENV
-          echo "Try to use both SSE and AVX kernels if the CPU supports both"
-        else
-          echo "We do not yet support vectorization type [${{matrix.vectorization}}]"
-        fi
 
     - name: Configure CMake
       run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}

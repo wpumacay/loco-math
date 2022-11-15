@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(LOCOMATH_AVX_ENABLED)
+#if defined(MATH_AVX_ENABLED)
 
 #include <immintrin.h>
 
@@ -273,4 +273,4 @@ LM_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
 }  // namespace avx
 }  // namespace math
 
-#endif  // LOCOMATH_AVX_ENABLED
+#endif  // MATH_AVX_ENABLED

@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_SSE_ENABLED)
 
 #include <emmintrin.h>
 #include <smmintrin.h>
@@ -49,7 +49,7 @@ LM_INLINE auto kernel_sub_quat(QuatBuffer<T>& dst, const QuatBuffer<T>& lhs,
                                const QuatBuffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
-    auto xmm_result = _mm_add_ps(xmm_lhs, xmm_rhs);
+    auto xmm_result = _mm_sub_ps(xmm_lhs, xmm_rhs);
     _mm_storeu_ps(dst.data(), xmm_result);
 }
 
@@ -63,7 +63,7 @@ LM_INLINE auto kernel_sub_quat(QuatBuffer<T>& dst, const QuatBuffer<T>& lhs,
     auto xmm_result_lo = _mm_sub_pd(xmm_lhs_lo, xmm_rhs_lo);
     auto xmm_result_hi = _mm_sub_pd(xmm_lhs_hi, xmm_rhs_hi);
     _mm_storeu_pd(dst.data(), xmm_result_lo);
-    _mm_storeu_pd(dst.data(), xmm_result_hi);
+    _mm_storeu_pd(dst.data() + 2, xmm_result_hi);
 }
 
 template <typename T, SFINAE_QUAT_F32_SSE_GUARD<T> = nullptr>
@@ -84,7 +84,7 @@ LM_INLINE auto kernel_scale_quat(QuatBuffer<T>& dst, T scale,
     auto xmm_result_lo = _mm_mul_pd(xmm_scale, xmm_quat_lo);
     auto xmm_result_hi = _mm_mul_pd(xmm_scale, xmm_quat_hi);
     _mm_storeu_pd(dst.data(), xmm_result_lo);
-    _mm_storeu_pd(dst.data(), xmm_result_hi);
+    _mm_storeu_pd(dst.data() + 2, xmm_result_hi);
 }
 
 template <typename T, SFINAE_QUAT_F32_SSE_GUARD<T> = nullptr>
@@ -147,4 +147,4 @@ LM_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> void {
 }  // namespace sse
 }  // namespace math
 
-#endif  // LOCOMATH_SSE_ENABLED
+#endif  // MATH_SSE_ENABLED

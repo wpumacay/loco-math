@@ -1,10 +1,10 @@
 #pragma once
 
 // clang-format off
-#if defined(LOCOMATH_FORCE_INLINE)
-    #if defined(LOCOMATH_COMPILER_CLANG) || defined(LOCOMATH_COMPILER_GCC)
+#if defined(MATH_FORCE_INLINE)
+    #if defined(MATH_COMPILER_CLANG) || defined(MATH_COMPILER_GCC)
         #define LM_INLINE inline __attribute__((__always_inline__))
-    #elif defined(LOCOMATH_COMPILER_MSVC)
+    #elif defined(MATH_COMPILER_MSVC)
         #define LM_INLINE __forceinline
     #else
         #define LM_INLINE inline
@@ -13,9 +13,9 @@
     #define LM_INLINE
 #endif
 
-#if defined(LOCOMATH_COMPILER_CLANG) || defined(LOCOMATH_COMPILER_GCC)
+#if defined(MATH_COMPILER_CLANG) || defined(MATH_COMPILER_GCC)
     #define LM_NEVER_INLINE __attribute__((noinline))
-#elif defined(LOCOMATH_COMPILER_MSVC)
+#elif defined(MATH_COMPILER_MSVC)
     #define LM_NEVER_INLINE __declspec(noinline)
 #else
     #define LM_NEVER_INLINE
@@ -41,13 +41,13 @@ struct ShuffleMask {
     static constexpr uint value = (((z) << 6) | ((y) << 4) | ((x) << 2) | (w));
 };
 
-#if defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_SSE_ENABLED)
 using HAS_SSE = std::true_type;
 #else
 using HAS_SSE = std::false_type;
 #endif
 
-#if defined(LOCOMATH_AVX_ENABLED)
+#if defined(MATH_AVX_ENABLED)
 using HAS_AVX = std::true_type;
 #else
 using HAS_AVX = std::false_type;

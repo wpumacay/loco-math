@@ -15,21 +15,21 @@ include(${loco_cmake_SOURCE_DIR}/Index.cmake)
 # -------------------------------------
 # Define our project :)
 project(
-  LocoMath
+  Math
   VERSION 0.4.1
-  DESCRIPTION "A basic math library for vectors and matrices"
-  HOMEPAGE_URL "https://github.com/wpumacay/loco_math"
+  DESCRIPTION "A basic math library for spatial algebra"
+  HOMEPAGE_URL "https://github.com/wpumacay/math"
   LANGUAGES C CXX)
 
 # -------------------------------------
 # Define some options the user can set before|while configuring the project
-option(LOCOMATH_BUILD_SSE "Build using SSE SIMD-extensions support" ON)
-option(LOCOMATH_BUILD_AVX "Build using AVX SIMD-extensions support" ON)
-option(LOCOMATH_BUILD_FORCE_INLINE "Build with inlining when requested" OFF)
-option(LOCOMATH_BUILD_PYTHON_BINDINGS "Build bindings (requires Pybind11)" ON)
-option(LOCOMATH_BUILD_DOCS "Build documentation (requires Doxygen+Breathe)" OFF)
-option(LOCOMATH_BUILD_TESTS "Build C++ unit-tests (requires google-test)" ON)
-option(LOCOMATH_BUILD_EXAMPLES "Build C++ examples" ON)
+option(MATH_BUILD_SSE "Build using SSE SIMD-extensions support" ON)
+option(MATH_BUILD_AVX "Build using AVX SIMD-extensions support" ON)
+option(MATH_BUILD_FORCE_INLINE "Build with inlining when requested" OFF)
+option(MATH_BUILD_PYTHON_BINDINGS "Build bindings (requires Pybind11)" ON)
+option(MATH_BUILD_DOCS "Build documentation (requires Doxygen+Breathe)" OFF)
+option(MATH_BUILD_TESTS "Build C++ unit-tests (requires google-test)" ON)
+option(MATH_BUILD_EXAMPLES "Build C++ examples" ON)
 
 # -------------------------------------
 # Initialize the project using our helper modules :D
@@ -41,12 +41,12 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 # -------------------------------------
 # Bring our dependencies accordingly
-include(LocoMathDependencies)
+include(Dependencies)
 
 # cmake-format: off
 # -------------------------------------
-# Setup the main C++ target `LocoMathCpp`
-loco_create_target(LocoMathCpp INTERFACE
+# Setup the main C++ target `MathCpp`
+loco_create_target(MathCpp INTERFACE
   SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/math/common.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/math/vec2_t_decl.hpp
@@ -88,48 +88,48 @@ loco_create_target(LocoMathCpp INTERFACE
   WARNINGS_AS_ERRORS
     FALSE
   ENABLE_SSE
-    ${LOCOMATH_BUILD_SSE}
+    ${MATH_BUILD_SSE}
   ENABLE_AVX
-    ${LOCOMATH_BUILD_AVX}
+    ${MATH_BUILD_AVX}
 )
 # cmake-format: on
 
 # -------------------------------------
 # If force-inline is being requested, then add it to the target
-if(LOCOMATH_BUILD_FORCE_INLINE)
+if(MATH_BUILD_FORCE_INLINE)
   # @todo(wilbert): Move this to one of the setup helpers on the loco-cmake repo
-  target_compile_definitions(LocoMathCpp PUBLIC -DLOCOMATH_FORCE_INLINE)
+  target_compile_definitions(MathCpp PUBLIC -DMATH_FORCE_INLINE)
 endif()
 
 # -------------------------------------
 # Expose an alias for the library (CMake namespace convention)
-add_library(loco::math ALIAS LocoMathCpp)
+add_library(math::math ALIAS MathCpp)
 
 # -------------------------------------
 # Add C++ examples to the build process
-if(LOCOMATH_BUILD_EXAMPLES)
+if(MATH_BUILD_EXAMPLES)
   add_subdirectory(examples/cpp)
 endif()
 
 # -------------------------------------
 # Add C++ tests to the build process
-if(LOCOMATH_BUILD_TESTS)
+if(MATH_BUILD_TESTS)
   add_subdirectory(tests/cpp)
 endif()
 
 # -------------------------------------
 # Add Python bindings to the build process
-if(LOCOMATH_BUILD_PYTHON_BINDINGS)
+if(MATH_BUILD_PYTHON_BINDINGS)
   add_subdirectory(python/math)
 endif()
 
 # -------------------------------------
 # Build the required documentation accordingly
-if(LOCOMATH_BUILD_DOCS)
+if(MATH_BUILD_DOCS)
   # cmake-format: off
   # -------------------------------------
   # Setup documentation for our target
-  loco_setup_cppdocs(LocoMathCpp
+  loco_setup_cppdocs(MathCpp
     DOXYGEN_FILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in
     DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Doxygen
     DOXYGEN_GENERATE_HTML FALSE
@@ -138,19 +138,15 @@ if(LOCOMATH_BUILD_DOCS)
     DOXYGEN_QUIET TRUE
     SPHINX_FILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in
     SPHINX_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Sphinx
-    SPHINX_BREATHE_PROJECT LocoUtilsCpp
+    SPHINX_BREATHE_PROJECT MathCpp
     SPHINX_DOXYGEN_XML_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Doxygen/xml)
   # cmake-format: on
 endif()
 
 # -------------------------------------
 # Show the properties of our main target
-loco_print_target_properties(LocoMathCpp)
+loco_print_target_properties(MathCpp)
 
 # -------------------------------------
 # Show some info of the this project
 loco_print_project_info()
-
-# -------------------------------------
-# Show some info of the host
-loco_print_host_info()

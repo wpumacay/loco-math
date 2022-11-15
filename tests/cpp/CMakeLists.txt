@@ -1,8 +1,8 @@
 # ~~~
 # CMake configuration for C++ unittests
 # ~~~
-if(NOT TARGET loco::math)
-  loco_message("Unittests require target [loco::math], but wasn't found"
+if(NOT TARGET math::math)
+  loco_message("Unittests require target [math::math], but wasn't found"
                LOG_LEVEL WARNING)
   return()
 endif()
@@ -17,7 +17,7 @@ include(CTest)
 include(Catch)
 
 add_executable(
-  LocoMathCppTests
+  MathCppTests
   ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_vec2_type.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_vec2_operations.cpp
@@ -36,6 +36,6 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat2_functions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat3_functions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_functions.cpp)
-target_link_libraries(LocoMathCppTests PRIVATE loco::math Catch2::Catch2)
+target_link_libraries(MathCppTests PRIVATE math::math Catch2::Catch2)
 # Discover tets and pick an integer as the random seed
-catch_discover_tests(LocoMathCppTests)
+catch_discover_tests(MathCppTests)

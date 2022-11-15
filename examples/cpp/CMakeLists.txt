@@ -1,14 +1,14 @@
 # ~~~
 # CMake configuration for C++ examples
 # ~~~
-if(NOT TARGET loco::math)
-  loco_message("Examples require the [loco::math] target to be defined"
+if(NOT TARGET math::math)
+  loco_message("Examples require the [math::math] target to be defined"
                LOG_LEVEL WARNING)
   return()
 endif()
 
 # List of all examples to be built
-set(LOCOMATH_EXAMPLES_LIST
+set(MATH_EXAMPLES_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/example_vec2_constructors.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_vec2_operations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_vec3_constructors.cpp
@@ -23,7 +23,7 @@ set(LOCOMATH_EXAMPLES_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/example_mat4_operations.cpp)
 
 # Create all the example targets
-foreach(example_filepath IN LISTS LOCOMATH_EXAMPLES_LIST)
+foreach(example_filepath IN LISTS MATH_EXAMPLES_LIST)
   loco_setup_single_file_example(${example_filepath} TARGET_DEPENDENCIES
-                                 loco::math)
+                                 math::math)
 endforeach()

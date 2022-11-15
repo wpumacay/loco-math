@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(LOCOMATH_AVX_ENABLED)
+#if defined(MATH_AVX_ENABLED)
 
 #include <immintrin.h>
 
@@ -263,4 +263,4 @@ LM_INLINE auto kernel_hadamard_mat3(Mat3Buffer<T>& dst,
 }  // namespace avx
 }  // namespace math
 
-#endif  // LOCOMATH_AVX_ENABLED
+#endif  // MATH_AVX_ENABLED

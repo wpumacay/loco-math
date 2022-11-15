@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(LOCOMATH_SSE_ENABLED) || defined(LOCOMATH_AVX_ENABLED)
+#if defined(MATH_SSE_ENABLED) || defined(MATH_AVX_ENABLED)
 
 #include <emmintrin.h>
 #include <smmintrin.h>
@@ -200,4 +200,4 @@ LM_INLINE auto kernel_dot_vec2(const Vec2Buffer<T>& lhs,
 }  // namespace sse
 }  // namespace math
 
-#endif  // LOCOMATH_SSE_ENABLED || LOCOMATH_AVX_ENABLED
+#endif  // MATH_SSE_ENABLED || MATH_AVX_ENABLED

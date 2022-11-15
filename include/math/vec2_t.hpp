@@ -13,7 +13,7 @@ using SFINAE_VEC2_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 /// \brief Returns the square of the norm-2 of the vector
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 LM_INLINE auto squareNorm(const Vector2<T>& vec) -> T {
-#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_AVX_ENABLED) || defined(MATH_SSE_ENABLED)
     return sse::kernel_length_square_vec2<T>(vec.elements());
 #else
     return scalar::kernel_length_square_vec2<T>(vec.elements());
@@ -23,7 +23,7 @@ LM_INLINE auto squareNorm(const Vector2<T>& vec) -> T {
 /// \brief Returns the norm-2 of the vector
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 LM_INLINE auto norm(const Vector2<T>& vec) -> T {
-#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_AVX_ENABLED) || defined(MATH_SSE_ENABLED)
     return sse::kernel_length_vec2<T>(vec.elements());
 #else
     return std::sqrt(scalar::kernel_length_square_vec2<T>(vec.elements()));
@@ -34,7 +34,7 @@ LM_INLINE auto norm(const Vector2<T>& vec) -> T {
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 LM_INLINE auto normalize(const Vector2<T>& vec) -> Vector2<T> {
     Vector2<T> vec_normalized = vec;
-#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_AVX_ENABLED) || defined(MATH_SSE_ENABLED)
     sse::kernel_normalize_in_place_vec2<T>(vec_normalized.elements());
 #else
     scalar::kernel_normalize_in_place_vec2<T>(vec_normalized.elements());
@@ -45,7 +45,7 @@ LM_INLINE auto normalize(const Vector2<T>& vec) -> Vector2<T> {
 /// \brief Normalizes in-place the given vector
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 LM_INLINE auto normalize_in_place(Vector2<T>& vec) -> void {  // NOLINT
-#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_AVX_ENABLED) || defined(MATH_SSE_ENABLED)
     sse::kernel_normalize_in_place_vec2<T>(vec.elements());
 #else
     scalar::kernel_normalize_in_place_vec2<T>(vec.elements());
@@ -55,7 +55,7 @@ LM_INLINE auto normalize_in_place(Vector2<T>& vec) -> void {  // NOLINT
 /// \brief Returns the dot-product of the given two vectors
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 LM_INLINE auto dot(const Vector2<T>& lhs, const Vector2<T>& rhs) -> T {
-#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_AVX_ENABLED) || defined(MATH_SSE_ENABLED)
     return sse::kernel_dot_vec2<T>(lhs.elements(), rhs.elements());
 #else
     return scalar::kernel_dot_vec2<T>(lhs.elements(), rhs.elements());
@@ -78,7 +78,7 @@ template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 LM_INLINE auto operator+(const Vector2<T>& lhs, const Vector2<T>& rhs)
     -> Vector2<T> {
     Vector2<T> dst;
-#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_AVX_ENABLED) || defined(MATH_SSE_ENABLED)
     sse::kernel_add_vec2<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_add_vec2<T>(dst.elements(), lhs.elements(), rhs.elements());
@@ -102,7 +102,7 @@ template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 LM_INLINE auto operator-(const Vector2<T>& lhs, const Vector2<T>& rhs)
     -> Vector2<T> {
     Vector2<T> dst;
-#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_AVX_ENABLED) || defined(MATH_SSE_ENABLED)
     sse::kernel_sub_vec2<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_sub_vec2<T>(dst.elements(), lhs.elements(), rhs.elements());
@@ -125,7 +125,7 @@ LM_INLINE auto operator-(const Vector2<T>& lhs, const Vector2<T>& rhs)
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 LM_INLINE auto operator*(double scale, const Vector2<T>& vec) -> Vector2<T> {
     Vector2<T> dst;
-#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_AVX_ENABLED) || defined(MATH_SSE_ENABLED)
     sse::kernel_scale_vec2<T>(dst.elements(), static_cast<T>(scale),
                               vec.elements());
 #else
@@ -150,7 +150,7 @@ LM_INLINE auto operator*(double scale, const Vector2<T>& vec) -> Vector2<T> {
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Vector2<T>& vec, double scale) -> Vector2<T> {
     Vector2<T> dst;
-#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_AVX_ENABLED) || defined(MATH_SSE_ENABLED)
     sse::kernel_scale_vec2<T>(dst.elements(), static_cast<T>(scale),
                               vec.elements());
 #else
@@ -176,7 +176,7 @@ template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Vector2<T>& lhs, const Vector2<T>& rhs)
     -> Vector2<T> {
     Vector2<T> dst;
-#if defined(LOCOMATH_AVX_ENABLED) || defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_AVX_ENABLED) || defined(MATH_SSE_ENABLED)
     sse::kernel_hadamard_vec2<T>(dst.elements(), lhs.elements(),
                                  rhs.elements());
 #else

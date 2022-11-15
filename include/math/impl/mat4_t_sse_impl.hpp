@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(LOCOMATH_SSE_ENABLED)
+#if defined(MATH_SSE_ENABLED)
 
 #include <emmintrin.h>
 #include <smmintrin.h>
@@ -291,4 +291,4 @@ LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
 }  // namespace sse
 }  // namespace math
 
-#endif  // LOCOMATH_SSE_ENABLED
+#endif  // MATH_SSE_ENABLED

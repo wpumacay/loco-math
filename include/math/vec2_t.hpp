@@ -62,9 +62,9 @@ LM_INLINE auto dot(const Vector2<T>& lhs, const Vector2<T>& rhs) -> T {
 #endif
 }
 
-/// \brief Returns the vector-sum of two 3d vector operands
+/// \brief Returns the vector-sum of two 2d vector operands
 ///
-/// \tparam T Type of scalar value used for the 3d-vector operands
+/// \tparam T Type of scalar value used for the 2d-vector operands
 ///
 /// This operator implements an element-wise sum of two Vector2 operands given
 /// as input arguments. The internal operator selects the appropriate "kernel"
@@ -86,9 +86,9 @@ LM_INLINE auto operator+(const Vector2<T>& lhs, const Vector2<T>& rhs)
     return dst;
 }
 
-/// \brief Returns the vector-difference of two 3d vector operands
+/// \brief Returns the vector-difference of two 2d vector operands
 ///
-/// \tparam T Type of scalar value used for the 3d-vector operands
+/// \tparam T Type of scalar value used for the 2d-vector operands
 ///
 /// This operator implements an element-wise difference of two Vector2 operands
 /// given as input arguments. The internal operator selects the appropriate
@@ -110,7 +110,7 @@ LM_INLINE auto operator-(const Vector2<T>& lhs, const Vector2<T>& rhs)
     return dst;
 }
 
-/// \brief Returns the scalar-vector product of a scalar and 3d vector operands
+/// \brief Returns the scalar-vector product of a scalar and 2d vector operands
 ///
 /// \tparam T Type of scalar used by both scalar and vector operands
 ///
@@ -121,7 +121,7 @@ LM_INLINE auto operator-(const Vector2<T>& lhs, const Vector2<T>& rhs)
 /// (i.e. SSE and AVX function intrinsics will be used to handle the operation).
 ///
 /// \param[in] scale Scalar value by which to scale the second operand
-/// \param[in] vec Vector in 3d-space which we want to scale
+/// \param[in] vec Vector in 2d-space which we want to scale
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 LM_INLINE auto operator*(double scale, const Vector2<T>& vec) -> Vector2<T> {
     Vector2<T> dst;
@@ -135,7 +135,7 @@ LM_INLINE auto operator*(double scale, const Vector2<T>& vec) -> Vector2<T> {
     return dst;
 }
 
-/// \brief Returns the vector-scalar product of a 3d vector and scalar operands
+/// \brief Returns the vector-scalar product of a 2d vector and scalar operands
 ///
 /// \tparam T Type of scalar used by both vector and scalar operands
 ///
@@ -145,7 +145,7 @@ LM_INLINE auto operator*(double scale, const Vector2<T>& vec) -> Vector2<T> {
 /// depending on whether or not the library was compiled using SIMD support
 /// (i.e. SSE and AVX function intrinsics will be used to handle the operation).
 ///
-/// \param[in] vec Vector in 3d-space which we want to scale
+/// \param[in] vec Vector in 2d-space which we want to scale
 /// \param[in] scale Scalar value by which to scale the first operand
 template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Vector2<T>& vec, double scale) -> Vector2<T> {
@@ -160,9 +160,9 @@ LM_INLINE auto operator*(const Vector2<T>& vec, double scale) -> Vector2<T> {
     return dst;
 }
 
-/// \brief Returns the element-wise product of two 3d vector operands
+/// \brief Returns the element-wise product of two 2d vector operands
 ///
-/// \tparam T Type of scalar value used by the 3d-vector operands
+/// \tparam T Type of scalar value used by the 2d-vector operands
 ///
 /// This operator implements an element-wise product (Hadamard-Schur product) of
 /// two Vector2 operands given as input arguments. The internal operator selects
@@ -188,7 +188,7 @@ LM_INLINE auto operator*(const Vector2<T>& lhs, const Vector2<T>& rhs)
 
 /// \brief Checks if two given vectors are "equal" (within epsilon margin)
 ///
-/// \tparam T Type of scalar value used by the 3d-vector operands
+/// \tparam T Type of scalar value used by the 2d-vector operands
 ///
 /// This operator implements an "np.allclose"-like operation (numpy's allclose
 /// function), checking if the corresponding (x,y,z) entries of both operands
@@ -210,7 +210,7 @@ LM_INLINE auto operator==(const Vector2<T>& lhs, const Vector2<T>& rhs)
 
 /// \brief Checks if two given vectors are not "equal" (within epsilon margin)
 ///
-/// \tparam T Type of scalar value used by the 3d-vector operands
+/// \tparam T Type of scalar value used by the 2d-vector operands
 ///
 /// \param[in] lhs Left-hand-side operand of the comparison
 /// \param[in] rhs Right-hand-side operand of the comparison

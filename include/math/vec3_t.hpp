@@ -228,6 +228,17 @@ LM_INLINE auto operator*(const Vector3<T>& lhs, const Vector3<T>& rhs)
     return dst;
 }
 
+/// \brief Returns the additive inverse of the given vector
+///
+/// \tparam T Type of scalar value used by the 3d-vector operand
+///
+/// \param[in] vec The vector whose inverse we want
+/// \returns The additive inverse of the given vector
+template <typename T, SFINAE_VEC3_GUARD<T> = nullptr>
+LM_INLINE auto operator-(const Vector3<T>& vec) -> Vector3<T> {
+    return Vector3<T>(-vec.x(), -vec.y(), -vec.z());
+}
+
 /// \brief Checks if two given vectors are "equal" (within epsilon margin)
 ///
 /// \tparam T Type of scalar value used by the 3d-vector operands

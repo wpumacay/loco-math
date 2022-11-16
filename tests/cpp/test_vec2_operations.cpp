@@ -203,4 +203,13 @@ TEMPLATE_TEST_CASE("Vector2 class (vec2_t) core Operations", "[vec2_t][ops]",
 
         REQUIRE(FuncClose<T>(v_dot, dot, EPSILON));
     }
+
+    SECTION("Vector additive inverse") {
+        auto val_x = GenRandomValue(T, 10);
+        auto val_y = GenRandomValue(T, 10);
+        Vector2 v(val_x, val_y);
+        auto inv_v = -v;
+
+        REQUIRE(FuncAllClose<T>(inv_v, -val_x, -val_y));
+    }
 }

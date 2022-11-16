@@ -209,6 +209,17 @@ LM_INLINE auto operator*(const Vector4<T>& lhs, const Vector4<T>& rhs)
     return dst;
 };
 
+/// \brief Returns the additive inverse of the given vector
+///
+/// \tparam T Type of scalar value used by the 4d-vector operand
+///
+/// \param[in] vec The vector whose inverse we want
+/// \returns The additive inverse of the given vector
+template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+LM_INLINE auto operator-(const Vector4<T>& vec) -> Vector4<T> {
+    return Vector4<T>(-vec.x(), -vec.y(), -vec.z(), -vec.w());
+}
+
 /// \brief Checks if two given vectors are "equal" (within epsilon margin)
 ///
 /// \tparam Scalar_T Type of scalar value used by the 4d-vector operands

@@ -186,6 +186,17 @@ LM_INLINE auto operator*(const Vector2<T>& lhs, const Vector2<T>& rhs)
     return dst;
 }
 
+/// \brief Returns the additive inverse of the given vector
+///
+/// \tparam T Type of scalar value used by the 2d-vector operand
+///
+/// \param[in] vec The vector whose inverse we want
+/// \returns The additive inverse of the given vector
+template <typename T, SFINAE_VEC2_GUARD<T> = nullptr>
+LM_INLINE auto operator-(const Vector2<T>& vec) -> Vector2<T> {
+    return Vector2<T>(-vec.x(), -vec.y());
+}
+
 /// \brief Checks if two given vectors are "equal" (within epsilon margin)
 ///
 /// \tparam T Type of scalar value used by the 2d-vector operands

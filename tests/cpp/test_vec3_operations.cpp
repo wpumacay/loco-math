@@ -259,4 +259,14 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
             REQUIRE(FuncAllClose<T>(result, 4.0, 14.0, 6.0));
         }
     }
+
+    SECTION("Vector additive inverse") {
+        auto val_x = GenRandomValue(T, 10);
+        auto val_y = GenRandomValue(T, 10);
+        auto val_z = GenRandomValue(T, 10);
+        Vector3 v(val_x, val_y, val_z);
+        auto inv_v = -v;
+
+        REQUIRE(FuncAllClose<T>(inv_v, -val_x, -val_y, -val_z));
+    }
 }

@@ -255,10 +255,25 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
         auto v_dot = math::dot(v_a, v_b);
 
         if (math::IsFloat32<T>::value) {
+            // TODO(wilbert): If scalar version is more precise, then we might
+            // have an issue with SIMD instructions not returning the correct
+            // value
+
             // Use larger delta, as we're losing precision quickly on f32
             REQUIRE(FuncClose<T>(v_dot, dot, static_cast<T>(1e-1)));
         } else {
             REQUIRE(FuncClose<T>(v_dot, dot, EPSILON));
         }
+    }
+
+    SECTION("Vector additive inverse") {
+        auto val_x = GenRandomValue(T, 10);
+        auto val_y = GenRandomValue(T, 10);
+        auto val_z = GenRandomValue(T, 10);
+        auto val_w = GenRandomValue(T, 10);
+        Vector4 v(val_x, val_y, val_z, val_w);
+        auto inv_v = -v;
+
+        REQUIRE(FuncAllClose<T>(inv_v, -val_x, -val_y, -val_z, -val_w));
     }
 }

@@ -32,18 +32,12 @@ namespace math {
 ///
 /// This is a class that represents 3x3 matrices with real-valued entries. The
 /// internal data is stored as the columns of the matrix using 3d vectors of the
-/// same scalar type. The resulting storage is column major and aligned in a way
-/// that allows the use of aligned versions of some SIMD instructions (when
-/// using either SSE or AVX instrinsics).
+/// same scalar type, thus using a column major order.
 template <typename Scalar_T>
 class Matrix3 {
  public:
-    /// Number of scalars used for the storage of this matrix. Notice that as
-    /// we're using vec3 as the columns of the matrix, and these are padded by
-    /// one float (4 floats per vec3), so we're actually using 12 f32 elements
-    static constexpr uint32_t BUFFER_SIZE = 12;
-    /// Alignment factor for the internal buffer (see m_Elements)
-    static constexpr uint32_t ALIGN_SIZE = 16;
+    /// Number of scalars used for the storage of this matrix
+    static constexpr uint32_t BUFFER_SIZE = 9;
     /// Number of dimensions of the matrix (square 3x3 matrix)
     static constexpr uint32_t MATRIX_SIZE = 3;
     /// Number of dimensions of this matrix (as in numpy.ndarray.ndim)
@@ -197,8 +191,7 @@ class Matrix3 {
     }
 
  private:
-    /// The buffer where all data is stored (as an array of 3 column
-    /// vectors)
+    /// The buffer where all data is stored
     BufferType m_Elements;
 };
 

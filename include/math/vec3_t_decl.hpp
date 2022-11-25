@@ -23,13 +23,12 @@ namespace math {
 ///
 /// This is a class that represents a 3d-vector with entries x, y, z of some
 /// scalar floating-point type. Its storage is a buffer of the given scalar
-/// type, and it's aligned accordingly in order to use the aligned versions of
-/// some SIMD instructions (when using either SSE or AVX intrinsics).
+/// type, and contains only the required storage for 3 elements.
 template <typename Scalar_T>
 class Vector3 {
  public:
     /// Number of scalars used in the storage of the vector
-    constexpr static uint32_t BUFFER_SIZE = 4;
+    constexpr static uint32_t BUFFER_SIZE = 3;
     /// Number of scalar dimensions of the vector
     constexpr static uint32_t VECTOR_SIZE = 3;
     /// Number of dimensions of this vector (as in np.array.ndim)
@@ -50,7 +49,6 @@ class Vector3 {
         m_Elements[0] = x_coord;
         m_Elements[1] = x_coord;
         m_Elements[2] = x_coord;
-        m_Elements[3] = 0;
     }
 
     /// Constructs a vector of the form (x, y, y)
@@ -58,7 +56,6 @@ class Vector3 {
         m_Elements[0] = x_coord;
         m_Elements[1] = y_coord;
         m_Elements[2] = y_coord;
-        m_Elements[3] = 0;
     }
 
     /// Constructs a vector of the form (x, y, z)
@@ -66,7 +63,6 @@ class Vector3 {
         m_Elements[0] = x_coord;
         m_Elements[1] = y_coord;
         m_Elements[2] = z_coord;
-        m_Elements[3] = 0;
     }
 
     // cppcheck-suppress noExplicitConstructor
@@ -152,8 +148,8 @@ class Vector3 {
     }
 
  private:
-    /// Storage of the vector's scalars (we pad by 1 due to SIMD usage)
-    BufferType m_Elements = {0, 0, 0, 0};
+    /// Storage of the vector's scalars
+    BufferType m_Elements = {0, 0, 0};
 };
 
 }  // namespace math

@@ -161,13 +161,7 @@ template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto operator+(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
     -> Matrix3<T> {
     Matrix3<T> dst;
-#if defined(MATH_AVX_ENABLED)
-    avx::kernel_add_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
-#elif defined(MATH_SSE_ENABLED)
-    sse::kernel_add_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
-#else
     scalar::kernel_add_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
-#endif
     return dst;
 }
 
@@ -175,45 +169,23 @@ template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto operator-(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
     -> Matrix3<T> {
     Matrix3<T> dst;
-#if defined(MATH_AVX_ENABLED)
-    avx::kernel_sub_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
-#elif defined(MATH_SSE_ENABLED)
-    sse::kernel_sub_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
-#else
     scalar::kernel_sub_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
-#endif
     return dst;
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto operator*(double scale, const Matrix3<T>& mat) -> Matrix3<T> {
     Matrix3<T> dst;
-#if defined(MATH_AVX_ENABLED)
-    avx::kernel_scale_mat3(dst.elements(), static_cast<T>(scale),
-                           mat.elements());
-#elif defined(MATH_SSE_ENABLED)
-    sse::kernel_scale_mat3<T>(dst.elements(), static_cast<T>(scale),
-                              mat.elements());
-#else
     scalar::kernel_scale_mat3<T>(dst.elements(), static_cast<T>(scale),
                                  mat.elements());
-#endif
     return dst;
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Matrix3<T>& mat, double scale) -> Matrix3<T> {
     Matrix3<T> dst;
-#if defined(MATH_AVX_ENABLED)
-    avx::kernel_scale_mat3(dst.elements(), static_cast<T>(scale),
-                           mat.elements());
-#elif defined(MATH_SSE_ENABLED)
-    sse::kernel_scale_mat3<T>(dst.elements(), static_cast<T>(scale),
-                              mat.elements());
-#else
     scalar::kernel_scale_mat3<T>(dst.elements(), static_cast<T>(scale),
                                  mat.elements());
-#endif
     return dst;
 }
 
@@ -221,14 +193,8 @@ template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
     -> Matrix3<T> {
     Matrix3<T> dst;
-#if defined(MATH_AVX_ENABLED)
-    avx::kernel_matmul_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
-#elif defined(MATH_SSE_ENABLED)
-    sse::kernel_matmul_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
-#else
     scalar::kernel_matmul_mat3<T>(dst.elements(), lhs.elements(),
                                   rhs.elements());
-#endif
     return dst;
 }
 
@@ -236,16 +202,8 @@ template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto operator*(const Matrix3<T>& lhs_mat, const Vector3<T>& rhs_vec)
     -> Vector3<T> {
     Vector3<T> dst;
-#if defined(MATH_AVX_ENABLED)
-    avx::kernel_matmul_vec_mat3<T>(dst.elements(), lhs_mat.elements(),
-                                   rhs_vec.elements());
-#elif defined(MATH_SSE_ENABLED)
-    sse::kernel_matmul_vec_mat3<T>(dst.elements(), lhs_mat.elements(),
-                                   rhs_vec.elements());
-#else
     scalar::kernel_matmul_vec_mat3<T>(dst.elements(), lhs_mat.elements(),
                                       rhs_vec.elements());
-#endif
     return dst;
 }
 
@@ -253,16 +211,8 @@ template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
 LM_INLINE auto hadamard(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
     -> Matrix3<T> {
     Matrix3<T> dst;
-#if defined(MATH_AVX_ENABLED)
-    avx::kernel_hadamard_mat3<T>(dst.elements(), lhs.elements(),
-                                 rhs.elements());
-#elif defined(MATH_SSE_ENABLED)
-    sse::kernel_hadamard_mat3<T>(dst.elements(), lhs.elements(),
-                                 rhs.elements());
-#else
     scalar::kernel_hadamard_mat3<T>(dst.elements(), lhs.elements(),
                                     rhs.elements());
-#endif
     return dst;
 }
 

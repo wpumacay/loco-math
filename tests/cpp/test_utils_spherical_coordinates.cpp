@@ -17,9 +17,9 @@ TEMPLATE_TEST_CASE("Utilities [Spherical-Coordinates]", "[sph_coords][funcs]",
             auto exp_rho = static_cast<T>(1.0);
             auto exp_theta = static_cast<T>(0.0);
             auto exp_phi = static_cast<T>(math::PI / 2.0);
-            REQUIRE(std::abs(sph_coords.rho() - exp_rho) < EPSILON);
-            REQUIRE(std::abs(sph_coords.theta() - exp_theta) < EPSILON);
-            REQUIRE(std::abs(sph_coords.phi() - exp_phi) < EPSILON);
+            REQUIRE(std::abs(sph_coords.rho - exp_rho) < EPSILON);
+            REQUIRE(std::abs(sph_coords.theta - exp_theta) < EPSILON);
+            REQUIRE(std::abs(sph_coords.phi - exp_phi) < EPSILON);
         }
 
         // (x=0, y=1, z=0) -> (rho=1, theta=pi/2, phi=pi/2)
@@ -29,9 +29,9 @@ TEMPLATE_TEST_CASE("Utilities [Spherical-Coordinates]", "[sph_coords][funcs]",
             auto exp_rho = static_cast<T>(1.0);
             auto exp_theta = static_cast<T>(math::PI / 2.0);
             auto exp_phi = static_cast<T>(math::PI / 2.0);
-            REQUIRE(std::abs(sph_coords.rho() - exp_rho) < EPSILON);
-            REQUIRE(std::abs(sph_coords.theta() - exp_theta) < EPSILON);
-            REQUIRE(std::abs(sph_coords.phi() - exp_phi) < EPSILON);
+            REQUIRE(std::abs(sph_coords.rho - exp_rho) < EPSILON);
+            REQUIRE(std::abs(sph_coords.theta - exp_theta) < EPSILON);
+            REQUIRE(std::abs(sph_coords.phi - exp_phi) < EPSILON);
         }
 
         // (x=-1, y=0, z=0) -> (rho=1, theta=pi, phi=pi/2)
@@ -41,9 +41,9 @@ TEMPLATE_TEST_CASE("Utilities [Spherical-Coordinates]", "[sph_coords][funcs]",
             auto exp_rho = static_cast<T>(1.0);
             auto exp_theta = static_cast<T>(math::PI);
             auto exp_phi = static_cast<T>(math::PI / 2.0);
-            REQUIRE(std::abs(sph_coords.rho() - exp_rho) < EPSILON);
-            REQUIRE(std::abs(sph_coords.theta() - exp_theta) < EPSILON);
-            REQUIRE(std::abs(sph_coords.phi() - exp_phi) < EPSILON);
+            REQUIRE(std::abs(sph_coords.rho - exp_rho) < EPSILON);
+            REQUIRE(std::abs(sph_coords.theta - exp_theta) < EPSILON);
+            REQUIRE(std::abs(sph_coords.phi - exp_phi) < EPSILON);
         }
 
         // (x=0, y=-1, z=0) -> (rho=1, theta=-pi/2, phi=pi/2)
@@ -53,9 +53,9 @@ TEMPLATE_TEST_CASE("Utilities [Spherical-Coordinates]", "[sph_coords][funcs]",
             auto exp_rho = static_cast<T>(1.0);
             auto exp_theta = static_cast<T>(-math::PI / 2.0);
             auto exp_phi = static_cast<T>(math::PI / 2.0);
-            REQUIRE(std::abs(sph_coords.rho() - exp_rho) < EPSILON);
-            REQUIRE(std::abs(sph_coords.theta() - exp_theta) < EPSILON);
-            REQUIRE(std::abs(sph_coords.phi() - exp_phi) < EPSILON);
+            REQUIRE(std::abs(sph_coords.rho - exp_rho) < EPSILON);
+            REQUIRE(std::abs(sph_coords.theta - exp_theta) < EPSILON);
+            REQUIRE(std::abs(sph_coords.phi - exp_phi) < EPSILON);
         }
     }
 

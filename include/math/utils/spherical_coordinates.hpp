@@ -26,64 +26,53 @@ class SphericalCoords {
  public:
     SphericalCoords() = default;
 
-    explicit SphericalCoords(Scalar_T rho, Scalar_T theta, Scalar_T phi);
-
-    auto Set(Scalar_T rho, Scalar_T theta, Scalar_T phi) -> void {
-        m_Rho = rho;
-        m_Theta = theta;
-        m_Phi = phi;
-    }
+    explicit SphericalCoords(Scalar_T rho, Scalar_T theta, Scalar_T phi)
+        : rho(rho), theta(theta), phi(phi) {}
 
     auto SetFromCartesian(const Vector3<Scalar_T>& vec) -> void {
         SetFromCartesian(vec.x(), vec.y(), vec.z());
     }
 
     auto SetFromCartesian(Scalar_T x, Scalar_T y, Scalar_T z) -> void {
-        m_Rho = std::sqrt(x * x + y * y + z * z);
+        rho = std::sqrt(x * x + y * y + z * z);
         constexpr auto EPS_RADIUS = static_cast<Scalar_T>(1e-10);
-        if (m_Rho < EPS_RADIUS) {
-            m_Theta = static_cast<Scalar_T>(0.0);
-            m_Phi = static_cast<Scalar_T>(0.0);
+        if (rho < EPS_RADIUS) {
+            theta = static_cast<Scalar_T>(0.0);
+            phi = static_cast<Scalar_T>(0.0);
         } else {
-            m_Theta = std::atan2(y, x);
+            theta = std::atan2(y, x);
             constexpr auto MIN_RATIO = static_cast<Scalar_T>(-1.0);
             constexpr auto MAX_RATIO = static_cast<Scalar_T>(1.0);
-            m_Phi = std::acos(CLAMP(z / m_Rho, MIN_RATIO, MAX_RATIO));
+            phi = std::acos(CLAMP(z / rho, MIN_RATIO, MAX_RATIO));
         }
     }
 
     auto GetCartesian() const -> Vector3<Scalar_T> {
-        const auto sin_theta = std::sin(m_Theta);  // NOLINT
-        const auto cos_theta = std::cos(m_Theta);  // NOLINT
-        const auto sin_phi = std::sin(m_Phi);      // NOLINT
-        const auto cos_phi = std::cos(m_Phi);      // NOLINT
+        const auto sin_theta = std::sin(theta);  // NOLINT
+        const auto cos_theta = std::cos(theta);  // NOLINT
+        const auto sin_phi = std::sin(phi);      // NOLINT
+        const auto cos_phi = std::cos(phi);      // NOLINT
 
-        auto x = m_Rho * cos_theta * sin_phi;
-        auto y = m_Rho * sin_theta * sin_phi;
-        auto z = m_Rho * cos_phi;
+        auto x = rho * cos_theta * sin_phi;
+        auto y = rho * sin_theta * sin_phi;
+        auto z = rho * cos_phi;
 
         return {x, y, z};
     }
 
     auto MakeSafe() -> void {
         // Restrict phi to be between EPS and PI-EPS
-        m_Phi = CLAMP(m_Phi, static_cast<Scalar_T>(math::EPS),
-                      static_cast<Scalar_T>(math::PI - math::EPS));
+        constexpr auto MIN_PHI = static_cast<Scalar_T>(math::EPS);
+        constexpr auto MAX_PHI = static_cast<Scalar_T>(math::PI - math::EPS);
+        phi = CLAMP(phi, MIN_PHI, MAX_PHI);
     }
 
-    auto rho() const -> Scalar_T { return m_Rho; }
-
-    auto theta() const -> Scalar_T { return m_Theta; }
-
-    auto phi() const -> Scalar_T { return m_Phi; }
-
- private:
     /// The distance from the origin to the end point
-    Scalar_T m_Rho = static_cast<Scalar_T>(0.0);
+    Scalar_T rho = static_cast<Scalar_T>(0.0);
     /// The polar angle (measured w.r.t. the positive Z-axis)
-    Scalar_T m_Theta = static_cast<Scalar_T>(0.0);
+    Scalar_T theta = static_cast<Scalar_T>(0.0);
     /// The azimuthal angle (measured w.r.t. the positive X-axis)
-    Scalar_T m_Phi = static_cast<Scalar_T>(0.0);
+    Scalar_T phi = static_cast<Scalar_T>(0.0);
 };
 
 }  // namespace math

@@ -70,9 +70,9 @@ class SphericalCoords {
     /// The distance from the origin to the end point
     Scalar_T rho = static_cast<Scalar_T>(0.0);
     /// The polar angle (measured w.r.t. the positive Z-axis)
-    Scalar_T theta = static_cast<Scalar_T>(0.0);
-    /// The azimuthal angle (measured w.r.t. the positive X-axis)
     Scalar_T phi = static_cast<Scalar_T>(0.0);
+    /// The azimuthal angle (measured w.r.t. the positive X-axis)
+    Scalar_T theta = static_cast<Scalar_T>(0.0);
 };
 
 }  // namespace math

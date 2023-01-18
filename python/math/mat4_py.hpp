@@ -26,6 +26,9 @@ namespace math {
 template <typename T>
 using SFINAE_MAT4_BINDINGS = typename std::enable_if<IsScalar<T>::value>::type*;
 
+template <typename... Args>
+using overload_cast = pybind11::detail::overload_cast_impl<Args...>;
+
 template <typename T, SFINAE_MAT4_BINDINGS<T> = nullptr>
 // NOLINTNEXTLINE
 auto bindings_matrix4(py::module& m, const char* class_name) -> void {
@@ -65,7 +68,10 @@ auto bindings_matrix4(py::module& m, const char* class_name) -> void {
                         return Class::Scale(scale);
                     })
         .def_static("Translation", &Class::Translation)
-        .def_static("Perspective", &Class::Perspective)
+        .def_static("Perspective",
+                    overload_cast<T, T, T, T>()(&Class::Perspective))
+        .def_static("Perspective",
+                    overload_cast<T, T, T, T, T, T>()(&Class::Perspective))
         .def_static("Ortho", &Class::Ortho)
         .def_static("Identity", &Class::Identity)
         .def_static("Zeros", &Class::Zeros)

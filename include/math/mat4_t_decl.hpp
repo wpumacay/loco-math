@@ -181,6 +181,11 @@ class Matrix4 {
     static auto Perspective(Scalar_T fov, Scalar_T aspect, Scalar_T near,
                             Scalar_T far) -> Matrix4<Scalar_T>;
 
+    /// Creates a perspective projection matrix from the frustum sizes
+    static auto Perspective(Scalar_T left, Scalar_T right, Scalar_T top,
+                            Scalar_T bottom, Scalar_T near, Scalar_T far)
+        -> Matrix4<Scalar_T>;
+
     /// Creates a orthographic projection matrix from the given configuration
     static auto Ortho(Scalar_T width, Scalar_T height, Scalar_T near,
                       Scalar_T far) -> Matrix4<Scalar_T>;

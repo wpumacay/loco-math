@@ -106,6 +106,26 @@ auto Matrix4<T>::Perspective(T fov, T aspect, T near, T far) -> Matrix4<T> {
 }
 
 template <typename T>
+auto Matrix4<T>::Perspective(T left, T right, T top, T bottom, T near, T far)
+    -> Matrix4<T> {
+    auto x = static_cast<T>(2.0) * near / (right - left);
+    auto y = static_cast<T>(2.0) * near / (top - bottom);
+
+    auto a = (right + left) / (right - left);
+    auto b = (top + bottom) / (top - bottom);
+    auto c = -(far + near) / (far - near);
+    auto d = -static_cast<T>(2.0) * far * near / (far - near);
+
+    // clang-format off
+    return Matrix4<T>(
+              x  ,  0.0 ,   a  ,  0.0 ,
+             0.0 ,   y  ,   b  ,  0.0 ,
+             0.0 ,  0.0 ,   c  ,   d  ,
+             0.0 ,  0.0 , -1.0 ,  0.0);
+    // clang-format on
+}
+
+template <typename T>
 auto Matrix4<T>::Ortho(T width, T height, T near, T far) -> Matrix4<T> {
     auto tmp_0 = static_cast<T>(2.0) / width;
     auto tmp_1 = static_cast<T>(2.0) / height;

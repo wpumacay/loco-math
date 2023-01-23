@@ -33,6 +33,7 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_operations.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_quat_type.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_quat_operations.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_euler_type.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat2_functions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat3_functions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_functions.cpp

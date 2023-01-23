@@ -60,8 +60,12 @@ class Euler {
         EXTRINSIC,
     };
 
-    /// Angle of rotation around the X-axis
-    ElementType x;  // NOLINT
+    /// \brief Angle of rotation around the X-axis
+    Scalar_T x = static_cast<Scalar_T>(0.0);  // NOLINT
+    /// \brief Angle of rotation around the Y-axis
+    Scalar_T y = static_cast<Scalar_T>(0.0);  // NOLINT
+    /// \brief Angle of rotation around the Z-axis
+    Scalar_T z = static_cast<Scalar_T>(0.0);  // NOLINT
 
     /// \brief Returns the internal order used for the elemental rotations
     ///

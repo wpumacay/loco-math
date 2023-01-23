@@ -111,4 +111,9 @@ auto Euler<T>::fromRotationMatrix(Mat4 m) -> Euler<T> {
     return Euler<T>::fromRotationMatrix(mat_3);
 }
 
+template <typename T>
+auto Euler<T>::fromQuaternion(Quat quaternion) -> Euler<T> {
+    return Euler<T>::fromRotationMatrix(Mat3::fromQuaternion(quaternion));
+}
+
 }  // namespace math

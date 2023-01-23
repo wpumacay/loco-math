@@ -117,6 +117,9 @@ class Euler {
 
     /// Returns the set of Euler angles associated with the given 4x4 matrix
     auto fromRotationMatrix(Mat4 matrix) -> Euler<Scalar_T>;
+
+    /// Returns the set of Euler angles associated with the given quaternion
+    auto fromQuaternion(Quat quaternion) -> Euler<Scalar_T>;
 };
 
 }  // namespace math

@@ -24,6 +24,7 @@
 // clang-format on
 #include <cassert>
 #include <cstdint>
+#include <algorithm>
 #include <type_traits>
 
 namespace math {
@@ -242,5 +243,11 @@ struct MatCommaInitializer {
     /// Index of the current coefficient being built
     uint32_t m_CurrentBuildIndex = MATRIX_FIRST_INDEX;
 };
+
+/// Returns the value clamped to the given range
+template <typename T>
+auto clamp(T x, T x_min, T x_max) -> T {
+    return std::max(x_min, std::min(x_max, x));
+}
 
 }  // namespace math

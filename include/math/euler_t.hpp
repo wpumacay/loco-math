@@ -31,7 +31,7 @@ auto Euler<T>::fromRotationMatrix(Mat3 m) -> Euler<T> {
     auto m31 = m(2, 0); auto m32 = m(2, 1); auto m33 = m(2, 2);
     // clang-format on
 
-    switch (m_Order) {
+    switch (this->order) {
         case Order::XYZ: {
             this->y = std::asin(clamp(m13, SIN_MIN, SIN_MAX));
             if (std::abs(m13) < ONE_MINUS_EPS) {

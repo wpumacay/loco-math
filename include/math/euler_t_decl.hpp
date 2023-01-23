@@ -12,15 +12,11 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <math/vec3_t_decl.hpp>
 #include <math/mat3_t_decl.hpp>
 #include <math/mat4_t_decl.hpp>
 #include <math/quat_t_decl.hpp>
 
 namespace math {
-
-template <typename Scalar_T>
-class Vec3;
 
 template <typename Scalar_T>
 class Matrix3;
@@ -34,18 +30,18 @@ class Quaternion;
 template <typename Scalar_T>
 class Euler {
  public:
-    /// Number of scalar dimensions of the euler angles representation
+    /// Number of scalar dimensions of the Euler angles representation
     constexpr static uint32_t EULER_SIZE = 3;
-    /// Number of scalars used in the storage of the euler angles
+    /// Number of scalars used in the storage of the Euler angles
     constexpr static uint32_t BUFFER_COUNT = 3;
-    /// Number of bytes allocated for the buffer of the euler angles
+    /// Number of bytes allocated for the buffer of the Euler angles
     constexpr static uint32_t BUFFER_SIZE = sizeof(Scalar_T) * BUFFER_COUNT;
 
-    /// Typename of the euler angles representation
+    /// Typename of the Euler angles representation
     using Type = Euler<Scalar_T>;
     /// Typename of the scalar used for the angles (float32, float64, etc.)
     using ElementType = Scalar_T;
-    /// Typename of the internal storage used for the vector
+    /// Typename of the internal storage used
     using BufferType = std::array<Scalar_T, 3>;
 
     /// Possible ordering (Tait-Bryan angles)
@@ -94,7 +90,6 @@ class Euler {
     Convention convention = Convention::INTRINSIC;  // NOLINT
 
     // Aliases for some related types we'll use
-    using Vec3 = Vector3<Scalar_T>;
     using Mat3 = Matrix3<Scalar_T>;
     using Mat4 = Matrix4<Scalar_T>;
     using Quat = Quaternion<Scalar_T>;
@@ -122,14 +117,6 @@ class Euler {
 
     /// Returns the set of Euler angles associated with the given 4x4 matrix
     auto fromRotationMatrix(Mat4 matrix) -> Euler<Scalar_T>;
-
- private:
-    /// Storage of the euler angles entries
-    BufferType m_Elements = {0, 0, 0};
-    /// The ordering used for this set of Euler angles
-    Order m_Order = Order::XYZ;
-    /// The convention used for this set of Euler angles
-    Convention m_Convention = Convention::INTRINSIC;
 };
 
 }  // namespace math

@@ -30,19 +30,9 @@ class Quaternion;
 template <typename Scalar_T>
 class Euler {
  public:
-    /// Number of scalar dimensions of the Euler angles representation
-    constexpr static uint32_t EULER_SIZE = 3;
-    /// Number of scalars used in the storage of the Euler angles
-    constexpr static uint32_t BUFFER_COUNT = 3;
-    /// Number of bytes allocated for the buffer of the Euler angles
-    constexpr static uint32_t BUFFER_SIZE = sizeof(Scalar_T) * BUFFER_COUNT;
-
-    /// Typename of the Euler angles representation
-    using Type = Euler<Scalar_T>;
-    /// Typename of the scalar used for the angles (float32, float64, etc.)
-    using ElementType = Scalar_T;
-    /// Typename of the internal storage used
-    using BufferType = std::array<Scalar_T, 3>;
+    using Mat3 = Matrix3<Scalar_T>;
+    using Mat4 = Matrix4<Scalar_T>;
+    using Quat = Quaternion<Scalar_T>;
 
     /// Possible ordering (Tait-Bryan angles)
     enum class Order {
@@ -93,11 +83,6 @@ class Euler {
     /// defined after we have rotated around the Y-axis previously.
     Convention convention = Convention::INTRINSIC;  // NOLINT
 
-    // Aliases for some related types we'll use
-    using Mat3 = Matrix3<Scalar_T>;
-    using Mat4 = Matrix4<Scalar_T>;
-    using Quat = Quaternion<Scalar_T>;
-
     /// Constructs a set of Euler angles with all zero entries
     Euler() = default;
 
@@ -105,25 +90,58 @@ class Euler {
     /// \param[in] x Euler angle associated with a rotation around the X axis
     /// \param[in] y Euler angle associated with a rotation around the Y axis
     /// \param[in] z Euler angle associated with a rotation around the Z axis
-    /// \param[in] order Order used for representating this set of Euler angles
+    /// \param[in] order Order used for the representation
     /// \param[in] convention Convention used for the representation
-    Euler(Scalar_T x, Scalar_T y, Scalar_T z, Order order = Order::XYZ,
-          Convention convention = Convention::INTRINSIC) {
+    explicit Euler(Scalar_T x, Scalar_T y, Scalar_T z, Order order = Order::XYZ,
+                   Convention convention = Convention::INTRINSIC) {
+        this->order = order;
+        this->convention = convention;
         this->x = x;
         this->y = y;
         this->z = z;
-        this->order = order;
-        this->convention = convention;
     }
 
-    /// Returns the set of Euler angles associated with the given 3x3 matrix
-    auto fromRotationMatrix(Mat3 matrix) -> Euler<Scalar_T>;
+    /// Constructs a set of Euler angles from the given 3x3 rotation matrix
+    /// \param[in] matrix A 3x3 rotation matrix given by the user
+    /// \param[in] order Order used for the representation
+    /// \param[in] convention Convention used for the representation
+    explicit Euler(const Mat3& matrix, Order order = Order::XYZ,
+                   Convention convention = Convention::INTRINSIC) {
+        this->order = order;
+        this->convention = convention;
+        setFromRotationMatrix(matrix);
+    }
 
-    /// Returns the set of Euler angles associated with the given 4x4 matrix
-    auto fromRotationMatrix(Mat4 matrix) -> Euler<Scalar_T>;
+    /// Constructs a set of Euler angles from the given 4x4 transform matrix
+    /// \param[in] matrix A 4x4 transform matrix given by the user
+    /// \param[in] order Order used for the representation
+    /// \param[in] convention Convention used for the representation
+    explicit Euler(const Mat4& matrix, Order order = Order::XYZ,
+                   Convention convention = Convention::INTRINSIC) {
+        this->order = order;
+        this->convention = convention;
+        setFromRotationMatrix(matrix);
+    }
 
-    /// Returns the set of Euler angles associated with the given quaternion
-    auto fromQuaternion(Quat quaternion) -> Euler<Scalar_T>;
+    /// Constructs a set of Euler angles from the given quaternion
+    /// \param[in] quaternion A quaternion given by the user
+    /// \param[in] order Order used for the representation
+    /// \param[in] convention Convention used for the representation
+    explicit Euler(const Quat& quaternion, Order order = Order::XYZ,
+                   Convention convention = Convention::INTRINSIC) {
+        this->order = order;
+        this->convention = convention;
+        setFromQuaternion(quaternion);
+    }
+
+    /// Updates this set of Euler angles with the given 3x3 rotation matrix
+    auto setFromRotationMatrix(const Mat3& matrix) -> void;
+
+    /// Updates this set of Euler angles with the given 4x4 transform matrix
+    auto setFromRotationMatrix(const Mat4& matrix) -> void;
+
+    /// Updates this set of Euler angles with the given quaternion
+    auto setFromQuaternion(const Quat& quaternion) -> void;
 };
 
 }  // namespace math

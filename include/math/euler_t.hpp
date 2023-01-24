@@ -11,7 +11,7 @@ namespace math {
 // ***************************************************************************//
 
 template <typename T>
-auto Euler<T>::fromRotationMatrix(Mat3 m) -> Euler<T> {
+auto Euler<T>::setFromRotationMatrix(const Mat3& m) -> void {
     // Implementation based on ThreeJS Euler.js implementation [0]
 
     constexpr T ONE = static_cast<T>(1.0);
@@ -23,8 +23,9 @@ auto Euler<T>::fromRotationMatrix(Mat3 m) -> Euler<T> {
 
     if (this->convention != Convention::INTRINSIC) {
         // TODO(wilbert): handle general case using the implementation from [1]
-        return Euler(ZERO, ZERO, ZERO);
+        return;
     }
+
     // clang-format off
     auto m11 = m(0, 0); auto m12 = m(0, 1); auto m13 = m(0, 2);
     auto m21 = m(1, 0); auto m22 = m(1, 1); auto m23 = m(1, 2);
@@ -102,18 +103,18 @@ auto Euler<T>::fromRotationMatrix(Mat3 m) -> Euler<T> {
 }
 
 template <typename T>
-auto Euler<T>::fromRotationMatrix(Mat4 m) -> Euler<T> {
+auto Euler<T>::setFromRotationMatrix(const Mat4& m) -> void {
     // clang-format off
     Mat3 mat_3(m(0, 0), m(0, 1), m(0, 2),
                m(1, 0), m(1, 1), m(1, 2),
                m(2, 0), m(2, 1), m(2, 2));
     // clang-format on
-    return Euler<T>::fromRotationMatrix(mat_3);
+    setFromRotationMatrix(mat_3);
 }
 
 template <typename T>
-auto Euler<T>::fromQuaternion(Quat quaternion) -> Euler<T> {
-    return Euler<T>::fromRotationMatrix(Mat3::fromQuaternion(quaternion));
+auto Euler<T>::setFromQuaternion(const Quat& quaternion) -> void {
+    setFromRotationMatrix(Mat3::fromQuaternion(quaternion));
 }
 
 }  // namespace math

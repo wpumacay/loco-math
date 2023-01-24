@@ -9,6 +9,7 @@
 #include <math/impl/mat3_t_avx_impl.hpp>
 
 #include <math/quat_t.hpp>
+#include <math/euler_t.hpp>
 
 namespace math {
 

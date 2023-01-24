@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <type_traits>
 
+#include <math/vec3_t_decl.hpp>
 #include <math/mat3_t_decl.hpp>
 #include <math/mat4_t_decl.hpp>
 #include <math/quat_t_decl.hpp>
@@ -30,6 +31,7 @@ class Quaternion;
 template <typename Scalar_T>
 class Euler {
  public:
+    using Vec3 = Vector3<Scalar_T>;
     using Mat3 = Matrix3<Scalar_T>;
     using Mat4 = Matrix4<Scalar_T>;
     using Quat = Quaternion<Scalar_T>;
@@ -134,6 +136,18 @@ class Euler {
         setFromQuaternion(quaternion);
     }
 
+    /// Constructs a set of Euler angles from the given axis-angle pair
+    /// \param[in] axis The axis of rotation given by the user
+    /// \param[in] angle The angle of rotation around the given axis
+    /// \param[in] order Order used for the representation
+    /// \param[in] convention Convention used for the representation
+    explicit Euler(const Vec3& axis, Scalar_T angle, Order order = Order::XYZ,
+                   Convention convention = Convention::INTRINSIC) {
+        this->order = order;
+        this->convention = convention;
+        setFromAxisAngle(axis, angle);
+    }
+
     /// Updates this set of Euler angles with the given 3x3 rotation matrix
     auto setFromRotationMatrix(const Mat3& matrix) -> void;
 
@@ -142,6 +156,9 @@ class Euler {
 
     /// Updates this set of Euler angles with the given quaternion
     auto setFromQuaternion(const Quat& quaternion) -> void;
+
+    /// Updates this set of Euler angles with the given axis-angle pair
+    auto setFromAxisAngle(const Vec3& axis, Scalar_T angle) -> void;
 };
 
 }  // namespace math

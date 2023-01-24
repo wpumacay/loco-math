@@ -34,6 +34,7 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
                    math::float32_t, math::float64_t) {
     using T = TestType;
     using Euler = math::Euler<T>;
+    using Quat = math::Quaternion<T>;
 
     SECTION("Default constructor") {
         Euler e;
@@ -54,6 +55,54 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
         REQUIRE(FuncAllClose<T>(e, val_x, val_y, val_z));
         REQUIRE(e.order == Euler::Order::XYZ);
         REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+    }
+
+    SECTION("From quaternion") {
+        // q = (w, x, y, z) = (1.0, 0.0, 0.0, 0.0)
+        // ea = (0.0, 0.0, 0.0, XYZ, INTRINSIC)
+        {
+            Quat q(1.0, 0.0, 0.0, 0.0);
+            Euler e(q);
+            REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, 0.0));
+            REQUIRE(e.order == Euler::Order::XYZ);
+            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+        }
+
+        // q = (cos(t/2), sin(t/2), 0.0, 0.0) (rot. angle t around x-axis)
+        {
+            auto angle = math::PI / 4.0;
+            auto cos_half = std::cos(angle / 2.0);
+            auto sin_half = std::sin(angle / 2.0);
+            Quat q(cos_half, sin_half, 0.0, 0.0);
+            Euler e(q);
+            REQUIRE(FuncAllClose<T>(e, angle, 0.0, 0.0));
+            REQUIRE(e.order == Euler::Order::XYZ);
+            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+        }
+
+        // q = (cos(t/2), 0.0, sin(t/2), 0.0) (rot. angle t around y-axis)
+        {
+            auto angle = math::PI / 4.0;
+            auto cos_half = std::cos(angle / 2.0);
+            auto sin_half = std::sin(angle / 2.0);
+            Quat q(cos_half, 0.0, sin_half, 0.0);
+            Euler e(q);
+            REQUIRE(FuncAllClose<T>(e, 0.0, angle, 0.0));
+            REQUIRE(e.order == Euler::Order::XYZ);
+            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+        }
+
+        // q = (cos(t/2), 0.0, 0.0, sin(t/2)) (rot. angle t around z-axis)
+        {
+            auto angle = math::PI / 4.0;
+            auto cos_half = std::cos(angle / 2.0);
+            auto sin_half = std::sin(angle / 2.0);
+            Quat q(cos_half, 0.0, 0.0, sin_half);
+            Euler e(q);
+            REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, angle));
+            REQUIRE(e.order == Euler::Order::XYZ);
+            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+        }
     }
 }
 

@@ -15,6 +15,7 @@
 #include <math/mat4_t_decl.hpp>
 #include <math/mat3_t_decl.hpp>
 #include <math/vec3_t_decl.hpp>
+#include <math/euler_t_decl.hpp>
 
 namespace math {
 
@@ -23,6 +24,9 @@ class Matrix3;
 
 template <typename Scalar_T>
 class Matrix4;
+
+template <typename Scalar_T>
+class Euler;
 
 }  // namespace math
 
@@ -47,6 +51,8 @@ class Quaternion {
 
     // Some related types
     using Vec3 = Vector3<Scalar_T>;
+    using Mat3 = Matrix3<Scalar_T>;
+    using Mat4 = Matrix4<Scalar_T>;
 
     /// Constructs a zero-initialized vector
     Quaternion() = default;
@@ -81,6 +87,15 @@ class Quaternion {
         // Just copy the whole data from the initializer list
         std::copy(values.begin(), values.end(), m_Elements.data());
     }
+
+    /// \brief Updates this quaternion with a given set of Euler angles
+    auto setFromEuler(const Euler<Scalar_T>& euler) -> void;
+
+    /// \brief Updates this quaternion with a given 3x3 rotation matrix
+    auto setFromMatrix(const Mat3& matrix) -> void;
+
+    /// \brief Updates this quaternion with a given 4x4 transformation matrix
+    auto setFromMatrix(const Mat4& matrix) -> void;
 
     /// Returns a mutable reference to the real w-component
     auto w() -> Scalar_T& { return m_Elements[0]; }

@@ -14,11 +14,15 @@
 
 #include <math/vec3_t_decl.hpp>
 #include <math/quat_t_decl.hpp>
+#include <math/euler_t_decl.hpp>
 
 namespace math {
 
 template <typename Scalar_T>
 class Quaternion;
+
+template <typename Scalar_T>
+class Euler;
 
 }  // namespace math
 

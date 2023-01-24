@@ -4,6 +4,10 @@
 
 #include <math/euler_t_decl.hpp>
 
+#include <math/quat_t.hpp>
+#include <math/mat3_t.hpp>
+#include <math/mat4_t.hpp>
+
 namespace math {
 
 // ***************************************************************************//
@@ -44,7 +48,7 @@ auto Euler<T>::setFromRotationMatrix(const Mat3& m) -> void {
             }
             break;
         }
-        case Order::YZX: {
+        case Order::YXZ: {
             this->x = std::asin(-clamp(m23, SIN_MIN, SIN_MAX));
             if (std::abs(m23) < ONE_MINUS_EPS) {
                 this->y = std::atan2(m13, m33);
@@ -114,7 +118,12 @@ auto Euler<T>::setFromRotationMatrix(const Mat4& m) -> void {
 
 template <typename T>
 auto Euler<T>::setFromQuaternion(const Quat& quaternion) -> void {
-    setFromRotationMatrix(Mat3::fromQuaternion(quaternion));
+    setFromRotationMatrix(Mat3::FromQuaternion(quaternion));
+}
+
+template <typename T>
+auto Euler<T>::setFromAxisAngle(const Vec3& axis, T angle) -> void {
+    setFromQuaternion(Quat::FromAxisAngle(axis, angle));
 }
 
 }  // namespace math

@@ -207,20 +207,6 @@ class Matrix4 {
         return MATRIX_SIZE * MATRIX_SIZE;
     }
 
-    /// Returns the dimnension of the matrix
-    static constexpr auto ndim() -> uint32_t { return MATRIX_SIZE; }
-
-    /// Returns the number of scalars used by the storage of the matrix
-    static constexpr auto buffer_size() -> uint32_t { return BUFFER_SIZE; }
-
-    /// Returns the size (in bytes) of the matrix
-    static constexpr auto num_bytes_size() -> uint32_t { return sizeof(Type); }
-
-    /// Returns the alignment (in bytes) of the matrix
-    static constexpr auto num_bytes_alignment() -> uint32_t {
-        return alignof(Type);
-    }
-
  private:
     /// The buffer where all data lies (as an array of 4 column vectors)
     BufferType m_Elements;

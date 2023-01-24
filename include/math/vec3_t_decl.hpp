@@ -133,20 +133,6 @@ class Vector3 {
         return str_result.str();
     }
 
-    /// Returns the number of dimensions of the vector (Vector3 <-> 3 scalars)
-    static constexpr auto size() -> uint32_t { return VECTOR_SIZE; }
-
-    /// Returns the number of scalars used by the storage of the vector
-    static constexpr auto buffer_size() -> uint32_t { return BUFFER_SIZE; }
-
-    /// Returns the size (in bytes) of the vector
-    static constexpr auto num_bytes_size() -> uint32_t { return sizeof(Type); }
-
-    /// Returns the alignment (in bytes) of the vector
-    static constexpr auto num_bytes_alignment() -> uint32_t {
-        return alignof(Type);
-    }
-
  private:
     /// Storage of the vector's scalars
     BufferType m_Elements = {0, 0, 0};

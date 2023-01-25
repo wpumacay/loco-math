@@ -66,7 +66,7 @@ class Quaternion {
         m_Elements[3] = static_cast<Scalar_T>(0.0F);
     }
 
-    /// Constructs a quaternion given its 4 entries
+    /// Constructs a quaternion given its 4 components
     /// \param x_val Value of the first imaginary component
     /// \param y_val Value of the second imaginary component
     /// \param z_val Value of the third imaginary component
@@ -79,6 +79,25 @@ class Quaternion {
         m_Elements[3] = z_val;
     }
 
+    /// Constructs a quaternion given a 3x3 rotation matrix
+    /// \param[in] matrix A 3x3 rotation matrix given by the user
+    explicit Quaternion(const Mat3& matrix) { setFromRotationMatrix(matrix); }
+
+    /// Constructs a quaternion given a 4x4 transformation matrix
+    /// \param[in] matrix A 4x4 transformation matrix given by the user
+    explicit Quaternion(const Mat4& matrix) { setFromRotationMatrix(matrix); }
+
+    /// Constructs a quaternion given a set of Euler angles
+    /// \param[in] euler A set of euler angles describing the same rotation
+    explicit Quaternion(const Euler<Scalar_T>& euler) { setFromEuler(euler); }
+
+    /// Constructs a quaternion given an axis-angle pair
+    /// \param[in] axis A vector representing the rotation axis
+    /// \param[in] angle The angle by which to rotate around the given axis
+    explicit Quaternion(const Vec3& axis, Scalar_T angle) {
+        setFromAxisAngle(axis, angle);
+    }
+
     // cppcheck-suppress noExplicitConstructor
     /// Constructs a quaternion from a given list of the form {x, y, z, w}
     Quaternion(const std::initializer_list<Scalar_T>& values) {
@@ -88,14 +107,17 @@ class Quaternion {
         std::copy(values.begin(), values.end(), m_Elements.data());
     }
 
+    /// \brief Updates this quaternion with a given 3x3 rotation matrix
+    auto setFromRotationMatrix(const Mat3& matrix) -> void;
+
+    /// \brief Updates this quaternion with a given 4x4 transformation matrix
+    auto setFromRotationMatrix(const Mat4& matrix) -> void;
+
     /// \brief Updates this quaternion with a given set of Euler angles
     auto setFromEuler(const Euler<Scalar_T>& euler) -> void;
 
-    /// \brief Updates this quaternion with a given 3x3 rotation matrix
-    auto setFromMatrix(const Mat3& matrix) -> void;
-
-    /// \brief Updates this quaternion with a given 4x4 transformation matrix
-    auto setFromMatrix(const Mat4& matrix) -> void;
+    /// \brief Updates this quaternion with a given axes-angle pair
+    auto setFromAxisAngle(const Vec3& axis, Scalar_T angle) -> void;
 
     /// Returns a mutable reference to the real w-component
     auto w() -> Scalar_T& { return m_Elements[0]; }

@@ -123,7 +123,7 @@ auto Euler<T>::setFromQuaternion(const Quat& quaternion) -> void {
 
 template <typename T>
 auto Euler<T>::setFromAxisAngle(const Vec3& axis, T angle) -> void {
-    setFromQuaternion(Quat::FromAxisAngle(axis, angle));
+    setFromQuaternion(Quat(axis, angle));
 }
 
 }  // namespace math

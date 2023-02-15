@@ -118,7 +118,7 @@ auto Euler<T>::setFromRotationMatrix(const Mat4& m) -> void {
 
 template <typename T>
 auto Euler<T>::setFromQuaternion(const Quat& quaternion) -> void {
-    setFromRotationMatrix(Mat3::FromQuaternion(quaternion));
+    setFromRotationMatrix(Mat3(quaternion));
 }
 
 template <typename T>

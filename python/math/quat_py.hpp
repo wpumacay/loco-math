@@ -128,11 +128,6 @@ auto bindings_quaternion(py::module& m, const char* class_name) -> void {
         .def_static("RotationX", &Class::RotationX)
         .def_static("RotationY", &Class::RotationY)
         .def_static("RotationZ", &Class::RotationZ)
-        .def_static("FromAxisAngle",
-                    [](const py::array_t<T>& axis, T angle) -> Class {
-                        auto axis_v = nparray_to_vec3<T>(axis);
-                        return Class::FromAxisAngle(axis_v, angle);
-                    })
         .def("length", [](const Class& self) -> T { return norm<T>(self); })
         .def("normalize",
              [](const Class& self) -> Class { return normalize<T>(self); })

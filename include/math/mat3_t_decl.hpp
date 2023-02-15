@@ -56,6 +56,11 @@ class Matrix3 {
     /// Typename of the columns of the matrix
     using ColumnType = Vector3<Scalar_T>;
 
+    // Some related types
+    using Vec3 = Vector3<Scalar_T>;
+    using Mat4 = Matrix4<Scalar_T>;
+    using Quat = Quaternion<Scalar_T>;
+
     /// Creates a zero-initialized matrix
     Matrix3() = default;
 
@@ -64,32 +69,55 @@ class Matrix3 {
     explicit Matrix3(Scalar_T x00, Scalar_T x01, Scalar_T x02,
                      Scalar_T x10, Scalar_T x11, Scalar_T x12,
                      Scalar_T x20, Scalar_T x21, Scalar_T x22) {
+        // First row
         m_Elements[0][0] = x00;
         m_Elements[1][0] = x01;
         m_Elements[2][0] = x02;
 
+        // Second row
         m_Elements[0][1] = x10;
         m_Elements[1][1] = x11;
         m_Elements[2][1] = x12;
 
+        // Third row
         m_Elements[0][2] = x20;
         m_Elements[1][2] = x21;
         m_Elements[2][2] = x22;
     }
     // clang-format on
 
+    /// \brief Creates a diagonal matrix from some given diagonal entries
     explicit Matrix3(Scalar_T x00, Scalar_T x11, Scalar_T x22) {
         m_Elements[0][0] = x00;
         m_Elements[1][1] = x11;
         m_Elements[2][2] = x22;
     }
 
+    /// \brief Creates a 3x3 matrix from its columns in order
     explicit Matrix3(const ColumnType& col0, const ColumnType& col1,
                      const ColumnType& col2) {
         m_Elements[0] = col0;
         m_Elements[1] = col1;
         m_Elements[2] = col2;
     }
+
+    /// \brief Creates a 3x3 rotation matrix from a given quaternion
+    explicit Matrix3(const Quat& quaternion) { setFromQuaternion(quaternion); }
+
+    /// \brief Creates a 3x3 rotation matrix from a given set of Euler angles
+    explicit Matrix3(const Euler<Scalar_T>& euler) { setFromEuler(euler); }
+
+    /// \brief Creates a 3x3 rotation matrix from a given 4x4 transform matrix
+    explicit Matrix3(const Mat4& transform) { setFromTransform(transform); }
+
+    /// \brief Udpates this rotation matrix from a given quaternion
+    auto setFromQuaternion(const Quat& quaternion) -> void;
+
+    /// \brief Updates this rotation matrix from a given set of Euler angles
+    auto setFromEuler(const Euler<Scalar_T>& euler) -> void;
+
+    /// \brief Updates this rotation matrix from a given 4x4 transform matrix
+    auto setFromTransform(const Mat4& transform) -> void;
 
     /// Returns a mutable reference to the underlying storage of the matrix
     auto elements() -> BufferType& { return m_Elements; }
@@ -143,9 +171,6 @@ class Matrix3 {
 
         return sstr_result.str();
     }
-
-    /// Creates a rotation matrix from the given quaternion
-    static auto FromQuaternion(Quaternion<Scalar_T> quat) -> Matrix3<Scalar_T>;
 
     /// Creates a rotation matrix for the given angle around the X-axis
     static auto RotationX(Scalar_T angle) -> Matrix3<Scalar_T>;

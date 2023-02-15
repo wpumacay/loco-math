@@ -72,7 +72,7 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) factory functions",
         auto z = GenRandomValue(T, 4);
 
         auto quat = Quaternion(w, x, y, z);
-        auto rot_mat = Matrix3::FromQuaternion(quat);
+        auto rot_mat = Matrix3(quat);
 
         auto length = std::sqrt(w * w + x * x + y * y + z * z);
         w /= length;

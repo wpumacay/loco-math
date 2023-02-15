@@ -14,37 +14,63 @@
 namespace math {
 
 // ***************************************************************************//
-//                       Factory functions implementation                     //
+//                           Factory functions                                //
 // ***************************************************************************//
 
 template <typename T>
-auto Matrix3<T>::FromQuaternion(Quaternion<T> quat) -> Matrix3<T> {
+auto Matrix3<T>::setFromQuaternion(const Quat& quat) -> void {
     // Just in case, make sure the quaternion is normalized
-    normalize_in_place<T>(quat);
+    auto quat_normalized = ::math::normalize(quat);
 
-    // TODO(wilbert): Should we get x, y, and z first, to avoid lots of accesses
-    auto xx = quat.x() * quat.x();
-    auto yy = quat.y() * quat.y();
-    auto zz = quat.z() * quat.z();
-    auto xy = quat.x() * quat.y();
-    auto wz = quat.w() * quat.z();
-    auto xz = quat.x() * quat.z();
-    auto wy = quat.w() * quat.y();
-    auto yz = quat.y() * quat.z();
-    auto wx = quat.w() * quat.x();
+    auto x = quat_normalized.x();
+    auto y = quat_normalized.y();
+    auto z = quat_normalized.z();
+    auto w = quat_normalized.w();
 
-    // clang-format off
-    return Matrix3<T>(
-        static_cast<T>(1.0) - static_cast<T>(2.0) * (yy + zz),
-        static_cast<T>(2.0) * (xy - wz),
-        static_cast<T>(2.0) * (xz + wy),
-        static_cast<T>(2.0) * (xy + wz),
-        static_cast<T>(1.0) - static_cast<T>(2.0) * (xx + zz),
-        static_cast<T>(2.0) * (yz - wx),
-        static_cast<T>(2.0) * (xz - wy),
-        static_cast<T>(2.0) * (yz + wx),
-        static_cast<T>(1.0) - static_cast<T>(2.0) * (xx + yy));
-    // clang-format on
+    auto xx = x * x;
+    auto yy = y * y;
+    auto zz = z * z;
+    auto xy = x * y;
+    auto wz = w * z;
+    auto xz = x * z;
+    auto wy = w * y;
+    auto yz = y * z;
+    auto wx = w * x;
+
+    constexpr auto ONE = static_cast<T>(1.0);
+    constexpr auto TWO = static_cast<T>(2.0);
+
+    m_Elements[0][0] = ONE - TWO * (yy + zz);
+    m_Elements[1][0] = TWO * (xy - wz);
+    m_Elements[2][0] = TWO * (xz + wy);
+
+    m_Elements[0][1] = TWO * (xy + wz);
+    m_Elements[1][1] = ONE - TWO * (xx + zz);
+    m_Elements[2][1] = TWO * (yz - wx);
+
+    m_Elements[0][2] = TWO * (xz - wy);
+    m_Elements[1][2] = TWO * (yz + wx);
+    m_Elements[2][2] = ONE - TWO * (xx + yy);
+}
+
+template <typename T>
+auto Matrix3<T>::setFromEuler(const Euler<T>& euler) -> void {
+    setFromQuaternion(Quat(euler));
+}
+
+template <typename T>
+auto Matrix3<T>::setFromTransform(const Mat4& m) -> void {
+    m_Elements[0][0] = m(0, 0);
+    m_Elements[1][0] = m(0, 1);
+    m_Elements[2][0] = m(0, 2);
+
+    m_Elements[0][1] = m(1, 0);
+    m_Elements[1][1] = m(1, 1);
+    m_Elements[2][1] = m(1, 2);
+
+    m_Elements[0][2] = m(2, 0);
+    m_Elements[1][2] = m(2, 1);
+    m_Elements[2][2] = m(2, 2);
 }
 
 template <typename T>

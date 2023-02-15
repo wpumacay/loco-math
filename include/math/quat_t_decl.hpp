@@ -188,18 +188,6 @@ class Quaternion {
     /// Returns the quaternion associated with the given rotation around z-axis
     static auto RotationZ(Scalar_T angle) -> Quaternion<Scalar_T>;
 
-    /// Returns the quaternion associated with the given axis and angle
-    static auto FromAxisAngle(Vector3<Scalar_T> axis, Scalar_T angle)
-        -> Quaternion<Scalar_T>;
-
-    /// Returns the quaternion associated with the given 3x3 rotation matrix
-    static auto FromRotationMatrix(Matrix3<Scalar_T> matrix)
-        -> Quaternion<Scalar_T>;
-
-    /// Returns the quaternion associated with the given 4x4 rotation matrix
-    static auto FromRotationMatrix(Matrix4<Scalar_T> matrix)
-        -> Quaternion<Scalar_T>;
-
  private:
     /// Storage of the quaternion's entries in   (w, x, y, z) order
     BufferType m_Elements = {1, 0, 0, 0};

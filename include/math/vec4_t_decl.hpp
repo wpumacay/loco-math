@@ -12,6 +12,14 @@
 #include <type_traits>
 
 #include <math/common.hpp>
+#include <math/vec3_t_decl.hpp>
+
+namespace math {
+
+template <typename Scalar_T>
+class Vector3;
+
+}  // namespace math
 
 namespace math {
 
@@ -41,6 +49,9 @@ class Vector4 {
     using ElementType = Scalar_T;
     /// Typename of the internal storage used for the vector
     using BufferType = std::array<Scalar_T, BUFFER_SIZE>;
+
+    // Some related types
+    using Vec3 = Vector3<Scalar_T>;
 
     /// Constructs a zero-initialized vector
     Vector4() = default;
@@ -76,6 +87,14 @@ class Vector4 {
         m_Elements[1] = y_coord;
         m_Elements[2] = z_coord;
         m_Elements[3] = w_coord;
+    }
+
+    /// Constructs a vector of the form (x, y, z, 1.0)
+    explicit Vector4(const Vec3& vec) {
+        m_Elements[0] = vec.x();
+        m_Elements[1] = vec.y();
+        m_Elements[2] = vec.z();
+        m_Elements[3] = 1.0F;
     }
 
     // cppcheck-suppress noExplicitConstructor

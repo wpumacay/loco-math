@@ -14,7 +14,7 @@ Checks: >
         -readability-redundant-access-specifiers,
         -readability-magic-numbers,
         -readability-function-cognitive-complexity,
-        -readability-identifier-length
+        -readability-identifier-length,
 
 WarningsAsErrors: ''
 FormatStyle: none

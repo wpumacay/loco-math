@@ -1,6 +1,12 @@
 #include <catch2/catch.hpp>
 #include <math/mat3_t.hpp>
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wimplicit-float-conversion"
+#pragma clang diagnostic ignored "-Wdouble-promotion"
+#endif
+
 constexpr double RANGE_MIN = -100.0;
 constexpr double RANGE_MAX = 100.0;
 
@@ -40,6 +46,7 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) constructors", "[mat3_t][template]",
     using T = TestType;
     using Matrix3 = math::Matrix3<T>;
     using Vector3 = math::Vector3<T>;
+    using Quat = math::Quaternion<T>;
 
     // Checking all exposed constructors
     SECTION("Default constructor") {
@@ -95,4 +102,20 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) constructors", "[mat3_t][template]",
                 3.0, 6.0, x22));
         // clang-format on
     }
+    SECTION("From quaternion") {
+        // NOLINTNEXTLINE
+        Quat q(1.0F, 0.0F, 0.0F, 0.0F);
+        Matrix3 mat(q);
+
+        // clang-format off
+        REQUIRE(FuncAllClose<T>(mat,
+            1.0, 0.0, 0.0, // NOLINT
+            0.0, 1.0, 0.0, // NOLINT
+            0.0, 0.0, 1.0  /* NOLINT */));
+        // clang-format on
+    }
 }
+
+#if defined(__clang__)
+#pragma clang diagnostic pop  // NOLINT
+#endif

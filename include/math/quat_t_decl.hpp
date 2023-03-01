@@ -85,7 +85,7 @@ class Quaternion {
 
     /// Constructs a quaternion given a 4x4 transformation matrix
     /// \param[in] matrix A 4x4 transformation matrix given by the user
-    explicit Quaternion(const Mat4& matrix) { setFromRotationMatrix(matrix); }
+    explicit Quaternion(const Mat4& transform) { setFromTransform(transform); }
 
     /// Constructs a quaternion given a set of Euler angles
     /// \param[in] euler A set of euler angles describing the same rotation
@@ -111,7 +111,7 @@ class Quaternion {
     auto setFromRotationMatrix(const Mat3& matrix) -> void;
 
     /// \brief Updates this quaternion with a given 4x4 transformation matrix
-    auto setFromRotationMatrix(const Mat4& matrix) -> void;
+    auto setFromTransform(const Mat4& transform) -> void;
 
     /// \brief Updates this quaternion with a given set of Euler angles
     auto setFromEuler(const Euler<Scalar_T>& euler) -> void;

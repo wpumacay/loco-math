@@ -67,7 +67,7 @@ auto Quaternion<T>::setFromRotationMatrix(const Mat3& m) -> void {
 }
 
 template <typename T>
-auto Quaternion<T>::setFromRotationMatrix(const Mat4& m) -> void {
+auto Quaternion<T>::setFromTransform(const Mat4& m) -> void {
     // clang-format off
     Mat3 mat_3(m(0, 0), m(0, 1), m(0, 2),
                m(1, 0), m(1, 1), m(1, 2),

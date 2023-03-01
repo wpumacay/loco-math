@@ -122,7 +122,7 @@ class Euler {
                    Convention convention = Convention::INTRINSIC) {
         this->order = order;
         this->convention = convention;
-        setFromRotationMatrix(matrix);
+        setFromTransform(matrix);
     }
 
     /// Constructs a set of Euler angles from the given quaternion
@@ -152,7 +152,7 @@ class Euler {
     auto setFromRotationMatrix(const Mat3& matrix) -> void;
 
     /// Updates this set of Euler angles with the given 4x4 transform matrix
-    auto setFromRotationMatrix(const Mat4& matrix) -> void;
+    auto setFromTransform(const Mat4& transform) -> void;
 
     /// Updates this set of Euler angles with the given quaternion
     auto setFromQuaternion(const Quat& quaternion) -> void;

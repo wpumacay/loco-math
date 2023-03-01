@@ -34,6 +34,8 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
                    math::float32_t, math::float64_t) {
     using T = TestType;
     using Euler = math::Euler<T>;
+    using Mat3 = math::Matrix3<T>;
+    using Mat4 = math::Matrix4<T>;
     using Quat = math::Quaternion<T>;
 
     SECTION("Default constructor") {
@@ -99,6 +101,76 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             auto sin_half = std::sin(angle / 2.0);
             Quat q(cos_half, 0.0, 0.0, sin_half);
             Euler e(q);
+            REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, angle));
+            REQUIRE(e.order == Euler::Order::XYZ);
+            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+        }
+    }
+
+    SECTION("From 3x3 rotation matrix") {
+        // Rot_x(45°) (rotation of 45° around the x-axis)
+        // e = (PI / 4, 0.0, 0.0, XYZ, INTRINSIC)
+        {
+            auto angle = ::math::PI / 4.0;
+            Mat3 rotmat = Mat3::RotationX(angle);
+            Euler e(rotmat);
+            REQUIRE(FuncAllClose<T>(e, angle, 0.0, 0.0));
+            REQUIRE(e.order == Euler::Order::XYZ);
+            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+        }
+
+        // Rot_y(45°) (rotation of 45° around the y-axis)
+        // e = (0.0, PI / 4, 0.0, XYZ, INTRINSIC)
+        {
+            auto angle = ::math::PI / 4.0;
+            Mat3 rotmat = Mat3::RotationY(angle);
+            Euler e(rotmat);
+            REQUIRE(FuncAllClose<T>(e, 0.0, angle, 0.0));
+            REQUIRE(e.order == Euler::Order::XYZ);
+            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+        }
+
+        // Rot_z(45°) (rotation of 45° around the z-axis)
+        // e = (0.0, 0.0, PI / 4, XYZ, INTRINSIC)
+        {
+            auto angle = ::math::PI / 4.0;
+            Mat3 rotmat = Mat3::RotationZ(angle);
+            Euler e(rotmat);
+            REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, angle));
+            REQUIRE(e.order == Euler::Order::XYZ);
+            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+        }
+    }
+
+    SECTION("From 4x4 transform matrix") {
+        // Rot_x(45°) (rotation of 45° around the x-axis)
+        // e = (PI / 4, 0.0, 0.0, XYZ, INTRINSIC)
+        {
+            auto angle = ::math::PI / 4.0;
+            Mat4 rotmat = Mat4::RotationX(angle);
+            Euler e(rotmat);
+            REQUIRE(FuncAllClose<T>(e, angle, 0.0, 0.0));
+            REQUIRE(e.order == Euler::Order::XYZ);
+            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+        }
+
+        // Rot_y(45°) (rotation of 45° around the y-axis)
+        // e = (0.0, PI / 4, 0.0, XYZ, INTRINSIC)
+        {
+            auto angle = ::math::PI / 4.0;
+            Mat4 rotmat = Mat4::RotationY(angle);
+            Euler e(rotmat);
+            REQUIRE(FuncAllClose<T>(e, 0.0, angle, 0.0));
+            REQUIRE(e.order == Euler::Order::XYZ);
+            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+        }
+
+        // Rot_z(45°) (rotation of 45° around the z-axis)
+        // e = (0.0, 0.0, PI / 4, XYZ, INTRINSIC)
+        {
+            auto angle = ::math::PI / 4.0;
+            Mat4 rotmat = Mat4::RotationZ(angle);
+            Euler e(rotmat);
             REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, angle));
             REQUIRE(e.order == Euler::Order::XYZ);
             REQUIRE(e.convention == Euler::Convention::INTRINSIC);

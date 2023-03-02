@@ -14,163 +14,6 @@
 namespace math {
 
 // ***************************************************************************//
-//                            Factory functions                               //
-// ***************************************************************************//
-
-template <typename T>
-auto Quaternion<T>::setFromRotationMatrix(const Mat3& m) -> void {
-    // clang-format off
-    auto m00 = m(0, 0); auto m01 = m(0, 1); auto m02 = m(0, 2);
-    auto m10 = m(1, 0); auto m11 = m(1, 1); auto m12 = m(1, 2);
-    auto m20 = m(2, 0); auto m21 = m(2, 1); auto m22 = m(2, 2);
-    // clang-format on
-
-    constexpr auto ONE = static_cast<T>(1.0);
-    constexpr auto TWO = static_cast<T>(2.0);
-    constexpr auto HALF = static_cast<T>(0.5);
-    constexpr auto QUARTER = static_cast<T>(0.25);
-
-    auto trace = m00 + m11 + m22;
-    if (trace > 0) {
-        // The trace is valid, so we can do the algebra around solving for w
-        auto s = HALF / std::sqrt(trace + ONE);
-
-        m_Elements[0] = QUARTER / s;
-        m_Elements[1] = (m21 - m12) * s;
-        m_Elements[2] = (m02 - m20) * s;
-        m_Elements[3] = (m10 - m01) * s;
-    } else if ((m00 > m11) && (m00 > m22)) {
-        // m00 is the dominant term, so do the algebra around solving for x
-        auto s = TWO * std::sqrt(ONE + m00 - m11 - m22);
-
-        m_Elements[0] = (m21 - m12) / s;
-        m_Elements[1] = QUARTER * s;
-        m_Elements[2] = (m01 + m10) / s;
-        m_Elements[3] = (m02 + m20) / s;
-    } else if (m11 > m22) {
-        // m11 is the dominant term, so do the algebra around solving for y
-        auto s = TWO * std::sqrt(ONE + m11 - m00 - m22);
-
-        m_Elements[0] = (m02 - m20) / s;
-        m_Elements[1] = (m01 + m10) / s;
-        m_Elements[2] = QUARTER * s;
-        m_Elements[3] = (m12 + m21) / s;
-    } else {
-        // m22 is the dominant term, so do the algebra around solving for z
-        auto s = TWO * std::sqrt(ONE + m22 - m00 - m11);
-
-        m_Elements[0] = (m10 - m01) / s;
-        m_Elements[1] = (m02 + m20) / s;
-        m_Elements[2] = (m12 + m21) / s;
-        m_Elements[3] = QUARTER * s;
-    }
-}
-
-template <typename T>
-auto Quaternion<T>::setFromTransform(const Mat4& m) -> void {
-    // clang-format off
-    Mat3 mat_3(m(0, 0), m(0, 1), m(0, 2),
-               m(1, 0), m(1, 1), m(1, 2),
-               m(2, 0), m(2, 1), m(2, 2));
-    // clang-format on
-    setFromRotationMatrix(mat_3);
-}
-
-template <typename T>
-auto Quaternion<T>::setFromEuler(const Euler<T>& euler) -> void {
-    constexpr auto HALF = static_cast<T>(0.5);
-    auto c1 = std::cos(HALF * euler.x);
-    auto c2 = std::cos(HALF * euler.y);
-    auto c3 = std::cos(HALF * euler.z);
-
-    auto s1 = std::sin(HALF * euler.x);
-    auto s2 = std::sin(HALF * euler.y);
-    auto s3 = std::sin(HALF * euler.z);
-
-    switch (euler.order) {
-        case Euler<T>::Order::XYZ: {
-            m_Elements[1] = s1 * c2 * c3 + c1 * s2 * s3;
-            m_Elements[2] = c1 * s2 * c3 - s1 * c2 * s3;
-            m_Elements[3] = c1 * c2 * s3 + s1 * s2 * c3;
-            m_Elements[0] = c1 * c2 * c3 - s1 * s2 * s3;
-            break;
-        }
-        case Euler<T>::Order::YXZ: {
-            m_Elements[1] = s1 * c2 * c3 + c1 * s2 * s3;
-            m_Elements[2] = c1 * s2 * c3 - s1 * c2 * s3;
-            m_Elements[3] = c1 * c2 * s3 - s1 * s2 * c3;
-            m_Elements[0] = c1 * c2 * c3 + s1 * s2 * s3;
-            break;
-        }
-        case Euler<T>::Order::ZXY: {
-            m_Elements[1] = s1 * c2 * c3 - c1 * s2 * s3;
-            m_Elements[2] = c1 * s2 * c3 + s1 * c2 * s3;
-            m_Elements[3] = c1 * c2 * s3 + s1 * s2 * c3;
-            m_Elements[0] = c1 * c2 * c3 - s1 * s2 * s3;
-            break;
-        }
-        case Euler<T>::Order::ZYX: {
-            m_Elements[1] = s1 * c2 * c3 - c1 * s2 * s3;
-            m_Elements[2] = c1 * s2 * c3 + s1 * c2 * s3;
-            m_Elements[3] = c1 * c2 * s3 - s1 * s2 * c3;
-            m_Elements[0] = c1 * c2 * c3 + s1 * s2 * s3;
-            break;
-        }
-        case Euler<T>::Order::YZX: {
-            m_Elements[1] = s1 * c2 * c3 + c1 * s2 * s3;
-            m_Elements[2] = c1 * s2 * c3 + s1 * c2 * s3;
-            m_Elements[3] = c1 * c2 * s3 - s1 * s2 * c3;
-            m_Elements[0] = c1 * c2 * c3 - s1 * s2 * s3;
-            break;
-        }
-        case Euler<T>::Order::XZY: {
-            m_Elements[1] = s1 * c2 * c3 - c1 * s2 * s3;
-            m_Elements[2] = c1 * s2 * c3 - s1 * c2 * s3;
-            m_Elements[3] = c1 * c2 * s3 + s1 * s2 * c3;
-            m_Elements[0] = c1 * c2 * c3 + s1 * s2 * s3;
-            break;
-        }
-        default:
-            break;
-    }
-}
-
-template <typename T>
-auto Quaternion<T>::setFromAxisAngle(const Vec3& axis, T angle) -> void {
-    // Just in case, make sure the axis is normalized
-    normalize_in_place<T>(axis);
-
-    constexpr auto HALF = static_cast<T>(0.5);
-    auto cos_half = std::cos(HALF * angle);
-    auto sin_half = std::sin(HALF * angle);
-    m_Elements[0] = cos_half;             // w
-    m_Elements[1] = sin_half * axis.x();  // x
-    m_Elements[2] = sin_half * axis.y();  // y
-    m_Elements[3] = sin_half * axis.z();  // z
-}
-
-template <typename T>
-auto Quaternion<T>::RotationX(T angle) -> Quaternion<T> {
-    auto cos_half = std::cos(angle / static_cast<T>(2.0));
-    auto sin_half = std::sin(angle / static_cast<T>(2.0));
-    return Quaternion<T>(cos_half, sin_half, 0, 0);
-}
-
-template <typename T>
-auto Quaternion<T>::RotationY(T angle) -> Quaternion<T> {
-    auto cos_half = std::cos(angle / static_cast<T>(2.0));
-    auto sin_half = std::sin(angle / static_cast<T>(2.0));
-    return Quaternion<T>(cos_half, 0, sin_half, 0);
-}
-
-template <typename T>
-auto Quaternion<T>::RotationZ(T angle) -> Quaternion<T> {
-    auto cos_half = std::cos(angle / static_cast<T>(2.0));
-    auto sin_half = std::sin(angle / static_cast<T>(2.0));
-    return Quaternion<T>(cos_half, 0, 0, sin_half);
-}
-
-// ***************************************************************************//
 //                       Quaternion Methods and Operators                     //
 // ***************************************************************************//
 
@@ -336,6 +179,168 @@ template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
 LM_INLINE auto operator!=(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     -> bool {
     return !scalar::kernel_compare_eq_quat<T>(lhs.elements(), rhs.elements());
+}
+
+// ***************************************************************************//
+//                         Quaternion-type methods                            //
+// ***************************************************************************//
+
+template <typename T>
+auto Quaternion<T>::setFromRotationMatrix(const Mat3& m) -> void {
+    // clang-format off
+    auto m00 = m(0, 0); auto m01 = m(0, 1); auto m02 = m(0, 2);
+    auto m10 = m(1, 0); auto m11 = m(1, 1); auto m12 = m(1, 2);
+    auto m20 = m(2, 0); auto m21 = m(2, 1); auto m22 = m(2, 2);
+    // clang-format on
+
+    constexpr auto ONE = static_cast<T>(1.0);
+    constexpr auto TWO = static_cast<T>(2.0);
+    constexpr auto HALF = static_cast<T>(0.5);
+    constexpr auto QUARTER = static_cast<T>(0.25);
+
+    auto trace = m00 + m11 + m22;
+    if (trace > 0) {
+        // The trace is valid, so we can do the algebra around solving for w
+        auto s = HALF / std::sqrt(trace + ONE);
+
+        m_Elements[0] = QUARTER / s;
+        m_Elements[1] = (m21 - m12) * s;
+        m_Elements[2] = (m02 - m20) * s;
+        m_Elements[3] = (m10 - m01) * s;
+    } else if ((m00 > m11) && (m00 > m22)) {
+        // m00 is the dominant term, so do the algebra around solving for x
+        auto s = TWO * std::sqrt(ONE + m00 - m11 - m22);
+
+        m_Elements[0] = (m21 - m12) / s;
+        m_Elements[1] = QUARTER * s;
+        m_Elements[2] = (m01 + m10) / s;
+        m_Elements[3] = (m02 + m20) / s;
+    } else if (m11 > m22) {
+        // m11 is the dominant term, so do the algebra around solving for y
+        auto s = TWO * std::sqrt(ONE + m11 - m00 - m22);
+
+        m_Elements[0] = (m02 - m20) / s;
+        m_Elements[1] = (m01 + m10) / s;
+        m_Elements[2] = QUARTER * s;
+        m_Elements[3] = (m12 + m21) / s;
+    } else {
+        // m22 is the dominant term, so do the algebra around solving for z
+        auto s = TWO * std::sqrt(ONE + m22 - m00 - m11);
+
+        m_Elements[0] = (m10 - m01) / s;
+        m_Elements[1] = (m02 + m20) / s;
+        m_Elements[2] = (m12 + m21) / s;
+        m_Elements[3] = QUARTER * s;
+    }
+}
+
+template <typename T>
+auto Quaternion<T>::setFromTransform(const Mat4& m) -> void {
+    // clang-format off
+    Mat3 mat_3(m(0, 0), m(0, 1), m(0, 2),
+               m(1, 0), m(1, 1), m(1, 2),
+               m(2, 0), m(2, 1), m(2, 2));
+    // clang-format on
+    setFromRotationMatrix(mat_3);
+}
+
+template <typename T>
+auto Quaternion<T>::setFromEuler(const Euler<T>& euler) -> void {
+    constexpr auto HALF = static_cast<T>(0.5);
+    auto c1 = std::cos(HALF * euler.x);
+    auto c2 = std::cos(HALF * euler.y);
+    auto c3 = std::cos(HALF * euler.z);
+
+    auto s1 = std::sin(HALF * euler.x);
+    auto s2 = std::sin(HALF * euler.y);
+    auto s3 = std::sin(HALF * euler.z);
+
+    switch (euler.order) {
+        case Euler<T>::Order::XYZ: {
+            m_Elements[1] = s1 * c2 * c3 + c1 * s2 * s3;
+            m_Elements[2] = c1 * s2 * c3 - s1 * c2 * s3;
+            m_Elements[3] = c1 * c2 * s3 + s1 * s2 * c3;
+            m_Elements[0] = c1 * c2 * c3 - s1 * s2 * s3;
+            break;
+        }
+        case Euler<T>::Order::YXZ: {
+            m_Elements[1] = s1 * c2 * c3 + c1 * s2 * s3;
+            m_Elements[2] = c1 * s2 * c3 - s1 * c2 * s3;
+            m_Elements[3] = c1 * c2 * s3 - s1 * s2 * c3;
+            m_Elements[0] = c1 * c2 * c3 + s1 * s2 * s3;
+            break;
+        }
+        case Euler<T>::Order::ZXY: {
+            m_Elements[1] = s1 * c2 * c3 - c1 * s2 * s3;
+            m_Elements[2] = c1 * s2 * c3 + s1 * c2 * s3;
+            m_Elements[3] = c1 * c2 * s3 + s1 * s2 * c3;
+            m_Elements[0] = c1 * c2 * c3 - s1 * s2 * s3;
+            break;
+        }
+        case Euler<T>::Order::ZYX: {
+            m_Elements[1] = s1 * c2 * c3 - c1 * s2 * s3;
+            m_Elements[2] = c1 * s2 * c3 + s1 * c2 * s3;
+            m_Elements[3] = c1 * c2 * s3 - s1 * s2 * c3;
+            m_Elements[0] = c1 * c2 * c3 + s1 * s2 * s3;
+            break;
+        }
+        case Euler<T>::Order::YZX: {
+            m_Elements[1] = s1 * c2 * c3 + c1 * s2 * s3;
+            m_Elements[2] = c1 * s2 * c3 + s1 * c2 * s3;
+            m_Elements[3] = c1 * c2 * s3 - s1 * s2 * c3;
+            m_Elements[0] = c1 * c2 * c3 - s1 * s2 * s3;
+            break;
+        }
+        case Euler<T>::Order::XZY: {
+            m_Elements[1] = s1 * c2 * c3 - c1 * s2 * s3;
+            m_Elements[2] = c1 * s2 * c3 - s1 * c2 * s3;
+            m_Elements[3] = c1 * c2 * s3 + s1 * s2 * c3;
+            m_Elements[0] = c1 * c2 * c3 + s1 * s2 * s3;
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+template <typename T>
+auto Quaternion<T>::setFromAxisAngle(const Vec3& axis, T angle) -> void {
+    // Just in case, make sure the axis is normalized
+    normalize_in_place<T>(axis);
+
+    constexpr auto HALF = static_cast<T>(0.5);
+    auto cos_half = std::cos(HALF * angle);
+    auto sin_half = std::sin(HALF * angle);
+    m_Elements[0] = cos_half;             // w
+    m_Elements[1] = sin_half * axis.x();  // x
+    m_Elements[2] = sin_half * axis.y();  // y
+    m_Elements[3] = sin_half * axis.z();  // z
+}
+
+template <typename T>
+auto Quaternion<T>::RotationX(T angle) -> Quaternion<T> {
+    auto cos_half = std::cos(angle / static_cast<T>(2.0));
+    auto sin_half = std::sin(angle / static_cast<T>(2.0));
+    return Quaternion<T>(cos_half, sin_half, 0, 0);
+}
+
+template <typename T>
+auto Quaternion<T>::RotationY(T angle) -> Quaternion<T> {
+    auto cos_half = std::cos(angle / static_cast<T>(2.0));
+    auto sin_half = std::sin(angle / static_cast<T>(2.0));
+    return Quaternion<T>(cos_half, 0, sin_half, 0);
+}
+
+template <typename T>
+auto Quaternion<T>::RotationZ(T angle) -> Quaternion<T> {
+    auto cos_half = std::cos(angle / static_cast<T>(2.0));
+    auto sin_half = std::sin(angle / static_cast<T>(2.0));
+    return Quaternion<T>(cos_half, 0, 0, sin_half);
+}
+
+template <typename T>
+auto Quaternion<T>::normalized() const -> Quaternion<T> {
+    return ::math::normalize<T>(*this);
 }
 
 }  // namespace math

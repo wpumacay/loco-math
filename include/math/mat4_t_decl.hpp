@@ -15,6 +15,22 @@
 
 #include <math/vec3_t_decl.hpp>
 #include <math/vec4_t_decl.hpp>
+#include <math/mat3_t_decl.hpp>
+#include <math/euler_t_decl.hpp>
+#include <math/quat_t_decl.hpp>
+
+namespace math {
+
+template <typename Scalar_T>
+class Matrix3;
+
+template <typename Scalar_T>
+class Euler;
+
+template <typename Scalar_T>
+class Quaternion;
+
+}  // namespace math
 
 namespace math {
 
@@ -47,6 +63,12 @@ class Matrix4 {
     using BufferType = std::array<Vector4<Scalar_T>, MATRIX_SIZE>;
     /// Typename of the columns of the matrix
     using ColumnType = Vector4<Scalar_T>;
+
+    // Some related types
+    using Vec3 = Vector3<Scalar_T>;
+    using Vec4 = Vector4<Scalar_T>;
+    using Mat3 = Matrix3<Scalar_T>;
+    using Quat = Quaternion<Scalar_T>;
 
     /// Creates a zero-initialized matrix
     Matrix4() = default;
@@ -97,6 +119,42 @@ class Matrix4 {
         m_Elements[2] = col2;
         m_Elements[3] = col3;
     }
+
+    /// Constructs a transform matrix given its world position and orientation
+    /// \param[in] position The position part of the transform in world space
+    /// \param[in] rotmat A 3x3 rotation matrix representing orientation
+    explicit Matrix4(const Vec3& position, const Mat3& rotmat) {
+        setPosition(position);
+        setRotation(rotmat);
+    }
+
+    /// Constructs a transform matrix given its world position and orientation
+    /// \param[in] position The position part of the transform in world space
+    /// \param[in] quat A quaternion representing the orientation in world space
+    explicit Matrix4(const Vec3& position, const Quat& quat) {
+        setPosition(position);
+        setRotation(quat);
+    }
+
+    /// Constructs a transform matrix given its world position and orientation
+    /// \param[in] position The position part of the transform in world space
+    /// \param[in] euler A set of euler angles representing orientation
+    explicit Matrix4(const Vec3& position, const Euler<Scalar_T>& euler) {
+        setPosition(position);
+        setRotation(euler);
+    }
+
+    /// Sets the position part of this transform
+    auto setPosition(const Vec3& position) -> void;
+
+    /// Sets the rotation part of this transform from a given quaternion
+    auto setRotation(const Quat& quat) -> void;
+
+    /// Sets the rotation part of this transform from given euler angles
+    auto setRotation(const Euler<Scalar_T>& euler) -> void;
+
+    /// Sets the rotation part of this transform from a 3x3 rotation matrix
+    auto setRotation(const Mat3& mat) -> void;
 
     /// Returns a mutable reference to the underlying storage of the matrix
     auto elements() -> BufferType& { return m_Elements; }

@@ -20,7 +20,7 @@ namespace math {
 template <typename T>
 auto Matrix3<T>::setFromQuaternion(const Quat& quat) -> void {
     // Just in case, make sure the quaternion is normalized
-    auto quat_normalized = ::math::normalize(quat);
+    auto quat_normalized = quat.normalized();
 
     auto x = quat_normalized.x();
     auto y = quat_normalized.y();

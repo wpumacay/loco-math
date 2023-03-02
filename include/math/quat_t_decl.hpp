@@ -12,9 +12,9 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <math/mat4_t_decl.hpp>
-#include <math/mat3_t_decl.hpp>
 #include <math/vec3_t_decl.hpp>
+#include <math/mat3_t_decl.hpp>
+#include <math/mat4_t_decl.hpp>
 #include <math/euler_t_decl.hpp>
 
 namespace math {
@@ -118,6 +118,9 @@ class Quaternion {
 
     /// \brief Updates this quaternion with a given axes-angle pair
     auto setFromAxisAngle(const Vec3& axis, Scalar_T angle) -> void;
+
+    /// \brief Returns a normalized version of a given quaternnion
+    auto normalized() const -> Quaternion<Scalar_T>;
 
     /// Returns a mutable reference to the real w-component
     auto w() -> Scalar_T& { return m_Elements[0]; }

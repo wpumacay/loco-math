@@ -8,7 +8,44 @@
 #include <math/impl/mat4_t_sse_impl.hpp>
 #include <math/impl/mat4_t_avx_impl.hpp>
 
+#include <math/quat_t.hpp>
+#include <math/euler_t.hpp>
+#include <math/mat3_t.hpp>
+
 namespace math {
+
+template <typename T>
+auto Matrix4<T>::setPosition(const Vec3& position) -> void {
+    m_Elements[3][0] = position.x();
+    m_Elements[3][1] = position.y();
+    m_Elements[3][2] = position.z();
+    m_Elements[3][3] = static_cast<T>(1.0);
+}
+
+template <typename T>
+auto Matrix4<T>::setRotation(const Mat3& rotmat) -> void {
+    m_Elements[0][0] = rotmat(0, 0);
+    m_Elements[0][1] = rotmat(1, 0);
+    m_Elements[0][2] = rotmat(2, 0);
+
+    m_Elements[1][0] = rotmat(0, 1);
+    m_Elements[1][1] = rotmat(1, 1);
+    m_Elements[1][2] = rotmat(2, 1);
+
+    m_Elements[2][0] = rotmat(0, 2);
+    m_Elements[2][1] = rotmat(1, 2);
+    m_Elements[2][2] = rotmat(2, 2);
+}
+
+template <typename T>
+auto Matrix4<T>::setRotation(const Quat& quat) -> void {
+    setRotation(Mat3(quat));
+}
+
+template <typename T>
+auto Matrix4<T>::setRotation(const Euler<T>& euler) -> void {
+    setRotation(Mat3(euler));
+}
 
 // ***************************************************************************//
 //                       Factory functions implementation                     //

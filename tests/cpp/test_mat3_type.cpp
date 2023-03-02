@@ -15,6 +15,11 @@ constexpr double RANGE_MAX = 100.0;
     GENERATE(take(Nsamples, random(static_cast<Type>(RANGE_MIN), \
                                    static_cast<Type>(RANGE_MAX))))
 
+// NOLINTNEXTLINE
+#define GenRandomInRange(Type, Nsamples, range_min, range_max)   \
+    GENERATE(take(Nsamples, random(static_cast<Type>(range_min), \
+                                   static_cast<Type>(range_max))))
+
 template <typename T>
 constexpr auto FuncClose(T a, T b, T eps) -> bool {
     return ((a - b) < eps) && ((a - b) > -eps);
@@ -44,13 +49,15 @@ auto FuncAllClose(const math::Matrix3<T>& mat,
 TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) constructors", "[mat3_t][template]",
                    math::float32_t, math::float64_t) {
     using T = TestType;
-    using Matrix3 = math::Matrix3<T>;
-    using Vector3 = math::Vector3<T>;
+    using Vec3 = math::Vector3<T>;
+    using Euler = math::Euler<T>;
+    using Mat3 = math::Matrix3<T>;
+    using Mat4 = math::Matrix4<T>;
     using Quat = math::Quaternion<T>;
 
     // Checking all exposed constructors
     SECTION("Default constructor") {
-        Matrix3 mat;
+        Mat3 mat;
         // clang-format off
         REQUIRE(FuncAllClose<T>(mat,
                 0.0, 0.0, 0.0,
@@ -60,7 +67,7 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) constructors", "[mat3_t][template]",
     }
     SECTION("From all matrix entries") {
         // clang-format off
-        Matrix3 mat(1.0, 2.0, 3.0,
+        Mat3 mat(1.0, 2.0, 3.0,
                     4.0, 5.0, 6.0,
                     7.0, 8.0, 9.0);
 
@@ -75,7 +82,7 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) constructors", "[mat3_t][template]",
         auto x11 = GenRandomValue(T, 8);
         auto x22 = GenRandomValue(T, 8);
 
-        Matrix3 mat(x00, x11, x22);
+        Mat3 mat(x00, x11, x22);
 
         // clang-format off
         REQUIRE(FuncAllClose<T>(mat,
@@ -89,11 +96,11 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) constructors", "[mat3_t][template]",
         auto x11 = GenRandomValue(T, 8);
         auto x22 = GenRandomValue(T, 8);
 
-        Vector3 col0 = {x00, 2.0, 3.0};
-        Vector3 col1 = {4.0, x11, 6.0};
-        Vector3 col2 = {7.0, 8.0, x22};
+        Vec3 col0 = {x00, 2.0, 3.0};
+        Vec3 col1 = {4.0, x11, 6.0};
+        Vec3 col2 = {7.0, 8.0, x22};
 
-        Matrix3 mat(col0, col1, col2);
+        Mat3 mat(col0, col1, col2);
 
         // clang-format off
         REQUIRE(FuncAllClose<T>(mat,
@@ -105,13 +112,71 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) constructors", "[mat3_t][template]",
     SECTION("From quaternion") {
         // NOLINTNEXTLINE
         Quat q(1.0F, 0.0F, 0.0F, 0.0F);
-        Matrix3 mat(q);
+        Mat3 mat(q);
 
         // clang-format off
         REQUIRE(FuncAllClose<T>(mat,
-            1.0, 0.0, 0.0, // NOLINT
-            0.0, 1.0, 0.0, // NOLINT
-            0.0, 0.0, 1.0  /* NOLINT */));
+            1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0));
+        // clang-format on
+    }
+    SECTION("From Euler angles") {
+        auto theta = GenRandomInRange(T, 10, -::math::PI, ::math::PI);
+        auto cos_t = std::cos(theta);
+        auto sin_t = std::sin(theta);
+
+        Euler e_x(theta, 0.0, 0.0);
+        Euler e_y(0.0, theta, 0.0);
+        Euler e_z(0.0, 0.0, theta);
+        Mat3 mat_x(e_x);
+        Mat3 mat_y(e_y);
+        Mat3 mat_z(e_z);
+
+        // clang-format off
+        REQUIRE(FuncAllClose<T>(mat_x,
+            1.0,  0.0 ,  0.0 ,
+            0.0, cos_t, -sin_t,
+            0.0, sin_t, cos_t));
+
+        REQUIRE(FuncAllClose<T>(mat_y,
+            cos_t , 0.0,  sin_t ,
+             0.0  , 1.0,   0.0  ,
+           -sin_t , 0.0,  cos_t));
+
+        REQUIRE(FuncAllClose<T>(mat_z,
+            cos_t , -sin_t , 0.0,
+            sin_t ,  cos_t , 0.0,
+             0.0  ,   0.0  , 1.0));
+        // clang-format on
+    }
+    SECTION("From 4x4 transform matrix") {
+        auto theta = GenRandomInRange(T, 10, -::math::PI, ::math::PI);
+        auto cos_t = std::cos(theta);
+        auto sin_t = std::sin(theta);
+
+        Mat4 tf_x = Mat4::RotationX(theta);
+        Mat4 tf_y = Mat4::RotationY(theta);
+        Mat4 tf_z = Mat4::RotationZ(theta);
+        Mat3 mat_x(tf_x);
+        Mat3 mat_y(tf_y);
+        Mat3 mat_z(tf_z);
+
+        // clang-format off
+        REQUIRE(FuncAllClose<T>(mat_x,
+            1.0,  0.0 ,  0.0 ,
+            0.0, cos_t, -sin_t,
+            0.0, sin_t, cos_t));
+
+        REQUIRE(FuncAllClose<T>(mat_y,
+            cos_t , 0.0,  sin_t ,
+             0.0  , 1.0,   0.0  ,
+           -sin_t , 0.0,  cos_t));
+
+        REQUIRE(FuncAllClose<T>(mat_z,
+            cos_t , -sin_t , 0.0,
+            sin_t ,  cos_t , 0.0,
+             0.0  ,   0.0  , 1.0));
         // clang-format on
     }
 }

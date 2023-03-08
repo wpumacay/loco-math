@@ -163,13 +163,8 @@ if os.path.exists("README.md"):
     with open("README.md", "r", encoding="utf-8") as fh:
         long_description = fh.read()
 
-required_packages = []
-if os.path.exists("requirements.txt"):
-    with open("requirements.txt", "r", encoding="utf-8") as fh:
-        required_packages = [line.replace("\n", "") for line in fh.readlines()]
-
 setup(
-    name="lmath",
+    name="math3d",
     version="0.4.1",
     description="A math library for small vectors and matrices",
     long_description=long_description,
@@ -184,8 +179,8 @@ setup(
         "Operating System :: POSIX :: Linux",
     ],
     zip_safe=False,
-    install_requires=required_packages,
     package_data={},
-    ext_modules=[CMakeExtension("lmath", ".")],
+    ext_modules=[CMakeExtension("math3d", ".")],
     cmdclass={"build_ext": CMakeBuild},
+    python_requires=">=3.7",
 )

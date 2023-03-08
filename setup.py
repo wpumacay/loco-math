@@ -65,13 +65,13 @@ class CMakeBuild(build_ext):
             "-DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=ON",
             "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=OFF",
             f"-DPYTHON_EXECUTABLE={sys.executable}",
-            "-DLOCOMATH_BUILD_SSE=ON",
-            "-DLOCOMATH_BUILD_AVX=ON",
-            "-DLOCOMATH_BUILD_FORCE_INLINE=OFF",
-            "-DLOCOMATH_BUILD_PYTHON_BINDINGS=ON",
-            "-DLOCOMATH_BUILD_DOCS=OFF",
-            "-DLOCOMATH_BUILD_TESTS=OFF",
-            "-DLOCOMATH_BUILD_EXAMPLES=OFF",
+            "-DMATH_BUILD_SSE=ON",
+            "-DMATH_BUILD_AVX=ON",
+            "-DMATH_BUILD_FORCE_INLINE=OFF",
+            "-DMATH_BUILD_PYTHON_BINDINGS=ON",
+            "-DMATH_BUILD_DOCS=OFF",
+            "-DMATH_BUILD_TESTS=OFF",
+            "-DMATH_BUILD_EXAMPLES=OFF",
         ]
         build_args = []
 

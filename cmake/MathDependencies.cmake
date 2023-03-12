@@ -11,6 +11,12 @@
 #   https://github.com/deepmind/mujoco/blob/main/cmake/FindOrFetch.cmake
 # ~~~
 
+set(MATH_DEP_VERSION_catch2
+    182c910b4b63ff587a3440e08f84f70497e49a81 # Release 2.13.10
+    CACHE STRING "Version of Catch2 to be fetched (used for unittests)")
+
+mark_as_advanced(MATH_DEP_VERSION_catch2)
+
 # cmake-format: off
 # ------------------------------------------------------------------------------
 # Catch2 is used for generating unittests for our C++ codebase
@@ -20,7 +26,7 @@ loco_find_or_fetch_dependency(
   PACKAGE_NAME Catch2
   LIBRARY_NAME catch2
   GIT_REPO https://github.com/catchorg/Catch2.git
-  GIT_TAG v2.x
+  GIT_TAG ${MATH_DEP_VERSION_catch2}
   TARGETS Catch2::Catch2
   BUILD_ARGS
     -DCATCH_INSTALL_DOCS=OFF

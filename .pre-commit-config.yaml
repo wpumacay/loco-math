@@ -40,3 +40,10 @@ repos:
         args: [-i]
     -   id: clang-tidy
     -   id: cpplint
+
+# Applies formatting for python files
+-   repo: https://github.com/psf/black
+    rev: 23.1.0
+    hooks:
+    -   id: black
+        language_version: python3.10

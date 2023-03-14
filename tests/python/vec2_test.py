@@ -3,10 +3,12 @@ import pytest
 import numpy as np
 import math3d as m3d
 
+
 @pytest.mark.parametrize("VectorCls", [(m3d.Vector2f), (m3d.Vector2d)])
 def test_vec2_attrs(VectorCls):
     # Make sure we have exposed both x and y as properties
-    assert (hasattr(VectorCls, 'x')) and (hasattr(VectorCls, 'y'))
+    assert (hasattr(VectorCls, "x")) and (hasattr(VectorCls, "y"))
+
 
 @pytest.mark.parametrize("VectorCls", [(m3d.Vector2f), (m3d.Vector2d)])
 class TestVec2Constructors:
@@ -28,13 +30,15 @@ class TestVec2Constructors:
 
 def test_numpy_array_constructor_f32():
     # From a numpy array (requires same dtype)
-    vec = m3d.Vector2f(np.array([11., 23.], dtype=np.float32))
+    vec = m3d.Vector2f(np.array([11.0, 23.0], dtype=np.float32))
     assert (vec.x == 11.0) and (vec.y == 23.0)
+
 
 def test_numpy_array_constructor_f64():
     # From a numpy array (requires same dtype)
-    vec = m3d.Vector2d(np.array([11., 23.], dtype=np.float64))
+    vec = m3d.Vector2d(np.array([11.0, 23.0], dtype=np.float64))
     assert (vec.x == 11.0) and (vec.y == 23.0)
+
 
 @pytest.mark.parametrize("VectorCls", [(m3d.Vector2f), (m3d.Vector2d)])
 def test_vec2_accessors(VectorCls):
@@ -47,17 +51,18 @@ def test_vec2_accessors(VectorCls):
     vec.x, vec.y = 1.0, 2.0
     assert (vec.x == 1.0) and (vec.y == 2.0)
 
+
 @pytest.mark.parametrize("VectorCls", [(m3d.Vector2f), (m3d.Vector2d)])
 class TestVec2Operators:
     def test_comparison_operator(self, VectorCls):
         vec_a = VectorCls(1.0, 2.0)
         vec_b = VectorCls(1.0, 2.0)
         # Comparison __eq__ internally calls == operator, which uses an epsilon
-        assert (vec_a == vec_b)
+        assert vec_a == vec_b
 
-        vec_b.x, vec_b.y =1.1, 2.1
+        vec_b.x, vec_b.y = 1.1, 2.1
         # Comparison __neq__ internally calls != operator, which uses an epsilon
-        assert (vec_a != vec_b)
+        assert vec_a != vec_b
 
     def test_vector_addition(self, VectorCls):
         vec_a = VectorCls(3.0, 7.0)

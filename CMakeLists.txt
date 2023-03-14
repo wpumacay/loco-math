@@ -28,7 +28,7 @@ option(MATH_BUILD_AVX "Build using AVX SIMD-extensions support" ON)
 option(MATH_BUILD_FORCE_INLINE "Build with inlining when requested" OFF)
 option(MATH_BUILD_PYTHON_BINDINGS "Build bindings (requires Pybind11)" ON)
 option(MATH_BUILD_DOCS "Build documentation (requires Doxygen+Breathe)" OFF)
-option(MATH_BUILD_TESTS "Build C++ unit-tests (requires google-test)" ON)
+option(MATH_BUILD_TESTS "Build C++ unit-tests (requires Catch2)" ON)
 option(MATH_BUILD_EXAMPLES "Build C++ examples" ON)
 
 # -------------------------------------

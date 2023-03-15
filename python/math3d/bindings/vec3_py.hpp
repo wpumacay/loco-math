@@ -48,6 +48,9 @@ auto bindings_vector3(py::module& m, const char* class_name) -> void {
             VECTOR_PROPERTY(z)
             VECTOR_OPERATORS(T)
             VECTOR_METHODS(T)
+            .def("cross", [](const Class& self, const Class& other) -> Class {
+                return ::math::cross<T>(self, other);
+            })
             VECTOR_GETSET_ITEM(3, T)
             // clant-format on
             // NOLINTNEXTLINE

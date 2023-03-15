@@ -171,6 +171,9 @@
     })                                                                  \
     .def("__neq__", [](const Class& lhs, const Class& rhs) -> bool {    \
         return lhs != rhs;                                              \
+    })                                                                  \
+    .def("__neg__", [](const Class& self) -> Class {                    \
+        return -self;                                                   \
     })
 
 #define MATRIX_OPERATORS(Type)                                              \

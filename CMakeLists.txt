@@ -15,7 +15,7 @@ include(${loco_cmake_SOURCE_DIR}/Index.cmake)
 # -------------------------------------
 # Define our project :)
 project(
-  Math
+  Math3d
   VERSION 0.4.1
   DESCRIPTION "A basic math library for spatial algebra"
   HOMEPAGE_URL "https://github.com/wpumacay/math"
@@ -120,7 +120,7 @@ endif()
 # -------------------------------------
 # Add Python bindings to the build process
 if(MATH_BUILD_PYTHON_BINDINGS)
-  add_subdirectory(python/math)
+  add_subdirectory(python/math3d)
 endif()
 
 # -------------------------------------

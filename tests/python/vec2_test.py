@@ -91,3 +91,27 @@ class TestVec2Operators:
         assert (vec_scaled.x == 14.0) and (vec_scaled.y == 28.0)
         vec_scaled = scale * vec
         assert (vec_scaled.x == 14.0) and (vec_scaled.y == 28.0)
+
+
+@pytest.mark.parametrize(
+    "Class,FloatType", [(m3d.Vector2f, np.float32), (m3d.Vector2d, np.float64)]
+)
+class TestVec2Methods:
+    def test_length(self, Class: Vector2Cls, FloatType) -> None:
+        vec = Class(3.0, 4.0)
+        assert (vec.norm() == 5.0) and (vec.squareNorm() == 25.0)
+
+    def test_normalize_in_place(self, Class: Vector2Cls, FloatType) -> None:
+        vec = Class(3.0, 4.0)
+        vec.normalize_()
+        assert np.abs(vec.x - 0.6) < 1e-5 and np.abs(vec.y - 0.8) < 1e-5
+
+    def test_normalize(self, Class: Vector2Cls, FloatType) -> None:
+        vec = Class(3.0, 4.0)
+        vec_n = vec.normalize()
+        assert np.abs(vec_n.x - 0.6) < 1e-5 and np.abs(vec_n.y - 0.8) < 1e-5
+
+    def test_dot_product(self, Class: Vector2Cls, FloatType) -> None:
+        vec_a = Class(3.0, 5.0)
+        vec_b = Class(7.0, 11.0)
+        assert vec_a.dot(vec_b) == 76.0

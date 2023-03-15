@@ -28,16 +28,20 @@ class TestVec2Constructors:
         assert (vec.x == 1.0) and (vec.y == 2.0)
 
 
-def test_numpy_array_constructor_f32():
+@pytest.mark.parametrize(
+    "VectorCls,FloatType", [(m3d.Vector2f, np.float32), (m3d.Vector2d, np.float64)]
+)
+def test_numpy_array_constructor_f32(VectorCls, FloatType):
     # From a numpy array (requires same dtype)
-    vec = m3d.Vector2f(np.array([11.0, 23.0], dtype=np.float32))
-    assert (vec.x == 11.0) and (vec.y == 23.0)
+    vec_np = np.array([19.0, 23.0])
+    vec = VectorCls(vec_np.astype(FloatType))
+    assert (vec.x == 19.0) and (vec.y == 23.0)
 
+    vec = VectorCls(vec_np.reshape(1, 2).astype(FloatType))
+    assert (vec.x == 19.0) and (vec.y == 23.0)
 
-def test_numpy_array_constructor_f64():
-    # From a numpy array (requires same dtype)
-    vec = m3d.Vector2d(np.array([11.0, 23.0], dtype=np.float64))
-    assert (vec.x == 11.0) and (vec.y == 23.0)
+    vec = VectorCls(vec_np.reshape(2, 1).astype(FloatType))
+    assert (vec.x == 19.0) and (vec.y == 23.0)
 
 
 @pytest.mark.parametrize("VectorCls", [(m3d.Vector2f), (m3d.Vector2d)])

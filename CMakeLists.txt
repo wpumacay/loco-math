@@ -120,7 +120,7 @@ endif()
 # -------------------------------------
 # Add Python bindings to the build process
 if(MATH_BUILD_PYTHON_BINDINGS)
-  add_subdirectory(python/math3d)
+  add_subdirectory(python/math3d/bindings)
 endif()
 
 # -------------------------------------

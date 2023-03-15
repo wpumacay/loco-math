@@ -34,6 +34,7 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) constructors",
     using T = TestType;
     using Quat = math::Quaternion<T>;
     using Euler = math::Euler<T>;
+    using Mat3 = math::Matrix3<T>;
 
     SECTION("Default constructor") {
         Quat q;
@@ -44,7 +45,7 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) constructors",
         constexpr int NUM_SAMPLES = 32;
         auto val_w = GenRandomValue(T, NUM_SAMPLES);
 
-        Quat q(val_w);
+        Quat q(val_w);  // Real valued quaternion
         FuncAllClose<T>(q, val_w, 0.0, 0.0, 0.0);
     }
 
@@ -59,6 +60,41 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) constructors",
         Quat q_2 = {val_w, val_x, val_y, val_z};
         FuncAllClose<T>(q_1, val_w, val_x, val_y, val_z);
         FuncAllClose<T>(q_2, val_w, val_x, val_y, val_z);
+    }
+
+    SECTION("From rotation matrix") {
+        // rot = Rot_x(t)
+        // q = (cos(t/2), sin(t/2), 0.0, 0.0)
+        {
+            auto angle = ::math::PI / 4.0;
+            auto rotmat = Mat3::RotationX(angle);
+            Quat q(rotmat);
+            auto cos_half = std::cos(angle / 2.0);
+            auto sin_half = std::sin(angle / 2.0);
+            REQUIRE(FuncAllClose<T>(q, cos_half, sin_half, 0.0, 0.0));
+        }
+
+        // rot = Rot_y(t)
+        // q = (cos(t/2), 0.0, sin(t/2), 0.0)
+        {
+            auto angle = ::math::PI / 4.0;
+            auto rotmat = Mat3::RotationY(angle);
+            Quat q(rotmat);
+            auto cos_half = std::cos(angle / 2.0);
+            auto sin_half = std::sin(angle / 2.0);
+            REQUIRE(FuncAllClose<T>(q, cos_half, 0.0, sin_half, 0.0));
+        }
+
+        // rot = Rot_z(t)
+        // q = (cos(t/2), 0.0, 0.0, sin(t/2))
+        {
+            auto angle = ::math::PI / 4.0;
+            auto rotmat = Mat3::RotationZ(angle);
+            Quat q(rotmat);
+            auto cos_half = std::cos(angle / 2.0);
+            auto sin_half = std::sin(angle / 2.0);
+            REQUIRE(FuncAllClose<T>(q, cos_half, 0.0, 0.0, sin_half));
+        }
     }
 
     SECTION("From Euler angles") {

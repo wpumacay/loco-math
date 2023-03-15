@@ -55,7 +55,7 @@ def test_numpy_array_constructor(Class: Vector3Cls, FloatType):
 
 @pytest.mark.parametrize("Class", [(m3d.Vector3f), (m3d.Vector3d)])
 def test_vec3_accessors(Class: Vector3Cls) -> None:
-    # Can get both x, y as properties
+    # Can get x, y, and z as properties
     vec = Class(3.0, 7.0, 11.0)
     assert (vec.x == 3.0) and (vec.y == 7.0) and (vec.z == 11.0)
     # Can get elements using __getitem__ as well

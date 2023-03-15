@@ -20,6 +20,7 @@ Testing/
 .vscode
 *.sublime-project
 *.sublime-workspace
+pyrightconfig.json
 
 # Exclude temporary folders
 *.egg-info/

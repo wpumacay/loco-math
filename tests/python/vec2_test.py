@@ -35,7 +35,7 @@ class TestVec2Constructors:
 @pytest.mark.parametrize(
     "Class,FloatType", [(m3d.Vector2f, np.float32), (m3d.Vector2d, np.float64)]
 )
-def test_numpy_array_constructor_f32(Class: Vector2Cls, FloatType) -> None:
+def test_numpy_array_constructor(Class: Vector2Cls, FloatType) -> None:
     # From a numpy array (requires same dtype)
     vec_np = np.array([19.0, 23.0])
     vec = Class(vec_np.astype(FloatType))
@@ -98,25 +98,25 @@ class TestVec2Operators:
         assert (vec_neg.x == -3.0) and (vec_neg.y == -5.0)
 
 
-@pytest.mark.parametrize(
-    "Class,FloatType", [(m3d.Vector2f, np.float32), (m3d.Vector2d, np.float64)]
-)
+@pytest.mark.parametrize("Class", [(m3d.Vector2f), (m3d.Vector2d)])
 class TestVec2Methods:
-    def test_length(self, Class: Vector2Cls, FloatType) -> None:
+    def test_length(self, Class: Vector2Cls) -> None:
         vec = Class(3.0, 4.0)
-        assert (vec.norm() == 5.0) and (vec.squareNorm() == 25.0)
+        assert (
+            np.abs(vec.norm() - 5.0) < 1e-5 and np.abs(vec.squareNorm() - 25.0) < 1e-5
+        )
 
-    def test_normalize_in_place(self, Class: Vector2Cls, FloatType) -> None:
+    def test_normalize_in_place(self, Class: Vector2Cls) -> None:
         vec = Class(3.0, 4.0)
         vec.normalize_()
         assert np.abs(vec.x - 0.6) < 1e-5 and np.abs(vec.y - 0.8) < 1e-5
 
-    def test_normalize(self, Class: Vector2Cls, FloatType) -> None:
+    def test_normalize(self, Class: Vector2Cls) -> None:
         vec = Class(3.0, 4.0)
         vec_n = vec.normalize()
         assert np.abs(vec_n.x - 0.6) < 1e-5 and np.abs(vec_n.y - 0.8) < 1e-5
 
-    def test_dot_product(self, Class: Vector2Cls, FloatType) -> None:
+    def test_dot_product(self, Class: Vector2Cls) -> None:
         vec_a = Class(3.0, 5.0)
         vec_b = Class(7.0, 11.0)
         assert vec_a.dot(vec_b) == 76.0

@@ -37,16 +37,17 @@ auto FuncAllClose(const math::Quaternion<T>& quat, T w, T x, T y, T z) -> bool {
 TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
                    math::float32_t, math::float64_t) {
     using T = TestType;
-    using Quaternion = math::Quaternion<T>;
+    using Quat = math::Quaternion<T>;
+    using Vec3 = ::math::Vector3<T>;
 
     constexpr T EPSILON = static_cast<T>(math::EPS);
 
     SECTION("Quaternion comparison ==, !=") {
         // Checking a fixed test case ******************************************
-        Quaternion q_1(4.0, 1.0, 2.0, 3.0);
-        Quaternion q_2(4.0, 1.0, 2.0, 3.0);
-        Quaternion q_3(static_cast<T>(4.1), static_cast<T>(1.1),
-                       static_cast<T>(2.1), static_cast<T>(3.1));
+        Quat q_1(4.0, 1.0, 2.0, 3.0);
+        Quat q_2(4.0, 1.0, 2.0, 3.0);
+        Quat q_3(static_cast<T>(4.1), static_cast<T>(1.1), static_cast<T>(2.1),
+                 static_cast<T>(3.1));
 
         REQUIRE(q_1 == q_2);
         REQUIRE(q_2 != q_3);
@@ -63,8 +64,8 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         auto val_y_b = GenRandomValue(T, 2);
         auto val_z_b = GenRandomValue(T, 2);
 
-        Quaternion q_a(val_w_a, val_x_a, val_y_a, val_z_a);
-        Quaternion q_b(val_w_b, val_x_b, val_y_b, val_z_b);
+        Quat q_a(val_w_a, val_x_a, val_y_a, val_z_a);
+        Quat q_b(val_w_b, val_x_b, val_y_b, val_z_b);
 
         auto equal_a_b_lib = (q_a == q_b);
         // clang-format off
@@ -92,8 +93,8 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         auto val_y_b = GenRandomValue(T, 2);
         auto val_z_b = GenRandomValue(T, 2);
 
-        Quaternion q_a(val_w_a, val_x_a, val_y_a, val_z_a);
-        Quaternion q_b(val_w_b, val_x_b, val_y_b, val_z_b);
+        Quat q_a(val_w_a, val_x_a, val_y_a, val_z_a);
+        Quat q_b(val_w_b, val_x_b, val_y_b, val_z_b);
         auto q_sum = q_a + q_b;
 
         // clang-format off
@@ -116,8 +117,8 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         auto val_y_b = GenRandomValue(T, 2);
         auto val_z_b = GenRandomValue(T, 2);
 
-        Quaternion q_a(val_w_a, val_x_a, val_y_a, val_z_a);
-        Quaternion q_b(val_w_b, val_x_b, val_y_b, val_z_b);
+        Quat q_a(val_w_a, val_x_a, val_y_a, val_z_a);
+        Quat q_b(val_w_b, val_x_b, val_y_b, val_z_b);
         auto q_sum = q_a - q_b;
 
         // clang-format off
@@ -140,8 +141,8 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         auto b_y = GenRandomValue(T, 2);
         auto b_z = GenRandomValue(T, 2);
 
-        Quaternion q_a(a_w, a_x, a_y, a_z);
-        Quaternion q_b(b_w, b_x, b_y, b_z);
+        Quat q_a(a_w, a_x, a_y, a_z);
+        Quat q_b(b_w, b_x, b_y, b_z);
         auto q_prod = q_a * q_b;
 
         // clang-format off
@@ -160,7 +161,7 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         auto val_z = GenRandomValue(T, 4);
         auto scale = GenRandomValue(T, 4);
 
-        Quaternion q(val_w, val_x, val_y, val_z);
+        Quat q(val_w, val_x, val_y, val_z);
         auto q_1 = static_cast<double>(scale) * q;
         auto q_2 = q * static_cast<double>(scale);
 
@@ -183,7 +184,7 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         auto val_x = GenRandomValue(T, 4);
         auto val_y = GenRandomValue(T, 4);
         auto val_z = GenRandomValue(T, 4);
-        Quaternion q(val_w, val_x, val_y, val_z);
+        Quat q(val_w, val_x, val_y, val_z);
 
         auto length = std::sqrt(val_w * val_w + val_x * val_x + val_y * val_y +
                                 val_z * val_z);
@@ -206,7 +207,7 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         auto val_x = GenRandomValue(T, 4);
         auto val_y = GenRandomValue(T, 4);
         auto val_z = GenRandomValue(T, 4);
-        Quaternion q(val_w, val_x, val_y, val_z);
+        Quat q(val_w, val_x, val_y, val_z);
         math::normalize_in_place(q);
 
         auto norm = std::sqrt(val_w * val_w + val_x * val_x + val_y * val_y +
@@ -227,7 +228,7 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         auto val_x = GenRandomValue(T, 4);
         auto val_y = GenRandomValue(T, 4);
         auto val_z = GenRandomValue(T, 4);
-        Quaternion q(val_w, val_x, val_y, val_z);
+        Quat q(val_w, val_x, val_y, val_z);
         auto qn = math::normalize(q);
 
         auto norm = std::sqrt(val_w * val_w + val_x * val_x + val_y * val_y +
@@ -249,7 +250,7 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         auto val_x = GenRandomValue(T, 4);
         auto val_y = GenRandomValue(T, 4);
         auto val_z = GenRandomValue(T, 4);
-        Quaternion q(val_w, val_x, val_y, val_z);
+        Quat q(val_w, val_x, val_y, val_z);
 
         auto q_conj = math::conjugate<T>(q);
         REQUIRE(FuncAllClose<T>(q_conj, val_w, -val_x, -val_y, -val_z));
@@ -260,7 +261,7 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
         auto val_x = GenRandomValue(T, 4);
         auto val_y = GenRandomValue(T, 4);
         auto val_z = GenRandomValue(T, 4);
-        Quaternion q(val_w, val_x, val_y, val_z);
+        Quat q(val_w, val_x, val_y, val_z);
 
         auto length_sq =
             val_w * val_w + val_x * val_x + val_y * val_y + val_z * val_z;
@@ -271,5 +272,20 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) core Operations", "[quat_t][ops]",
 
         auto q_inv = math::inverse<T>(q);
         REQUIRE(FuncAllClose<T>(q_inv, qinv_w, qinv_x, qinv_y, qinv_z));
+    }
+
+    SECTION("Quaternion as rotations") {
+        // Check the rotation of the basis vectors around each of the three axes
+        Vec3 vec_i(1.0, 0.0, 0.0);
+        Vec3 vec_j(0.0, 1.0, 0.0);
+        Vec3 vec_k(0.0, 0.0, 1.0);
+
+        auto q_x = Quat::RotationX(static_cast<T>(::math::PI / 2.0));
+        auto q_y = Quat::RotationY(static_cast<T>(::math::PI / 2.0));
+        auto q_z = Quat::RotationZ(static_cast<T>(::math::PI / 2.0));
+
+        REQUIRE(vec_j == ::math::rotate<T>(q_z, vec_i));
+        REQUIRE(vec_k == ::math::rotate<T>(q_x, vec_j));
+        REQUIRE(vec_i == ::math::rotate<T>(q_y, vec_k));
     }
 }

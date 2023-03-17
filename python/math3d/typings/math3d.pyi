@@ -125,7 +125,7 @@ Vector4d = Vector4
 
 class Quaternion:
     def __init__(
-        self, *args: Union[float, ndarray], **kwargs: Union[float, ndarray]
+        self, *args: Union[float, ndarray, list[float]], **kwargs: Union[float, ndarray]
     ): ...
     @property
     def w(self) -> float: ...
@@ -163,3 +163,7 @@ class Quaternion:
     def RotationY(angle: float) -> Quaternion: ...
     @staticmethod
     def RotationZ(angle: float) -> Quaternion: ...
+
+# Structure should be the same, except for the internal usage of f32 and f64
+Quaternionf = Quaternion
+Quaterniond = Quaternion

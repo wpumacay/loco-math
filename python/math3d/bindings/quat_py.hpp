@@ -129,6 +129,8 @@ auto bindings_quaternion(py::module& m, const char* class_name) -> void {
         .def_static("RotationY", &Class::RotationY)
         .def_static("RotationZ", &Class::RotationZ)
         .def("length", [](const Class& self) -> T { return norm<T>(self); })
+        .def("lengthSquare",
+             [](const Class& self) -> T { return ::math::squareNorm<T>(self); })
         .def("normalize",
              [](const Class& self) -> Class { return normalize<T>(self); })
         .def("normalize_",

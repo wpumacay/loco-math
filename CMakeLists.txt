@@ -63,6 +63,7 @@ loco_create_target(MathCpp INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include/math/mat3_t.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/math/mat4_t_decl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/math/mat4_t.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/math/pose3d_t_decl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/math/impl/vec2_t_scalar_impl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/math/impl/vec2_t_sse_impl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/math/impl/vec3_t_scalar_impl.hpp

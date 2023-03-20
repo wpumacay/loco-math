@@ -170,6 +170,12 @@ LM_INLINE auto rotate(const Quaternion<T>& quat, const Vector3<T>& vec)
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+LM_INLINE auto operator*(const Quaternion<T>& quat, const Vector3<T>& vec)
+    -> Vector3<T> {
+    return ::math::rotate<T>(quat, vec);
+}
+
+template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
 LM_INLINE auto operator==(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     -> bool {
     return scalar::kernel_compare_eq_quat<T>(lhs.elements(), rhs.elements());
@@ -315,6 +321,21 @@ auto Quaternion<T>::setFromAxisAngle(const Vec3& axis, T angle) -> void {
     m_Elements[1] = sin_half * axis.x();  // x
     m_Elements[2] = sin_half * axis.y();  // y
     m_Elements[3] = sin_half * axis.z();  // z
+}
+
+template <typename T>
+auto Quaternion<T>::conjugate() const -> Quaternion<T> {
+    return ::math::conjugate<T>(*this);
+}
+
+template <typename T>
+auto Quaternion<T>::inverse() const -> Quaternion<T> {
+    return ::math::inverse<T>(*this);
+}
+
+template <typename T>
+auto Quaternion<T>::rotate(const Vector3<T>& vec) const -> Vector3<T> {
+    return ::math::rotate<T>(vec);
 }
 
 template <typename T>

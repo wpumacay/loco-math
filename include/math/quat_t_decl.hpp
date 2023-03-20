@@ -119,6 +119,15 @@ class Quaternion {
     /// \brief Updates this quaternion with a given axes-angle pair
     auto setFromAxisAngle(const Vec3& axis, Scalar_T angle) -> void;
 
+    /// \brief Returns the conjugate of this quaternion
+    auto conjugate() const -> Quaternion<Scalar_T>;
+
+    /// \brief Returns the inverse of this quaternion
+    auto inverse() const -> Quaternion<Scalar_T>;
+
+    /// \brief Rotates the given vector using this quaternion
+    auto rotate(const Vec3& vec) const -> Vec3;
+
     /// \brief Normalizes this quaternion in place
     auto normalize() -> void;
 

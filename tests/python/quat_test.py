@@ -3,10 +3,21 @@ import pytest
 import numpy as np
 import math3d as m3d
 
-from typing import Type, Union
+from typing import Type, Union, List
 
 QuaternionCls = Type[Union[m3d.Quaternionf, m3d.Quaterniond]]
 Vector3Cls = Type[Union[m3d.Vector3f, m3d.Vector3d]]
+
+Quaternion = Union[m3d.Quaternionf, m3d.Quaterniond]
+
+
+def quat_all_close(quat: Quaternion, q_list: List[float], tol: float = 1e-5) -> bool:
+    return (
+        np.abs(quat.w - q_list[0]) < tol
+        and np.abs(quat.x - q_list[1]) < tol
+        and np.abs(quat.y - q_list[2]) < tol
+        and np.abs(quat.z - q_list[3]) < tol
+    )
 
 
 @pytest.mark.parametrize("Quat", [(m3d.Quaternionf), (m3d.Quaterniond)])
@@ -175,6 +186,21 @@ class TestQuatMethods:
         assert np.abs(q_inv.x + x / norm_square) < EPSILON
         assert np.abs(q_inv.y + y / norm_square) < EPSILON
         assert np.abs(q_inv.z + z / norm_square) < EPSILON
+
+
+@pytest.mark.parametrize("Quat", [(m3d.Quaternionf), (m3d.Quaterniond)])
+def test_quat_factory_functions(Quat: QuaternionCls) -> None:
+    # Create quaternions using RotationXYZ functions, and check the
+    # implementation works as expected
+    theta, epsilon = np.pi / 2.0, 1e-5
+    cos_half_t, sin_half_t = np.cos(theta / 2.0), np.sin(theta / 2.0)
+    q_rot_x = Quat.RotationX(theta)
+    q_rot_y = Quat.RotationY(theta)
+    q_rot_z = Quat.RotationZ(theta)
+
+    assert quat_all_close(q_rot_x, [cos_half_t, sin_half_t, 0.0, 0.0], epsilon)
+    assert quat_all_close(q_rot_y, [cos_half_t, 0.0, sin_half_t, 0.0], epsilon)
+    assert quat_all_close(q_rot_z, [cos_half_t, 0.0, 0.0, sin_half_t], epsilon)
 
 
 @pytest.mark.parametrize(

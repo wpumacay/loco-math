@@ -318,6 +318,26 @@ auto Quaternion<T>::setFromAxisAngle(const Vec3& axis, T angle) -> void {
 }
 
 template <typename T>
+auto Quaternion<T>::normalize() -> void {
+    ::math::normalize_in_place<T>(*this);
+}
+
+template <typename T>
+auto Quaternion<T>::normalized() const -> Quaternion<T> {
+    return ::math::normalize<T>(*this);
+}
+
+template <typename T>
+auto Quaternion<T>::lengthSquare() const -> T {
+    return ::math::squareNorm<T>(*this);
+}
+
+template <typename T>
+auto Quaternion<T>::length() const -> T {
+    return ::math::norm<T>(*this);
+}
+
+template <typename T>
 auto Quaternion<T>::RotationX(T angle) -> Quaternion<T> {
     auto cos_half = std::cos(angle / static_cast<T>(2.0));
     auto sin_half = std::sin(angle / static_cast<T>(2.0));
@@ -336,11 +356,6 @@ auto Quaternion<T>::RotationZ(T angle) -> Quaternion<T> {
     auto cos_half = std::cos(angle / static_cast<T>(2.0));
     auto sin_half = std::sin(angle / static_cast<T>(2.0));
     return Quaternion<T>(cos_half, 0, 0, sin_half);
-}
-
-template <typename T>
-auto Quaternion<T>::normalized() const -> Quaternion<T> {
-    return ::math::normalize<T>(*this);
 }
 
 }  // namespace math

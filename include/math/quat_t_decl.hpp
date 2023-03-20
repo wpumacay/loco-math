@@ -119,8 +119,17 @@ class Quaternion {
     /// \brief Updates this quaternion with a given axes-angle pair
     auto setFromAxisAngle(const Vec3& axis, Scalar_T angle) -> void;
 
+    /// \brief Normalizes this quaternion in place
+    auto normalize() -> void;
+
     /// \brief Returns a normalized version of a given quaternnion
     auto normalized() const -> Quaternion<Scalar_T>;
+
+    /// \brief Returns the square of the norm of this quaternion
+    auto lengthSquare() const -> Scalar_T;
+
+    /// \brief Returns the norm of this quaternion
+    auto length() const -> Scalar_T;
 
     /// Returns a mutable reference to the real w-component
     auto w() -> Scalar_T& { return m_Elements[0]; }

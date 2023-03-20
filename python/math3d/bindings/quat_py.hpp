@@ -26,11 +26,15 @@ using SFINAE_QUAT_BINDINGS = typename std::enable_if<IsScalar<T>::value>::type*;
 template <typename T, SFINAE_QUAT_BINDINGS<T> = nullptr>
 // NOLINTNEXTLINE
 auto bindings_quaternion(py::module& m, const char* class_name) -> void {
+    // using Vec3 = Vector3<T>;
+    using Mat3 = Matrix3<T>;
+
     using Class = Quaternion<T>;
     py::class_<Class>(m, class_name, py::buffer_protocol())
         .def(py::init<>())
         .def(py::init<T>())
         .def(py::init<T, T, T, T>())
+        .def(py::init<Mat3>())
         .def(py::init([](const py::array_t<T>& array_np) -> Class {
             auto array_buffer_info = array_np.request();
             if (array_buffer_info.size != Quaternion<T>::QUAT_SIZE) {

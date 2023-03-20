@@ -145,7 +145,7 @@ auto Matrix3<T>::Zeros() -> Matrix3<T> {
 }
 
 // ***************************************************************************//
-//                       Matrix Methods implementation                        //
+//                     Matrix Operations and Functions                        //
 // ***************************************************************************//
 
 template <typename T>
@@ -293,6 +293,20 @@ auto operator>>(std::istream& input_stream, Matrix3<T>& dst) -> std::istream& {
         dst(2, 2) = mat[8];  // NOLINT
     }
     return input_stream;
+}
+
+// ***************************************************************************//
+//                       Matrix Methods implementation                        //
+// ***************************************************************************//
+
+template <typename T>
+LM_INLINE auto Matrix3<T>::operator*(const Vector3<T>& rhs) -> Vector3<T> {
+    return ::math::operator*(*this, rhs);
+}
+
+template <typename T>
+LM_INLINE auto Matrix3<T>::operator*(const Matrix3<T>& rhs) -> Matrix3<T> {
+    return ::math::operator*(*this, rhs);
 }
 
 }  // namespace math

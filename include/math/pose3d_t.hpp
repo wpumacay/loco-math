@@ -19,19 +19,22 @@ Pose3d<T>::Pose3d(const Vec3& pos, const Quat& quat) {
 template <typename T>
 Pose3d<T>::Pose3d(const Vec3& pos, const Euler<T>& euler) {
     this->position = pos;
-    this->orientation.setFromEuler(euler).normalized();
+    this->orientation.setFromEuler(euler);
+    this->orientation.normalize();
 }
 
 template <typename T>
 Pose3d<T>::Pose3d(const Vec3& pos, const Mat3& rotmat) {
     this->position = pos;
-    this->orientation.setFromRotationMatrix(rotmat).normalized();
+    this->orientation.setFromRotationMatrix(rotmat);
+    this->orientation.normalize();
 }
 
 template <typename T>
 Pose3d<T>::Pose3d(const Mat4& transform) {
     this->position = Vec3(transform[3]);
-    this->orientation.setFromRotationMatrix(Mat3(transform)).normalized();
+    this->orientation.setFromRotationMatrix(Mat3(transform));
+    this->orientation.normalize();
 }
 
 template <typename T>

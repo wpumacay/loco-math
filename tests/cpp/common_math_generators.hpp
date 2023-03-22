@@ -31,6 +31,10 @@ class RandomValueBase : public Catch::Generators::IGenerator<V> {
 //                        Generators for Vector types                         //
 //****************************************************************************//
 
+//-------------------//
+// Custom Generators //
+//-------------------//
+
 template <typename T>
 class RandomVec2Generator : public RandomValueBase<T, Vector2<T>> {
  public:
@@ -69,6 +73,10 @@ class RandomVec4Generator : public RandomValueBase<T, Vector4<T>> {
     }
 };
 
+//--------------------//
+// Generator wrappers //
+//--------------------//
+
 template <typename T>
 auto random_vec2(T val_range_min = static_cast<T>(-1.0),
                  T val_range_max = static_cast<T>(1.0))
@@ -100,6 +108,10 @@ auto random_vec4(T val_range_min = static_cast<T>(-1.0),
 //                      Generators for Quaternion type                        //
 //****************************************************************************//
 
+//-------------------//
+// Custom Generators //
+//-------------------//
+
 template <typename T>
 class RandomQuaternion : public RandomValueBase<T, Quaternion<T>> {
  public:
@@ -113,9 +125,134 @@ class RandomQuaternion : public RandomValueBase<T, Quaternion<T>> {
 };
 
 template <typename T>
+class RandomUnitQuaternion : public RandomValueBase<T, Quaternion<T>> {
+ public:
+    RandomUnitQuaternion() : RandomValueBase<T, Quaternion<T>>(-1.0, 1.0) {}
+
+    auto next() -> bool override {
+        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
+                         this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen)};
+        this->m_Value.normalize();
+        return true;
+    }
+};
+
+//--------------------//
+// Generator wrappers //
+//--------------------//
+
+template <typename T>
 auto random_quaternion() -> Catch::Generators::GeneratorWrapper<Quaternion<T>> {
     return Catch::Generators::GeneratorWrapper<Quaternion<T>>(
         Catch::Generators::pf::make_unique<RandomQuaternion<T>>());
+}
+
+template <typename T>
+auto random_unit_quaternion()
+    -> Catch::Generators::GeneratorWrapper<Quaternion<T>> {
+    return Catch::Generators::GeneratorWrapper<Quaternion<T>>(
+        Catch::Generators::pf::make_unique<RandomUnitQuaternion<T>>());
+}
+
+//****************************************************************************//
+//                       Generators for Matrix3 types                         //
+//****************************************************************************//
+
+//-------------------//
+// Custom Generators //
+//-------------------//
+
+template <typename T>
+class RandomMatrix3 : public RandomValueBase<T, Matrix3<T>> {
+ public:
+    RandomMatrix3(T range_min, T range_max)
+        : RandomValueBase<T, Matrix3<T>>(range_min, range_max) {}
+
+    auto next() -> bool override {
+        this->m_Value =
+            Matrix3<T>(this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
+                       this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
+                       this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
+                       this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
+                       this->m_Dist(this->m_Gen));
+        return true;
+    }
+};
+
+template <typename T>
+class RandomRotationXMatrix3 : public RandomValueBase<T, Matrix3<T>> {
+ public:
+    RandomRotationXMatrix3(T angle_min, T angle_max)
+        : RandomValueBase<T, Matrix3<T>>(angle_min, angle_max) {}
+
+    auto next() -> bool override {
+        this->m_Value = Matrix3<T>::RotationX(this->m_Dist(this->m_Gen));
+        return true;
+    }
+};
+
+template <typename T>
+class RandomRotationYMatrix3 : public RandomValueBase<T, Matrix3<T>> {
+ public:
+    RandomRotationYMatrix3(T angle_min, T angle_max)
+        : RandomValueBase<T, Matrix3<T>>(angle_min, angle_max) {}
+
+    auto next() -> bool override {
+        this->m_Value = Matrix3<T>::RotationY(this->m_Dist(this->m_Gen));
+        return true;
+    }
+};
+
+template <typename T>
+class RandomRotationZMatrix3 : public RandomValueBase<T, Matrix3<T>> {
+ public:
+    RandomRotationZMatrix3(T angle_min, T angle_max)
+        : RandomValueBase<T, Matrix3<T>>(angle_min, angle_max) {}
+
+    auto next() -> bool override {
+        this->m_Value = Matrix3<T>::RotationZ(this->m_Dist(this->m_Gen));
+        return true;
+    }
+};
+
+//--------------------//
+// Generator wrappers //
+//--------------------//
+
+template <typename T>
+auto random_mat3(T val_range_min = static_cast<T>(-10.0),
+                 T val_range_max = static_cast<T>(10.0))
+    -> Catch::Generators::GeneratorWrapper<Matrix3<T>> {
+    return Catch::Generators::GeneratorWrapper<Matrix3<T>>(
+        Catch::Generators::pf::make_unique<RandomMatrix3<T>>(val_range_min,
+                                                             val_range_max));
+}
+
+template <typename T>
+auto random_rotx_mat3(T angle_min = static_cast<T>(-::math::PI),
+                      T angle_max = static_cast<T>(::math::PI))
+    -> Catch::Generators::GeneratorWrapper<Matrix3<T>> {
+    return Catch::Generators::GeneratorWrapper<Matrix3<T>>(
+        Catch::Generators::pf::make_unique<RandomRotationXMatrix3<T>>(
+            angle_min, angle_max));
+}
+
+template <typename T>
+auto random_roty_mat3(T angle_min = static_cast<T>(-::math::PI),
+                      T angle_max = static_cast<T>(::math::PI))
+    -> Catch::Generators::GeneratorWrapper<Matrix3<T>> {
+    return Catch::Generators::GeneratorWrapper<Matrix3<T>>(
+        Catch::Generators::pf::make_unique<RandomRotationYMatrix3<T>>(
+            angle_min, angle_max));
+}
+
+template <typename T>
+auto random_rotz_mat3(T angle_min = static_cast<T>(-::math::PI),
+                      T angle_max = static_cast<T>(::math::PI))
+    -> Catch::Generators::GeneratorWrapper<Matrix3<T>> {
+    return Catch::Generators::GeneratorWrapper<Matrix3<T>>(
+        Catch::Generators::pf::make_unique<RandomRotationZMatrix3<T>>(
+            angle_min, angle_max));
 }
 
 }  // namespace math

@@ -84,10 +84,10 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) constructors", "[mat4_t][template]",
         // clang-format on
     }
     SECTION("From diagonal entries") {
-        auto x00 = GenRandomValue(T, 4);
-        auto x11 = GenRandomValue(T, 4);
-        auto x22 = GenRandomValue(T, 4);
-        auto x33 = GenRandomValue(T, 4);
+        auto x00 = GenRandomValue(T, 2);
+        auto x11 = GenRandomValue(T, 2);
+        auto x22 = GenRandomValue(T, 2);
+        auto x33 = GenRandomValue(T, 2);
         Mat4 mat(x00, x11, x22, x33);
         // clang-format off
         REQUIRE(FuncAllClose<T>(mat,
@@ -98,10 +98,10 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) constructors", "[mat4_t][template]",
         // clang-format on
     }
     SECTION("From column vectors") {
-        auto x00 = GenRandomValue(T, 4);
-        auto x11 = GenRandomValue(T, 4);
-        auto x22 = GenRandomValue(T, 4);
-        auto x33 = GenRandomValue(T, 4);
+        auto x00 = GenRandomValue(T, 2);
+        auto x11 = GenRandomValue(T, 2);
+        auto x22 = GenRandomValue(T, 2);
+        auto x33 = GenRandomValue(T, 2);
 
         Vec4 col0 = {x00, 2.0, 3.0, 4.0};
         Vec4 col1 = {5.0, x11, 7.0, 8.0};

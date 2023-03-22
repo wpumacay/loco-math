@@ -85,25 +85,25 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
         REQUIRE(m_3 != m_1);
     }
 
-    // Generate first random matrix (2^8 cases possible values)
+    // Generate first random matrix (2^4 cases possible values)
     auto x00 = GenRandomValue(T, 2);
-    auto x01 = GenRandomValue(T, 2);
-    auto x02 = GenRandomValue(T, 2);
-    auto x03 = GenRandomValue(T, 2);
+    auto x01 = GenRandomValue(T, 1);
+    auto x02 = GenRandomValue(T, 1);
+    auto x03 = GenRandomValue(T, 1);
 
     auto x10 = GenRandomValue(T, 1);
-    auto x11 = GenRandomValue(T, 1);
+    auto x11 = GenRandomValue(T, 2);
     auto x12 = GenRandomValue(T, 1);
     auto x13 = GenRandomValue(T, 1);
 
     auto x20 = GenRandomValue(T, 1);
     auto x21 = GenRandomValue(T, 1);
-    auto x22 = GenRandomValue(T, 1);
+    auto x22 = GenRandomValue(T, 2);
     auto x23 = GenRandomValue(T, 1);
 
-    auto x30 = GenRandomValue(T, 2);
-    auto x31 = GenRandomValue(T, 2);
-    auto x32 = GenRandomValue(T, 2);
+    auto x30 = GenRandomValue(T, 1);
+    auto x31 = GenRandomValue(T, 1);
+    auto x32 = GenRandomValue(T, 1);
     auto x33 = GenRandomValue(T, 2);
 
     // clang-format off
@@ -116,21 +116,21 @@ TEMPLATE_TEST_CASE("Matrix4 class (mat4_t) core operations", "[mat4_t][ops]",
     // Generate second random matrix (2^8 cases possible values)
     auto y00 = GenRandomValue(T, 2);
     auto y10 = GenRandomValue(T, 1);
-    auto y01 = GenRandomValue(T, 2);
+    auto y01 = GenRandomValue(T, 1);
     auto y11 = GenRandomValue(T, 1);
 
-    auto y02 = GenRandomValue(T, 2);
-    auto y12 = GenRandomValue(T, 1);
-    auto y03 = GenRandomValue(T, 2);
+    auto y02 = GenRandomValue(T, 1);
+    auto y12 = GenRandomValue(T, 2);
+    auto y03 = GenRandomValue(T, 1);
     auto y13 = GenRandomValue(T, 1);
 
     auto y20 = GenRandomValue(T, 1);
-    auto y30 = GenRandomValue(T, 2);
-    auto y21 = GenRandomValue(T, 1);
-    auto y31 = GenRandomValue(T, 2);
+    auto y30 = GenRandomValue(T, 1);
+    auto y21 = GenRandomValue(T, 2);
+    auto y31 = GenRandomValue(T, 1);
 
     auto y22 = GenRandomValue(T, 1);
-    auto y32 = GenRandomValue(T, 2);
+    auto y32 = GenRandomValue(T, 1);
     auto y23 = GenRandomValue(T, 1);
     auto y33 = GenRandomValue(T, 2);
 

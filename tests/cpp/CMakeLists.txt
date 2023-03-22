@@ -34,10 +34,12 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/test_quat_type.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_quat_operations.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_euler_type.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_pose3d_type.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat2_functions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat3_functions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_functions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_utils_spherical_coordinates.cpp)
 target_link_libraries(MathCppTests PRIVATE math::math Catch2::Catch2)
+target_include_directories(MathCppTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 # Discover tets and pick an integer as the random seed
 catch_discover_tests(MathCppTests)

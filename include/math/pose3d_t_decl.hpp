@@ -3,6 +3,8 @@
 #include <sstream>
 #include <string>
 
+#include <math/common.hpp>
+
 #include <math/vec3_t_decl.hpp>
 #include <math/vec4_t_decl.hpp>
 #include <math/mat3_t_decl.hpp>
@@ -31,30 +33,20 @@ class Pose3d {
     using Mat3 = ::math::Matrix3<Scalar_T>;
     using Mat4 = ::math::Matrix4<Scalar_T>;
 
-    /// The position part of this pose
+    /// The position component of this pose
     Vec3 position;
-    /// The orientation part of this pose
+    /// The orientation component of this pose
     Quat orientation;
 
-    explicit Pose3d(const Vec3& pos, const Quat& quat) {
-        this->position = pos;
-        this->orientation = quat;
-    }
+    Pose3d() = default;
 
-    explicit Pose3d(const Vec3& pos, const Euler<Scalar_T>& euler) {
-        this->position = pos;
-        this->orientation.setFromEuler(euler);
-    }
+    explicit Pose3d(const Vec3& pos, const Quat& quat);
 
-    explicit Pose3d(const Vec3& pos, const Mat3& mat) {
-        this->position = pos;
-        this->orientation.setFromRotationMatrix(mat);
-    }
+    explicit Pose3d(const Vec3& pos, const Euler<Scalar_T>& euler);
 
-    explicit Pose3d(const Mat4& transform) {
-        this->position = Vec3(transform[3]);
-        this->orientation.setFromRotationMatrix(Mat3(transform));
-    }
+    explicit Pose3d(const Vec3& pos, const Mat3& mat);
+
+    explicit Pose3d(const Mat4& transform);
 
     /// Transforms the given vector by using this pose
     LM_INLINE auto apply(const Vec3& rhs) const -> Vec3;

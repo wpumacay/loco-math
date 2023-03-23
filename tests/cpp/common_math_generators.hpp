@@ -4,6 +4,7 @@
 #include <math/vec4_t.hpp>
 #include <math/mat3_t.hpp>
 #include <math/quat_t.hpp>
+#include <math/mat4_t.hpp>
 
 #include <random>
 
@@ -23,7 +24,7 @@ class RandomValueBase : public Catch::Generators::IGenerator<V> {
     std::uniform_real_distribution<T> m_Dist;
     /// The method used to generate random numbers
     std::minstd_rand m_Gen;
-    /// The vector value to be exposed
+    /// The random value to be exposed
     V m_Value;
 };
 
@@ -102,56 +103,6 @@ auto random_vec4(T val_range_min = static_cast<T>(-1.0),
     return Catch::Generators::GeneratorWrapper<Vector4<T>>(
         Catch::Generators::pf::make_unique<RandomVec4Generator<T>>(
             val_range_min, val_range_max));
-}
-
-//****************************************************************************//
-//                      Generators for Quaternion type                        //
-//****************************************************************************//
-
-//-------------------//
-// Custom Generators //
-//-------------------//
-
-template <typename T>
-class RandomQuaternion : public RandomValueBase<T, Quaternion<T>> {
- public:
-    RandomQuaternion() : RandomValueBase<T, Quaternion<T>>(-1.0, 1.0) {}
-
-    auto next() -> bool override {
-        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                         this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen)};
-        return true;
-    }
-};
-
-template <typename T>
-class RandomUnitQuaternion : public RandomValueBase<T, Quaternion<T>> {
- public:
-    RandomUnitQuaternion() : RandomValueBase<T, Quaternion<T>>(-1.0, 1.0) {}
-
-    auto next() -> bool override {
-        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                         this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen)};
-        this->m_Value.normalize();
-        return true;
-    }
-};
-
-//--------------------//
-// Generator wrappers //
-//--------------------//
-
-template <typename T>
-auto random_quaternion() -> Catch::Generators::GeneratorWrapper<Quaternion<T>> {
-    return Catch::Generators::GeneratorWrapper<Quaternion<T>>(
-        Catch::Generators::pf::make_unique<RandomQuaternion<T>>());
-}
-
-template <typename T>
-auto random_unit_quaternion()
-    -> Catch::Generators::GeneratorWrapper<Quaternion<T>> {
-    return Catch::Generators::GeneratorWrapper<Quaternion<T>>(
-        Catch::Generators::pf::make_unique<RandomUnitQuaternion<T>>());
 }
 
 //****************************************************************************//
@@ -253,6 +204,147 @@ auto random_rotz_mat3(T angle_min = static_cast<T>(-::math::PI),
     return Catch::Generators::GeneratorWrapper<Matrix3<T>>(
         Catch::Generators::pf::make_unique<RandomRotationZMatrix3<T>>(
             angle_min, angle_max));
+}
+
+//****************************************************************************//
+//                      Generators for Quaternion type                        //
+//****************************************************************************//
+
+//-------------------//
+// Custom Generators //
+//-------------------//
+
+template <typename T>
+class RandomQuaternion : public RandomValueBase<T, Quaternion<T>> {
+ public:
+    RandomQuaternion() : RandomValueBase<T, Quaternion<T>>(-1.0, 1.0) {}
+
+    auto next() -> bool override {
+        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
+                         this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen)};
+        return true;
+    }
+};
+
+template <typename T>
+class RandomUnitQuaternion : public RandomValueBase<T, Quaternion<T>> {
+ public:
+    RandomUnitQuaternion() : RandomValueBase<T, Quaternion<T>>(-1.0, 1.0) {}
+
+    auto next() -> bool override {
+        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
+                         this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen)};
+        this->m_Value.normalize();
+        return true;
+    }
+};
+
+//--------------------//
+// Generator wrappers //
+//--------------------//
+
+template <typename T>
+auto random_quaternion() -> Catch::Generators::GeneratorWrapper<Quaternion<T>> {
+    return Catch::Generators::GeneratorWrapper<Quaternion<T>>(
+        Catch::Generators::pf::make_unique<RandomQuaternion<T>>());
+}
+
+template <typename T>
+auto random_unit_quaternion()
+    -> Catch::Generators::GeneratorWrapper<Quaternion<T>> {
+    return Catch::Generators::GeneratorWrapper<Quaternion<T>>(
+        Catch::Generators::pf::make_unique<RandomUnitQuaternion<T>>());
+}
+
+//****************************************************************************//
+//                     Generators for Euler angles type                       //
+//****************************************************************************//
+
+//-------------------//
+// Custom Generators //
+//-------------------//
+
+template <typename T>
+class RandomEuler : public RandomValueBase<T, Euler<T>> {
+ public:
+    RandomEuler()
+        : RandomValueBase<T, Euler<T>>(static_cast<T>(-::math::PI),
+                                       static_cast<T>(::math::PI)) {}
+
+    auto next() -> bool override {
+        this->m_Value.x = this->m_Dist(this->m_Gen);
+        this->m_Value.y = this->m_Dist(this->m_Gen);
+        this->m_Value.z = this->m_Dist(this->m_Gen);
+        return true;
+    }
+};
+
+//--------------------//
+// Generator wrappers //
+//--------------------//
+
+template <typename T>
+auto random_euler() -> Catch::Generators::GeneratorWrapper<Euler<T>> {
+    return Catch::Generators::GeneratorWrapper<Euler<T>>(
+        Catch::Generators::pf::make_unique<RandomEuler<T>>());
+}
+
+//****************************************************************************//
+//                    Generators for Transform(Mat4) type                     //
+//****************************************************************************//
+
+//-------------------//
+// Custom Generators //
+//-------------------//
+
+template <typename T>
+class RandomTransformMat4 : public Catch::Generators::IGenerator<Matrix4<T>> {
+ public:
+    RandomTransformMat4()
+        : m_DistPosition(static_cast<T>(-10.0), static_cast<T>(10.0)),
+          m_DistRotation(static_cast<T>(-1.0), static_cast<T>(1.0)),
+          m_Gen(std::random_device{}()) {}  // NOLINT
+
+    auto get() const -> const Matrix4<T>& override { return m_Value; }
+
+    auto next() -> bool override {
+        m_Position.x() = m_DistPosition(m_Gen);
+        m_Position.y() = m_DistPosition(m_Gen);
+        m_Position.z() = m_DistPosition(m_Gen);
+
+        m_Orientation.w() = m_DistRotation(m_Gen);
+        m_Orientation.x() = m_DistRotation(m_Gen);
+        m_Orientation.y() = m_DistRotation(m_Gen);
+        m_Orientation.z() = m_DistRotation(m_Gen);
+        m_Orientation.normalize();
+
+        return true;
+    }
+
+ private:
+    /// Distribution from which to generate random values for positions
+    std::uniform_real_distribution<T> m_DistPosition;
+    /// Distribution from which to generate random values for quaternions
+    std::uniform_real_distribution<T> m_DistRotation;
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// The random transform to be exposed
+    Matrix4<T> m_Value;
+    /// The position used to generate the transform
+    Vector3<T> m_Position;
+    /// The orientation used to generate the transform
+    Quaternion<T> m_Orientation;
+};
+
+//--------------------//
+// Generator wrappers //
+//--------------------//
+
+template <typename T>
+auto random_transform_mat4()
+    -> Catch::Generators::GeneratorWrapper<Matrix4<T>> {
+    return Catch::Generators::GeneratorWrapper<Matrix4<T>>(
+        Catch::Generators::pf::make_unique<RandomTransformMat4<T>>());
 }
 
 }  // namespace math

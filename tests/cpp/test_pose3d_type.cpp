@@ -39,7 +39,7 @@ TEMPLATE_TEST_CASE("Pose3d class (pose3d_t) constructors",
         REQUIRE(std::abs(X.orientation.length() - 1.0) < 1e-5);
     }
 
-    SECTION("From position(Vec3) and rotatio matrix(Mat3)") {
+    SECTION("From position(Vec3) and rotation matrix(Mat3)") {
         auto position = GENERATE(take(4, ::math::random_vec3<T>(-10.0, 10.0)));
         auto angle =
             GENERATE(take(4, random(-::math::PI / 2.0, ::math::PI / 2.0)));
@@ -79,6 +79,25 @@ TEMPLATE_TEST_CASE("Pose3d class (pose3d_t) constructors",
             // quaternion around the z axis
             REQUIRE(X.orientation == Quat::RotationZ(angle));
         }
+    }
+
+    SECTION("From position(Vec3) and Euler angles(Euler)") {
+        auto position = GENERATE(take(4, ::math::random_vec3<T>(-10.0, 10.0)));
+        auto euler = GENERATE(take(4, ::math::random_euler<T>()));
+        Pose X(position, euler);  // NOLINT
+        // Position should be copied directly to the pose object
+        REQUIRE(X.position == position);
+        // Orientation is transformed internally into a unit quaternion
+        REQUIRE(std::abs(X.orientation.length() - 1.0) < 1e-5);
+    }
+
+    SECTION("From matrix transform(Mat4)") {
+        auto tf = GENERATE(take(4, ::math::random_transform_mat4<T>()));
+        Pose X(tf);  // NOLINT
+        // Position should be copied directly to the pose object
+        REQUIRE(X.position == Vec3(tf[3]));
+        // Orientation is transformed internally into a unit quaternion
+        REQUIRE(std::abs(X.orientation.length() - 1.0) < 1e-5);
     }
 }
 

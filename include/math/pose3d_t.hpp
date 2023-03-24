@@ -74,4 +74,9 @@ auto Pose3d<T>::operator*(const Pose3d<T>& rhs) const -> Pose3d<T> {
     return Pose3d<T>(res_position, res_orientation);
 }
 
+template <typename T>
+auto Pose3d<T>::operator*(const Vec3& rhs) const -> Vec3 {
+    return this->apply(rhs);
+}
+
 }  // namespace math

@@ -61,6 +61,9 @@ class Pose3d {
     LM_INLINE auto operator*(const Pose3d<Scalar_T>& rhs) const
         -> Pose3d<Scalar_T>;
 
+    /// Applies this transform to the given vector
+    LM_INLINE auto operator*(const Vec3& rhs) const -> Vec3;
+
     /// Returns a printable string representation of this pose
     auto toString() const -> std::string {
         std::stringstream str_result;

@@ -197,6 +197,45 @@ TEMPLATE_TEST_CASE("Pose3d class (pose3d_t) API", "[pose3d_t][template]",
         // Rotation matrix should be the upper-left 3x3 matrix
         REQUIRE(Mat3(tf_mat) == Mat3::RotationX(::math::PI / 2.0));
     }
+
+    SECTION("'Operator*' method (transforms a given vector)") {
+        // Should behave the same as the 'apply' method.
+
+        // Point B in A = (1.0, 1.0, 1.0)
+        // X of A in W = {pos=(-3.0, 0.0, 0.0), rot=quat_rot_z(PI / 2)}
+        // Point B in W = (-4.0, 1.0, 1.0)
+        {
+            // NOLINTNEXTLINE
+            Vec3 p_BA(1.0, 1.0, 1.0);
+            // NOLINTNEXTLINE
+            Pose X_AW(Vec3(-3.0, 0.0, 0.0), Quat::RotationZ(::math::PI / 2.0));
+            // NOLINTNEXTLINE
+            auto p_BW = X_AW * p_BA;
+
+            REQUIRE(p_BW == Vec3(-4.0, 1.0, 1.0));
+        }
+
+        // Point C in B = (1.0, 1.0, 1.0)
+        // X of B in A = {pos(0.0, 5.0, 0.0), rot=quat_rot_x(PI / 2)}
+        // Point C in A = (1.0, 6.0, -1.0)
+        // X of A in W = {pos(0.0, 5.0, 0.0), rot=quat_rot_y(PI / 2)}
+        // Point C in W = (1.0, 6.0, 6.0)
+        {
+            // NOLINTNEXTLINE
+            Pose X_BA(Vec3(0.0, 5.0, 0.0), Quat::RotationY(::math::PI / 2.0));
+            // NOLINTNEXTLINE
+            Pose X_AW(Vec3(0.0, 5.0, 0.0), Quat::RotationX(::math::PI / 2.0));
+
+            // NOLINTNEXTLINE
+            Vec3 p_CB(1.0, 1.0, 1.0);
+            // NOLINTNEXTLINE
+            auto p_CA = X_BA * p_CB;
+            REQUIRE(p_CA == Vec3(1.0, 6.0, -1.0));
+            // NOLINTNEXTLINE
+            auto p_CW = X_AW * X_BA * p_CB;
+            REQUIRE(p_CW == Vec3(1.0, 6.0, 6.0));
+        }
+    }
 }
 
 #if defined(__clang__)

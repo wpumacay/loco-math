@@ -44,7 +44,22 @@ auto Pose3d<T>::apply(const Vec3& rhs) const -> Vec3 {
 
 template <typename T>
 auto Pose3d<T>::inverse() const -> Pose3d<T> {
-    return Pose3d<T>(-this->position, this->orientation.inverse());
+    // Inverse transform in matrix form:
+    //
+    //        | R   p |        | R^-1   -R^-1 * p |
+    // X_AB = |       | X_BA = |                  |
+    //        | 0   1 |        |  0          1    |
+    //
+    // Using quaternions (q) instead of Rotations (R)
+    // - p: position (vector)
+    //   q: orientation (quaternion)
+    //
+    // q_inv = q^-1
+    // p_inv = -q_inv * p
+
+    auto q_inv = this->orientation.inverse();
+    auto p_inv = -q_inv.rotate(this->position);
+    return Pose3d<T>(p_inv, q_inv);
 }
 
 template <typename T>

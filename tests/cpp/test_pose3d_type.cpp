@@ -145,6 +145,23 @@ TEMPLATE_TEST_CASE("Pose3d class (pose3d_t) API", "[pose3d_t][template]",
             REQUIRE(p_CW == Vec3(1.0, 6.0, 6.0));
         }
     }
+
+    SECTION("'Inverse' method (inverts the transform)") {
+        // X of A in W = {pos=(0.0, 3.0, 0.0), rot=quat_rot_x(PI / 2)}
+        // X of W in A = (pos=(0.0, 0.0, 3.0), rot=quat_rot_x(-PI / 2))
+
+        // NOLINTNEXTLINE
+        Pose X_AW(Vec3(0.0, 3.0, 0.0), Quat::RotationX(::math::PI / 2.0));
+        // NOLINTNEXTLINE
+        auto X_WA = X_AW.inverse();
+
+        REQUIRE(X_WA.position == Vec3(0.0, 0.0, 3.0));
+        REQUIRE(X_WA.orientation == Quat::RotationX(-::math::PI / 2.0));
+    }
+
+    SECTION("'Operator *' method (compounds transforms)") {
+        ///
+    }
 }
 
 #if defined(__clang__)

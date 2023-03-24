@@ -149,18 +149,42 @@ TEMPLATE_TEST_CASE("Pose3d class (pose3d_t) API", "[pose3d_t][template]",
     SECTION("'Inverse' method (inverts the transform)") {
         // X of A in W = {pos=(0.0, 3.0, 0.0), rot=quat_rot_x(PI / 2)}
         // X of W in A = (pos=(0.0, 0.0, 3.0), rot=quat_rot_x(-PI / 2))
+        {
+            // NOLINTNEXTLINE
+            Pose X_AW(Vec3(0.0, 3.0, 0.0), Quat::RotationX(::math::PI / 2.0));
+            // NOLINTNEXTLINE
+            auto X_WA = X_AW.inverse();
 
-        // NOLINTNEXTLINE
-        Pose X_AW(Vec3(0.0, 3.0, 0.0), Quat::RotationX(::math::PI / 2.0));
-        // NOLINTNEXTLINE
-        auto X_WA = X_AW.inverse();
-
-        REQUIRE(X_WA.position == Vec3(0.0, 0.0, 3.0));
-        REQUIRE(X_WA.orientation == Quat::RotationX(-::math::PI / 2.0));
+            REQUIRE(X_WA.position == Vec3(0.0, 0.0, 3.0));
+            REQUIRE(X_WA.orientation == Quat::RotationX(-::math::PI / 2.0));
+        }
     }
 
     SECTION("'Operator *' method (compounds transforms)") {
-        ///
+        // Point C in B = (1.0, 1.0, 1.0)
+        // X of B in A = {pos(0.0, 5.0, 0.0), rot=quat_rot_x(PI / 2)}
+        // Point C in A = (1.0, 6.0, -1.0)
+        // X of A in W = {pos(0.0, 5.0, 0.0), rot=quat_rot_y(PI / 2)}
+        // Point C in W = (1.0, 6.0, 6.0)
+        // X of B in W = X_AW * X_BA = ...
+        // ... {pos(0.0, 5.0, 5.0), rot=quat_rot_x(PI / 2) * quat_rot_y(PI / 2)}
+        {
+            // NOLINTNEXTLINE
+            Vec3 p_CB(1.0, 1.0, 1.0);
+            // NOLINTNEXTLINE
+            Pose X_BA(Vec3(0.0, 5.0, 0.0), Quat::RotationY(::math::PI / 2.0));
+            // NOLINTNEXTLINE
+            Pose X_AW(Vec3(0.0, 5.0, 0.0), Quat::RotationX(::math::PI / 2.0));
+            // NOLINTNEXTLINE
+            auto X_BW = X_AW * X_BA;
+            REQUIRE(X_BW.position == Vec3(0.0, 5.0, 5.0));
+            REQUIRE(X_BW.orientation == Quat::RotationX(::math::PI / 2.0) *
+                                            Quat::RotationY(::math::PI / 2.0));
+
+            // NOLINTNEXTLINE
+            auto p_CW = X_BW.apply(p_CB);
+            REQUIRE(p_CW == Vec3(1.0, 6.0, 6.0));
+        }
     }
 }
 

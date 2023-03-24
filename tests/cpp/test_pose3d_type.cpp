@@ -107,6 +107,7 @@ TEMPLATE_TEST_CASE("Pose3d class (pose3d_t) API", "[pose3d_t][template]",
     using T = TestType;
     using Pose = ::math::Pose3d<T>;
     using Quat = ::math::Quaternion<T>;
+    using Mat3 = ::math::Matrix3<T>;
     using Vec3 = ::math::Vector3<T>;
 
     SECTION("'Apply' method (transform a vec3)") {
@@ -185,6 +186,16 @@ TEMPLATE_TEST_CASE("Pose3d class (pose3d_t) API", "[pose3d_t][template]",
             auto p_CW = X_BW.apply(p_CB);
             REQUIRE(p_CW == Vec3(1.0, 6.0, 6.0));
         }
+    }
+
+    SECTION("'toMatrix' method (converts pose to 4x4 transform matrix)") {
+        // NOLINTNEXTLINE
+        Pose X(Vec3(0.0, 5.0, 0.0), Quat::RotationX(::math::PI / 2.0));
+        auto tf_mat = X.toMatrix();
+        // Position should be at last column
+        REQUIRE(Vec3(tf_mat[3]) == Vec3(0.0, 5.0, 0.0));
+        // Rotation matrix should be the upper-left 3x3 matrix
+        REQUIRE(Mat3(tf_mat) == Mat3::RotationX(::math::PI / 2.0));
     }
 }
 

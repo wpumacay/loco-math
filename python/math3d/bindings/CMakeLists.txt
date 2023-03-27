@@ -6,7 +6,8 @@ if(NOT TARGET math::math)
   return()
 endif()
 
-pybind11_add_module(math3d ${CMAKE_CURRENT_SOURCE_DIR}/bindings_py.cpp)
+pybind11_add_module(math3d ${CMAKE_CURRENT_SOURCE_DIR}/bindings_py.cpp
+                    ${CMAKE_CURRENT_SOURCE_DIR}/conversions_py.cpp)
 target_include_directories(math3d PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(math3d PRIVATE math::math)
 

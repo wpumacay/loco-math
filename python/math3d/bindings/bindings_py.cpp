@@ -10,6 +10,12 @@
 
 namespace py = pybind11;
 
+namespace math {
+
+extern auto bindings_conversions_functions(py::module m) -> void;
+
+}
+
 // NOLINTNEXTLINE
 PYBIND11_MODULE(math3d, m) {
     ::math::bindings_vector2<math::float32_t>(m, "Vector2f");
@@ -26,4 +32,6 @@ PYBIND11_MODULE(math3d, m) {
     ::math::bindings_matrix4<math::float64_t>(m, "Matrix4d");
     ::math::bindings_quaternion<math::float32_t>(m, "Quaternionf");
     ::math::bindings_quaternion<math::float64_t>(m, "Quaterniond");
+
+    ::math::bindings_conversions_functions(m);
 }

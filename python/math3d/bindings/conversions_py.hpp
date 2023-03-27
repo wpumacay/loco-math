@@ -10,6 +10,9 @@
 #include <math/vec2_t.hpp>
 #include <math/vec3_t.hpp>
 #include <math/vec4_t.hpp>
+#include <math/mat2_t.hpp>
+#include <math/mat3_t.hpp>
+#include <math/mat4_t.hpp>
 
 namespace py = pybind11;
 
@@ -19,6 +22,10 @@ namespace py = pybind11;
 #endif
 
 // clang-format off
+
+// -------------------------------------------------------------------------- //
+//                Macros for conversions between and from Vectors             //
+// -------------------------------------------------------------------------- //
 
 // NOLINTNEXTLINE
 #define VECTOR_TO_NPARRAY(VecCls, xvec)                             \
@@ -70,6 +77,22 @@ namespace py = pybind11;
     memcpy(vec.data(), info.ptr, sizeof(Type) * SIZE_N);                    \
     return vec
 
+// -------------------------------------------------------------------------- //
+//               Macros for conversions between and from Matrices             //
+// -------------------------------------------------------------------------- //
+
+// NOLINTNEXTLINE
+#define MATRIX_TO_NPARRAY(MatCls, xmat)                                 \
+    constexpr size_t SIZE_N = MatCls::MATRIX_SIZE;                      \
+    using Type = typename MatCls::ElementType;                          \
+    return py::array(py::buffer_info(                                   \
+                        const_cast<Type*>(xmat.data()), /* NOLINT */    \
+                        sizeof(Type),                                   \
+                        py::format_descriptor<Type>::format(),          \
+                        2,                                              \
+                        {SIZE_N, SIZE_N},                               \
+                        {sizeof(Type), sizeof(Type) * SIZE_N}))
+
 // clang-format on
 
 namespace math {
@@ -95,6 +118,21 @@ inline auto vec3_to_nparray(const Vector3<T>& vec) -> py::array_t<T> {
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
 inline auto vec4_to_nparray(const Vector4<T>& vec) -> py::array_t<T> {
     VECTOR_TO_NPARRAY(Vector4<T>, vec);
+}
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto mat2_to_nparray(const Matrix2<T>& mat) -> py::array_t<T> {
+    MATRIX_TO_NPARRAY(Matrix2<T>, mat);
+}
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto mat3_to_nparray(const Matrix3<T>& mat) -> py::array_t<T> {
+    MATRIX_TO_NPARRAY(Matrix3<T>, mat);
+}
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto mat4_to_nparray(const Matrix4<T>& mat) -> py::array_t<T> {
+    MATRIX_TO_NPARRAY(Matrix4<T>, mat);
 }
 
 // -------------------------------------------------------------------------- //

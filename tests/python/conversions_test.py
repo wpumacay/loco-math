@@ -8,6 +8,9 @@ from typing import Type, Union, Callable, cast
 Vector2Cls = Type[Union[m3d.Vector2f, m3d.Vector2d]]
 Vector3Cls = Type[Union[m3d.Vector3f, m3d.Vector3d]]
 Vector4Cls = Type[Union[m3d.Vector4f, m3d.Vector4d]]
+Matrix2Cls = Type[Union[m3d.Matrix2f, m3d.Matrix2d]]
+Matrix3Cls = Type[Union[m3d.Matrix3f, m3d.Matrix3d]]
+Matrix4Cls = Type[Union[m3d.Matrix4f, m3d.Matrix4d]]
 
 ################################################################################
 #                       Tests for math3d types to nparray                      #
@@ -53,6 +56,70 @@ def test_vec4_to_nparray(Func: Callable, Class: Vector4Cls, Type: type) -> None:
     array_np = Func(Class(2.0, 3.0, 5.0, 7.0))
     assert array_np.dtype == Type and np.allclose(
         array_np, np.array([2.0, 3.0, 5.0, 7.0], dtype=Type)
+    )
+
+
+@pytest.mark.parametrize(
+    "Func,Class,Type",
+    [
+        (m3d.mat2_to_nparray_f32, m3d.Matrix2f, np.float32),
+        (m3d.mat2_to_nparray_f64, m3d.Matrix2d, np.float64),
+    ],
+)
+def test_mat2_to_nparray(Func: Callable, Class: Matrix2Cls, Type: type) -> None:
+    # fmt: off
+    array_np = Func(Class(2.0, 3.0,
+                          5.0, 7.0))
+    # fmt: on
+    assert array_np.dtype == Type and np.allclose(
+        array_np, np.array([[2.0, 3.0], [5.0, 7.0]], dtype=Type)
+    )
+
+
+@pytest.mark.parametrize(
+    "Func,Class,Type",
+    [
+        (m3d.mat3_to_nparray_f32, m3d.Matrix3f, np.float32),
+        (m3d.mat3_to_nparray_f64, m3d.Matrix3d, np.float64),
+    ],
+)
+def test_mat3_to_nparray(Func: Callable, Class: Matrix3Cls, Type: type) -> None:
+    # fmt: off
+    array_np = Func(Class(2.0, 3.0, 5.0,
+                          7.0, 11.0, 13.0,
+                          17.0, 19.0, 23.0))
+    # fmt: on
+    assert array_np.dtype == Type and np.allclose(
+        array_np,
+        np.array([[2.0, 3.0, 5.0], [7.0, 11.0, 13.0], [17.0, 19.0, 23.0]], dtype=Type),
+    )
+
+
+@pytest.mark.parametrize(
+    "Func,Class,Type",
+    [
+        (m3d.mat4_to_nparray_f32, m3d.Matrix4f, np.float32),
+        (m3d.mat4_to_nparray_f64, m3d.Matrix4d, np.float64),
+    ],
+)
+def test_mat4_to_nparray(Func: Callable, Class: Matrix4Cls, Type: type) -> None:
+    # fmt: off
+    array_np = Func(Class(2.0, 3.0, 5.0, 7.0,
+                          11.0, 13.0, 17.0, 19.0,
+                          23.0, 29.0, 31.0, 37.0,
+                          41.0, 43.0, 47.0, 53.0))
+    # fmt: on
+    assert array_np.dtype == Type and np.allclose(
+        array_np,
+        np.array(
+            [
+                [2.0, 3.0, 5.0, 7.0],
+                [11.0, 13.0, 17.0, 19.0],
+                [23.0, 29.0, 31.0, 37.0],
+                [41.0, 43.0, 47.0, 53.0],
+            ],
+            dtype=Type,
+        ),
     )
 
 

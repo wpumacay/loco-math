@@ -14,6 +14,14 @@
 #include <math/mat3_t.hpp>
 #include <math/mat4_t.hpp>
 
+/**
+ * NOTES:
+ *
+ * - For numpy to matrix conversions: We're assumming that the matrix given as a
+ * numpy array is stored in the most common format (row-major). Our internal
+ * ordering for matrices is column-major, so we have to grab the elements.
+ */
+
 namespace py = pybind11;
 
 #if defined(_MSC_VER)
@@ -35,21 +43,21 @@ namespace py = pybind11;
 
 // NOLINTNEXTLINE
 #define NPARRAY_TO_VECTOR(VecCls, xarray_np)                                \
-    auto array_buffer_info = xarray_np.request();                           \
-    if (array_buffer_info.size != VecCls::VECTOR_SIZE) {                    \
+    auto info = xarray_np.request();                                        \
+    if (info.size != VecCls::VECTOR_SIZE) {                                 \
         throw std::runtime_error("Incompatible array size, expected " +     \
                                  std::to_string(VecCls::VECTOR_SIZE) +      \
                                  " elements");                              \
     }                                                                       \
     VecCls vec;                                                             \
-    memcpy(vec.data(), array_buffer_info.ptr, sizeof(VecCls));              \
+    memcpy(vec.data(), info.ptr, sizeof(VecCls));                           \
     return vec
 
 // NOLINTNEXTLINE
 #define BUFFER_TO_VECTOR(VecCls, xbuff)                                     \
     constexpr size_t SIZE_N = VecCls::VECTOR_SIZE;                          \
     using Type = typename VecCls::ElementType;                              \
-    py::buffer_info info = xbuff.request();                                 \
+    auto info = xbuff.request();                                            \
     if (IsFloat32<Type>::value &&                                           \
         (info.format != py::format_descriptor<Type>::format())) {           \
         throw std::runtime_error(                                           \
@@ -92,6 +100,31 @@ namespace py = pybind11;
                         2,                                              \
                         {SIZE_N, SIZE_N},                               \
                         {sizeof(Type), sizeof(Type) * SIZE_N}))
+
+
+// NOLINTNEXTLINE
+#define NPARRAY_TO_MATRIX(MatCls, xarray_np)                                \
+    constexpr uint32_t SIZE_N = MatCls::MATRIX_SIZE;                        \
+    using Type = typename MatCls::ElementType;                              \
+    auto info = xarray_np.request();                                        \
+    if (info.ndim != 2) {                                                   \
+        throw std::runtime_error(                                           \
+            "nparray_to_matrix: incompatible array dimensions. It requires "\
+            "an (n, n) array, so two dimensions are required");             \
+    }                                                                       \
+    if (info.shape[0] != SIZE_N || info.shape[1] != SIZE_N) {               \
+        throw std::runtime_error(                                           \
+            "nparray_to_matrix: incompatible array size. It expects a (n, " \
+            "n) matrix of size 'n'");                                       \
+    }                                                                       \
+    auto data = static_cast<const Type*>(info.ptr);                         \
+    MatCls matrix;                                                          \
+    for (uint32_t i = 0; i < SIZE_N; ++i) {                                 \
+        for (uint32_t j = 0; j < SIZE_N; ++j) {                             \
+            matrix(i, j) = data[j + SIZE_N * i];                            \
+        }                                                                   \
+    }                                                                       \
+    return matrix
 
 // clang-format on
 
@@ -152,6 +185,21 @@ inline auto nparray_to_vec3(const py::array_t<T>& array_np) -> Vector3<T> {
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
 inline auto nparray_to_vec4(const py::array_t<T>& array_np) -> Vector4<T> {
     NPARRAY_TO_VECTOR(Vector4<T>, array_np);
+}
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto nparray_to_mat2(const py::array_t<T>& array_np) -> Matrix2<T> {
+    NPARRAY_TO_MATRIX(Matrix2<T>, array_np);
+}
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto nparray_to_mat3(const py::array_t<T>& array_np) -> Matrix3<T> {
+    NPARRAY_TO_MATRIX(Matrix3<T>, array_np);
+}
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto nparray_to_mat4(const py::array_t<T>& array_np) -> Matrix4<T> {
+    NPARRAY_TO_MATRIX(Matrix4<T>, array_np);
 }
 
 // -------------------------------------------------------------------------- //

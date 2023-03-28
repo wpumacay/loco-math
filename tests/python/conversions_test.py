@@ -91,7 +91,9 @@ def test_mat3_to_nparray(Func: Callable, Class: Matrix3Cls, Type: type) -> None:
     # fmt: on
     assert array_np.dtype == Type and np.allclose(
         array_np,
-        np.array([[2.0, 3.0, 5.0], [7.0, 11.0, 13.0], [17.0, 19.0, 23.0]], dtype=Type),
+        np.array(
+            [[2.0, 3.0, 5.0], [7.0, 11.0, 13.0], [17.0, 19.0, 23.0]], dtype=Type
+        ),
     )
 
 
@@ -149,7 +151,9 @@ def test_nparray_to_vec2(Func: Callable, Type: type) -> None:
 )
 def test_nparray_to_vec3(Func: Callable, Type: type) -> None:
     vec = Func(np.array([2.0, 3.0, 5.0], dtype=Type))
-    assert np.allclose(cast(np.ndarray, vec), np.array([2.0, 3.0, 5.0], dtype=Type))
+    assert np.allclose(
+        cast(np.ndarray, vec), np.array([2.0, 3.0, 5.0], dtype=Type)
+    )
 
 
 @pytest.mark.parametrize(
@@ -164,3 +168,52 @@ def test_nparray_to_vec4(Func: Callable, Type: type) -> None:
     assert np.allclose(
         cast(np.ndarray, vec), np.array([2.0, 3.0, 5.0, 7.0], dtype=Type)
     )
+
+
+@pytest.mark.parametrize(
+    "Func,Type",
+    [
+        (m3d.nparray_to_mat2_f32, np.float32),
+        (m3d.nparray_to_mat2_f64, np.float64),
+    ],
+)
+def test_nparray_to_mat2(Func: Callable, Type: type) -> None:
+    mat_np = np.array([[2.0, 3.0], [5.0, 7.0]], dtype=Type)
+    mat = Func(mat_np)
+    assert np.allclose(cast(np.ndarray, mat), mat_np)
+
+
+@pytest.mark.parametrize(
+    "Func,Type",
+    [
+        (m3d.nparray_to_mat3_f32, np.float32),
+        (m3d.nparray_to_mat3_f64, np.float64),
+    ],
+)
+def test_nparray_to_mat3(Func: Callable, Type: type) -> None:
+    mat_np = np.array(
+        [[2.0, 3.0, 5.0], [7.0, 11.0, 13.0], [17.0, 19.0, 23.0]], dtype=Type
+    )
+    mat = Func(mat_np)
+    assert np.allclose(cast(np.ndarray, mat), mat_np)
+
+
+@pytest.mark.parametrize(
+    "Func,Type",
+    [
+        (m3d.nparray_to_mat4_f32, np.float32),
+        (m3d.nparray_to_mat4_f64, np.float64),
+    ],
+)
+def test_nparray_to_mat4(Func: Callable, Type: type) -> None:
+    mat_np = np.array(
+        [
+            [2.0, 3.0, 5.0, 7.0],
+            [11.0, 13.0, 17.0, 19.0],
+            [23.0, 29.0, 31.0, 37.0],
+            [41.0, 43.0, 47.0, 53.0],
+        ],
+        dtype=Type,
+    )
+    mat = Func(mat_np)
+    assert np.allclose(cast(np.ndarray, mat), mat_np)

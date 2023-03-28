@@ -22,6 +22,12 @@ auto bindings_conversions_functions(py::module m) -> void {
     m.def("nparray_to_vec3_f64", ::math::nparray_to_vec3<::math::float64_t>);
     m.def("nparray_to_vec4_f32", ::math::nparray_to_vec4<::math::float32_t>);
     m.def("nparray_to_vec4_f64", ::math::nparray_to_vec4<::math::float64_t>);
+    m.def("nparray_to_mat2_f32", ::math::nparray_to_mat2<::math::float32_t>);
+    m.def("nparray_to_mat2_f64", ::math::nparray_to_mat2<::math::float64_t>);
+    m.def("nparray_to_mat3_f32", ::math::nparray_to_mat3<::math::float32_t>);
+    m.def("nparray_to_mat3_f64", ::math::nparray_to_mat3<::math::float64_t>);
+    m.def("nparray_to_mat4_f32", ::math::nparray_to_mat4<::math::float32_t>);
+    m.def("nparray_to_mat4_f64", ::math::nparray_to_mat4<::math::float64_t>);
 }
 
 }  // namespace math

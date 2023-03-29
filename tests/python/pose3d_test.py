@@ -7,6 +7,7 @@ from typing import Type, Union, cast
 
 Vec3Cls = Type[Union[m3d.Vector3f, m3d.Vector3d]]
 QuatCls = Type[Union[m3d.Quaternionf, m3d.Quaterniond]]
+Mat3Cls = Type[Union[m3d.Matrix3f, m3d.Matrix3d]]
 Pose3dCls = Type[Union[m3d.Pose3d_f, m3d.Pose3d_d]]
 
 np.random.seed(0)
@@ -45,10 +46,56 @@ def test_default_constructor(Class: Pose3dCls, Type: type) -> None:
 def test_pos_quat_constructor(
     Pose: Pose3dCls, Vec3: Vec3Cls, Quat: QuatCls, Type: type
 ) -> None:
-    vec_position = Vec3(np.random.randn(1, 3).astype(Type))
+    position = Vec3(np.random.randn(1, 3).astype(Type))
     quat_orientation = Quat(np.random.randn(1, 4).astype(Type))
-    pose = Pose(vec_position, quat_orientation)
+    pose = Pose(position, quat_orientation)
     # Position should be copied directly to the pose object
-    assert np.allclose(cast(np.ndarray, pose.position), cast(np.ndarray, vec_position))
+    assert np.allclose(cast(np.ndarray, pose.position), cast(np.ndarray, position))
     # Orientation is normalized to ensure it represents a rotation
+    assert np.abs(pose.orientation.length() - 1.0) < 1e-5
+
+
+@pytest.mark.parametrize(
+    "Pose,Vec3,Mat3,Quat,Type",
+    [
+        (m3d.Pose3d_f, m3d.Vector3f, m3d.Matrix3f, m3d.Quaternionf, np.float32),
+        (m3d.Pose3d_d, m3d.Vector3d, m3d.Matrix3d, m3d.Quaterniond, np.float64),
+    ],
+)
+def test_pos_mat3_constructor(
+    Pose: Pose3dCls, Vec3: Vec3Cls, Mat3: Mat3Cls, Quat: QuatCls, Type: type
+) -> None:
+    position = Vec3(np.random.randn(1, 3).astype(Type))
+    # NOTE(wilbert): if using [-pi, pi], we might get neg. quaternions, which
+    # in the end result in the same orientation, but won't check using allclose
+    angle = np.pi * (np.random.random() - 0.5)
+
+    rotmat = Mat3.RotationX(angle)
+    pose = Pose(position, rotmat)
+    assert np.allclose(cast(np.ndarray, pose.position), cast(np.ndarray, position))
+    assert np.allclose(
+        cast(np.ndarray, pose.orientation),
+        cast(np.ndarray, Quat.RotationX(angle)),
+        atol=1e-5,
+    )
+    assert np.abs(pose.orientation.length() - 1.0) < 1e-5
+
+    rotmat = Mat3.RotationY(angle)
+    pose = Pose(position, rotmat)
+    assert np.allclose(cast(np.ndarray, pose.position), cast(np.ndarray, position))
+    assert np.allclose(
+        cast(np.ndarray, pose.orientation),
+        cast(np.ndarray, Quat.RotationY(angle)),
+        atol=1e-5,
+    )
+    assert np.abs(pose.orientation.length() - 1.0) < 1e-5
+
+    rotmat = Mat3.RotationZ(angle)
+    pose = Pose(position, rotmat)
+    assert np.allclose(cast(np.ndarray, pose.position), cast(np.ndarray, position))
+    assert np.allclose(
+        cast(np.ndarray, pose.orientation),
+        cast(np.ndarray, Quat.RotationZ(angle)),
+        atol=1e-5,
+    )
     assert np.abs(pose.orientation.length() - 1.0) < 1e-5

@@ -92,36 +92,36 @@ class Euler {
     /// \param[in] x Euler angle associated with a rotation around the X axis
     /// \param[in] y Euler angle associated with a rotation around the Y axis
     /// \param[in] z Euler angle associated with a rotation around the Z axis
-    /// \param[in] order Order used for the representation
-    /// \param[in] convention Convention used for the representation
-    explicit Euler(Scalar_T x, Scalar_T y, Scalar_T z, Order order = Order::XYZ,
-                   Convention convention = Convention::INTRINSIC) {
-        this->order = order;
-        this->convention = convention;
-        this->x = x;
-        this->y = y;
-        this->z = z;
+    /// \param[in] p_order Order used for the representation
+    /// \param[in] p_convention Convention used for the representation
+    explicit Euler(Scalar_T e_x, Scalar_T e_y, Scalar_T e_z, Order p_order = Order::XYZ,
+                   Convention p_convention = Convention::INTRINSIC) {
+        this->order = p_order;
+        this->convention = p_convention;
+        this->x = e_x;
+        this->y = e_y;
+        this->z = e_z;
     }
 
     /// Constructs a set of Euler angles from the given 3x3 rotation matrix
     /// \param[in] matrix A 3x3 rotation matrix given by the user
-    /// \param[in] order Order used for the representation
-    /// \param[in] convention Convention used for the representation
-    explicit Euler(const Mat3& matrix, Order order = Order::XYZ,
-                   Convention convention = Convention::INTRINSIC) {
-        this->order = order;
-        this->convention = convention;
+    /// \param[in] p_order Order used for the representation
+    /// \param[in] p_convention Convention used for the representation
+    explicit Euler(const Mat3& matrix, Order p_order = Order::XYZ,
+                   Convention p_convention = Convention::INTRINSIC) {
+        this->order = p_order;
+        this->convention = p_convention;
         setFromRotationMatrix(matrix);
     }
 
     /// Constructs a set of Euler angles from the given 4x4 transform matrix
     /// \param[in] matrix A 4x4 transform matrix given by the user
-    /// \param[in] order Order used for the representation
-    /// \param[in] convention Convention used for the representation
-    explicit Euler(const Mat4& matrix, Order order = Order::XYZ,
-                   Convention convention = Convention::INTRINSIC) {
-        this->order = order;
-        this->convention = convention;
+    /// \param[in] p_order Order used for the representation
+    /// \param[in] p_convention Convention used for the representation
+    explicit Euler(const Mat4& matrix, Order p_order = Order::XYZ,
+                   Convention p_convention = Convention::INTRINSIC) {
+        this->order = p_order;
+        this->convention = p_convention;
         setFromTransform(matrix);
     }
 
@@ -129,10 +129,10 @@ class Euler {
     /// \param[in] quaternion A quaternion given by the user
     /// \param[in] order Order used for the representation
     /// \param[in] convention Convention used for the representation
-    explicit Euler(const Quat& quaternion, Order order = Order::XYZ,
-                   Convention convention = Convention::INTRINSIC) {
-        this->order = order;
-        this->convention = convention;
+    explicit Euler(const Quat& quaternion, Order p_order = Order::XYZ,
+                   Convention p_convention = Convention::INTRINSIC) {
+        this->order = p_order;
+        this->convention = p_convention;
         setFromQuaternion(quaternion);
     }
 
@@ -141,10 +141,10 @@ class Euler {
     /// \param[in] angle The angle of rotation around the given axis
     /// \param[in] order Order used for the representation
     /// \param[in] convention Convention used for the representation
-    explicit Euler(const Vec3& axis, Scalar_T angle, Order order = Order::XYZ,
-                   Convention convention = Convention::INTRINSIC) {
-        this->order = order;
-        this->convention = convention;
+    explicit Euler(const Vec3& axis, Scalar_T angle, Order p_order = Order::XYZ,
+                   Convention p_convention = Convention::INTRINSIC) {
+        this->order = p_order;
+        this->convention = p_convention;
         setFromAxisAngle(axis, angle);
     }
 

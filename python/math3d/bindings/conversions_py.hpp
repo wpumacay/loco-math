@@ -10,6 +10,17 @@
 #include <math/vec2_t.hpp>
 #include <math/vec3_t.hpp>
 #include <math/vec4_t.hpp>
+#include <math/mat2_t.hpp>
+#include <math/mat3_t.hpp>
+#include <math/mat4_t.hpp>
+
+/**
+ * NOTES:
+ *
+ * - For numpy to matrix conversions: We're assumming that the matrix given as a
+ * numpy array is stored in the most common format (row-major). Our internal
+ * ordering for matrices is column-major, so we have to grab the elements.
+ */
 
 namespace py = pybind11;
 
@@ -18,169 +29,196 @@ namespace py = pybind11;
 #pragma warning(disable : 4127)
 #endif
 
+// clang-format off
+
+// -------------------------------------------------------------------------- //
+//                Macros for conversions between and from Vectors             //
+// -------------------------------------------------------------------------- //
+
+// NOLINTNEXTLINE
+#define VECTOR_TO_NPARRAY(VecCls, xvec)                             \
+    auto array_np = py::array_t<T>(VecCls::VECTOR_SIZE);            \
+    memcpy(array_np.request().ptr, xvec.data(), sizeof(VecCls));    \
+    return array_np
+
+// NOLINTNEXTLINE
+#define NPARRAY_TO_VECTOR(VecCls, xarray_np)                                \
+    auto info = xarray_np.request();                                        \
+    if (info.size != VecCls::VECTOR_SIZE) {                                 \
+        throw std::runtime_error("Incompatible array size, expected " +     \
+                                 std::to_string(VecCls::VECTOR_SIZE) +      \
+                                 " elements");                              \
+    }                                                                       \
+    VecCls vec;                                                             \
+    memcpy(vec.data(), info.ptr, sizeof(VecCls));                           \
+    return vec
+
+// NOLINTNEXTLINE
+#define BUFFER_TO_VECTOR(VecCls, xbuff)                                     \
+    constexpr size_t SIZE_N = VecCls::VECTOR_SIZE;                          \
+    using Type = typename VecCls::ElementType;                              \
+    auto info = xbuff.request();                                            \
+    if (IsFloat32<Type>::value &&                                           \
+        (info.format != py::format_descriptor<Type>::format())) {           \
+        throw std::runtime_error(                                           \
+            "Incompatible format: expected float (float32) array");         \
+    }                                                                       \
+    if (IsFloat64<Type>::value &&                                           \
+        (info.format != py::format_descriptor<Type>::format())) {           \
+        throw std::runtime_error(                                           \
+            "Incompatible format: expected double (float64) array");        \
+    }                                                                       \
+    bool is_valid_shape;                                                    \
+    if (info.ndim == 1) {                                                   \
+        is_valid_shape = (info.shape[0] == SIZE_N);                         \
+    } else if (info.ndim == 2) {                                            \
+        is_valid_shape = (info.shape[0] == SIZE_N ||                        \
+                          info.shape[1] == SIZE_N);                         \
+    } else {                                                                \
+        is_valid_shape = false;                                             \
+    }                                                                       \
+    if (!is_valid_shape) {                                                  \
+        throw std::runtime_error(                                           \
+            "Incompatible shape: expected (,n), (1,n), (n,1)");             \
+    }                                                                       \
+    VecCls vec;                                                             \
+    memcpy(vec.data(), info.ptr, sizeof(Type) * SIZE_N);                    \
+    return vec
+
+// -------------------------------------------------------------------------- //
+//               Macros for conversions between and from Matrices             //
+// -------------------------------------------------------------------------- //
+
+// NOLINTNEXTLINE
+#define MATRIX_TO_NPARRAY(MatCls, xmat)                                 \
+    constexpr size_t SIZE_N = MatCls::MATRIX_SIZE;                      \
+    using Type = typename MatCls::ElementType;                          \
+    return py::array(py::buffer_info(                                   \
+                        const_cast<Type*>(xmat.data()), /* NOLINT */    \
+                        sizeof(Type),                                   \
+                        py::format_descriptor<Type>::format(),          \
+                        2,                                              \
+                        {SIZE_N, SIZE_N},                               \
+                        {sizeof(Type), sizeof(Type) * SIZE_N}))
+
+
+// NOLINTNEXTLINE
+#define NPARRAY_TO_MATRIX(MatCls, xarray_np)                                \
+    constexpr uint32_t SIZE_N = MatCls::MATRIX_SIZE;                        \
+    using Type = typename MatCls::ElementType;                              \
+    auto info = xarray_np.request();                                        \
+    if (info.ndim != 2) {                                                   \
+        throw std::runtime_error(                                           \
+            "nparray_to_matrix: incompatible array dimensions. It requires "\
+            "an (n, n) array, so two dimensions are required");             \
+    }                                                                       \
+    if (info.shape[0] != SIZE_N || info.shape[1] != SIZE_N) {               \
+        throw std::runtime_error(                                           \
+            "nparray_to_matrix: incompatible array size. It expects a (n, " \
+            "n) matrix of size 'n'");                                       \
+    }                                                                       \
+    auto data = static_cast<const Type*>(info.ptr);                         \
+    MatCls matrix;                                                          \
+    for (uint32_t i = 0; i < SIZE_N; ++i) {                                 \
+        for (uint32_t j = 0; j < SIZE_N; ++j) {                             \
+            matrix(i, j) = data[j + SIZE_N * i];                            \
+        }                                                                   \
+    }                                                                       \
+    return matrix
+
+// clang-format on
+
 namespace math {
 
 template <typename T>
 using SFINAE_CONVERSIONS_BINDINGS =
     typename std::enable_if<IsScalar<T>::value>::type*;
 
+// -------------------------------------------------------------------------- //
+//                    Conversions from Math3d to NumPy                        //
+// -------------------------------------------------------------------------- //
+
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
 inline auto vec2_to_nparray(const Vector2<T>& vec) -> py::array_t<T> {
-    auto array_np = py::array_t<T>(Vector2<T>::VECTOR_SIZE);
-    memcpy(array_np.request().ptr, vec.data(), sizeof(Vector2<T>));
-    return array_np;
+    VECTOR_TO_NPARRAY(Vector2<T>, vec);
 }
 
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
 inline auto vec3_to_nparray(const Vector3<T>& vec) -> py::array_t<T> {
-    auto array_np = py::array_t<T>(Vector3<T>::VECTOR_SIZE);
-    memcpy(array_np.request().ptr, vec.data(), sizeof(Vector3<T>));
-    return array_np;
+    VECTOR_TO_NPARRAY(Vector3<T>, vec);
 }
 
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
 inline auto vec4_to_nparray(const Vector4<T>& vec) -> py::array_t<T> {
-    auto array_np = py::array_t<T>(Vector4<T>::VECTOR_SIZE);
-    memcpy(array_np.request().ptr, vec.data(), sizeof(Vector4<T>));
-    return array_np;
+    VECTOR_TO_NPARRAY(Vector4<T>, vec);
 }
 
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
-inline auto nparray_to_vec2(const py::array_t<T>& array_np) -> Vector2<T> {
-    auto array_buffer_info = array_np.request();
-    if (array_buffer_info.size != Vector2<T>::VECTOR_SIZE) {
-        throw std::runtime_error("Incompatible array size, expected " +
-                                 std::to_string(Vector2<T>::VECTOR_SIZE) +
-                                 " elements");
-    }
+inline auto mat2_to_nparray(const Matrix2<T>& mat) -> py::array_t<T> {
+    MATRIX_TO_NPARRAY(Matrix2<T>, mat);
+}
 
-    Vector2<T> vec;
-    memcpy(vec.data(), array_buffer_info.ptr, sizeof(Vector2<T>));
-    return vec;
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto mat3_to_nparray(const Matrix3<T>& mat) -> py::array_t<T> {
+    MATRIX_TO_NPARRAY(Matrix3<T>, mat);
+}
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto mat4_to_nparray(const Matrix4<T>& mat) -> py::array_t<T> {
+    MATRIX_TO_NPARRAY(Matrix4<T>, mat);
+}
+
+// -------------------------------------------------------------------------- //
+//                    Conversions from NumPy to Math3d                        //
+// -------------------------------------------------------------------------- //
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto nparray_to_vec2(const py::array_t<T>& array_np) -> Vector2<T> {
+    NPARRAY_TO_VECTOR(Vector2<T>, array_np);
 }
 
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
 inline auto nparray_to_vec3(const py::array_t<T>& array_np) -> Vector3<T> {
-    auto array_buffer_info = array_np.request();
-    if (array_buffer_info.size != Vector3<T>::VECTOR_SIZE) {
-        throw std::runtime_error("Incompatible array size, expected " +
-                                 std::to_string(Vector3<T>::VECTOR_SIZE) +
-                                 " elements");
-    }
-
-    Vector3<T> vec;
-    memcpy(vec.data(), array_buffer_info.ptr, sizeof(Vector3<T>));
-    return vec;
+    NPARRAY_TO_VECTOR(Vector3<T>, array_np);
 }
 
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
 inline auto nparray_to_vec4(const py::array_t<T>& array_np) -> Vector4<T> {
-    auto array_buffer_info = array_np.request();
-    if (array_buffer_info.size != Vector4<T>::VECTOR_SIZE) {
-        throw std::runtime_error("Incompatible array size, expected " +
-                                 std::to_string(Vector4<T>::VECTOR_SIZE) +
-                                 " elements");
-    }
-
-    Vector4<T> vec;
-    memcpy(vec.data(), array_buffer_info.ptr, sizeof(Vector4<T>));
-    return vec;
+    NPARRAY_TO_VECTOR(Vector4<T>, array_np);
 }
 
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto nparray_to_mat2(const py::array_t<T>& array_np) -> Matrix2<T> {
+    NPARRAY_TO_MATRIX(Matrix2<T>, array_np);
+}
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto nparray_to_mat3(const py::array_t<T>& array_np) -> Matrix3<T> {
+    NPARRAY_TO_MATRIX(Matrix3<T>, array_np);
+}
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto nparray_to_mat4(const py::array_t<T>& array_np) -> Matrix4<T> {
+    NPARRAY_TO_MATRIX(Matrix4<T>, array_np);
+}
+
+// -------------------------------------------------------------------------- //
+//                 Conversions from Buffer Protocol to Math3d                 //
+// -------------------------------------------------------------------------- //
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
 inline auto buffer_to_vec4(const py::buffer& buff) -> Vector4<T> {
-    py::buffer_info info = buff.request();
-    if (IsFloat32<T>::value &&
-        (info.format != py::format_descriptor<T>::format())) {
-        throw std::runtime_error(
-            "Incompatible format: expected float (float32) array");
-    }
-    if (IsFloat64<T>::value &&
-        (info.format != py::format_descriptor<T>::format())) {
-        throw std::runtime_error(
-            "Incompatible format: expected double (float64) array");
-    }
-    // NOLINTNEXTLINE TODO(wilbert): cppcheck might be giving a false positive?
-    bool is_valid_shape;
-    if (info.ndim == 1) {
-        is_valid_shape = (info.shape[0] == Vector4<T>::VECTOR_SIZE);
-    } else if (info.ndim == 2) {
-        is_valid_shape = (info.shape[0] == Vector4<T>::VECTOR_SIZE ||
-                          info.shape[1] == Vector4<T>::VECTOR_SIZE);
-    } else {
-        is_valid_shape = false;
-    }
-    if (!is_valid_shape) {
-        throw std::runtime_error(
-            "Incompatible shape: expected (,n), (1,n), (n,1)");
-    }
-    Vector4<T> vec;
-    memcpy(vec.data(), info.ptr, sizeof(T) * Vector4<T>::VECTOR_SIZE);
-    return vec;
+    BUFFER_TO_VECTOR(Vector4<T>, buff);
 }
 
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
 inline auto buffer_to_vec3(const py::buffer& buff) -> Vector3<T> {
-    py::buffer_info info = buff.request();
-    if (IsFloat32<T>::value &&
-        (info.format != py::format_descriptor<T>::format())) {
-        throw std::runtime_error(
-            "Incompatible format: expected float (float32) array");
-    }
-    if (IsFloat64<T>::value &&
-        (info.format != py::format_descriptor<T>::format())) {
-        throw std::runtime_error(
-            "Incompatible format: expected double (float64) array");
-    }
-    // NOLINTNEXTLINE TODO(wilbert): cppcheck might be giving a false positive?
-    bool is_valid_shape;
-    if (info.ndim == 1) {
-        is_valid_shape = (info.shape[0] == Vector3<T>::VECTOR_SIZE);
-    } else if (info.ndim == 2) {
-        is_valid_shape = (info.shape[0] == Vector3<T>::VECTOR_SIZE ||
-                          info.shape[1] == Vector3<T>::VECTOR_SIZE);
-    } else {
-        is_valid_shape = false;
-    }
-    if (!is_valid_shape) {
-        throw std::runtime_error(
-            "Incompatible shape: expected (,n), (1,n), (n,1)");
-    }
-    Vector3<T> vec;
-    memcpy(vec.data(), info.ptr, sizeof(T) * Vector3<T>::VECTOR_SIZE);
-    return vec;
+    BUFFER_TO_VECTOR(Vector3<T>, buff);
 }
 
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
 inline auto buffer_to_vec2(const py::buffer& buff) -> Vector2<T> {
-    py::buffer_info info = buff.request();
-    if (IsFloat32<T>::value &&
-        (info.format != py::format_descriptor<T>::format())) {
-        throw std::runtime_error(
-            "Incompatible format: expected float (float32) array");
-    }
-    if (IsFloat64<T>::value &&
-        (info.format != py::format_descriptor<T>::format())) {
-        throw std::runtime_error(
-            "Incompatible format: expected double (float64) array");
-    }
-    // NOLINTNEXTLINE TODO(wilbert): cppcheck might be giving a false positive?
-    bool is_valid_shape;
-    if (info.ndim == 1) {
-        is_valid_shape = (info.shape[0] == Vector2<T>::VECTOR_SIZE);
-    } else if (info.ndim == 2) {
-        is_valid_shape = (info.shape[0] == Vector2<T>::VECTOR_SIZE ||
-                          info.shape[1] == Vector2<T>::VECTOR_SIZE);
-    } else {
-        is_valid_shape = false;
-    }
-    if (!is_valid_shape) {
-        throw std::runtime_error(
-            "Incompatible shape: expected (,n), (1,n), (n,1)");
-    }
-    Vector2<T> vec;
-    memcpy(vec.data(), info.ptr, sizeof(T) * Vector2<T>::VECTOR_SIZE);
-    return vec;
+    BUFFER_TO_VECTOR(Vector2<T>, buff);
 }
 
 }  // namespace math

@@ -156,6 +156,16 @@ class Matrix3 {
         return m_Elements[col_index][row_index];
     }
 
+    /// Multiplies this matrix by the given matrix
+    /// \param[in] rhs The matrix to multiply this matrix by
+    /// \returns The resulting matrix that combines both matrix operands
+    LM_INLINE auto operator*(const Type& rhs) -> Type;
+
+    /// Multiplies this matrix by the given vector
+    /// \param[in] rhs The second operand of the matrix-vector multiplication
+    /// \returns The resulting vector of the matrix multiplication
+    LM_INLINE auto operator*(const Vec3& rhs) -> Vec3;
+
     /// Returns a comma-initializer to construct the matrix via its coefficients
     auto operator<<(Scalar_T coeff) -> MatCommaInitializer<Type> {
         return MatCommaInitializer<Type>(*this, coeff);

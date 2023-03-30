@@ -10,11 +10,12 @@ Checks: >
         modernize-*,
         performance-*,
         readability-*,
-        -cppcoreguidelines-avoid-magic-numbers,
         -readability-redundant-access-specifiers,
+        -cppcoreguidelines-non-private-member-variables-in-classes,
+        -cppcoreguidelines-avoid-magic-numbers,
         -readability-magic-numbers,
-        -readability-function-cognitive-complexity,
         -readability-identifier-length,
+        -readability-function-cognitive-complexity,
 
 WarningsAsErrors: ''
 FormatStyle: none

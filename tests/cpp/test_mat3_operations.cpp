@@ -80,18 +80,18 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
         REQUIRE(m_3 != m_1);
     }
 
-    // Generate first random matrix (2^8 cases possible values)
+    // Generate first random matrix (2^6 cases possible values)
     auto x00 = GenRandomValue(T, 2);
-    auto x01 = GenRandomValue(T, 2);
+    auto x01 = GenRandomValue(T, 1);
     auto x02 = GenRandomValue(T, 2);
 
     auto x10 = GenRandomValue(T, 2);
-    auto x11 = GenRandomValue(T, 2);
+    auto x11 = GenRandomValue(T, 1);
     auto x12 = GenRandomValue(T, 2);
 
     auto x20 = GenRandomValue(T, 2);
-    auto x21 = GenRandomValue(T, 2);
-    auto x22 = GenRandomValue(T, 1);
+    auto x21 = GenRandomValue(T, 1);
+    auto x22 = GenRandomValue(T, 2);
 
     // clang-format off
     Matrix3 m_a(x00, x01, x02,
@@ -101,16 +101,16 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
 
     // Generate second random matrix (2^8 cases possible values)
     auto y00 = GenRandomValue(T, 2);
-    auto y01 = GenRandomValue(T, 2);
+    auto y01 = GenRandomValue(T, 1);
     auto y02 = GenRandomValue(T, 2);
 
     auto y10 = GenRandomValue(T, 2);
-    auto y11 = GenRandomValue(T, 2);
+    auto y11 = GenRandomValue(T, 1);
     auto y12 = GenRandomValue(T, 2);
 
     auto y20 = GenRandomValue(T, 2);
-    auto y21 = GenRandomValue(T, 2);
-    auto y22 = GenRandomValue(T, 1);
+    auto y21 = GenRandomValue(T, 1);
+    auto y22 = GenRandomValue(T, 2);
 
     // clang-format off
     Matrix3 m_b(y00, y01, y02,

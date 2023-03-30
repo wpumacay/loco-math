@@ -335,7 +335,7 @@ auto Quaternion<T>::inverse() const -> Quaternion<T> {
 
 template <typename T>
 auto Quaternion<T>::rotate(const Vector3<T>& vec) const -> Vector3<T> {
-    return ::math::rotate<T>(vec);
+    return ::math::rotate<T>(*this, vec);
 }
 
 template <typename T>

@@ -6,6 +6,11 @@
 
 #include <math/mat2_t_decl.hpp>
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcomment"
+#endif
+
 /**
  * SSE instruction sets required for each kernel:
  *
@@ -140,12 +145,12 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
     //
     // We need to shuffle in this way both lhs and rhs
     //      [b00,b10,b01,b11]
-    //        /           \
+    //        |            |
     // [b00,b00,b01,b01]  [b10,b10,b11,b11]
     //         x                  x
     // [a00,a10,a00,a10]  [a01,a11,a01,a11]
-    //          \                /
-    //           \              /
+    //         |                 |
+    //          |               |
     //           [matmul result]
     auto xmm_rhs_mix_0 = _mm_shuffle_ps(xmm_mat_rhs, xmm_mat_rhs, 0xa0);
     auto xmm_rhs_mix_1 = _mm_shuffle_ps(xmm_mat_rhs, xmm_mat_rhs, 0xf5);
@@ -174,12 +179,12 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
     //
     // We need to shuffle in this way both lhs and rhs
     //      [b00,b10,b01,b11]
-    //        /           \
+    //        |            |
     // [b00,b00,b01,b01]  [b10,b10,b11,b11]
     //         x                  x
     // [a00,a10,a00,a10]  [a01,a11,a01,a11]
-    //          \                /
-    //           \              /
+    //         |                 |
+    //          |               |
     //           [matmul result]
     auto ymm_rhs_mix_0 = _mm256_shuffle_pd(ymm_mat_rhs, ymm_mat_rhs, 0x00);
     auto ymm_rhs_mix_1 = _mm256_shuffle_pd(ymm_mat_rhs, ymm_mat_rhs, 0x0f);
@@ -250,5 +255,9 @@ LM_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
 
 }  // namespace avx
 }  // namespace math
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 #endif  // MATH_AVX_ENABLED

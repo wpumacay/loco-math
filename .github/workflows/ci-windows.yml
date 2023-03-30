@@ -12,25 +12,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest]
+        os: [windows-2022]
         build-type: [Release, Debug]
 
     name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • MSVC"
     runs-on: ${{matrix.os}}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Update CMake
       uses: jwlawson/actions-setup-cmake@v1.10
 
     - name: Configure CMake
       env:
-        CMAKE_GENERATOR: "Visual Studio 16 2019"
-      run: cmake -S . -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
+        CMAKE_GENERATOR: "Visual Studio 17 2022"
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
 
     - name: Build C++ Project
-      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build-type}}
+      run: cmake --build build --config ${{matrix.build-type}}
 
     - name: Running C++ Tests
-      run: ctest --test-dir ${{github.workspace}}/build/tests/cpp
+      run: ctest --test-dir build/tests/cpp

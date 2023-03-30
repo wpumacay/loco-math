@@ -1,28 +1,45 @@
 # ~~~
 # CMake configuration for C++ unittests
 # ~~~
-if(NOT TINYMATH_BUILD_TESTS)
+if(NOT TARGET math::math)
+  loco_message("Unittests require target [math::math], but wasn't found"
+               LOG_LEVEL WARNING)
   return()
 endif()
 
-if((NOT TARGET tinymath::tinymath) OR (NOT TARGET Catch2::Catch2))
-  tmMessage(
-    "Unittests require both tinymath::tinymath and Catch2::Catch2 targets"
-    LOG_LEVEL WARNING)
+if(NOT TARGET Catch2::Catch2)
+  loco_message("Unittests require target [Catch2::Catch2], but wasn't found"
+               LOG_LEVEL WARNING)
   return()
 endif()
 
 include(CTest)
-include(${CMAKE_SOURCE_DIR}/third_party/catch2/source/contrib/Catch.cmake)
+include(Catch)
 
 add_executable(
-  TinyMathCppTests
+  MathCppTests
   ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_vec2_type.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_vec2_operations.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_vec3_type.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_vec3_operations.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_vec4_type.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/test_vec4_operations.cpp)
-target_link_libraries(TinyMathCppTests PRIVATE tinymath::tinymath
-                                               Catch2::Catch2)
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_vec4_operations.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_mat2_type.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_mat2_operations.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_mat3_type.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_mat3_operations.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_type.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_operations.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_quat_type.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_quat_operations.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_euler_type.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_pose3d_type.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_mat2_functions.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_mat3_functions.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_functions.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_utils_spherical_coordinates.cpp)
+target_link_libraries(MathCppTests PRIVATE math::math Catch2::Catch2)
+target_include_directories(MathCppTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 # Discover tets and pick an integer as the random seed
-catch_discover_tests(TinyMathCppTests EXTRA_ARGS --rng-seed 721790)
+catch_discover_tests(MathCppTests)

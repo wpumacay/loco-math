@@ -1,38 +1,47 @@
-#include <iostream>
-#include <tinymath/tinymath.hpp>
+#include <math/vec4_t.hpp>
 
-template <typename T>
-auto printVector(const tiny::math::Vector4<T>& vec) -> void {
-    std::cout << "Vector4(";
-    std::cout << vec.x() << ", ";
-    std::cout << vec.y() << ", ";
-    std::cout << vec.z() << ", ";
-    std::cout << vec.w() << ")";
-    std::cout << "\n";
+template <typename T,
+          typename = typename std::enable_if<math::IsScalar<T>::value>::type>
+LM_NEVER_INLINE auto run_operations_vec4() -> void {
+    using Vec4 = math::Vector4<T>;
+
+    // Preamble (show the type we're currently working with)
+    if (std::is_same<T, float>()) {
+        std::cout << "Vector2-float32 type:\n";
+    } else if (std::is_same<T, double>()) {
+        std::cout << "Vector2-float64 type:\n";
+    }
+
+    Vec4 vec_a(1.0, 2.0, 3.0, 4.0);
+    Vec4 vec_b(3.0, 5.0, 7.0, 9.0);
+
+    Vec4 vec_sum = vec_a + vec_b;
+    Vec4 vec_diff = vec_a - vec_b;
+    Vec4 vec_scale_1 = 2.5 * vec_a;
+    Vec4 vec_scale_2 = vec_b * 0.25;
+    Vec4 vec_mul = vec_a * vec_b;
+
+    std::cout << "a: " << '\n' << vec_a.toString() << '\n';
+    std::cout << "b: " << '\n' << vec_b.toString() << '\n';
+    std::cout << "a + b: " << '\n' << vec_sum.toString() << '\n';
+    std::cout << "a - b: " << '\n' << vec_diff.toString() << '\n';
+    std::cout << "2.5 * a: " << '\n' << vec_scale_1.toString() << '\n';
+    std::cout << "b * 0.25: " << '\n' << vec_scale_2.toString() << '\n';
+    std::cout << "a . b: " << '\n' << math::dot(vec_a, vec_b) << '\n';
+    std::cout << "b . a: " << '\n' << math::dot(vec_b, vec_a) << '\n';
+    std::cout << "|a|: " << '\n' << math::norm(vec_a) << '\n';
+    std::cout << "|a|^2: " << '\n' << math::squareNorm(vec_a) << '\n';
+    std::cout << "|b|: " << '\n' << math::norm(vec_b) << '\n';
+    std::cout << "|b|^2: " << '\n' << math::squareNorm(vec_b) << '\n';
+    std::cout << "a * b: " << '\n' << vec_mul.toString() << '\n';
+    std::cout << "a == b: " << '\n'
+              << ((vec_a == vec_b) ? "True" : "False") << '\n';
+    std::cout << "a != b: " << '\n'
+              << ((vec_a != vec_b) ? "True" : "False") << '\n';
 }
 
 auto main() -> int {
-    {
-        using Vector4f = tiny::math::Vector4<tiny::math::float32_t>;
-        Vector4f vec_a(1.0F, 2.0F, 3.0F, 4.0F);  // NOLINT
-        Vector4f vec_b(2.0F, 4.0F, 6.0F, 8.0F);  // NOLINT
-
-        auto vec_c = vec_a + vec_b;
-        auto vec_d = vec_a - vec_b;
-        printVector(vec_c);
-        printVector(vec_d);
-    }
-
-    {
-        using Vector4d = tiny::math::Vector4<tiny::math::float64_t>;
-        Vector4d vec_a(1.0, 2.0, 3.0, 4.0);  // NOLINT
-        Vector4d vec_b(2.0, 4.0, 6.0, 8.0);  // NOLINT
-
-        auto vec_c = vec_a + vec_b;
-        auto vec_d = vec_a - vec_b;
-        printVector(vec_c);
-        printVector(vec_d);
-    }
-
+    run_operations_vec4<float>();
+    run_operations_vec4<double>();
     return 0;
 }

@@ -7,3 +7,6 @@ pre-commit==v2.14.0
 cpplint
 ipython
 ipykernel
+matplotlib
+jupyter
+meshcat

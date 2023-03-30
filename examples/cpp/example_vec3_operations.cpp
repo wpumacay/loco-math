@@ -1,49 +1,47 @@
-#include <iostream>
-#include <tinymath/tinymath.hpp>
+#include <math/vec3_t.hpp>
 
-template <typename T>
-auto printVector(const tiny::math::Vector3<T>& vec) -> void {
-    std::cout << "Vector3(";
-    std::cout << vec.x() << ", ";
-    std::cout << vec.y() << ", ";
-    std::cout << vec.z() << ")";
-    std::cout << "\n";
+template <typename T,
+          typename = typename std::enable_if<math::IsScalar<T>::value>::type>
+LM_NEVER_INLINE auto run_operations_vec3() -> void {
+    using Vec3 = math::Vector3<T>;
+
+    // Preamble (show the type we're currently working with)
+    if (std::is_same<T, float>()) {
+        std::cout << "Vector2-float32 type:\n";
+    } else if (std::is_same<T, double>()) {
+        std::cout << "Vector2-float64 type:\n";
+    }
+
+    Vec3 vec_a(1.0, 2.0, 3.0);
+    Vec3 vec_b(3.0, 5.0, 7.0);
+
+    Vec3 vec_sum = vec_a + vec_b;
+    Vec3 vec_diff = vec_a - vec_b;
+    Vec3 vec_scale_1 = 2.5 * vec_a;
+    Vec3 vec_scale_2 = vec_b * 0.25;
+    Vec3 vec_mul = vec_a * vec_b;
+
+    std::cout << "a: " << '\n' << vec_a.toString() << '\n';
+    std::cout << "b: " << '\n' << vec_b.toString() << '\n';
+    std::cout << "a + b: " << '\n' << vec_sum.toString() << '\n';
+    std::cout << "a - b: " << '\n' << vec_diff.toString() << '\n';
+    std::cout << "2.5 * a: " << '\n' << vec_scale_1.toString() << '\n';
+    std::cout << "b * 0.25: " << '\n' << vec_scale_2.toString() << '\n';
+    std::cout << "a . b: " << '\n' << math::dot(vec_a, vec_b) << '\n';
+    std::cout << "b . a: " << '\n' << math::dot(vec_b, vec_a) << '\n';
+    std::cout << "|a|: " << '\n' << math::norm(vec_a) << '\n';
+    std::cout << "|a|^2: " << '\n' << math::squareNorm(vec_a) << '\n';
+    std::cout << "|b|: " << '\n' << math::norm(vec_b) << '\n';
+    std::cout << "|b|^2: " << '\n' << math::squareNorm(vec_b) << '\n';
+    std::cout << "a * b: " << '\n' << vec_mul.toString() << '\n';
+    std::cout << "a == b: " << '\n'
+              << ((vec_a == vec_b) ? "True" : "False") << '\n';
+    std::cout << "a != b: " << '\n'
+              << ((vec_a != vec_b) ? "True" : "False") << '\n';
 }
 
 auto main() -> int {
-    {
-        using Vector3f = tiny::math::Vector3<tiny::math::float32_t>;
-        Vector3f vec_a(1.0F, 2.0F, 3.0F);  // NOLINT
-        Vector3f vec_b(2.0F, 4.0F, 6.0F);  // NOLINT
-
-        auto vec_c = vec_a + vec_b;
-        auto vec_d = vec_a - vec_b;
-        printVector(vec_c);
-        printVector(vec_d);
-
-        std::cout << "dot-vec3f(a,b): " << vec_a.dot(vec_b) << "\n";
-        std::cout << "len^2-vec3f(a): " << vec_a.squaredNorm() << "\n";
-        std::cout << "len^2-vec3f(b): " << vec_b.squaredNorm() << "\n";
-        std::cout << "len-vec3f(a): " << vec_a.norm() << "\n";
-        std::cout << "len-vec3f(b): " << vec_b.norm() << "\n";
-    }
-
-    {
-        using Vector3d = tiny::math::Vector3<tiny::math::float64_t>;
-        Vector3d vec_a(1.0, 2.0, 3.0);  // NOLINT
-        Vector3d vec_b(2.0, 4.0, 6.0);  // NOLINT
-
-        auto vec_c = vec_a + vec_b;
-        auto vec_d = vec_a - vec_b;
-        printVector(vec_c);
-        printVector(vec_d);
-
-        std::cout << "dot-vec3d(a,b): " << vec_a.dot(vec_b) << "\n";
-        std::cout << "len^2-vec3d(a): " << vec_a.squaredNorm() << "\n";
-        std::cout << "len^2-vec3d(b): " << vec_b.squaredNorm() << "\n";
-        std::cout << "len-vec3d(a): " << vec_a.norm() << "\n";
-        std::cout << "len-vec3d(b): " << vec_b.norm() << "\n";
-    }
-
+    run_operations_vec3<float>();
+    run_operations_vec3<double>();
     return 0;
 }

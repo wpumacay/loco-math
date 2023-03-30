@@ -99,3 +99,112 @@ def test_pos_mat3_constructor(
         atol=1e-5,
     )
     assert np.abs(pose.orientation.length() - 1.0) < 1e-5
+
+
+@pytest.mark.parametrize(
+    "Pose,Vec3,Quat,Type",
+    [
+        (m3d.Pose3d_f, m3d.Vector3f, m3d.Quaternionf, np.float32),
+        (m3d.Pose3d_d, m3d.Vector3d, m3d.Quaterniond, np.float64),
+    ],
+)
+def test_apply_method(
+    Pose: Pose3dCls, Vec3: Vec3Cls, Quat: QuatCls, Type: type
+) -> None:
+    # Point B in A = (1.0, 1.0, 1.0)
+    # X of A in W = {pos=(-3.0, 0.0, 0.0), rot=quat_rot_z(PI / 2)}
+    # Point B in W = (-4.0, 1.0, 1.0)
+    p_BA = Vec3(1.0, 1.0, 1.0)
+    X_AW = Pose(Vec3(-3.0, 0.0, 0.0), Quat.RotationZ(np.pi / 2.0))
+    p_BW = X_AW.apply(p_BA)
+    assert np.allclose(cast(np.ndarray, p_BW), np.array([-4.0, 1.0, 1.0]).astype(Type))
+
+
+@pytest.mark.parametrize(
+    "Pose,Vec3,Quat,Type",
+    [
+        (m3d.Pose3d_f, m3d.Vector3f, m3d.Quaternionf, np.float32),
+        (m3d.Pose3d_d, m3d.Vector3d, m3d.Quaterniond, np.float64),
+    ],
+)
+def test_inverse_method(
+    Pose: Pose3dCls, Vec3: Vec3Cls, Quat: QuatCls, Type: type
+) -> None:
+    # X of A in W = {pos=(0.0, 3.0, 0.0), rot=quat_rot_x(PI / 2)}
+    # X of W in A = (pos=(0.0, 0.0, 3.0), rot=quat_rot_x(-PI / 2))
+    X_AW = Pose(Vec3(0.0, 3.0, 0.0), Quat.RotationX(np.pi / 2.0))
+    X_WA = X_AW.inverse()
+    assert np.allclose(
+        cast(np.ndarray, X_WA.position), np.array([0.0, 0.0, 3.0], dtype=Type)
+    )
+    assert np.allclose(
+        cast(np.ndarray, X_WA.orientation),
+        cast(np.ndarray, Quat.RotationX(-np.pi / 2.0)),
+    )
+
+
+@pytest.mark.parametrize(
+    "Pose,Vec3,Quat,Type",
+    [
+        (m3d.Pose3d_f, m3d.Vector3f, m3d.Quaternionf, np.float32),
+        (m3d.Pose3d_d, m3d.Vector3d, m3d.Quaterniond, np.float64),
+    ],
+)
+def test_vecmul_operator_method(
+    Pose: Pose3dCls, Vec3: Vec3Cls, Quat: QuatCls, Type: type
+) -> None:
+    # Point B in A = (1.0, 1.0, 1.0)
+    # X of A in W = {pos=(-3.0, 0.0, 0.0), rot=quat_rot_z(PI / 2)}
+    # Point B in W = (-4.0, 1.0, 1.0)
+    p_BA = Vec3(1.0, 1.0, 1.0)
+    X_AW = Pose(Vec3(-3.0, 0.0, 0.0), Quat.RotationZ(np.pi / 2.0))
+    p_BW = X_AW * p_BA
+    assert np.allclose(cast(np.ndarray, p_BW), np.array([-4.0, 1.0, 1.0], dtype=Type))
+
+    # Point C in B = (1.0, 1.0, 1.0)
+    # X of B in A = {pos(0.0, 5.0, 0.0), rot=quat_rot_x(PI / 2)}
+    # Point C in A = (1.0, 6.0, -1.0)
+    # X of A in W = {pos(0.0, 5.0, 0.0), rot=quat_rot_y(PI / 2)}
+    # Point C in W = (1.0, 6.0, 6.0)
+    X_BA = Pose(Vec3(0.0, 5.0, 0.0), Quat.RotationY(np.pi / 2.0))
+    X_AW = Pose(Vec3(0.0, 5.0, 0.0), Quat.RotationX(np.pi / 2.0))
+    p_CB = Vec3(1.0, 1.0, 1.0)
+    p_CA = X_BA * p_CB
+    assert np.allclose(cast(np.ndarray, p_CA), np.array([1.0, 6.0, -1.0], dtype=Type))
+    p_CW = X_AW * p_CA
+    assert np.allclose(cast(np.ndarray, p_CW), np.array([1.0, 6.0, 6.0], dtype=Type))
+
+
+@pytest.mark.parametrize(
+    "Pose,Vec3,Quat,Type",
+    [
+        (m3d.Pose3d_f, m3d.Vector3f, m3d.Quaternionf, np.float32),
+        (m3d.Pose3d_d, m3d.Vector3d, m3d.Quaterniond, np.float64),
+    ],
+)
+def test_posemul_operator_method(
+    Pose: Pose3dCls, Vec3: Vec3Cls, Quat: QuatCls, Type: type
+) -> None:
+    # Point C in B = (1.0, 1.0, 1.0)
+    # X of B in A = {pos(0.0, 5.0, 0.0), rot=quat_rot_x(PI / 2)}
+    # Point C in A = (1.0, 6.0, -1.0)
+    # X of A in W = {pos(0.0, 5.0, 0.0), rot=quat_rot_y(PI / 2)}
+    # Point C in W = (1.0, 6.0, 6.0)
+    # X of B in W = X_AW * X_BA = ...
+    # ... {pos(0.0, 5.0, 5.0), rot=quat_rot_x(PI / 2) * quat_rot_y(PI / 2)}
+    p_CB = Vec3(1.0, 1.0, 1.0)
+    X_BA = Pose(Vec3(0.0, 5.0, 0.0), Quat.RotationY(np.pi / 2.0))
+    X_AW = Pose(Vec3(0.0, 5.0, 0.0), Quat.RotationX(np.pi / 2.0))
+    X_BW = X_AW * X_BA
+    assert np.allclose(
+        cast(np.ndarray, X_BW.position), np.array([0.0, 5.0, 5.0], dtype=Type)
+    )
+    assert np.allclose(
+        cast(np.ndarray, X_BW.orientation),
+        cast(
+            np.ndarray,
+            Quat.RotationX(np.pi / 2.0) * Quat.RotationY(np.pi / 2.0),
+        ),
+    )
+    p_CW = X_BW.apply(p_CB)
+    assert np.allclose(cast(np.ndarray, p_CW), np.array([1.0, 6.0, 6.0], dtype=Type))

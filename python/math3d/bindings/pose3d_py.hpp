@@ -29,6 +29,7 @@ template <typename T, SFINAE_POSE3D_BINDINGS<T> = nullptr>
 auto bindings_pose3d(py::module& m, const char* class_name) -> void {
     using Vec3 = ::math::Vector3<T>;
     using Mat3 = ::math::Matrix3<T>;
+    using Mat4 = ::math::Matrix4<T>;
     using Quat = ::math::Quaternion<T>;
 
     using Class = ::math::Pose3d<T>;
@@ -50,9 +51,8 @@ auto bindings_pose3d(py::module& m, const char* class_name) -> void {
              })
         .def("inverse",
              [](const Class& self) -> Class { return self.inverse(); })
-        .def(
-            "toMatrix",
-            [](const Class& self) -> py::array_t<T> { return self.toMatrix(); })
+        .def("toMatrix",
+             [](const Class& self) -> Mat4 { return self.toMatrix(); })
         .def("__mul__",
              [](const Class& self, const Vec3& vec) -> Vec3 {
                  return self * vec;

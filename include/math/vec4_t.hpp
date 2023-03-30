@@ -207,7 +207,7 @@ LM_INLINE auto operator*(const Vector4<T>& lhs, const Vector4<T>& rhs)
                                     rhs.elements());
 #endif
     return dst;
-};
+}
 
 /// \brief Returns the additive inverse of the given vector
 ///

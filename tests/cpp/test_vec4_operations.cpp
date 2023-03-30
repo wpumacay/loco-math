@@ -1,6 +1,19 @@
 #include <catch2/catch.hpp>
 #include <math/vec4_t.hpp>
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wimplicit-float-conversion"
+#pragma clang diagnostic ignored "-Wdouble-promotion"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-conversion"
+#pragma GCC diagnostic ignored "-Wdouble-promotion"
+#elif defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4305)
+#endif
+
 constexpr double RANGE_MIN = -100.0;
 constexpr double RANGE_MAX = 100.0;
 
@@ -277,3 +290,11 @@ TEMPLATE_TEST_CASE("Vector4 class (vec4_t) core Operations", "[vec4_t][ops]",
         REQUIRE(FuncAllClose<T>(inv_v, -val_x, -val_y, -val_z, -val_w));
     }
 }
+
+#if defined(__clang__)
+#pragma clang diagnostic pop  // NOLINT
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#elif defined(_MSC_VER)
+#pragma warning(pop)
+#endif

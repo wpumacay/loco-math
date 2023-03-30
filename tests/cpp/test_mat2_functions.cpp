@@ -4,6 +4,14 @@
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wimplicit-float-conversion"
+#pragma clang diagnostic ignored "-Wdouble-promotion"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-conversion"
+#pragma GCC diagnostic ignored "-Wdouble-promotion"
+#elif defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4305)
 #endif
 
 static constexpr double ANGLE_MIN = -math::PI;
@@ -78,3 +86,11 @@ TEMPLATE_TEST_CASE("Matrix2 class (mat2_t) factory functions",
         // clang-format on
     }
 }
+
+#if defined(__clang__)
+#pragma clang diagnostic pop  // NOLINT
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#elif defined(_MSC_VER)
+#pragma warning(pop)
+#endif

@@ -26,8 +26,8 @@ class SphericalCoords {
  public:
     SphericalCoords() = default;
 
-    explicit SphericalCoords(Scalar_T rho, Scalar_T theta, Scalar_T phi)
-        : rho(rho), theta(theta), phi(phi) {}
+    explicit SphericalCoords(Scalar_T p_rho, Scalar_T p_theta, Scalar_T p_phi)
+        : rho(p_rho), theta(p_theta), phi(p_phi) {}
 
     auto SetFromCartesian(const Vector3<Scalar_T>& vec) -> void {
         SetFromCartesian(vec.x(), vec.y(), vec.z());

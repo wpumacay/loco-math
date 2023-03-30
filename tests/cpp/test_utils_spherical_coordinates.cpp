@@ -1,6 +1,19 @@
 #include <catch2/catch.hpp>
 #include <math/utils/spherical_coordinates.hpp>
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wimplicit-float-conversion"
+#pragma clang diagnostic ignored "-Wdouble-promotion"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-conversion"
+#pragma GCC diagnostic ignored "-Wdouble-promotion"
+#elif defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4305)
+#endif
+
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Utilities [Spherical-Coordinates]", "[sph_coords][funcs]",
                    math::float32_t, math::float64_t) {
@@ -61,3 +74,11 @@ TEMPLATE_TEST_CASE("Utilities [Spherical-Coordinates]", "[sph_coords][funcs]",
 
     SECTION("SphericalCoords::GetCartesian") {}
 }
+
+#if defined(__clang__)
+#pragma clang diagnostic pop  // NOLINT
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#elif defined(_MSC_VER)
+#pragma warning(pop)
+#endif

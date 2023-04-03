@@ -19,22 +19,22 @@
 
 namespace math {
 
-template <typename Scalar_T>
+template <typename T>
 class Matrix3;
 
-template <typename Scalar_T>
+template <typename T>
 class Matrix4;
 
-template <typename Scalar_T>
+template <typename T>
 class Quaternion;
 
-template <typename Scalar_T>
+template <typename T>
 class Euler {
  public:
-    using Vec3 = Vector3<Scalar_T>;
-    using Mat3 = Matrix3<Scalar_T>;
-    using Mat4 = Matrix4<Scalar_T>;
-    using Quat = Quaternion<Scalar_T>;
+    using Vec3 = Vector3<T>;
+    using Mat3 = Matrix3<T>;
+    using Mat4 = Matrix4<T>;
+    using Quat = Quaternion<T>;
 
     /// Possible ordering (Tait-Bryan angles)
     enum class Order {
@@ -53,11 +53,11 @@ class Euler {
     };
 
     /// \brief Angle of rotation around the X-axis
-    Scalar_T x = static_cast<Scalar_T>(0.0);  // NOLINT
+    T x = static_cast<T>(0.0);  // NOLINT
     /// \brief Angle of rotation around the Y-axis
-    Scalar_T y = static_cast<Scalar_T>(0.0);  // NOLINT
+    T y = static_cast<T>(0.0);  // NOLINT
     /// \brief Angle of rotation around the Z-axis
-    Scalar_T z = static_cast<Scalar_T>(0.0);  // NOLINT
+    T z = static_cast<T>(0.0);  // NOLINT
 
     /// \brief Returns the internal order used for the elemental rotations
     ///
@@ -89,12 +89,12 @@ class Euler {
     Euler() = default;
 
     /// Constructs a set of Euler angles from the given configuration
-    /// \param[in] x Euler angle associated with a rotation around the X axis
-    /// \param[in] y Euler angle associated with a rotation around the Y axis
-    /// \param[in] z Euler angle associated with a rotation around the Z axis
+    /// \param[in] e_x Euler angle associated with a rotation around the X axis
+    /// \param[in] e_y Euler angle associated with a rotation around the Y axis
+    /// \param[in] e_z Euler angle associated with a rotation around the Z axis
     /// \param[in] p_order Order used for the representation
     /// \param[in] p_convention Convention used for the representation
-    explicit Euler(Scalar_T e_x, Scalar_T e_y, Scalar_T e_z, Order p_order = Order::XYZ,
+    explicit Euler(T e_x, T e_y, T e_z, Order p_order = Order::XYZ,
                    Convention p_convention = Convention::INTRINSIC) {
         this->order = p_order;
         this->convention = p_convention;
@@ -127,8 +127,8 @@ class Euler {
 
     /// Constructs a set of Euler angles from the given quaternion
     /// \param[in] quaternion A quaternion given by the user
-    /// \param[in] order Order used for the representation
-    /// \param[in] convention Convention used for the representation
+    /// \param[in] p_order Order used for the representation
+    /// \param[in] p_convention Convention used for the representation
     explicit Euler(const Quat& quaternion, Order p_order = Order::XYZ,
                    Convention p_convention = Convention::INTRINSIC) {
         this->order = p_order;
@@ -139,9 +139,9 @@ class Euler {
     /// Constructs a set of Euler angles from the given axis-angle pair
     /// \param[in] axis The axis of rotation given by the user
     /// \param[in] angle The angle of rotation around the given axis
-    /// \param[in] order Order used for the representation
-    /// \param[in] convention Convention used for the representation
-    explicit Euler(const Vec3& axis, Scalar_T angle, Order p_order = Order::XYZ,
+    /// \param[in] p_order Order used for the representation
+    /// \param[in] p_convention Convention used for the representation
+    explicit Euler(const Vec3& axis, T angle, Order p_order = Order::XYZ,
                    Convention p_convention = Convention::INTRINSIC) {
         this->order = p_order;
         this->convention = p_convention;
@@ -158,7 +158,7 @@ class Euler {
     auto setFromQuaternion(const Quat& quaternion) -> void;
 
     /// Updates this set of Euler angles with the given axis-angle pair
-    auto setFromAxisAngle(const Vec3& axis, Scalar_T angle) -> void;
+    auto setFromAxisAngle(const Vec3& axis, T angle) -> void;
 };
 
 }  // namespace math

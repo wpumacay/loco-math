@@ -19,7 +19,7 @@ namespace math {
 ///
 /// \brief Class representation of a vector in 2d-space
 ///
-/// \tparam Scalar_T Type of scalar value used for this 2d-vector (float|double)
+/// \tparam T Type of scalar value used for this 2d-vector (float|double)
 ///
 /// This is a class that represents a 2d-vector with entries x, y of some
 /// scalar floating-point type. Its storage is a buffer of the given scalar
@@ -27,7 +27,7 @@ namespace math {
 /// between adding padding/size and usage of aligned load/store). So, SIMD
 /// kernels are build using unaligned load/store operations (unlike friends like
 /// vec3 and vec4 types)
-template <typename Scalar_T>
+template <typename T>
 struct Vector2 {
     /// Number of scalars used in the storage of the vector
     static constexpr uint32_t BUFFER_SIZE = 2;
@@ -37,45 +37,45 @@ struct Vector2 {
     static constexpr uint32_t VECTOR_NDIM = 1;
 
     /// Type alias of the vector
-    using Type = Vector2<Scalar_T>;
+    using Type = Vector2<T>;
     /// Type alias of the scalar used for this vector (float32|64)
-    using ElementType = Scalar_T;
+    using ElementType = T;
     /// Type alias of the internal storage used for the vector (i.e. std::array)
-    using BufferType = std::array<Scalar_T, BUFFER_SIZE>;
+    using BufferType = std::array<T, BUFFER_SIZE>;
 
     /// Constructs a zero-initialized vector
     Vector2() = default;
 
     /// Constructs a vector of the form (x, x)
-    explicit Vector2(Scalar_T x_coord) {
+    explicit Vector2(T x_coord) {
         m_Elements[0] = x_coord;
         m_Elements[1] = x_coord;
     }
 
     /// Constructs a vector of the form (x, y)
-    explicit Vector2(Scalar_T x_coord, Scalar_T y_coord) {
+    explicit Vector2(T x_coord, T y_coord) {
         m_Elements[0] = x_coord;
         m_Elements[1] = y_coord;
     }
 
     // cppcheck-suppress noExplicitConstructor
     /// Constructs a vector from an initializer list of the form {x, y}
-    Vector2(const std::initializer_list<Scalar_T>& values) {
-        assert(values.size() == Vector2<Scalar_T>::VECTOR_SIZE);
+    Vector2(const std::initializer_list<T>& values) {
+        assert(values.size() == Vector2<T>::VECTOR_SIZE);
         std::copy(values.begin(), values.end(), m_Elements.data());
     }
 
     /// Returns a mutable reference to the x-component of the vector
-    auto x() -> Scalar_T& { return m_Elements[0]; }
+    auto x() -> T& { return m_Elements[0]; }
 
     /// Returns a mutable reference to the y-component of the vector
-    auto y() -> Scalar_T& { return m_Elements[1]; }
+    auto y() -> T& { return m_Elements[1]; }
 
     /// Returns an unmutable reference to the x-component of the vector
-    auto x() const -> const Scalar_T& { return m_Elements[0]; }
+    auto x() const -> const T& { return m_Elements[0]; }
 
     /// Returns an unmutable reference to the y-component of the vector
-    auto y() const -> const Scalar_T& { return m_Elements[1]; }
+    auto y() const -> const T& { return m_Elements[1]; }
 
     /// Returns a mutable reference to the underlying storage of the vector
     auto elements() -> BufferType& { return m_Elements; }
@@ -84,21 +84,21 @@ struct Vector2 {
     auto elements() const -> const BufferType& { return m_Elements; }
 
     /// Returns a pointer to the data of the underlying storage in use
-    auto data() -> Scalar_T* { return m_Elements.data(); }
+    auto data() -> T* { return m_Elements.data(); }
 
     /// Reeturns a const-pointer to the data of the underlying storage in use
-    auto data() const -> const Scalar_T* { return m_Elements.data(); }
+    auto data() const -> const T* { return m_Elements.data(); }
 
     /// Returns a mutable reference to the requested entry of the vector
-    auto operator[](uint32_t index) -> Scalar_T& { return m_Elements[index]; }
+    auto operator[](uint32_t index) -> T& { return m_Elements[index]; }
 
     /// Returns an unmutable reference to the requested entry of the vector
-    auto operator[](uint32_t index) const -> const Scalar_T& {
+    auto operator[](uint32_t index) const -> const T& {
         return m_Elements[index];
     }
 
     /// Returns a comma-initializer to construct the vector via its coefficients
-    auto operator<<(Scalar_T coeff) -> VecCommaInitializer<Type> {
+    auto operator<<(T coeff) -> VecCommaInitializer<Type> {
         return VecCommaInitializer<Type>(*this, coeff);
     }
 

@@ -12,26 +12,26 @@
 #include <math/euler_t_decl.hpp>
 
 namespace math {
-template <typename Scalar_T>
+template <typename T>
 class Matrix3;
 
-template <typename Scalar_T>
+template <typename T>
 class Euler;
 
-template <typename Scalar_T>
+template <typename T>
 class Quaternion;
 }  // namespace math
 
 namespace math {
 
-template <typename Scalar_T>
+template <typename T>
 class Pose3d {
  public:
-    using Vec3 = ::math::Vector3<Scalar_T>;
-    using Vec4 = ::math::Vector4<Scalar_T>;
-    using Quat = ::math::Quaternion<Scalar_T>;
-    using Mat3 = ::math::Matrix3<Scalar_T>;
-    using Mat4 = ::math::Matrix4<Scalar_T>;
+    using Vec3 = ::math::Vector3<T>;
+    using Vec4 = ::math::Vector4<T>;
+    using Quat = ::math::Quaternion<T>;
+    using Mat3 = ::math::Matrix3<T>;
+    using Mat4 = ::math::Matrix4<T>;
 
     /// The position component of this pose
     Vec3 position;
@@ -42,7 +42,7 @@ class Pose3d {
 
     explicit Pose3d(const Vec3& pos, const Quat& quat);
 
-    explicit Pose3d(const Vec3& pos, const Euler<Scalar_T>& euler);
+    explicit Pose3d(const Vec3& pos, const Euler<T>& euler);
 
     explicit Pose3d(const Vec3& pos, const Mat3& mat);
 
@@ -52,14 +52,13 @@ class Pose3d {
     LM_INLINE auto apply(const Vec3& rhs) const -> Vec3;
 
     /// Returns the inverse of this pose
-    LM_INLINE auto inverse() const -> Pose3d<Scalar_T>;
+    LM_INLINE auto inverse() const -> Pose3d<T>;
 
     /// Returns a 4x4 matrix equivalent to this pose
     LM_INLINE auto toMatrix() const -> Mat4;
 
     /// Composes the given pose with this pose
-    LM_INLINE auto operator*(const Pose3d<Scalar_T>& rhs) const
-        -> Pose3d<Scalar_T>;
+    LM_INLINE auto operator*(const Pose3d<T>& rhs) const -> Pose3d<T>;
 
     /// Applies this transform to the given vector
     LM_INLINE auto operator*(const Vec3& rhs) const -> Vec3;

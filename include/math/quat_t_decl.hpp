@@ -19,20 +19,20 @@
 
 namespace math {
 
-template <typename Scalar_T>
+template <typename T>
 class Matrix3;
 
-template <typename Scalar_T>
+template <typename T>
 class Matrix4;
 
-template <typename Scalar_T>
+template <typename T>
 class Euler;
 
 }  // namespace math
 
 namespace math {
 
-template <typename Scalar_T>
+template <typename T>
 class Quaternion {
  public:
     /// Number of scalar dimensions of the quaternion
@@ -40,30 +40,30 @@ class Quaternion {
     /// Number of scalars used in the storage of the vector
     constexpr static uint32_t BUFFER_COUNT = 4;
     /// Number of bytes allocated for the buffer of this quaternion
-    constexpr static uint32_t BUFFER_SIZE = sizeof(Scalar_T) * BUFFER_COUNT;
+    constexpr static uint32_t BUFFER_SIZE = sizeof(T) * BUFFER_COUNT;
 
     /// Typename of the vector
-    using Type = Quaternion<Scalar_T>;
+    using Type = Quaternion<T>;
     /// Typename of the scalar used for the vector (float32, float64, etc.)
-    using ElementType = Scalar_T;
+    using ElementType = T;
     /// Typename of the internal storage used for the vector
-    using BufferType = std::array<Scalar_T, BUFFER_COUNT>;
+    using BufferType = std::array<T, BUFFER_COUNT>;
 
     // Some related types
-    using Vec3 = Vector3<Scalar_T>;
-    using Mat3 = Matrix3<Scalar_T>;
-    using Mat4 = Matrix4<Scalar_T>;
+    using Vec3 = Vector3<T>;
+    using Mat3 = Matrix3<T>;
+    using Mat4 = Matrix4<T>;
 
     /// Constructs a zero-initialized vector
     Quaternion() = default;
 
     /// Constructs a real-valued quaternion
     /// \param real Real-value part of the quaternion
-    explicit Quaternion(Scalar_T real) {
+    explicit Quaternion(T real) {
         m_Elements[0] = real;
-        m_Elements[1] = static_cast<Scalar_T>(0.0F);
-        m_Elements[2] = static_cast<Scalar_T>(0.0F);
-        m_Elements[3] = static_cast<Scalar_T>(0.0F);
+        m_Elements[1] = static_cast<T>(0.0F);
+        m_Elements[2] = static_cast<T>(0.0F);
+        m_Elements[3] = static_cast<T>(0.0F);
     }
 
     /// Constructs a quaternion given its 4 components
@@ -71,8 +71,7 @@ class Quaternion {
     /// \param y_val Value of the second imaginary component
     /// \param z_val Value of the third imaginary component
     /// \param w_val Value of the real-valued component
-    explicit Quaternion(Scalar_T w_val, Scalar_T x_val, Scalar_T y_val,
-                        Scalar_T z_val) {
+    explicit Quaternion(T w_val, T x_val, T y_val, T z_val) {
         m_Elements[0] = w_val;
         m_Elements[1] = x_val;
         m_Elements[2] = y_val;
@@ -84,25 +83,25 @@ class Quaternion {
     explicit Quaternion(const Mat3& matrix) { setFromRotationMatrix(matrix); }
 
     /// Constructs a quaternion given a 4x4 transformation matrix
-    /// \param[in] matrix A 4x4 transformation matrix given by the user
+    /// \param[in] transform A 4x4 transformation matrix given by the user
     explicit Quaternion(const Mat4& transform) { setFromTransform(transform); }
 
     /// Constructs a quaternion given a set of Euler angles
     /// \param[in] euler A set of euler angles describing the same rotation
-    explicit Quaternion(const Euler<Scalar_T>& euler) { setFromEuler(euler); }
+    explicit Quaternion(const Euler<T>& euler) { setFromEuler(euler); }
 
     /// Constructs a quaternion given an axis-angle pair
     /// \param[in] axis A vector representing the rotation axis
     /// \param[in] angle The angle by which to rotate around the given axis
-    explicit Quaternion(const Vec3& axis, Scalar_T angle) {
+    explicit Quaternion(const Vec3& axis, T angle) {
         setFromAxisAngle(axis, angle);
     }
 
     // cppcheck-suppress noExplicitConstructor
     /// Constructs a quaternion from a given list of the form {x, y, z, w}
-    Quaternion(const std::initializer_list<Scalar_T>& values) {
+    Quaternion(const std::initializer_list<T>& values) {
         // Complain in case we don't receive exactly 4 values
-        assert(values.size() == Quaternion<Scalar_T>::QUAT_SIZE);
+        assert(values.size() == Quaternion<T>::QUAT_SIZE);
         // Just copy the whole data from the initializer list
         std::copy(values.begin(), values.end(), m_Elements.data());
     }
@@ -114,16 +113,16 @@ class Quaternion {
     auto setFromTransform(const Mat4& transform) -> void;
 
     /// \brief Updates this quaternion with a given set of Euler angles
-    auto setFromEuler(const Euler<Scalar_T>& euler) -> void;
+    auto setFromEuler(const Euler<T>& euler) -> void;
 
     /// \brief Updates this quaternion with a given axes-angle pair
-    auto setFromAxisAngle(const Vec3& axis, Scalar_T angle) -> void;
+    auto setFromAxisAngle(const Vec3& axis, T angle) -> void;
 
     /// \brief Returns the conjugate of this quaternion
-    auto conjugate() const -> Quaternion<Scalar_T>;
+    auto conjugate() const -> Quaternion<T>;
 
     /// \brief Returns the inverse of this quaternion
-    auto inverse() const -> Quaternion<Scalar_T>;
+    auto inverse() const -> Quaternion<T>;
 
     /// \brief Rotates the given vector using this quaternion
     auto rotate(const Vec3& vec) const -> Vec3;
@@ -132,37 +131,37 @@ class Quaternion {
     auto normalize() -> void;
 
     /// \brief Returns a normalized version of a given quaternnion
-    auto normalized() const -> Quaternion<Scalar_T>;
+    auto normalized() const -> Quaternion<T>;
 
     /// \brief Returns the square of the norm of this quaternion
-    auto lengthSquare() const -> Scalar_T;
+    auto lengthSquare() const -> T;
 
     /// \brief Returns the norm of this quaternion
-    auto length() const -> Scalar_T;
+    auto length() const -> T;
 
     /// Returns a mutable reference to the real w-component
-    auto w() -> Scalar_T& { return m_Elements[0]; }
+    auto w() -> T& { return m_Elements[0]; }
 
     /// Returns a mutable reference to the imaginary x-component
-    auto x() -> Scalar_T& { return m_Elements[1]; }
+    auto x() -> T& { return m_Elements[1]; }
 
     /// Returns a mutable reference to the imaginary y-component
-    auto y() -> Scalar_T& { return m_Elements[2]; }
+    auto y() -> T& { return m_Elements[2]; }
 
     /// Returns a mutable reference to the imaginary z-component
-    auto z() -> Scalar_T& { return m_Elements[3]; }
+    auto z() -> T& { return m_Elements[3]; }
 
     /// Returns an unmutable reference to the real w-component
-    auto w() const -> const Scalar_T& { return m_Elements[0]; }
+    auto w() const -> const T& { return m_Elements[0]; }
 
     /// Returns an unmutable reference to the imaginary x-component
-    auto x() const -> const Scalar_T& { return m_Elements[1]; }
+    auto x() const -> const T& { return m_Elements[1]; }
 
     /// Returns an unmutable reference to the imaginary y-component
-    auto y() const -> const Scalar_T& { return m_Elements[2]; }
+    auto y() const -> const T& { return m_Elements[2]; }
 
     /// Returns an unmutable reference to the imaginary z-component
-    auto z() const -> const Scalar_T& { return m_Elements[3]; }
+    auto z() const -> const T& { return m_Elements[3]; }
 
     /// Returns a mutable reference to the storage of the quaternion
     auto elements() -> BufferType& { return m_Elements; }
@@ -171,16 +170,16 @@ class Quaternion {
     auto elements() const -> const BufferType& { return m_Elements; }
 
     /// Returns a pointer to the data of the underlying storage in use
-    auto data() -> Scalar_T* { return m_Elements.data(); }
+    auto data() -> T* { return m_Elements.data(); }
 
     /// Reeturns a const-pointer to the data of the underlying storage in use
-    auto data() const -> const Scalar_T* { return m_Elements.data(); }
+    auto data() const -> const T* { return m_Elements.data(); }
 
     /// Returns a mutable reference to the requested entry of the quaternion
-    auto operator[](uint32_t index) -> Scalar_T& { return m_Elements[index]; }
+    auto operator[](uint32_t index) -> T& { return m_Elements[index]; }
 
     /// Returns an unmutable reference to the requested entry of the quaternion
-    auto operator[](uint32_t index) const -> const Scalar_T& {
+    auto operator[](uint32_t index) const -> const T& {
         return m_Elements[index];
     }
 
@@ -201,13 +200,13 @@ class Quaternion {
     }
 
     /// Returns the quaternion associated with the given rotation around x-axis
-    static auto RotationX(Scalar_T angle) -> Quaternion<Scalar_T>;
+    static auto RotationX(T angle) -> Quaternion<T>;
 
     /// Returns the quaternion associated with the given rotation around y-axis
-    static auto RotationY(Scalar_T angle) -> Quaternion<Scalar_T>;
+    static auto RotationY(T angle) -> Quaternion<T>;
 
     /// Returns the quaternion associated with the given rotation around z-axis
-    static auto RotationZ(Scalar_T angle) -> Quaternion<Scalar_T>;
+    static auto RotationZ(T angle) -> Quaternion<T>;
 
  private:
     /// Storage of the quaternion's entries in   (w, x, y, z) order

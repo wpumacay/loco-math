@@ -19,13 +19,13 @@
 
 namespace math {
 
-template <typename Scalar_T>
+template <typename T>
 class Matrix4;
 
-template <typename Scalar_T>
+template <typename T>
 class Quaternion;
 
-template <typename Scalar_T>
+template <typename T>
 class Euler;
 
 }  // namespace math
@@ -36,12 +36,12 @@ namespace math {
 ///
 /// \brief Class representation of a 3 by 3 matrix of real-valued entries
 ///
-/// \tparam Scalar_T Type of scalar value used for the entries of the matrix
+/// \tparam T Type of scalar value used for the entries of the matrix
 ///
 /// This is a class that represents 3x3 matrices with real-valued entries. The
 /// internal data is stored as the columns of the matrix using 3d vectors of the
 /// same scalar type, thus using a column major order.
-template <typename Scalar_T>
+template <typename T>
 class Matrix3 {
  public:
     /// Number of scalars used for the storage of this matrix
@@ -52,27 +52,27 @@ class Matrix3 {
     static constexpr uint32_t MATRIX_NDIM = 2;
 
     /// Typename of the matrix
-    using Type = Matrix3<Scalar_T>;
+    using Type = Matrix3<T>;
     /// Typename of the scalar used for the matrix entries (float, double, etc.)
-    using ElementType = Scalar_T;
+    using ElementType = T;
     /// Typename of the internal storage used by the matrix
-    using BufferType = std::array<Vector3<Scalar_T>, MATRIX_SIZE>;
+    using BufferType = std::array<Vector3<T>, MATRIX_SIZE>;
     /// Typename of the columns of the matrix
-    using ColumnType = Vector3<Scalar_T>;
+    using ColumnType = Vector3<T>;
 
     // Some related types
-    using Vec3 = Vector3<Scalar_T>;
-    using Mat4 = Matrix4<Scalar_T>;
-    using Quat = Quaternion<Scalar_T>;
+    using Vec3 = Vector3<T>;
+    using Mat4 = Matrix4<T>;
+    using Quat = Quaternion<T>;
 
     /// Creates a zero-initialized matrix
     Matrix3() = default;
 
     // clang-format off
     /// Creates a matrix using the given scalars for its entries
-    explicit Matrix3(Scalar_T x00, Scalar_T x01, Scalar_T x02,
-                     Scalar_T x10, Scalar_T x11, Scalar_T x12,
-                     Scalar_T x20, Scalar_T x21, Scalar_T x22) {
+    explicit Matrix3(T x00, T x01, T x02,
+                     T x10, T x11, T x12,
+                     T x20, T x21, T x22) {
         // First row
         m_Elements[0][0] = x00;
         m_Elements[1][0] = x01;
@@ -91,7 +91,7 @@ class Matrix3 {
     // clang-format on
 
     /// \brief Creates a diagonal matrix from some given diagonal entries
-    explicit Matrix3(Scalar_T x00, Scalar_T x11, Scalar_T x22) {
+    explicit Matrix3(T x00, T x11, T x22) {
         m_Elements[0][0] = x00;
         m_Elements[1][1] = x11;
         m_Elements[2][2] = x22;
@@ -109,7 +109,7 @@ class Matrix3 {
     explicit Matrix3(const Quat& quaternion) { setFromQuaternion(quaternion); }
 
     /// \brief Creates a 3x3 rotation matrix from a given set of Euler angles
-    explicit Matrix3(const Euler<Scalar_T>& euler) { setFromEuler(euler); }
+    explicit Matrix3(const Euler<T>& euler) { setFromEuler(euler); }
 
     /// \brief Creates a 3x3 rotation matrix from a given 4x4 transform matrix
     explicit Matrix3(const Mat4& transform) { setFromTransform(transform); }
@@ -118,7 +118,7 @@ class Matrix3 {
     auto setFromQuaternion(const Quat& quaternion) -> void;
 
     /// \brief Updates this rotation matrix from a given set of Euler angles
-    auto setFromEuler(const Euler<Scalar_T>& euler) -> void;
+    auto setFromEuler(const Euler<T>& euler) -> void;
 
     /// \brief Updates this rotation matrix from a given 4x4 transform matrix
     auto setFromTransform(const Mat4& transform) -> void;
@@ -130,10 +130,10 @@ class Matrix3 {
     auto elements() const -> const BufferType& { return m_Elements; }
 
     /// Returns a pointer to the data of the underlying storage in use
-    auto data() -> Scalar_T* { return m_Elements[0].data(); }
+    auto data() -> T* { return m_Elements[0].data(); }
 
     /// Reeturns a const-pointer to the data of the underlying storage in use
-    auto data() const -> const Scalar_T* { return m_Elements[0].data(); }
+    auto data() const -> const T* { return m_Elements[0].data(); }
 
     /// Gets a mutable reference to the column requested by the given index
     auto operator[](uint32_t col_index) -> ColumnType& {
@@ -146,13 +146,12 @@ class Matrix3 {
     }
 
     /// Gets a mutable reference to the requested matrix entry
-    auto operator()(uint32_t row_index, uint32_t col_index) -> Scalar_T& {
+    auto operator()(uint32_t row_index, uint32_t col_index) -> T& {
         return m_Elements[col_index][row_index];
     }
 
     /// Gets an unmutable reference to the requested matrix entry
-    auto operator()(uint32_t row_index, uint32_t col_index) const
-        -> const Scalar_T& {
+    auto operator()(uint32_t row_index, uint32_t col_index) const -> const T& {
         return m_Elements[col_index][row_index];
     }
 
@@ -167,7 +166,7 @@ class Matrix3 {
     LM_INLINE auto operator*(const Vec3& rhs) -> Vec3;
 
     /// Returns a comma-initializer to construct the matrix via its coefficients
-    auto operator<<(Scalar_T coeff) -> MatCommaInitializer<Type> {
+    auto operator<<(T coeff) -> MatCommaInitializer<Type> {
         return MatCommaInitializer<Type>(*this, coeff);
     }
 
@@ -187,26 +186,25 @@ class Matrix3 {
     }
 
     /// Creates a rotation matrix for the given angle around the X-axis
-    static auto RotationX(Scalar_T angle) -> Matrix3<Scalar_T>;
+    static auto RotationX(T angle) -> Matrix3<T>;
 
     /// Creates a rotation matrix for the given angle around the Y-axis
-    static auto RotationY(Scalar_T angle) -> Matrix3<Scalar_T>;
+    static auto RotationY(T angle) -> Matrix3<T>;
 
     /// Creates a rotation matrix for the given angle around the Z-axis
-    static auto RotationZ(Scalar_T angle) -> Matrix3<Scalar_T>;
+    static auto RotationZ(T angle) -> Matrix3<T>;
 
     /// Creates a scale matrix for the given separate scale arguments
-    static auto Scale(Scalar_T scale_x, Scalar_T scale_y, Scalar_T scale_z)
-        -> Matrix3<Scalar_T>;
+    static auto Scale(T scale_x, T scale_y, T scale_z) -> Matrix3<T>;
 
     /// Creates a scale matrix for the given scale arguments given as a vec-3
-    static auto Scale(const Vector3<Scalar_T>& scale) -> Matrix3<Scalar_T>;
+    static auto Scale(const Vector3<T>& scale) -> Matrix3<T>;
 
     /// Creates an Identity matrix
-    static auto Identity() -> Matrix3<Scalar_T>;
+    static auto Identity() -> Matrix3<T>;
 
     /// Creates a Zero matrix
-    static auto Zeros() -> Matrix3<Scalar_T>;
+    static auto Zeros() -> Matrix3<T>;
 
     /// Returns the number of rows
     static constexpr auto rows() -> uint32_t { return MATRIX_SIZE; }

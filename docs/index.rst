@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to LocoMath's documentation!
+Welcome to Math3d's documentation!
 ====================================
 
 .. toctree::
@@ -14,10 +14,10 @@ Welcome to LocoMath's documentation!
 C++ API Documentation
 =====================
 
-.. doxygenclass:: locomath::Vector4
+.. doxygenclass:: math::Vector4
     :members:
 
-.. doxygenclass:: locomath::Matrix4
+.. doxygenclass:: math::Matrix4
     :members:
 
 Indices and tables

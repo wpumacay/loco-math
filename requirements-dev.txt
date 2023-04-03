@@ -10,3 +10,5 @@ ipykernel
 matplotlib
 jupyter
 meshcat
+sphinx
+sphinx_rtd_theme

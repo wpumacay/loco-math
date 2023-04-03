@@ -130,25 +130,17 @@ if(MATH_BUILD_DOCS)
   # cmake-format: off
   # -------------------------------------
   # Setup documentation for our target
-  loco_setup_cppdocs_doxygen(MathCpp
-      DOXYGEN_FILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in
-      DOXYGEN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/docs/Doxygen
-      DOXYGEN_GENERATE_HTML TRUE
-      DOXYGEN_GENERATE_LATEX FALSE
-      DOXYGEN_GENERATE_XML TRUE
-      DOXYGEN_QUIET TRUE)
-
-  #### loco_setup_cppdocs(MathCpp
-  ####   DOXYGEN_FILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in
-  ####   DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Doxygen
-  ####   DOXYGEN_GENERATE_HTML FALSE
-  ####   DOXYGEN_GENERATE_LATEX FALSE
-  ####   DOXYGEN_GENERATE_XML TRUE
-  ####   DOXYGEN_QUIET TRUE
-  ####   SPHINX_FILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in
-  ####   SPHINX_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Sphinx
-  ####   SPHINX_BREATHE_PROJECT MathCpp
-  ####   SPHINX_DOXYGEN_XML_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Doxygen/xml)
+  loco_setup_cppdocs(MathCpp
+    DOXYGEN_FILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in
+    DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Doxygen
+    DOXYGEN_GENERATE_HTML FALSE
+    DOXYGEN_GENERATE_LATEX FALSE
+    DOXYGEN_GENERATE_XML TRUE
+    DOXYGEN_QUIET TRUE
+    SPHINX_FILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in
+    SPHINX_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Sphinx
+    SPHINX_BREATHE_PROJECT MathCpp
+    SPHINX_DOXYGEN_XML_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/docs/Doxygen/xml)
   # cmake-format: on
 endif()
 

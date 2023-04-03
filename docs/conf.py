@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "Math3d"
+project = "MathCpp"
 copyright = "2022, Math3d"
 author = "Anomymous"
 version = "0.4.1"

@@ -21,13 +21,13 @@
 
 namespace math {
 
-template <typename Scalar_T>
+template <typename T>
 class Matrix3;
 
-template <typename Scalar_T>
+template <typename T>
 class Euler;
 
-template <typename Scalar_T>
+template <typename T>
 class Quaternion;
 
 }  // namespace math
@@ -38,14 +38,14 @@ namespace math {
 ///
 /// \brief Class representation of a 4 by 4 matrix of real-valued entries
 ///
-/// \tparam Scalar_T Type of scalar value used for the entries of the matrix
+/// \tparam T Type of scalar value used for the entries of the matrix
 ///
 /// This is a class that represents 4x4 matrices with real-valued entries. The
 /// internal data is stored as the columns of the matrix using 4d vectors of the
 /// same scalar type. The resulting storage is column major and aligned in a way
 /// that allows the use of aligned versions of some SIMD instructions (when
 /// using either SSE or AVX instrinsics).
-template <typename Scalar_T>
+template <typename T>
 class Matrix4 {
  public:
     /// Number of scalars used in the storage of the matrix
@@ -56,28 +56,26 @@ class Matrix4 {
     static constexpr uint32_t MATRIX_NDIM = 2;
 
     /// Typename of the matrix
-    using Type = Matrix4<Scalar_T>;
+    using Type = Matrix4<T>;
     /// Typename of the scalar used for the matrix entries (float, double, etc.)
-    using ElementType = Scalar_T;
+    using ElementType = T;
     /// Typename of the internal storage used by the matrix
-    using BufferType = std::array<Vector4<Scalar_T>, MATRIX_SIZE>;
+    using BufferType = std::array<Vector4<T>, MATRIX_SIZE>;
     /// Typename of the columns of the matrix
-    using ColumnType = Vector4<Scalar_T>;
+    using ColumnType = Vector4<T>;
 
     // Some related types
-    using Vec3 = Vector3<Scalar_T>;
-    using Vec4 = Vector4<Scalar_T>;
-    using Mat3 = Matrix3<Scalar_T>;
-    using Quat = Quaternion<Scalar_T>;
+    using Vec3 = Vector3<T>;
+    using Vec4 = Vector4<T>;
+    using Mat3 = Matrix3<T>;
+    using Quat = Quaternion<T>;
 
     /// Creates a zero-initialized matrix
     Matrix4() = default;
 
     /// Creates a matrix using the given scalars for its entries
-    explicit Matrix4(Scalar_T x00, Scalar_T x01, Scalar_T x02, Scalar_T x03,
-                     Scalar_T x10, Scalar_T x11, Scalar_T x12, Scalar_T x13,
-                     Scalar_T x20, Scalar_T x21, Scalar_T x22, Scalar_T x23,
-                     Scalar_T x30, Scalar_T x31, Scalar_T x32, Scalar_T x33) {
+    explicit Matrix4(T x00, T x01, T x02, T x03, T x10, T x11, T x12, T x13,
+                     T x20, T x21, T x22, T x23, T x30, T x31, T x32, T x33) {
         // Row-0
         m_Elements[0][0] = x00;
         m_Elements[1][0] = x01;
@@ -104,7 +102,7 @@ class Matrix4 {
     }
 
     /// Creates a diagonal matrix using the given diagonal elements
-    explicit Matrix4(Scalar_T x00, Scalar_T x11, Scalar_T x22, Scalar_T x33) {
+    explicit Matrix4(T x00, T x11, T x22, T x33) {
         m_Elements[0][0] = x00;
         m_Elements[1][1] = x11;
         m_Elements[2][2] = x22;
@@ -139,7 +137,7 @@ class Matrix4 {
     /// Constructs a transform matrix given its world position and orientation
     /// \param[in] position The position part of the transform in world space
     /// \param[in] euler A set of euler angles representing orientation
-    explicit Matrix4(const Vec3& position, const Euler<Scalar_T>& euler) {
+    explicit Matrix4(const Vec3& position, const Euler<T>& euler) {
         setPosition(position);
         setRotation(euler);
     }
@@ -151,7 +149,7 @@ class Matrix4 {
     auto setRotation(const Quat& quat) -> void;
 
     /// Sets the rotation part of this transform from given euler angles
-    auto setRotation(const Euler<Scalar_T>& euler) -> void;
+    auto setRotation(const Euler<T>& euler) -> void;
 
     /// Sets the rotation part of this transform from a 3x3 rotation matrix
     auto setRotation(const Mat3& mat) -> void;
@@ -163,10 +161,10 @@ class Matrix4 {
     auto elements() const -> const BufferType& { return m_Elements; }
 
     /// Returns a pointer to the data of the underlying storage in use
-    auto data() -> Scalar_T* { return m_Elements[0].data(); }
+    auto data() -> T* { return m_Elements[0].data(); }
 
     /// Reeturns a const-pointer to the data of the underlying storage in use
-    auto data() const -> const Scalar_T* { return m_Elements[0].data(); }
+    auto data() const -> const T* { return m_Elements[0].data(); }
 
     /// Gets a mutable reference to the column requested by the given index
     auto operator[](uint32_t col_index) -> ColumnType& {
@@ -179,18 +177,17 @@ class Matrix4 {
     }
 
     /// Gets a mutable reference to the requested matrix entry
-    auto operator()(uint32_t row_index, uint32_t col_index) -> Scalar_T& {
+    auto operator()(uint32_t row_index, uint32_t col_index) -> T& {
         return m_Elements[col_index][row_index];
     }
 
     /// Gets an unmutable reference to the requested matrix entry
-    auto operator()(uint32_t row_index, uint32_t col_index) const
-        -> const Scalar_T& {
+    auto operator()(uint32_t row_index, uint32_t col_index) const -> const T& {
         return m_Elements[col_index][row_index];
     }
 
     /// Returns a comma-initializer to construct the matrix via its coefficients
-    auto operator<<(Scalar_T coeff) -> MatCommaInitializer<Type> {
+    auto operator<<(T coeff) -> MatCommaInitializer<Type> {
         return MatCommaInitializer<Type>(*this, coeff);
     }
 
@@ -216,43 +213,38 @@ class Matrix4 {
     }
 
     /// Creates a rotation matrix for the given angle around the X-axis
-    static auto RotationX(Scalar_T angle) -> Matrix4<Scalar_T>;
+    static auto RotationX(T angle) -> Matrix4<T>;
 
     /// Creates a rotation matrix for the given angle around the Y-axis
-    static auto RotationY(Scalar_T angle) -> Matrix4<Scalar_T>;
+    static auto RotationY(T angle) -> Matrix4<T>;
 
     /// Creates a rotation matrix for the given angle around the Z-axis
-    static auto RotationZ(Scalar_T angle) -> Matrix4<Scalar_T>;
+    static auto RotationZ(T angle) -> Matrix4<T>;
 
     /// Creates a scale matrix for the given separate scale arguments
-    static auto Scale(Scalar_T scale_x, Scalar_T scale_y, Scalar_T scale_z)
-        -> Matrix4<Scalar_T>;
+    static auto Scale(T scale_x, T scale_y, T scale_z) -> Matrix4<T>;
 
     /// Creates a scale matrix for the given scale arguments given as a vec3
-    static auto Scale(const Vector3<Scalar_T>& scale) -> Matrix4<Scalar_T>;
+    static auto Scale(const Vector3<T>& scale) -> Matrix4<T>;
 
     /// Creates a translation matrix from the given translation given as a vec3
-    static auto Translation(const Vector3<Scalar_T>& position)
-        -> Matrix4<Scalar_T>;
+    static auto Translation(const Vector3<T>& position) -> Matrix4<T>;
 
     /// Creates a perspective projection matrix from the given configuration
-    static auto Perspective(Scalar_T fov, Scalar_T aspect, Scalar_T near,
-                            Scalar_T far) -> Matrix4<Scalar_T>;
+    static auto Perspective(T fov, T aspect, T near, T far) -> Matrix4<T>;
 
     /// Creates a perspective projection matrix from the frustum sizes
-    static auto Perspective(Scalar_T left, Scalar_T right, Scalar_T top,
-                            Scalar_T bottom, Scalar_T near, Scalar_T far)
-        -> Matrix4<Scalar_T>;
+    static auto Perspective(T left, T right, T top, T bottom, T near, T far)
+        -> Matrix4<T>;
 
     /// Creates a orthographic projection matrix from the given configuration
-    static auto Ortho(Scalar_T width, Scalar_T height, Scalar_T near,
-                      Scalar_T far) -> Matrix4<Scalar_T>;
+    static auto Ortho(T width, T height, T near, T far) -> Matrix4<T>;
 
     /// Returns a 4x4 identity matrix of the current scalar type
-    static auto Identity() -> Matrix4<Scalar_T>;
+    static auto Identity() -> Matrix4<T>;
 
     /// Returns a 4x4 zero matrix of the current scalar type
-    static auto Zeros() -> Matrix4<Scalar_T>;
+    static auto Zeros() -> Matrix4<T>;
 
     /// Returns the number of rows
     static constexpr auto rows() -> uint32_t { return MATRIX_SIZE; }

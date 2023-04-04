@@ -164,8 +164,8 @@ if os.path.exists("README.md"):
         long_description = fh.read()
 
 setup(
-    name="math3d",
-    version="0.4.1",
+    name="Math3d",
+    version="0.4.2",
     description="A math library for small vectors and matrices",
     long_description=long_description,
     long_description_content_type="text/markdown",

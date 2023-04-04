@@ -1,2 +1,6 @@
 build/
 _build/
+
+# Sphinx config is generated using CMake, so just keep the template conf.py.in
+conf.py
+!conf.py.in

@@ -312,15 +312,15 @@ auto Quaternion<T>::setFromEuler(const Euler<T>& euler) -> void {
 template <typename T>
 auto Quaternion<T>::setFromAxisAngle(const Vec3& axis, T angle) -> void {
     // Just in case, make sure the axis is normalized
-    normalize_in_place<T>(axis);
+    auto axis_n = axis.normalized();
 
     constexpr auto HALF = static_cast<T>(0.5);
     auto cos_half = std::cos(HALF * angle);
     auto sin_half = std::sin(HALF * angle);
-    m_Elements[0] = cos_half;             // w
-    m_Elements[1] = sin_half * axis.x();  // x
-    m_Elements[2] = sin_half * axis.y();  // y
-    m_Elements[3] = sin_half * axis.z();  // z
+    m_Elements[0] = cos_half;               // w
+    m_Elements[1] = sin_half * axis_n.x();  // x
+    m_Elements[2] = sin_half * axis_n.y();  // y
+    m_Elements[3] = sin_half * axis_n.z();  // z
 }
 
 template <typename T>

@@ -18,15 +18,15 @@ auto ToString(const Order& p_order) -> std::string {
         case Order::XYZ:
             return "XYZ";
         case Order::YZX:
-            return "XYZ";
+            return "YZX";
         case Order::ZXY:
-            return "XYZ";
+            return "ZXY";
         case Order::XZY:
-            return "XYZ";
+            return "XZY";
         case Order::YXZ:
-            return "XYZ";
+            return "YXZ";
         case Order::ZYX:
-            return "XYZ";
+            return "ZYX";
     }
 }
 

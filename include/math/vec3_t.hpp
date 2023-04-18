@@ -8,6 +8,10 @@
 
 namespace math {
 
+// ***************************************************************************//
+//                   Vector3 helper functions and operators                   //
+// ***************************************************************************//
+
 template <typename T>
 using SFINAE_VEC3_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 
@@ -199,6 +203,40 @@ auto operator>>(std::istream& input_stream, Vector3<T>& dst) -> std::istream& {
     }
 
     return input_stream;
+}
+
+// ***************************************************************************//
+//                           Vector3-type methods                             //
+// ***************************************************************************//
+
+template <typename T>
+auto Vector3<T>::lengthSquare() const -> T {
+    return ::math::squareNorm<T>(*this);
+}
+
+template <typename T>
+auto Vector3<T>::length() const -> T {
+    return ::math::norm<T>(*this);
+}
+
+template <typename T>
+auto Vector3<T>::normalize() -> void {
+    ::math::normalize_in_place<T>(*this);
+}
+
+template <typename T>
+auto Vector3<T>::normalized() const -> Vector3<T> {
+    return ::math::normalize<T>(*this);
+}
+
+template <typename T>
+auto Vector3<T>::dot(const Vector3<T>& rhs) const -> T {
+    return ::math::dot<T>(rhs);
+}
+
+template <typename T>
+auto Vector3<T>::cross(const Vector3<T>& rhs) const -> Vector3<T> {
+    return ::math::cross<T>(rhs);
 }
 
 }  // namespace math

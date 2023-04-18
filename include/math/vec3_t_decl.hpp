@@ -92,6 +92,24 @@ class Vector3 {
         std::copy(values.begin(), values.end(), m_Elements.data());
     }
 
+    /// Returns the square of the length of this vector
+    auto lengthSquare() const -> T;
+
+    /// Returns the length of this vector
+    auto length() const -> T;
+
+    /// Normalizes this vector in place
+    auto normalize() -> void;
+
+    /// Returns the normalized version of this vector
+    auto normalized() const -> Vector3<T>;
+
+    /// Returns the dot product of this vector with the given vector
+    auto dot(const Vector3<T>& rhs) const -> T;
+
+    /// Returns the cross product of this vector with the given vector
+    auto cross(const Vector3<T>& rhs) const -> Vector3<T>;
+
     /// Returns a mutable reference to the x-component of the vector
     auto x() -> T& { return m_Elements[0]; }
 

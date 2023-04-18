@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <string>
 
 #include <math/euler_t_decl.hpp>
 
@@ -9,6 +10,36 @@
 #include <math/mat4_t.hpp>
 
 namespace math {
+
+namespace euler {
+
+auto ToString(const Order& p_order) -> std::string {
+    switch (p_order) {
+        case Order::XYZ:
+            return "XYZ";
+        case Order::YZX:
+            return "XYZ";
+        case Order::ZXY:
+            return "XYZ";
+        case Order::XZY:
+            return "XYZ";
+        case Order::YXZ:
+            return "XYZ";
+        case Order::ZYX:
+            return "XYZ";
+    }
+}
+
+auto ToString(const Convention& p_convention) -> std::string {
+    switch (p_convention) {
+        case Convention::INTRINSIC:
+            return "Intrinsic";
+        case Convention::EXTRINSIC:
+            return "Extrinsic";
+    }
+}
+
+}  // namespace euler
 
 // ***************************************************************************//
 //                       Factory functions implementation                     //
@@ -25,7 +56,7 @@ auto Euler<T>::setFromRotationMatrix(const Mat3& m) -> void {
     constexpr T SIN_MAX = ONE;
     constexpr T ONE_MINUS_EPS = ONE - EPSILON;
 
-    if (this->convention != Convention::INTRINSIC) {
+    if (this->convention != euler::Convention::INTRINSIC) {
         // TODO(wilbert): handle general case using the implementation from [1]
         return;
     }
@@ -37,7 +68,7 @@ auto Euler<T>::setFromRotationMatrix(const Mat3& m) -> void {
     // clang-format on
 
     switch (this->order) {
-        case Order::XYZ: {
+        case euler::Order::XYZ: {
             this->y = std::asin(clamp(m13, SIN_MIN, SIN_MAX));
             if (std::abs(m13) < ONE_MINUS_EPS) {
                 this->x = std::atan2(-m23, m33);
@@ -48,7 +79,7 @@ auto Euler<T>::setFromRotationMatrix(const Mat3& m) -> void {
             }
             break;
         }
-        case Order::YXZ: {
+        case euler::Order::YXZ: {
             this->x = std::asin(-clamp(m23, SIN_MIN, SIN_MAX));
             if (std::abs(m23) < ONE_MINUS_EPS) {
                 this->y = std::atan2(m13, m33);
@@ -59,7 +90,7 @@ auto Euler<T>::setFromRotationMatrix(const Mat3& m) -> void {
             }
             break;
         }
-        case Order::ZXY: {
+        case euler::Order::ZXY: {
             this->x = std::asin(clamp(m32, SIN_MIN, SIN_MAX));
             if (std::abs(m32) < ONE_MINUS_EPS) {
                 this->y = std::atan2(-m31, m33);
@@ -70,7 +101,7 @@ auto Euler<T>::setFromRotationMatrix(const Mat3& m) -> void {
             }
             break;
         }
-        case Order::ZYX: {
+        case euler::Order::ZYX: {
             this->y = std::asin(-clamp(m31, SIN_MIN, SIN_MAX));
             if (std::abs(m31) < ONE_MINUS_EPS) {
                 this->x = std::atan2(m32, m33);
@@ -81,7 +112,7 @@ auto Euler<T>::setFromRotationMatrix(const Mat3& m) -> void {
             }
             break;
         }
-        case Order::YZX: {
+        case euler::Order::YZX: {
             this->z = std::asin(clamp(m21, SIN_MIN, SIN_MAX));
             if (std::abs(m21) < ONE_MINUS_EPS) {
                 this->x = std::atan2(-m23, m22);
@@ -92,7 +123,7 @@ auto Euler<T>::setFromRotationMatrix(const Mat3& m) -> void {
             }
             break;
         }
-        case Order::XZY: {
+        case euler::Order::XZY: {
             this->z = std::asin(-clamp(m12, SIN_MIN, SIN_MAX));
             if (std::abs(m12) < ONE_MINUS_EPS) {
                 this->x = std::atan2(m32, m22);

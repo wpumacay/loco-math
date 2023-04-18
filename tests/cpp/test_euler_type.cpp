@@ -50,9 +50,9 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
         Euler e;
         REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, 0.0));
         // Default setting for order is Order::XYZ
-        REQUIRE(e.order == Euler::Order::XYZ);
+        REQUIRE(e.order == ::math::euler::Order::XYZ);
         // Default setting for convention is Convention::INTRINSIC
-        REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+        REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
     }
 
     SECTION("From single scalar argument") {
@@ -63,8 +63,8 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
 
         Euler e(val_x, val_y, val_z);
         REQUIRE(FuncAllClose<T>(e, val_x, val_y, val_z));
-        REQUIRE(e.order == Euler::Order::XYZ);
-        REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+        REQUIRE(e.order == ::math::euler::Order::XYZ);
+        REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
     }
 
     SECTION("From quaternion") {
@@ -74,8 +74,8 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             Quat q(1.0, 0.0, 0.0, 0.0);
             Euler e(q);
             REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, 0.0));
-            REQUIRE(e.order == Euler::Order::XYZ);
-            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
 
         // q = (cos(t/2), sin(t/2), 0.0, 0.0) (rot. angle t around x-axis)
@@ -86,8 +86,8 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             Quat q(cos_half, sin_half, 0.0, 0.0);
             Euler e(q);
             REQUIRE(FuncAllClose<T>(e, angle, 0.0, 0.0));
-            REQUIRE(e.order == Euler::Order::XYZ);
-            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
 
         // q = (cos(t/2), 0.0, sin(t/2), 0.0) (rot. angle t around y-axis)
@@ -98,8 +98,8 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             Quat q(cos_half, 0.0, sin_half, 0.0);
             Euler e(q);
             REQUIRE(FuncAllClose<T>(e, 0.0, angle, 0.0));
-            REQUIRE(e.order == Euler::Order::XYZ);
-            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
 
         // q = (cos(t/2), 0.0, 0.0, sin(t/2)) (rot. angle t around z-axis)
@@ -110,8 +110,8 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             Quat q(cos_half, 0.0, 0.0, sin_half);
             Euler e(q);
             REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, angle));
-            REQUIRE(e.order == Euler::Order::XYZ);
-            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
     }
 
@@ -123,8 +123,8 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             Mat3 rotmat = Mat3::RotationX(angle);
             Euler e(rotmat);
             REQUIRE(FuncAllClose<T>(e, angle, 0.0, 0.0));
-            REQUIRE(e.order == Euler::Order::XYZ);
-            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
 
         // Rot_y(45°) (rotation of 45° around the y-axis)
@@ -134,8 +134,8 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             Mat3 rotmat = Mat3::RotationY(angle);
             Euler e(rotmat);
             REQUIRE(FuncAllClose<T>(e, 0.0, angle, 0.0));
-            REQUIRE(e.order == Euler::Order::XYZ);
-            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
 
         // Rot_z(45°) (rotation of 45° around the z-axis)
@@ -145,8 +145,8 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             Mat3 rotmat = Mat3::RotationZ(angle);
             Euler e(rotmat);
             REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, angle));
-            REQUIRE(e.order == Euler::Order::XYZ);
-            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
     }
 
@@ -158,8 +158,8 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             Mat4 rotmat = Mat4::RotationX(angle);
             Euler e(rotmat);
             REQUIRE(FuncAllClose<T>(e, angle, 0.0, 0.0));
-            REQUIRE(e.order == Euler::Order::XYZ);
-            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
 
         // Rot_y(45°) (rotation of 45° around the y-axis)
@@ -169,8 +169,8 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             Mat4 rotmat = Mat4::RotationY(angle);
             Euler e(rotmat);
             REQUIRE(FuncAllClose<T>(e, 0.0, angle, 0.0));
-            REQUIRE(e.order == Euler::Order::XYZ);
-            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
 
         // Rot_z(45°) (rotation of 45° around the z-axis)
@@ -180,8 +180,8 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             Mat4 rotmat = Mat4::RotationZ(angle);
             Euler e(rotmat);
             REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, angle));
-            REQUIRE(e.order == Euler::Order::XYZ);
-            REQUIRE(e.convention == Euler::Convention::INTRINSIC);
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
     }
 }

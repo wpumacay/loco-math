@@ -109,8 +109,8 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) constructors",
         // ea = (0.0, 0.0, 0.0, XYZ, INTRINSIC)
         // q = (w, x, y, z) = (1.0, 0.0, 0.0, 0.0)
         {
-            Euler e(0.0, 0.0, 0.0, Euler::Order::XYZ,
-                    Euler::Convention::INTRINSIC);
+            Euler e(0.0, 0.0, 0.0, ::math::euler::Order::XYZ,
+                    ::math::euler::Convention::INTRINSIC);
             Quat q(e);
             REQUIRE(FuncAllClose<T>(q, 1.0, 0.0, 0.0, 0.0));
         }

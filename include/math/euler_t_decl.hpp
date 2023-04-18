@@ -28,6 +28,32 @@ class Matrix4;
 template <typename T>
 class Quaternion;
 
+namespace euler {
+
+/// Possible ordering (Tait-Bryan angles)
+enum class Order : uint8_t {
+    XYZ,
+    YZX,
+    ZXY,
+    XZY,
+    YXZ,
+    ZYX,
+};
+
+/// Returns the string representation of the given order
+inline auto ToString(const Order& p_order) -> std::string;
+
+/// Possible conventions, either INTRINSIC or EXTRINSIC
+enum class Convention {
+    INTRINSIC,
+    EXTRINSIC,
+};
+
+/// Returns the string representation of the given convention
+inline auto ToString(const Convention& p_convention) -> std::string;
+
+}  // namespace euler
+
 template <typename T>
 class Euler {
  public:
@@ -35,22 +61,6 @@ class Euler {
     using Mat3 = Matrix3<T>;
     using Mat4 = Matrix4<T>;
     using Quat = Quaternion<T>;
-
-    /// Possible ordering (Tait-Bryan angles)
-    enum class Order {
-        XYZ,
-        YZX,
-        ZXY,
-        XZY,
-        YXZ,
-        ZYX,
-    };
-
-    /// Possible conventions, either INTRINSIC or EXTRINSIC
-    enum class Convention {
-        INTRINSIC,
-        EXTRINSIC,
-    };
 
     /// \brief Angle of rotation around the X-axis
     T x = static_cast<T>(0.0);  // NOLINT
@@ -69,7 +79,7 @@ class Euler {
     /// component of the Euler angles, then around the Y axis by an angle given
     /// by the .y() component of the Euler angles, and finally a rotation around
     /// the Z-axis by an angle given by the .z() component of the Euler angles.
-    Order order = Order::XYZ;  // NOLINT
+    euler::Order order = euler::Order::XYZ;  // NOLINT
 
     /// \brief Returns the convention used by this set of Euler angles
     ///
@@ -83,7 +93,7 @@ class Euler {
     /// be performed around the new Y-axis after the first rotation was taken;
     /// we then rotate around the Z-axis in a similar way, around the new Z-axis
     /// defined after we have rotated around the Y-axis previously.
-    Convention convention = Convention::INTRINSIC;  // NOLINT
+    euler::Convention convention = euler::Convention::INTRINSIC;  // NOLINT
 
     /// Constructs a set of Euler angles with all zero entries
     Euler() = default;
@@ -94,8 +104,9 @@ class Euler {
     /// \param[in] e_z Euler angle associated with a rotation around the Z axis
     /// \param[in] p_order Order used for the representation
     /// \param[in] p_convention Convention used for the representation
-    explicit Euler(T e_x, T e_y, T e_z, Order p_order = Order::XYZ,
-                   Convention p_convention = Convention::INTRINSIC) {
+    explicit Euler(
+        T e_x, T e_y, T e_z, euler::Order p_order = euler::Order::XYZ,
+        euler::Convention p_convention = euler::Convention::INTRINSIC) {
         this->order = p_order;
         this->convention = p_convention;
         this->x = e_x;
@@ -107,8 +118,9 @@ class Euler {
     /// \param[in] matrix A 3x3 rotation matrix given by the user
     /// \param[in] p_order Order used for the representation
     /// \param[in] p_convention Convention used for the representation
-    explicit Euler(const Mat3& matrix, Order p_order = Order::XYZ,
-                   Convention p_convention = Convention::INTRINSIC) {
+    explicit Euler(
+        const Mat3& matrix, euler::Order p_order = euler::Order::XYZ,
+        euler::Convention p_convention = euler::Convention::INTRINSIC) {
         this->order = p_order;
         this->convention = p_convention;
         setFromRotationMatrix(matrix);
@@ -118,8 +130,9 @@ class Euler {
     /// \param[in] matrix A 4x4 transform matrix given by the user
     /// \param[in] p_order Order used for the representation
     /// \param[in] p_convention Convention used for the representation
-    explicit Euler(const Mat4& matrix, Order p_order = Order::XYZ,
-                   Convention p_convention = Convention::INTRINSIC) {
+    explicit Euler(
+        const Mat4& matrix, euler::Order p_order = euler::Order::XYZ,
+        euler::Convention p_convention = euler::Convention::INTRINSIC) {
         this->order = p_order;
         this->convention = p_convention;
         setFromTransform(matrix);
@@ -129,8 +142,9 @@ class Euler {
     /// \param[in] quaternion A quaternion given by the user
     /// \param[in] p_order Order used for the representation
     /// \param[in] p_convention Convention used for the representation
-    explicit Euler(const Quat& quaternion, Order p_order = Order::XYZ,
-                   Convention p_convention = Convention::INTRINSIC) {
+    explicit Euler(
+        const Quat& quaternion, euler::Order p_order = euler::Order::XYZ,
+        euler::Convention p_convention = euler::Convention::INTRINSIC) {
         this->order = p_order;
         this->convention = p_convention;
         setFromQuaternion(quaternion);
@@ -141,8 +155,9 @@ class Euler {
     /// \param[in] angle The angle of rotation around the given axis
     /// \param[in] p_order Order used for the representation
     /// \param[in] p_convention Convention used for the representation
-    explicit Euler(const Vec3& axis, T angle, Order p_order = Order::XYZ,
-                   Convention p_convention = Convention::INTRINSIC) {
+    explicit Euler(
+        const Vec3& axis, T angle, euler::Order p_order = euler::Order::XYZ,
+        euler::Convention p_convention = euler::Convention::INTRINSIC) {
         this->order = p_order;
         this->convention = p_convention;
         setFromAxisAngle(axis, angle);

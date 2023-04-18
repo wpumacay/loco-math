@@ -262,42 +262,42 @@ auto Quaternion<T>::setFromEuler(const Euler<T>& euler) -> void {
     auto s3 = std::sin(HALF * euler.z);
 
     switch (euler.order) {
-        case Euler<T>::Order::XYZ: {
+        case euler::Order::XYZ: {
             m_Elements[1] = s1 * c2 * c3 + c1 * s2 * s3;
             m_Elements[2] = c1 * s2 * c3 - s1 * c2 * s3;
             m_Elements[3] = c1 * c2 * s3 + s1 * s2 * c3;
             m_Elements[0] = c1 * c2 * c3 - s1 * s2 * s3;
             break;
         }
-        case Euler<T>::Order::YXZ: {
+        case euler::Order::YXZ: {
             m_Elements[1] = s1 * c2 * c3 + c1 * s2 * s3;
             m_Elements[2] = c1 * s2 * c3 - s1 * c2 * s3;
             m_Elements[3] = c1 * c2 * s3 - s1 * s2 * c3;
             m_Elements[0] = c1 * c2 * c3 + s1 * s2 * s3;
             break;
         }
-        case Euler<T>::Order::ZXY: {
+        case euler::Order::ZXY: {
             m_Elements[1] = s1 * c2 * c3 - c1 * s2 * s3;
             m_Elements[2] = c1 * s2 * c3 + s1 * c2 * s3;
             m_Elements[3] = c1 * c2 * s3 + s1 * s2 * c3;
             m_Elements[0] = c1 * c2 * c3 - s1 * s2 * s3;
             break;
         }
-        case Euler<T>::Order::ZYX: {
+        case euler::Order::ZYX: {
             m_Elements[1] = s1 * c2 * c3 - c1 * s2 * s3;
             m_Elements[2] = c1 * s2 * c3 + s1 * c2 * s3;
             m_Elements[3] = c1 * c2 * s3 - s1 * s2 * c3;
             m_Elements[0] = c1 * c2 * c3 + s1 * s2 * s3;
             break;
         }
-        case Euler<T>::Order::YZX: {
+        case euler::Order::YZX: {
             m_Elements[1] = s1 * c2 * c3 + c1 * s2 * s3;
             m_Elements[2] = c1 * s2 * c3 + s1 * c2 * s3;
             m_Elements[3] = c1 * c2 * s3 - s1 * s2 * c3;
             m_Elements[0] = c1 * c2 * c3 - s1 * s2 * s3;
             break;
         }
-        case Euler<T>::Order::XZY: {
+        case euler::Order::XZY: {
             m_Elements[1] = s1 * c2 * c3 - c1 * s2 * s3;
             m_Elements[2] = c1 * s2 * c3 - s1 * c2 * s3;
             m_Elements[3] = c1 * c2 * s3 + s1 * s2 * c3;

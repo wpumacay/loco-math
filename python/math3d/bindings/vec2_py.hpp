@@ -15,6 +15,7 @@
 #include <math/vec2_t.hpp>
 
 #include <common_py.hpp>
+#include <conversions_py.hpp>
 
 namespace py = pybind11;
 
@@ -50,6 +51,9 @@ auto bindings_vector2(py::module& m, const char* class_name) -> void {
             VECTOR_METHODS(T)
             VECTOR_GETSET_ITEM(2, T)
             // clant-format on
+            .def("numpy", [](const Class& self) -> py::array_t<T> {
+                return ::math::vec2_to_nparray<T>(self);
+            })
             // NOLINTNEXTLINE
             .def_property_readonly("ndim", [](const Class&) {
                 return Class::VECTOR_NDIM;

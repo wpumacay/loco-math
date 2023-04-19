@@ -154,3 +154,13 @@ class TestVec3Methods:
         vec_c = vec_k.cross(vec_i)
         expected_c = Class(0.0, 1.0, 0.0)
         assert vec_c == expected_c
+
+
+@pytest.mark.parametrize(
+    "Vec3,FloatType", [(m3d.Vector3f, np.float32), (m3d.Vector3d, np.float64)]
+)
+def test_convert_to_numpy(Vec3: Vector3Cls, FloatType: type) -> None:
+    vec3 = Vec3(1.0, 2.0, 3.0)
+    np_vec3 = vec3.numpy()
+    assert type(np_vec3) == np.ndarray
+    assert np.allclose(np_vec3, np.array([1.0, 2.0, 3.0], dtype=FloatType))

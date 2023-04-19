@@ -13,6 +13,7 @@
 #include <math/vec3_t.hpp>
 
 #include <common_py.hpp>
+#include <conversions_py.hpp>
 
 namespace py = pybind11;
 
@@ -53,6 +54,9 @@ auto bindings_vector3(py::module& m, const char* class_name) -> void {
             })
             VECTOR_GETSET_ITEM(3, T)
             // clant-format on
+            .def("numpy", [](const Class& self) -> py::array_t<T> {
+                return ::math::vec3_to_nparray<T>(self);
+            })
             // NOLINTNEXTLINE
             .def_property_readonly("ndim", [](const Class&) {
                 return Class::VECTOR_NDIM;

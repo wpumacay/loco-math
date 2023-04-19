@@ -46,6 +46,10 @@ auto bindings_matrix4(py::module& m, const char* class_name) -> void {
         // cppcheck-suppress constParameter
         MATRIX_GETSET_ITEM(4, T)
         // clang-format on
+        .def("numpy",
+             [](const Class& self) -> py::array_t<T> {
+                 return ::math::mat4_to_nparray<T>(self);
+             })
         .def("flatten",
              [](const Class& self) -> py::array_t<T> {
                  auto array_np = py::array_t<T>(Class::BUFFER_SIZE);

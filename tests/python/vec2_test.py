@@ -120,3 +120,13 @@ class TestVec2Methods:
         vec_a = Class(3.0, 5.0)
         vec_b = Class(7.0, 11.0)
         assert vec_a.dot(vec_b) == 76.0
+
+
+@pytest.mark.parametrize(
+    "Vec2,FloatType", [(m3d.Vector2f, np.float32), (m3d.Vector2d, np.float64)]
+)
+def test_convert_to_numpy(Vec2: Vector2Cls, FloatType: type) -> None:
+    vec2 = Vec2(1.0, 2.0)
+    np_vec2 = vec2.numpy()
+    assert type(np_vec2) == np.ndarray
+    assert np.allclose(np_vec2, np.array([1.0, 2.0], dtype=FloatType))

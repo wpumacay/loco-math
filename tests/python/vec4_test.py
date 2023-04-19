@@ -180,3 +180,13 @@ class TestVec4Methods:
         vec_a = Class(3.0, 5.0, 7.0, 11.0)
         vec_b = Class(13.0, 17.0, 19.0, 23.0)
         assert np.abs(vec_a.dot(vec_b) - 510.0) < 1e-5
+
+
+@pytest.mark.parametrize(
+    "Vec4,FloatType", [(m3d.Vector4f, np.float32), (m3d.Vector4d, np.float64)]
+)
+def test_convert_to_numpy(Vec4: Vector4Cls, FloatType: type) -> None:
+    vec4 = Vec4(1.0, 2.0, 3.0, 4.0)
+    np_vec4 = vec4.numpy()
+    assert type(np_vec4) == np.ndarray
+    assert np.allclose(np_vec4, np.array([1.0, 2.0, 3.0, 4.0], dtype=FloatType))

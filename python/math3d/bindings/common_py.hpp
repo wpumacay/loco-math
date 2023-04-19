@@ -199,33 +199,33 @@
 
 #define VECTOR_METHODS(Type)                                            \
     .def("dot", [](const Class& self, const Class& other) -> Type {     \
-        return dot(self, other);                                        \
+        return ::math::dot<Type>(self, other);                          \
     })                                                                  \
     .def("norm", [](const Class& self) -> Type {                        \
-        return norm(self);                                              \
+        return ::math::norm<Type>(self);                                \
     })                                                                  \
     .def("squareNorm", [](const Class& self) -> Type {                  \
-        return squareNorm(self);                                        \
+        return ::math::squareNorm<Type>(self);                          \
     })                                                                  \
     .def("normalize", [](const Class& self) -> Class {                  \
-        return normalize(self);                                         \
+        return ::math::normalize<Type>(self);                           \
     })                                                                  \
     .def("normalize_", [](Class& self) -> void {                        \
-        normalize_in_place(self);                                       \
+        ::math::normalize_in_place<Type>(self);                         \
     })
 
 #define MATRIX_METHODS(Type)                                            \
     .def("transpose", [](const Class& self) -> Class {                  \
-        return transpose<Type>(self);                                   \
+        return ::math::transpose<Type>(self);                           \
     })                                                                  \
     .def("trace", [](const Class& self) -> Type {                       \
-        return trace<Type>(self);                                       \
+        return ::math::trace<Type>(self);                               \
     })                                                                  \
     .def("determinant", [](const Class& self) -> Type {                 \
-        return determinant<Type>(self);                                 \
+        return ::math::determinant<Type>(self);                         \
     })                                                                  \
     .def("inverse", [](const Class& self) -> Class {                    \
-        return inverse<Type>(self);                                     \
+        return ::math::inverse<Type>(self);                             \
     })
 
 // clang-format on

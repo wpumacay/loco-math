@@ -1,8 +1,2 @@
 numpy
 setuptools
-pytest
-ipython
-ipykernel
-matplotlib
-jupyter
-meshcat

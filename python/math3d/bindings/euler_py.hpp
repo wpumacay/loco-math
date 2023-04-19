@@ -10,6 +10,21 @@ namespace py = pybind11;
 
 namespace math {
 
+// NOLINTNEXTLINE
+auto bindings_euler_enums(py::module& m) -> void {
+    py::enum_<::math::euler::Order>(m, "eOrder")
+        .value("XYZ", ::math::euler::Order::XYZ)
+        .value("YZX", ::math::euler::Order::YZX)
+        .value("ZXY", ::math::euler::Order::ZXY)
+        .value("XZY", ::math::euler::Order::XZY)
+        .value("YXZ", ::math::euler::Order::YXZ)
+        .value("ZYX", ::math::euler::Order::ZYX);
+
+    py::enum_<::math::euler::Convention>(m, "eConvention")
+        .value("INTRINSIC", ::math::euler::Convention::INTRINSIC)
+        .value("EXTRINSIC", ::math::euler::Convention::EXTRINSIC);
+}
+
 template <typename T>
 using SFINAE_EULER_BINDINGS =
     typename std::enable_if<IsScalar<T>::value>::type*;
@@ -56,9 +71,12 @@ auto bindings_euler(py::module& m, const char* class_name) -> void {
                  self.setFromAxisAngle(axis_v4, angle);
              })
         .def("__repr__", [](const Class& self) -> py::str {
-            return py::str("Euler({}, {}, {}, dtype={})")
+            return py::str(
+                       "Euler({}, {}, {}, dtype={}, order={}, convention={})")
                 .format(self.x, self.y, self.z,
-                        (IsFloat32<T>::value ? "float32" : "float64"));
+                        (IsFloat32<T>::value ? "float32" : "float64"),
+                        ::math::euler::ToString(self.order),
+                        ::math::euler::ToString(self.convention));
         });
 }
 

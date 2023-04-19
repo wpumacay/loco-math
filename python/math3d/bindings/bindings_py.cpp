@@ -34,6 +34,7 @@ PYBIND11_MODULE(math3d, m) {
     ::math::bindings_matrix4<::math::float64_t>(m, "Matrix4d");
     ::math::bindings_quaternion<::math::float32_t>(m, "Quaternionf");
     ::math::bindings_quaternion<::math::float64_t>(m, "Quaterniond");
+    ::math::bindings_euler_enums(m);
     ::math::bindings_euler<::math::float32_t>(m, "Euler_f");
     ::math::bindings_euler<::math::float64_t>(m, "Euler_d");
     ::math::bindings_pose3d<::math::float32_t>(m, "Pose3d_f");

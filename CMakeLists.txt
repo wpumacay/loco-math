@@ -16,7 +16,7 @@ include(${loco_cmake_SOURCE_DIR}/Index.cmake)
 # Define our project :)
 project(
   Math3d
-  VERSION 0.4.2
+  VERSION 0.4.3
   DESCRIPTION "A basic math library for spatial algebra"
   HOMEPAGE_URL "https://github.com/wpumacay/math"
   LANGUAGES C CXX)

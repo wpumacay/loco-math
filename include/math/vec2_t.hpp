@@ -7,6 +7,10 @@
 
 namespace math {
 
+// ***************************************************************************//
+//                   Vector2 helper functions and operators                   //
+// ***************************************************************************//
+
 template <typename T>
 using SFINAE_VEC2_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 
@@ -267,6 +271,30 @@ auto operator>>(std::istream& input_stream, Vector2<T>& dst) -> std::istream& {
     }
 
     return input_stream;
+}
+
+// ***************************************************************************//
+//                           Vector2-type methods                             //
+// ***************************************************************************//
+
+template <typename T>
+auto Vector2<T>::lengthSquare() const -> T {
+    return ::math::squareNorm<T>(*this);
+}
+
+template <typename T>
+auto Vector2<T>::length() const -> T {
+    return ::math::norm<T>(*this);
+}
+
+template <typename T>
+auto Vector2<T>::normalize() -> void {
+    ::math::normalize_in_place<T>(*this);
+}
+
+template <typename T>
+auto Vector2<T>::normalized() const -> Vector2<T> {
+    return ::math::normalize<T>(*this);
 }
 
 }  // namespace math

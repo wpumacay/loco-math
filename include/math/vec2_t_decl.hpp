@@ -36,11 +36,9 @@ struct Vector2 {
     /// Number of dimensions of this vector (as in numpy.ndarray.ndim)
     static constexpr uint32_t VECTOR_NDIM = 1;
 
-    /// Type alias of the vector
+    // Some handy type aliases used throught the codebase
     using Type = Vector2<T>;
-    /// Type alias of the scalar used for this vector (float32|64)
     using ElementType = T;
-    /// Type alias of the internal storage used for the vector (i.e. std::array)
     using BufferType = std::array<T, BUFFER_SIZE>;
 
     /// Constructs a zero-initialized vector
@@ -58,12 +56,26 @@ struct Vector2 {
         m_Elements[1] = y_coord;
     }
 
-    // cppcheck-suppress noExplicitConstructor
     /// Constructs a vector from an initializer list of the form {x, y}
     Vector2(const std::initializer_list<T>& values) {
         assert(values.size() == Vector2<T>::VECTOR_SIZE);
         std::copy(values.begin(), values.end(), m_Elements.data());
     }
+
+    /// Returns the square of the length of this vector
+    auto lengthSquare() const -> T;
+
+    /// Returns the length of this vector
+    auto length() const -> T;
+
+    /// Normalizes this vector in place
+    auto normalize() -> void;
+
+    /// Returns the normalized version of this vector
+    auto normalized() const -> Vector2<T>;
+
+    /// Returns the dot product of this vector with the given vector
+    auto dot(const Vector2<T>& rhs) const -> T;
 
     /// Returns a mutable reference to the x-component of the vector
     auto x() -> T& { return m_Elements[0]; }

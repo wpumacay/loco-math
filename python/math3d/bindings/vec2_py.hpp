@@ -48,8 +48,22 @@ auto bindings_vector2(py::module& m, const char* class_name) -> void {
             VECTOR_PROPERTY(x)
             VECTOR_PROPERTY(y)
             VECTOR_OPERATORS(T)
-            VECTOR_METHODS(T)
             VECTOR_GETSET_ITEM(2, T)
+            .def("dot", [](const Class& self, const Class& other) -> T {
+                return self.dot(other);
+            })
+            .def("norm", [](const Class& self) -> T {
+                return self.length();
+            })
+            .def("squareNorm", [](const Class& self) -> T {
+                return self.lengthSquare();
+            })
+            .def("normalize", [](const Class& self) -> Class {
+                return self.normalized();
+            })
+            .def("normalize_", [](Class& self) -> void {
+                self.normalize();
+            })
             // clant-format on
             .def("numpy", [](const Class& self) -> py::array_t<T> {
                 return ::math::vec2_to_nparray<T>(self);

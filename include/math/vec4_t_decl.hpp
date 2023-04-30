@@ -37,20 +37,16 @@ template <typename T>
 class Vector4 {
  public:
     /// Number of scalars used in the storage of the vector
-    constexpr static uint32_t BUFFER_SIZE = 4;
+    static constexpr uint32_t BUFFER_SIZE = 4;
     /// Number of scalar dimensions of the vector
-    constexpr static uint32_t VECTOR_SIZE = 4;
+    static constexpr uint32_t VECTOR_SIZE = 4;
     /// Number of dimensions of this vector (as in np.array.ndim)
     static constexpr uint32_t VECTOR_NDIM = 1;
 
-    /// Typename of the vector
+    // Some handy type aliases used throught the codebase
     using Type = Vector4<T>;
-    /// Typename of the scalar used for the vector (float32, float64, etc.)
     using ElementType = T;
-    /// Typename of the internal storage used for the vector
     using BufferType = std::array<T, BUFFER_SIZE>;
-
-    // Some related types
     using Vec3 = Vector3<T>;
 
     /// Constructs a zero-initialized vector
@@ -96,7 +92,6 @@ class Vector4 {
         m_Elements[3] = 1.0F;
     }
 
-    // cppcheck-suppress noExplicitConstructor
     /// Constructs a vector from an initializer list of the form {x, y, z, w}
     Vector4(const std::initializer_list<T>& values) {
         // Complain in case we don't receive exactly 4 values
@@ -105,7 +100,20 @@ class Vector4 {
         std::copy(values.begin(), values.end(), m_Elements.data());
     }
 
-    // @todo(wilbert): RAII break (rule of 5)
+    /// Returns the square of the length of this vector
+    auto lengthSquare() const -> T;
+
+    /// Returns the length of this vector
+    auto length() const -> T;
+
+    /// Normalizes this vector in place
+    auto normalize() -> void;
+
+    /// Returns the normalized version of this vector
+    auto normalized() const -> Vector4<T>;
+
+    /// Returns the dot product of this vector with the given vector
+    auto dot(const Vector4<T>& rhs) const -> T;
 
     /// Returns a mutable reference to the x-component of the vector
     auto x() -> T& { return m_Elements[0]; }

@@ -50,9 +50,23 @@ auto bindings_vector4(py::module& m, const char* class_name) -> void {
             VECTOR_PROPERTY(z)
             VECTOR_PROPERTY(w)
             VECTOR_OPERATORS(T)
-            VECTOR_METHODS(T)
             VECTOR_GETSET_ITEM(4, T)
             // clant-format on
+            .def("dot", [](const Class& self, const Class& other) -> T {
+                return self.dot(other);
+            })
+            .def("norm", [](const Class& self) -> T {
+                return self.length();
+            })
+            .def("squareNorm", [](const Class& self) -> T {
+                return self.lengthSquare();
+            })
+            .def("normalize", [](const Class& self) -> Class {
+                return self.normalized();
+            })
+            .def("normalize_", [](Class& self) -> void {
+                self.normalize();
+            })
             .def("numpy", [](const Class& self) -> py::array_t<T> {
                 return ::math::vec4_to_nparray<T>(self);
             })

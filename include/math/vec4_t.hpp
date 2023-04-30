@@ -8,6 +8,10 @@
 
 namespace math {
 
+// ***************************************************************************//
+//                   Vector4 helper functions and operators                   //
+// ***************************************************************************//
+
 template <typename T>
 using SFINAE_VEC4_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 
@@ -295,6 +299,35 @@ auto operator>>(std::istream& input_stream, Vector4<T>& dst) -> std::istream& {
     }
 
     return input_stream;
+}
+
+// ***************************************************************************//
+//                           Vector4-type methods                             //
+// ***************************************************************************//
+
+template <typename T>
+auto Vector4<T>::lengthSquare() const -> T {
+    return ::math::squareNorm<T>(*this);
+}
+
+template <typename T>
+auto Vector4<T>::length() const -> T {
+    return ::math::norm<T>(*this);
+}
+
+template <typename T>
+auto Vector4<T>::normalize() -> void {
+    ::math::normalize_in_place<T>(*this);
+}
+
+template <typename T>
+auto Vector4<T>::normalized() const -> Vector4<T> {
+    return ::math::normalize<T>(*this);
+}
+
+template <typename T>
+auto Vector4<T>::dot(const Vector4<T>& rhs) const -> T {
+    return ::math::dot<T>(*this, rhs);
 }
 
 }  // namespace math

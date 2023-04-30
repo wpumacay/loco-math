@@ -36,17 +36,15 @@ template <typename T>
 class Vector3 {
  public:
     /// Number of scalars used in the storage of the vector
-    constexpr static uint32_t BUFFER_SIZE = 3;
+    static constexpr uint32_t BUFFER_SIZE = 3;
     /// Number of scalar dimensions of the vector
-    constexpr static uint32_t VECTOR_SIZE = 3;
+    static constexpr uint32_t VECTOR_SIZE = 3;
     /// Number of dimensions of this vector (as in np.array.ndim)
     static constexpr uint32_t VECTOR_NDIM = 1;
 
-    /// Typename of the vector
+    // Some handy type aliases used throught the codebase
     using Type = Vector3<T>;
-    /// Typename of the scalar used for the vector (float32, float64, etc.)
     using ElementType = T;
-    /// Typename of the internal storage used for the vector
     using BufferType = std::array<T, BUFFER_SIZE>;
 
     // Some related types
@@ -83,7 +81,6 @@ class Vector3 {
         m_Elements[2] = vec.z();
     }
 
-    // cppcheck-suppress noExplicitConstructor
     /// COnstructs a vector from an initializer list of the form {x, y, z}
     Vector3(const std::initializer_list<T>& values) {
         // Complain in case we don't receive exactly 3 values

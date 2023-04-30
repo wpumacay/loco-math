@@ -48,12 +48,26 @@ auto bindings_vector3(py::module& m, const char* class_name) -> void {
             VECTOR_PROPERTY(y)
             VECTOR_PROPERTY(z)
             VECTOR_OPERATORS(T)
-            VECTOR_METHODS(T)
-            .def("cross", [](const Class& self, const Class& other) -> Class {
-                return ::math::cross<T>(self, other);
-            })
             VECTOR_GETSET_ITEM(3, T)
             // clant-format on
+            .def("dot", [](const Class& self, const Class& other) -> T {
+                return self.dot(other);
+            })
+            .def("norm", [](const Class& self) -> T {
+                return self.length();
+            })
+            .def("squareNorm", [](const Class& self) -> T {
+                return self.lengthSquare();
+            })
+            .def("normalize", [](const Class& self) -> Class {
+                return self.normalized();
+            })
+            .def("normalize_", [](Class& self) -> void {
+                self.normalize();
+            })
+            .def("cross", [](const Class& self, const Class& other) -> Class {
+                return self.cross(other);
+            })
             .def("numpy", [](const Class& self) -> py::array_t<T> {
                 return ::math::vec3_to_nparray<T>(self);
             })

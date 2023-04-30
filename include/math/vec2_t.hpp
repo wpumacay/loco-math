@@ -297,4 +297,9 @@ auto Vector2<T>::normalized() const -> Vector2<T> {
     return ::math::normalize<T>(*this);
 }
 
+template <typename T>
+auto Vector2<T>::dot(const Vector2<T>& rhs) const -> T {
+    return ::math::dot<T>(*this, rhs);
+}
+
 }  // namespace math

@@ -231,12 +231,12 @@ auto Vector3<T>::normalized() const -> Vector3<T> {
 
 template <typename T>
 auto Vector3<T>::dot(const Vector3<T>& rhs) const -> T {
-    return ::math::dot<T>(rhs);
+    return ::math::dot<T>(*this, rhs);
 }
 
 template <typename T>
 auto Vector3<T>::cross(const Vector3<T>& rhs) const -> Vector3<T> {
-    return ::math::cross<T>(rhs);
+    return ::math::cross<T>(*this, rhs);
 }
 
 }  // namespace math

@@ -136,7 +136,7 @@ class TestMat3Operators:
         np_c = np_a + np_b
 
         mat_a, mat_b = Mat3(np_a), Mat3(np_b)
-        mat_c = Mat3(3.0, 5.0, 8.0, 11.0, 16.0, 19.0, 24.0, 27.0, 32.0)
+        mat_c = mat_a + mat_b
         assert mat3_all_close(mat_c, np_c)
 
         # Testing against randomly sampled matrices

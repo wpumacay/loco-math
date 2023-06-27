@@ -4,7 +4,7 @@
 #include <catch2/catch.hpp>
 #include <math/pose3d_t.hpp>
 
-#include <common_math_generators.hpp>
+#include "./common_math_generators.hpp"
 
 #if defined(__clang__)
 #pragma clang diagnostic push

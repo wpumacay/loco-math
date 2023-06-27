@@ -3,13 +3,18 @@ import pytest
 import numpy as np
 import math3d as m3d
 
-from typing import Type, Union, cast
+from typing import Type, Union, cast, Tuple
 
 Matrix3Cls = Type[Union[m3d.Matrix3f, m3d.Matrix3d]]
 Vector3Cls = Type[Union[m3d.Vector3f, m3d.Vector3d]]
 
 Matrix3 = Union[m3d.Matrix3f, m3d.Matrix3d]
 Vector3 = Union[m3d.Vector3f, m3d.Vector3d]
+
+# Make sure our generators are seeded with the answer to the universe :D
+np.random.seed(42)
+# Number of times we will sample a random matrix for mat3 operator checks
+NUM_SAMPLES = 10
 
 
 def mat3_all_close(mat: Matrix3, mat_np: np.ndarray, epsilon: float = 1e-5) -> bool:
@@ -93,3 +98,73 @@ def test_mat3_accessors(Mat3, Vec3, FloatType) -> None:
 
     # __getitem__ by using a slice
     # TODO(wilbert): implement __getitem__ to retrieve a view of the vector
+
+
+@pytest.mark.parametrize(
+    "Mat3, Vec3, FloatType",
+    [
+        (m3d.Matrix3f, m3d.Vector3f, np.float32),
+        (m3d.Matrix3d, m3d.Vector3d, np.float64),
+    ],
+)
+class TestMat3Operators:
+    def test_comparison_operator(
+        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+    ) -> None:
+        mat_a = Mat3(np.arange(1, 10).reshape(3, 3).astype(FloatType))
+        mat_b = Mat3(np.arange(1, 10).reshape(3, 3).astype(FloatType))
+
+        # Checking comparison operator (__eq__)
+        assert mat_a == mat_b
+
+        # Update the matrices so they don't match
+        mat_a[0, 0], mat_b[0, 0] = 1.1, 2.1
+
+        # Checking neg. comparison  operator (__neq__)
+        assert mat_a != mat_b
+
+    def test_matrix_addition(
+        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+    ) -> None:
+        # Testing against some hardcoded matrices
+        np_a = np.array(
+            [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]], dtype=FloatType
+        )
+        np_b = np.array(
+            [[2.0, 3.0, 5.0], [7.0, 11.0, 13.0], [17.0, 19.0, 23.0]], dtype=FloatType
+        )
+        np_c = np_a + np_b
+
+        mat_a, mat_b = Mat3(np_a), Mat3(np_b)
+        mat_c = Mat3(3.0, 5.0, 8.0, 11.0, 16.0, 19.0, 24.0, 27.0, 32.0)
+        assert mat3_all_close(mat_c, np_c)
+
+        # Testing against randomly sampled matrices
+        for i in range(NUM_SAMPLES):
+            np_a = np.random.randn(3, 3).astype(FloatType)
+            np_b = np.random.randn(3, 3).astype(FloatType)
+            np_c = np_a + np_b
+
+            mat_a, mat_b = Mat3(np_a), Mat3(np_b)
+            mat_c = mat_a + mat_b
+            assert mat3_all_close(mat_c, np_c)
+
+    def test_matrix_substraction(
+        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+    ) -> None:
+        ...
+
+    def test_matrix_scalar_product(
+        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+    ) -> None:
+        ...
+
+    def test_matrix_vector_product(
+        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+    ) -> None:
+        ...
+
+    def test_matrix_matrix_product(
+        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+    ) -> None:
+        ...

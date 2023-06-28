@@ -221,9 +221,56 @@ class TestMat3Operators:
     def test_matrix_vector_product(
         self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
     ) -> None:
-        ...
+        # Checking against hard-coded test case
+        # fmt: off
+        mat = Mat3(1.0, -4.0, 1.0,
+                  -6.0, -7.0, 9.0,
+                  -4.0,  6.0, 0.0)
+        # fmt: on
+        vec = Vec3(2.0, 7.0, 6.0)
+
+        n_vec = mat * vec
+
+        assert vec3_all_close(n_vec, np.array([-20.0, -7.0, 34.0]))
+
+        # Checking against a randomly sampled matrix
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(3, 3).astype(FloatType)
+            np_vec = np.random.randn(3, 1).astype(FloatType)
+            mat = Mat3(np_mat)
+            vec = Vec3(np_vec)
+
+            np_prod = np_mat @ vec
+            prod = mat * vec
+            assert type(prod) == Vec3
+            assert vec3_all_close(prod, np_prod)
 
     def test_matrix_matrix_product(
         self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
     ) -> None:
-        ...
+        # Checking against hard-coded test case
+        # fmt: off
+        mat_a = Mat3(-10.0, -10.0, -2.0,
+                      -8.0,  -8.0,  1.0,
+                       5.0,  -7.0, -3.0)
+
+        mat_b = Mat3(-1.0, -1.0,  8.0,
+                      6.0,  6.0,  0.0,
+                     -8.0,  2.0, -9.0)
+        mat_c = mat_a * mat_b
+        expected_c = np.array([[-34.0, -54.0, -62.0],
+                               [-48.0, -38.0, -73.0],
+                               [-23.0, -53.0,  67.0]], dtype=FloatType)
+        # fmt: on
+        assert type(mat_c) == Mat3
+        assert mat3_all_close(mat_c, expected_c)
+
+        # Checking against a randomly sampled matrix
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat_a = np.random.randn(3, 3).astype(FloatType)
+            np_mat_b = np.random.randn(3, 3).astype(FloatType)
+            mat_a, mat_b = Mat3(np_mat_a), Mat3(np_mat_b)
+
+            mat_c = mat_a * mat_b
+            expected_c = np_mat_a @ np_mat_b
+            assert mat3_all_close(mat_c, expected_c)

@@ -14,14 +14,16 @@ Vector3 = Union[m3d.Vector3f, m3d.Vector3d]
 # Make sure our generators are seeded with the answer to the universe :D
 np.random.seed(42)
 # Number of times we will sample a random matrix for mat3 operator checks
-NUM_SAMPLES = 10
+NUM_RANDOM_SAMPLES = 10
+# The delta used for tolerance (due to floating point precision mismatches)
+EPSILON = 1e-5
 
 
-def mat3_all_close(mat: Matrix3, mat_np: np.ndarray, epsilon: float = 1e-5) -> bool:
+def mat3_all_close(mat: Matrix3, mat_np: np.ndarray, epsilon: float = EPSILON) -> bool:
     return np.allclose(cast(np.ndarray, mat), mat_np, atol=epsilon)
 
 
-def vec3_all_close(vec: Vector3, vec_np: np.ndarray, epsilon: float = 1e-5) -> bool:
+def vec3_all_close(vec: Vector3, vec_np: np.ndarray, epsilon: float = EPSILON) -> bool:
     return np.allclose(cast(np.ndarray, vec), vec_np, atol=epsilon)
 
 
@@ -97,7 +99,7 @@ def test_mat3_accessors(Mat3, Vec3, FloatType) -> None:
     assert mat[2, 0] == 7.0 and mat[2, 1] == 8.0 and mat[2, 2] == 9.0
 
     # __getitem__ by using a slice
-    # TODO(wilbert): implement __getitem__ to retrieve a view of the vector
+    # TODO(wilbert): impl. __getitem__ to retrieve a slice-view of the vector
 
 
 @pytest.mark.parametrize(
@@ -137,27 +139,84 @@ class TestMat3Operators:
 
         mat_a, mat_b = Mat3(np_a), Mat3(np_b)
         mat_c = mat_a + mat_b
+        # Check that we're doing what numpy does for addition
         assert mat3_all_close(mat_c, np_c)
 
         # Testing against randomly sampled matrices
-        for i in range(NUM_SAMPLES):
+        for _ in range(NUM_RANDOM_SAMPLES):
             np_a = np.random.randn(3, 3).astype(FloatType)
             np_b = np.random.randn(3, 3).astype(FloatType)
             np_c = np_a + np_b
 
             mat_a, mat_b = Mat3(np_a), Mat3(np_b)
             mat_c = mat_a + mat_b
+            # Check that we're doing what numpy does for addition
             assert mat3_all_close(mat_c, np_c)
 
     def test_matrix_substraction(
         self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
     ) -> None:
-        ...
+        # Testing against some hardcoded matrices
+        np_a = np.array(
+            [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]], dtype=FloatType
+        )
+        np_b = np.array(
+            [[2.0, 3.0, 5.0], [7.0, 11.0, 13.0], [17.0, 19.0, 23.0]], dtype=FloatType
+        )
+        np_c = np_a - np_b
+
+        mat_a, mat_b = Mat3(np_a), Mat3(np_b)
+        mat_c = mat_a - mat_b
+        # Check that we're doing what numpy does for substraction
+        assert mat3_all_close(mat_c, np_c)
+
+        # Testing against randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_a = np.random.randn(3, 3).astype(FloatType)
+            np_b = np.random.randn(3, 3).astype(FloatType)
+            np_c = np_a - np_b
+
+            mat_a, mat_b = Mat3(np_a), Mat3(np_b)
+            mat_c = mat_a - mat_b
+            # Check that we're doing what numpy does for addition
+            assert mat3_all_close(mat_c, np_c)
 
     def test_matrix_scalar_product(
         self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
     ) -> None:
-        ...
+        ## Checking against hard coded test case
+        np_mat = np.arange(1, 10).reshape(3, 3).astype(FloatType)
+        factor = 1.5
+        mat = Mat3(np_mat)
+
+        # Checking __mul__
+        s_mat = mat * factor  # Math3d land
+        s_np_mat = np_mat * factor  # Numpy land
+        assert type(s_mat) == Mat3
+        assert mat3_all_close(s_mat, s_np_mat)
+
+        # Checking __rmul__
+        s_mat = factor * mat  # Math3d land
+        s_np_mat = factor * np_mat  # Numpy
+        assert type(s_mat) == Mat3
+        assert mat3_all_close(s_mat, s_np_mat)
+
+        # Checking against a randomly sampled matrix
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(3, 3).astype(FloatType)
+            factor = np.random.randn()
+            mat = Mat3(np_mat)
+
+            # Checking __mul__
+            s_mat = mat * factor
+            s_np_mat = np_mat * factor
+            assert type(s_mat) == Mat3
+            assert mat3_all_close(s_mat, s_np_mat)
+
+            # Checking __rmul__
+            s_mat = factor * mat
+            assert type(s_mat) == Mat3
+            assert mat3_all_close(s_mat, s_np_mat)
 
     def test_matrix_vector_product(
         self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type

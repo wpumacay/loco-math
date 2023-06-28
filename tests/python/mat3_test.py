@@ -274,3 +274,70 @@ class TestMat3Operators:
             mat_c = mat_a * mat_b
             expected_c = np_mat_a @ np_mat_b
             assert mat3_all_close(mat_c, expected_c)
+
+
+@pytest.mark.parametrize(
+    "Mat3, Vec3, FloatType",
+    [
+        (m3d.Matrix3f, m3d.Vector3f, np.float32),
+        (m3d.Matrix3d, m3d.Vector3d, np.float64),
+    ],
+)
+class TestMat3Methods:
+    def test_matrix_transpose(
+        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+    ) -> None:
+        # Checking against a hard-coded test case
+        # fmt: off
+        mat = Mat3(1.0, 2.0, 3.0,
+                   4.0, 5.0, 6.0,
+                   7.0, 8.0, 9.0)
+        expected_mat = Mat3(1.0, 4.0, 7.0,
+                            2.0, 5.0, 8.0,
+                            3.0, 6.0, 9.0)
+        # fmt: on
+        mat_t = mat.transpose()
+        assert type(mat_t) == Mat3
+        assert mat_t == expected_mat
+
+        # Checking against a randomly sampled matrix
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(3, 3).astype(FloatType)
+            mat = Mat3(np_mat)
+
+            mat_t = mat.transpose()
+            expected_np_mat_t = np_mat.T
+            assert mat3_all_close(mat_t, expected_np_mat_t)
+
+    def test_matrix_trace(
+        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+    ) -> None:
+        # Checking against a hard-coded test case
+        # fmt: off
+        mat = Mat3(1.0, 2.0, 3.0,
+                   4.0, 5.0, 6.0,
+                   7.0, 8.0, 9.0)
+        # fmt: on
+        trace = mat.trace()
+        expected_trace = 15.0
+        assert type(trace) is float
+        assert np.abs(trace - expected_trace) < EPSILON
+
+        # Checking against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(3, 3).astype(FloatType)
+            mat = Mat3(np_mat)
+
+            trace = mat.trace()
+            expected_trace = np.trace(np_mat)
+            assert np.abs(trace - expected_trace) < EPSILON
+
+    def test_matrix_determinant(
+        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+    ) -> None:
+        ...
+
+    def test_matrix_inverse(
+        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+    ) -> None:
+        ...

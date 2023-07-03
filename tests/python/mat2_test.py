@@ -300,3 +300,29 @@ class TestMat2Operators:
             np_prod = np_mat @ vec
             prod = mat * vec
             assert vec2_all_close(prod, np_prod)
+
+    def test_matrix_matrix_product(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # Checking against hard-coded test case
+        # fmt: off
+        mat_a = Mat2(1.0, 2.0,
+                     3.0, 4.0)
+        mat_b = Mat2(5.0, 6.0,
+                     7.0, 8.0)
+        expected_c = Mat2(19.0, 22.0,
+                          43.0, 50.0)
+        mat_c = mat_a * mat_b
+        # fmt: on
+        assert type(mat_c) == Mat2
+        assert mat_c == expected_c
+
+        # Checking against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat_a = np.random.randn(2, 2).astype(FloatType)
+            np_mat_b = np.random.randn(2, 2).astype(FloatType)
+            mat_a, mat_b = Mat2(np_mat_a), Mat2(np_mat_b)
+
+            mat_c = mat_a * mat_b
+            expected_c = np_mat_a @ np_mat_b
+            assert mat2_all_close(mat_c, expected_c)

@@ -303,11 +303,34 @@ Matrix3d = Matrix3
 ################################################################################
 
 class Matrix4:
+    @overload
+    def __init__(self): ...
+    @overload
+    def __init__(self, d0: float, d1: float, d2: float, d3: float): ...
+    @overload
     def __init__(
         self,
-        *args: Union[float, ndarray, Vector4],
-        **kwargs: Union[float, ndarray, Vector4]
+        m00: float,
+        m01: float,
+        m02: float,
+        m03: float,
+        m10: float,
+        m11: float,
+        m12: float,
+        m13: float,
+        m20: float,
+        m21: float,
+        m22: float,
+        m23: float,
+        m30: float,
+        m31: float,
+        m32: float,
+        m33: float,
     ): ...
+    @overload
+    def __init__(self, col0: Vector4, col1: Vector4, col2: Vector4, col3: Vector4): ...
+    @overload
+    def __init__(self, np_mat: ndarray): ...
     @overload
     def __getitem__(self, index: int) -> Vector4: ...
     @overload
@@ -320,6 +343,8 @@ class Matrix4:
     def __sub__(self, rhs: Matrix4) -> Matrix4: ...
     @overload
     def __mul__(self, rhs: float) -> Matrix4: ...
+    @overload
+    def __mul__(self, rhs: Vector4) -> Vector4: ...
     @overload
     def __mul__(self, rhs: Matrix4) -> Matrix4: ...
     @overload

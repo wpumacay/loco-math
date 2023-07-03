@@ -155,3 +155,85 @@ class TestMat2Accessors:
                                 [3.1, 4.1]], dtype=FloatType)
         # fmt: on
         assert mat2_all_close(mat, expected_np)
+
+
+@pytest.mark.parametrize(
+    "Mat2, Vec2, FloatType",
+    [
+        (m3d.Matrix2f, m3d.Vector2f, np.float32),
+        (m3d.Matrix2d, m3d.Vector2d, np.float64),
+    ],
+)
+class TestMat2Operators:
+    def test_comparison_operator(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # fmt: off
+        mat_a = Mat2(1.0, 2.0,
+                     3.0, 4.0)
+        mat_b = Mat2(1.0, 2.0,
+                     3.0, 4.0)
+        # fmt: on
+
+        # Checking comparison operator (__eq__)
+        assert mat_a == mat_b
+
+        # Update the matrices so they don't match
+        mat_a[0, 0], mat_b[0, 0] = 1.1, 2.1
+
+        # Checking neg. comparison  operator (__neq__)
+        assert mat_a != mat_b
+
+    def test_matrix_addition(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # Testing against some hard-coded matrices
+        # fmt: off
+        mat_a = Mat2(1.0, 2.0,
+                     3.0, 4.0)
+        mat_b = Mat2(2.0, 3.0,
+                     5.0, 7.0)
+        mat_c = mat_a + mat_b
+        expected_c = Mat2(3.0, 5.0,
+                          8.0, 11.0)
+        # fmt: on
+        assert type(mat_c) is Mat2
+        assert mat_c == expected_c
+
+        # Testing against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_a = np.random.randn(2, 2).astype(FloatType)
+            np_b = np.random.randn(2, 2).astype(FloatType)
+            np_c = np_a + np_b
+
+            mat_a, mat_b = Mat2(np_a), Mat2(np_b)
+            mat_c = mat_a + mat_b
+            # Check that we're doing what numpy does for addition
+            assert mat2_all_close(mat_c, np_c)
+
+    def test_matrix_substraction(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # Testing against some hard-coded matrices
+        # fmt: off
+        mat_a = Mat2(1.0, 2.0,
+                     3.0, 4.0)
+        mat_b = Mat2(2.0, 3.0,
+                     5.0, 7.0)
+        mat_c = mat_a - mat_b
+        expected_c = Mat2(-1.0, -1.0,
+                          -2.0, -3.0)
+        # fmt: on
+        assert type(mat_c) is Mat2
+        assert mat_c == expected_c
+
+        # Testing against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_a = np.random.randn(2, 2).astype(FloatType)
+            np_b = np.random.randn(2, 2).astype(FloatType)
+            np_c = np_a - np_b
+
+            mat_a, mat_b = Mat2(np_a), Mat2(np_b)
+            mat_c = mat_a - mat_b
+            # Check that we're doing what numpy does for addition
+            assert mat2_all_close(mat_c, np_c)

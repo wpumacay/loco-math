@@ -335,9 +335,48 @@ class TestMat3Methods:
     def test_matrix_determinant(
         self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
     ) -> None:
-        ...
+        # Checking against a hard-coded test case
+        # fmt: off
+        mat = Mat3( 0.50130818,  0.3485203 , -0.73158798,
+                    0.11190553, -0.78547367, -0.83114009,
+                   -1.89185312, -1.26867963,  1.98250988)
+        # fmt: on
+        det = mat.determinant()
+        expected_det = 0.3524501163395751
+        assert type(det) is float
+        assert np.abs(det - expected_det) < EPSILON
+
+        # Checking against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(3, 3).astype(FloatType)
+            mat = Mat3(np_mat)
+
+            det = mat.determinant()
+            expected_det = np.linalg.det(np_mat)
+            assert np.abs(det - expected_det) < EPSILON
 
     def test_matrix_inverse(
         self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
     ) -> None:
-        ...
+        # Checking against a hard-coded test case
+        # fmt: off
+        mat = Mat3( 0.50130818,  0.3485203 , -0.73158798,
+                    0.11190553, -0.78547367, -0.83114009,
+                   -1.89185312, -1.26867963,  1.98250988)
+        inv = mat.inverse()
+        expected_inv = np.array([[-7.41001263,  0.67301955, -2.45229678],
+                                 [ 3.83186468, -1.10713136,  0.94988927],
+                                 [-4.61901701, -0.06624979, -1.22787794]],
+                                dtype=FloatType)
+        # fmt: on
+        assert type(inv) is Mat3
+        assert mat3_all_close(inv, expected_inv)
+
+        # Checking against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(3, 3).astype(FloatType)
+            mat = Mat3(np_mat)
+
+            inv = mat.inverse()
+            expected_inv = np.linalg.inv(np_mat)
+            assert mat3_all_close(inv, expected_inv)

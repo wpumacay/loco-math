@@ -275,3 +275,28 @@ class TestMat2Operators:
             scaled = factor * mat
             np_scaled = factor * np_mat
             assert mat2_all_close(scaled, np_scaled)
+
+    def test_matrix_vector_product(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # Checking against hard-coded test case
+        # fmt: off
+        mat = Mat2(1.0, 2.0,
+                   3.0, 4.0)
+        # fmt: on
+        vec = Vec2(1.0, 2.0)
+        prod = mat * vec
+        expected_prod = Vec2(5.0, 11.0)
+        assert type(prod) is Vec2
+        assert prod == expected_prod
+
+        # Checking against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(2, 2).astype(FloatType)
+            np_vec = np.random.randn(2, 1).astype(FloatType)
+            mat = Mat2(np_mat)
+            vec = Vec2(np_vec)
+
+            np_prod = np_mat @ vec
+            prod = mat * vec
+            assert vec2_all_close(prod, np_prod)

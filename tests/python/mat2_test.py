@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 import math3d as m3d
 
-from typing import Type, Union, cast, Tuple
+from typing import Type, Union, cast
 
 Matrix2Cls = Type[Union[m3d.Matrix2f, m3d.Matrix2d]]
 Vector2Cls = Type[Union[m3d.Vector2f, m3d.Vector2d]]
@@ -36,21 +36,21 @@ def vec2_all_close(vec: Vector2, vec_np: np.ndarray, epsilon: float = EPSILON) -
 )
 class TestMat2Constructors:
     def test_default_constructor(
-        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+        self, Mat2: Matrix2Cls, _: Vector2Cls, FloatType: type
     ) -> None:
         mat = Mat2()
         expected_np = np.zeros((2, 2), dtype=FloatType)
         assert mat2_all_close(mat, expected_np)
 
     def test_diagonal_constructor(
-        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+        self, Mat2: Matrix2Cls, _: Vector2Cls, FloatType: type
     ) -> None:
         mat = Mat2(1.0, 2.0)
         expected_np = np.diag([1.0, 2.0]).astype(FloatType)
         assert mat2_all_close(mat, expected_np)
 
     def test_all_entries_constructor(
-        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+        self, Mat2: Matrix2Cls, _: Vector2Cls, FloatType: type
     ) -> None:
         # fmt: off
         mat = Mat2(1.0, 2.0,
@@ -73,7 +73,7 @@ class TestMat2Constructors:
         assert mat2_all_close(mat, expected_np)
 
     def test_numpy_array_constructor(
-        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+        self, Mat2: Matrix2Cls, _: Vector2Cls, FloatType: type
     ) -> None:
         # fmt: off
         mat = Mat2(np.array([[1.0, 2.0],
@@ -107,7 +107,7 @@ class TestMat2Accessors:
         assert vec2_all_close(col1, np.array([2.0, 4.0], dtype=FloatType))
 
     def test_get_entry(
-        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+        self, Mat2: Matrix2Cls, _: Vector2Cls, FloatType: type  # pyright: ignore
     ) -> None:
         # fmt: off
         mat = Mat2(1.0, 2.0,
@@ -125,9 +125,7 @@ class TestMat2Accessors:
         # TODO(wilbert): impl. __getitem__ to retrieve a slice-view of the vector
         ...
 
-    def test_set_column(
-        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
-    ) -> None:
+    def test_set_column(self, Mat2: Matrix2Cls, _: Vector2Cls, FloatType: type) -> None:
         # fmt: off
         mat = Mat2(1.0, 2.0,
                    3.0, 4.0)
@@ -140,9 +138,7 @@ class TestMat2Accessors:
         # fmt: on
         assert mat2_all_close(mat, expected_np)
 
-    def test_set_entry(
-        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
-    ) -> None:
+    def test_set_entry(self, Mat2: Matrix2Cls, _: Vector2Cls, FloatType: type) -> None:
         # fmt: off
         mat = Mat2(1.0, 2.0,
                    3.0, 4.0)

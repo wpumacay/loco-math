@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 import math3d as m3d
 
-from typing import Type, Union, cast, Tuple
+from typing import Type, Union, cast
 
 Matrix4Cls = Type[Union[m3d.Matrix4f, m3d.Matrix4d]]
 Vector4Cls = Type[Union[m3d.Vector4f, m3d.Vector4d]]

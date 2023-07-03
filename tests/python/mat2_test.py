@@ -82,3 +82,76 @@ class TestMat2Constructors:
                                 [3.0, 4.0]], dtype=FloatType)
         # fmt: on
         assert mat2_all_close(mat, expected_np)
+
+
+@pytest.mark.parametrize(
+    "Mat2, Vec2, FloatType",
+    [
+        (m3d.Matrix2f, m3d.Vector2f, np.float32),
+        (m3d.Matrix2d, m3d.Vector2d, np.float64),
+    ],
+)
+class TestMat2Accessors:
+    def test_get_column(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # fmt: off
+        mat = Mat2(1.0, 2.0,
+                   3.0, 4.0)
+        # fmt: on
+
+        # __getitem__ by using a single entry should return the requested column
+        col0, col1 = mat[0], mat[1]
+        assert type(col0) == Vec2 and type(col1) == Vec2
+        assert vec2_all_close(col0, np.array([1.0, 3.0], dtype=FloatType))
+        assert vec2_all_close(col1, np.array([2.0, 4.0], dtype=FloatType))
+
+    def test_get_entry(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # fmt: off
+        mat = Mat2(1.0, 2.0,
+                   3.0, 4.0)
+        # fmt: on
+
+        # __getitem__ by using a tuple to get matrix entries
+        assert mat[0, 0] == 1.0 and mat[0, 1] == 2.0
+        assert mat[1, 0] == 3.0 and mat[1, 1] == 4.0
+
+    def test_get_view(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # __getitem__ by using a slice of the matrix (view)
+        # TODO(wilbert): impl. __getitem__ to retrieve a slice-view of the vector
+        ...
+
+    def test_set_column(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # fmt: off
+        mat = Mat2(1.0, 2.0,
+                   3.0, 4.0)
+
+        # __setitem__ by passing a column vector and column index
+        mat[0] = np.array([1.1, 3.1], dtype=FloatType)
+        mat[1] = np.array([2.1, 4.1], dtype=FloatType)
+        expected_np = np.array([[1.1, 2.1],
+                                [3.1, 4.1]], dtype=FloatType)
+        # fmt: on
+        assert mat2_all_close(mat, expected_np)
+
+    def test_set_entry(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # fmt: off
+        mat = Mat2(1.0, 2.0,
+                   3.0, 4.0)
+
+        # __setitem__ by passing a single float and a tuple as index
+        mat[0, 0], mat[0, 1] = 1.1, 2.1
+        mat[1, 0], mat[1, 1] = 3.1, 4.1
+
+        expected_np = np.array([[1.1, 2.1],
+                                [3.1, 4.1]], dtype=FloatType)
+        # fmt: on
+        assert mat2_all_close(mat, expected_np)

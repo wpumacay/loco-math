@@ -411,3 +411,114 @@ class TestMat4Operators:
             mat_c = mat_a * mat_b
             expected_c = np_mat_a @ np_mat_b
             assert mat4_all_close(mat_c, expected_c)
+
+
+@pytest.mark.parametrize(
+    "Mat4, Vec4, FloatType",
+    [
+        (m3d.Matrix4f, m3d.Vector4f, np.float32),
+        (m3d.Matrix4d, m3d.Vector4d, np.float64),
+    ],
+)
+class TestMat4Methods:
+    def test_matrix_transpose(
+        self, Mat4: Matrix4Cls, Vec4: Vector4Cls, FloatType: type
+    ) -> None:
+        # Checking against a hard-coded test case
+        # fmt: off
+        mat = Mat4( 1.0,  2.0,  3.0,  4.0,
+                    5.0,  6.0,  7.0,  8.0,
+                    9.0, 10.0, 11.0, 12.0,
+                   13.0, 14.0, 15.0, 16.0)
+        expected_mat = Mat4( 1.0, 5.0,  9.0, 13.0,
+                             2.0, 6.0, 10.0, 14.0,
+                             3.0, 7.0, 11.0, 15.0,
+                             4.0, 8.0, 12.0, 16.0)
+        # fmt: on
+        mat_t = mat.transpose()
+        assert type(mat_t) == Mat4
+        assert mat_t == expected_mat
+
+        # Checking against a randomly sampled matrix
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(4, 4).astype(FloatType)
+            mat = Mat4(np_mat)
+
+            mat_t = mat.transpose()
+            expected_np_mat_t = np_mat.T
+            assert mat4_all_close(mat_t, expected_np_mat_t)
+
+    def test_matrix_trace(
+        self, Mat4: Matrix4Cls, Vec4: Vector4Cls, FloatType: type
+    ) -> None:
+        # Checking against a hard-coded test case
+        # fmt: off
+        mat = Mat4( 1.0,  2.0,  3.0,  4.0,
+                    5.0,  6.0,  7.0,  8.0,
+                    9.0, 10.0, 11.0, 12.0,
+                   13.0, 14.0, 15.0, 16.0)
+        # fmt: on
+        trace = mat.trace()
+        expected_trace = 34.0
+        assert type(trace) is float
+        assert np.abs(trace - expected_trace) < EPSILON
+
+        # Checking against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(4, 4).astype(FloatType)
+            mat = Mat4(np_mat)
+
+            trace = mat.trace()
+            expected_trace = np.trace(np_mat)
+            assert np.abs(trace - expected_trace) < EPSILON
+
+    def test_matrix_determinant(
+        self, Mat4: Matrix4Cls, Vec4: Vector4Cls, FloatType: type
+    ) -> None:
+        # Checking against a hard-coded test case
+        # fmt: off
+        mat = Mat4( 0.91464976,  0.55413345,  0.19333044, -0.60001319,
+                    0.73620611, -0.35718703, -0.69387382,  0.50825215,
+                   -1.83009442,  0.04651359, -2.44449474, -0.3210386 ,
+                    0.61120402, -0.93451763,  0.51492608, -0.43250595)
+        # fmt: on
+        det = mat.determinant()
+        expected_det = -4.079931117433607
+        assert type(det) is float
+        assert np.abs(det - expected_det) < EPSILON
+
+        # Checking against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(4, 4).astype(FloatType)
+            mat = Mat4(np_mat)
+
+            det = mat.determinant()
+            expected_det = np.linalg.det(np_mat)
+            assert np.abs(det - expected_det) < EPSILON
+
+    def test_matrix_inverse(
+        self, Mat4: Matrix4Cls, Vec4: Vector4Cls, FloatType: type
+    ) -> None:
+        # Checking against a hard-coded test case
+        # fmt: off
+        mat = Mat4( 0.91464976,  0.55413345,  0.19333044, -0.60001319,
+                    0.73620611, -0.35718703, -0.69387382,  0.50825215,
+                   -1.83009442,  0.04651359, -2.44449474, -0.3210386 ,
+                    0.61120402, -0.93451763,  0.51492608, -0.43250595)
+        inv = mat.inverse()
+        expected_inv = Mat4( 0.44307324,  0.51365366, -0.09779816,  0.06153157,
+                             0.45732357, -0.14613512, -0.07970549, -0.74700735,
+                            -0.23821917, -0.4532605 , -0.29562532,  0.01727412,
+                            -0.64561897,  0.50199861, -0.3179462 , -0.5905242)
+        # fmt: on
+        assert type(inv) is Mat4
+        assert inv == expected_inv
+
+        # Checking against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(4, 4).astype(FloatType)
+            mat = Mat4(np_mat)
+
+            inv = mat.inverse()
+            expected_inv = np.linalg.inv(np_mat)
+            assert mat4_all_close(inv, expected_inv)

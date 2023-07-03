@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 import math3d as m3d
 
-from typing import Type, Union, cast, Tuple
+from typing import Type, Union, cast
 
 Matrix3Cls = Type[Union[m3d.Matrix3f, m3d.Matrix3d]]
 Vector3Cls = Type[Union[m3d.Vector3f, m3d.Vector3d]]
@@ -36,19 +36,19 @@ def vec3_all_close(vec: Vector3, vec_np: np.ndarray, epsilon: float = EPSILON) -
 )
 class TestMat3Constructors:
     def test_default_constructor(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+        self, Mat3: Matrix3Cls, _: Vector3Cls, FloatType: type
     ) -> None:
         mat = Mat3()
         assert mat3_all_close(mat, np.zeros((3, 3), dtype=FloatType))
 
     def test_diagonal_constructor(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+        self, Mat3: Matrix3Cls, _: Vector3Cls, FloatType: type
     ) -> None:
         mat = Mat3(1.0, 2.0, 3.0)
         assert mat3_all_close(mat, np.diag([1.0, 2.0, 3.0]).astype(FloatType))
 
     def test_all_entries_constructor(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+        self, Mat3: Matrix3Cls, _: Vector3Cls, FloatType: type
     ) -> None:
         mat = Mat3(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
         assert mat3_all_close(mat, np.arange(1, 10).reshape(3, 3).astype(FloatType))
@@ -63,7 +63,7 @@ class TestMat3Constructors:
         assert mat3_all_close(mat, np.arange(1, 10).reshape(3, 3).astype(FloatType))
 
     def test_numpy_array_constructor(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+        self, Mat3: Matrix3Cls, _: Vector3Cls, FloatType: type
     ) -> None:
         mat = Mat3(
             np.array(
@@ -111,7 +111,7 @@ def test_mat3_accessors(Mat3, Vec3, FloatType) -> None:
 )
 class TestMat3Operators:
     def test_comparison_operator(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+        self, Mat3: Matrix3Cls, _: Vector3Cls, FloatType: type
     ) -> None:
         mat_a = Mat3(np.arange(1, 10).reshape(3, 3).astype(FloatType))
         mat_b = Mat3(np.arange(1, 10).reshape(3, 3).astype(FloatType))
@@ -126,7 +126,7 @@ class TestMat3Operators:
         assert mat_a != mat_b
 
     def test_matrix_addition(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+        self, Mat3: Matrix3Cls, _: Vector3Cls, FloatType: type
     ) -> None:
         # Testing against some hardcoded matrices
         np_a = np.array(
@@ -143,7 +143,7 @@ class TestMat3Operators:
         assert mat3_all_close(mat_c, np_c)
 
         # Testing against randomly sampled matrices
-        for _ in range(NUM_RANDOM_SAMPLES):
+        for i in range(NUM_RANDOM_SAMPLES):  # pyright: ignore
             np_a = np.random.randn(3, 3).astype(FloatType)
             np_b = np.random.randn(3, 3).astype(FloatType)
             np_c = np_a + np_b
@@ -154,7 +154,7 @@ class TestMat3Operators:
             assert mat3_all_close(mat_c, np_c)
 
     def test_matrix_substraction(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+        self, Mat3: Matrix3Cls, _: Vector3Cls, FloatType: type
     ) -> None:
         # Testing against some hardcoded matrices
         np_a = np.array(
@@ -171,7 +171,7 @@ class TestMat3Operators:
         assert mat3_all_close(mat_c, np_c)
 
         # Testing against randomly sampled matrices
-        for _ in range(NUM_RANDOM_SAMPLES):
+        for i in range(NUM_RANDOM_SAMPLES):  # pyright: ignore
             np_a = np.random.randn(3, 3).astype(FloatType)
             np_b = np.random.randn(3, 3).astype(FloatType)
             np_c = np_a - np_b
@@ -182,7 +182,7 @@ class TestMat3Operators:
             assert mat3_all_close(mat_c, np_c)
 
     def test_matrix_scalar_product(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+        self, Mat3: Matrix3Cls, _: Vector3Cls, FloatType: type
     ) -> None:
         ## Checking against hard coded test case
         np_mat = np.arange(1, 10).reshape(3, 3).astype(FloatType)
@@ -202,7 +202,7 @@ class TestMat3Operators:
         assert mat3_all_close(s_mat, s_np_mat)
 
         # Checking against a randomly sampled matrix
-        for _ in range(NUM_RANDOM_SAMPLES):
+        for i in range(NUM_RANDOM_SAMPLES):  # pyright: ignore
             np_mat = np.random.randn(3, 3).astype(FloatType)
             factor = np.random.randn()
             mat = Mat3(np_mat)
@@ -246,7 +246,7 @@ class TestMat3Operators:
             assert vec3_all_close(prod, np_prod)
 
     def test_matrix_matrix_product(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
+        self, Mat3: Matrix3Cls, _: Vector3Cls, FloatType: type
     ) -> None:
         # Checking against hard-coded test case
         # fmt: off
@@ -266,7 +266,7 @@ class TestMat3Operators:
         assert mat3_all_close(mat_c, expected_c)
 
         # Checking against a randomly sampled matrix
-        for _ in range(NUM_RANDOM_SAMPLES):
+        for i in range(NUM_RANDOM_SAMPLES):  # pyright: ignore
             np_mat_a = np.random.randn(3, 3).astype(FloatType)
             np_mat_b = np.random.randn(3, 3).astype(FloatType)
             mat_a, mat_b = Mat3(np_mat_a), Mat3(np_mat_b)
@@ -277,16 +277,14 @@ class TestMat3Operators:
 
 
 @pytest.mark.parametrize(
-    "Mat3, Vec3, FloatType",
+    "Mat3, FloatType",
     [
-        (m3d.Matrix3f, m3d.Vector3f, np.float32),
-        (m3d.Matrix3d, m3d.Vector3d, np.float64),
+        (m3d.Matrix3f, np.float32),
+        (m3d.Matrix3d, np.float64),
     ],
 )
 class TestMat3Methods:
-    def test_matrix_transpose(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
-    ) -> None:
+    def test_matrix_transpose(self, Mat3: Matrix3Cls, FloatType: type) -> None:
         # Checking against a hard-coded test case
         # fmt: off
         mat = Mat3(1.0, 2.0, 3.0,
@@ -309,9 +307,7 @@ class TestMat3Methods:
             expected_np_mat_t = np_mat.T
             assert mat3_all_close(mat_t, expected_np_mat_t)
 
-    def test_matrix_trace(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
-    ) -> None:
+    def test_matrix_trace(self, Mat3: Matrix3Cls, FloatType: type) -> None:
         # Checking against a hard-coded test case
         # fmt: off
         mat = Mat3(1.0, 2.0, 3.0,
@@ -332,9 +328,7 @@ class TestMat3Methods:
             expected_trace = np.trace(np_mat)
             assert np.abs(trace - expected_trace) < EPSILON
 
-    def test_matrix_determinant(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
-    ) -> None:
+    def test_matrix_determinant(self, Mat3: Matrix3Cls, FloatType: type) -> None:
         # Checking against a hard-coded test case
         # fmt: off
         mat = Mat3( 0.50130818,  0.3485203 , -0.73158798,
@@ -355,9 +349,7 @@ class TestMat3Methods:
             expected_det = np.linalg.det(np_mat)
             assert np.abs(det - expected_det) < EPSILON
 
-    def test_matrix_inverse(
-        self, Mat3: Matrix3Cls, Vec3: Vector3Cls, FloatType: type
-    ) -> None:
+    def test_matrix_inverse(self, Mat3: Matrix3Cls, FloatType: type) -> None:
         # Checking against a hard-coded test case
         # fmt: off
         mat = Mat3( 0.50130818,  0.3485203 , -0.73158798,

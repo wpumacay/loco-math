@@ -326,3 +326,102 @@ class TestMat2Operators:
             mat_c = mat_a * mat_b
             expected_c = np_mat_a @ np_mat_b
             assert mat2_all_close(mat_c, expected_c)
+
+
+@pytest.mark.parametrize(
+    "Mat2, Vec2, FloatType",
+    [
+        (m3d.Matrix2f, m3d.Vector2f, np.float32),
+        (m3d.Matrix2d, m3d.Vector2d, np.float64),
+    ],
+)
+class TestMat2Methods:
+    def test_matrix_transpose(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # Checking against a hard-coded test case
+        # fmt: off
+        mat = Mat2(1.0, 2.0,
+                   3.0, 4.0)
+        expected_mat = Mat2(1.0, 3.0,
+                            2.0, 4.0)
+        # fmt: on
+        mat_t = mat.transpose()
+        assert type(mat_t) == Mat2
+        assert mat_t == expected_mat
+
+        # Checking against a randomly sampled matrix
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(2, 2).astype(FloatType)
+            mat = Mat2(np_mat)
+
+            mat_t = mat.transpose()
+            expected_np_mat_t = np_mat.T
+            assert mat2_all_close(mat_t, expected_np_mat_t)
+
+    def test_matrix_trace(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # Checking against a hard-coded test case
+        # fmt: off
+        mat = Mat2(1.0, 2.0,
+                   3.0, 4.0)
+        # fmt: on
+        trace = mat.trace()
+        expected_trace = 5.0
+        assert type(trace) is float
+        assert np.abs(trace - expected_trace) < EPSILON
+
+        # Checking against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(2, 2).astype(FloatType)
+            mat = Mat2(np_mat)
+
+            trace = mat.trace()
+            expected_trace = np.trace(np_mat)
+            assert np.abs(trace - expected_trace) < EPSILON
+
+    def test_matrix_determinant(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # Checking against a hard-coded test case
+        # fmt: off
+        mat = Mat2( 0.27958992, -2.56058477,
+                   -0.40810265, -1.03088155)
+        # fmt: on
+        det = mat.determinant()
+        expected_det = -1.3332055294650407
+        assert type(det) is float
+        assert np.abs(det - expected_det) < EPSILON
+
+        # Checking against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(2, 2).astype(FloatType)
+            mat = Mat2(np_mat)
+
+            det = mat.determinant()
+            expected_det = np.linalg.det(np_mat)
+            assert np.abs(det - expected_det) < EPSILON
+
+    def test_matrix_inverse(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        # Checking against a hard-coded test case
+        # fmt: off
+        mat = Mat2( 0.27958992, -2.56058477,
+                   -0.40810265, -1.03088155)
+        inv = mat.inverse()
+        expected_inv = Mat2( 0.77323528, -1.92062268,
+                            -0.30610633, -0.20971254)
+        # fmt: on
+        assert type(inv) is Mat2
+        assert inv == expected_inv
+
+        # Checking against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(2, 2).astype(FloatType)
+            mat = Mat2(np_mat)
+
+            inv = mat.inverse()
+            expected_inv = np.linalg.inv(np_mat)
+            assert mat2_all_close(inv, expected_inv)

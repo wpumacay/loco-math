@@ -237,3 +237,41 @@ class TestMat2Operators:
             mat_c = mat_a - mat_b
             # Check that we're doing what numpy does for addition
             assert mat2_all_close(mat_c, np_c)
+
+    def test_matrix_scalar_product(
+        self, Mat2: Matrix2Cls, Vec2: Vector2Cls, FloatType: type
+    ) -> None:
+        ## Checking against hard-coded test case
+        # fmt: off
+        mat = Mat2(1.0, 2.0,
+                   3.0, 4.0)
+        factor = 1.5
+        expected_scaled = Mat2(1.5, 3.0,
+                               4.5, 6.0)
+        # fmt: on
+
+        # Checking __mul__
+        scaled = mat * factor
+        assert type(scaled) is Mat2
+        assert scaled == expected_scaled
+
+        # Checking __rmul__
+        scaled = factor * mat
+        assert type(scaled) == Mat2
+        assert scaled == expected_scaled
+
+        # Checking against some randomly sampled matrices
+        for _ in range(NUM_RANDOM_SAMPLES):
+            np_mat = np.random.randn(2, 2).astype(FloatType)
+            factor = np.random.randn()
+            mat = Mat2(np_mat)
+
+            # Checking __mul__
+            scaled = mat * factor
+            np_scaled = np_mat * factor
+            assert mat2_all_close(scaled, np_scaled)
+
+            # Checking __rmul__
+            scaled = factor * mat
+            np_scaled = factor * np_mat
+            assert mat2_all_close(scaled, np_scaled)

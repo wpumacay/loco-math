@@ -172,3 +172,39 @@ def test_from_transform_setter(Euler: EulerCls, Mat4: Matrix4Cls) -> None:
     assert euler_all_close(euler_x, [np.pi / 3.0, 0.0, 0.0], EPSILON)
     assert euler_all_close(euler_y, [0.0, np.pi / 4.0, 0.0, EPSILON])
     assert euler_all_close(euler_z, [0.0, 0.0, np.pi / 5.0], EPSILON)
+
+
+@pytest.mark.parametrize(
+    "Euler, Quat", [(m3d.Euler_f, m3d.Quaternionf), (m3d.Euler_d, m3d.Quaterniond)]
+)
+def test_from_quaternion_setter(Euler: EulerCls, Quat: QuaternionCls) -> None:
+    quat_x = Quat.RotationX(np.pi / 3.0)
+    quat_y = Quat.RotationY(np.pi / 4.0)
+    quat_z = Quat.RotationZ(np.pi / 5.0)
+
+    euler_x, euler_y, euler_z = Euler(), Euler(), Euler()
+    euler_x.setFromQuaternion(quat_x)
+    euler_y.setFromQuaternion(quat_y)
+    euler_z.setFromQuaternion(quat_z)
+
+    assert euler_all_close(euler_x, [np.pi / 3.0, 0.0, 0.0], EPSILON)
+    assert euler_all_close(euler_y, [0.0, np.pi / 4.0, 0.0], EPSILON)
+    assert euler_all_close(euler_z, [0.0, 0.0, np.pi / 5.0], EPSILON)
+
+
+@pytest.mark.parametrize(
+    "Euler, Vec3", [(m3d.Euler_f, m3d.Vector3f), (m3d.Euler_d, m3d.Vector3d)]
+)
+def test_from_axis_angle_constructor(Euler: EulerCls, Vec3: Vector3Cls) -> None:
+    axis_x, angle_x = Vec3(1.0, 0.0, 0.0), np.pi / 3.0
+    axis_y, angle_y = Vec3(0.0, 1.0, 0.0), np.pi / 4.0
+    axis_z, angle_z = Vec3(0.0, 0.0, 1.0), np.pi / 5.0
+
+    euler_x, euler_y, euler_z = Euler(), Euler(), Euler()
+    euler_x.setFromAxisAngle(axis_x, angle_x)
+    euler_y.setFromAxisAngle(axis_y, angle_y)
+    euler_z.setFromAxisAngle(axis_z, angle_z)
+
+    assert euler_all_close(euler_x, [np.pi / 3.0, 0.0, 0.0], EPSILON)
+    assert euler_all_close(euler_y, [0.0, np.pi / 4.0, 0.0], EPSILON)
+    assert euler_all_close(euler_z, [0.0, 0.0, np.pi / 5.0], EPSILON)

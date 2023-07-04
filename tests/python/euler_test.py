@@ -21,9 +21,6 @@ NUM_RANDOM_SAMPLES = 10
 EPSILON = 1e-5
 
 
-from pdb import set_trace
-
-
 def euler_all_close(euler: EulerType, e_list: List[float], tol: float = 1e-5) -> None:
     return (
         np.abs(euler.x - e_list[0]) < tol
@@ -195,7 +192,7 @@ def test_from_quaternion_setter(Euler: EulerCls, Quat: QuaternionCls) -> None:
 @pytest.mark.parametrize(
     "Euler, Vec3", [(m3d.Euler_f, m3d.Vector3f), (m3d.Euler_d, m3d.Vector3d)]
 )
-def test_from_axis_angle_constructor(Euler: EulerCls, Vec3: Vector3Cls) -> None:
+def test_from_axis_angle_setter(Euler: EulerCls, Vec3: Vector3Cls) -> None:
     axis_x, angle_x = Vec3(1.0, 0.0, 0.0), np.pi / 3.0
     axis_y, angle_y = Vec3(0.0, 1.0, 0.0), np.pi / 4.0
     axis_z, angle_z = Vec3(0.0, 0.0, 1.0), np.pi / 5.0

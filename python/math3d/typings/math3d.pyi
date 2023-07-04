@@ -1,5 +1,6 @@
-from typing import Union, Tuple, List, overload
+from typing import Union, Tuple, List, overload, Any
 from numpy import ndarray
+from enum import Enum
 
 ################################################################################
 #                           Type hints for Vector2                             #
@@ -192,6 +193,64 @@ class Quaternion:
 # Structure should be the same, except for the internal usage of f32 and f64
 Quaternionf = Quaternion
 Quaterniond = Quaternion
+
+################################################################################
+#                          Type hints for Quaternion                           #
+################################################################################
+
+class eOrder(Enum):
+    XYZ = 0
+    YZX = 1
+    ZXY = 2
+    XZY = 3
+    YXZ = 4
+    ZYX = 5
+
+class eConvention(Enum):
+    INTRINSIC = 0
+    EXTRINSIC = 1
+
+class Euler:
+    @overload
+    def __init__(self): ...
+    @overload
+    def __init__(self, r: float, p: float, y: float): ...
+    @overload
+    def __init__(self, rotmat: Matrix3): ...
+    @overload
+    def __init__(self, tf: Matrix4): ...
+    @overload
+    def __init__(self, quat: Quaternion): ...
+    @overload
+    def __init__(self, axis: Vector3, angle: float): ...
+    @property
+    def order(self) -> Any: ...
+    @order.setter
+    def order(self, value: Any) -> None: ...
+    @property
+    def convention(self) -> Any: ...
+    @convention.setter
+    def convention(self, value: Any) -> None: ...
+    @property
+    def x(self) -> float: ...
+    @x.setter
+    def x(self, value: float) -> None: ...
+    @property
+    def y(self) -> float: ...
+    @y.setter
+    def y(self, value: float) -> None: ...
+    @property
+    def z(self) -> float: ...
+    @z.setter
+    def z(self, value: float) -> None: ...
+    def setFromRotationMatrix(self, rotmat: Matrix3) -> None: ...
+    def setFromTransform(self, tf: Matrix4) -> None: ...
+    def setFromQuaternion(self, quat: Quaternion) -> None: ...
+    def setFromAxisAngle(self, axis: Vector3, angle: float) -> None: ...
+
+# Structure should be the same, except for the internal usage of f32 and f64
+Euler_f = Euler
+Euler_d = Euler
 
 ################################################################################
 #                            Type hints for Matrix2                            #

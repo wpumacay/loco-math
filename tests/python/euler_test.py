@@ -96,3 +96,79 @@ def test_from_transform_constructor(Euler: EulerCls, Mat4: Matrix4Cls) -> None:
     assert euler_all_close(euler_x, [np.pi / 3.0, 0.0, 0.0], CONST_EPS)
     assert euler_all_close(euler_y, [0.0, np.pi / 4.0, 0.0], CONST_EPS)
     assert euler_all_close(euler_z, [0.0, 0.0, np.pi / 5.0], CONST_EPS)
+
+
+@pytest.mark.parametrize(
+    "Euler, Quat", [(m3d.Euler_f, m3d.Quaternionf), (m3d.Euler_d, m3d.Quaterniond)]
+)
+def test_from_quaternion_constructor(Euler: EulerCls, Quat: QuaternionCls) -> None:
+    quat_x = Quat.RotationX(np.pi / 3.0)
+    quat_y = Quat.RotationY(np.pi / 4.0)
+    quat_z = Quat.RotationZ(np.pi / 5.0)
+
+    euler_x = Euler(quat_x)
+    euler_y = Euler(quat_y)
+    euler_z = Euler(quat_z)
+
+    # Be a little more forgiving with the tolerance for these calculations
+    CONST_EPS = 1e-4
+
+    assert euler_all_close(euler_x, [np.pi / 3.0, 0.0, 0.0], CONST_EPS)
+    assert euler_all_close(euler_y, [0.0, np.pi / 4.0, 0.0], CONST_EPS)
+    assert euler_all_close(euler_z, [0.0, 0.0, np.pi / 5.0], CONST_EPS)
+
+
+@pytest.mark.parametrize(
+    "Euler, Vec3", [(m3d.Euler_f, m3d.Vector3f), (m3d.Euler_d, m3d.Vector3d)]
+)
+def test_from_axis_angle_constructor(Euler: EulerCls, Vec3: Vector3Cls) -> None:
+    axis_x, angle_x = Vec3(1.0, 0.0, 0.0), np.pi / 3.0
+    axis_y, angle_y = Vec3(0.0, 1.0, 0.0), np.pi / 4.0
+    axis_z, angle_z = Vec3(0.0, 0.0, 1.0), np.pi / 5.0
+
+    euler_x = Euler(axis_x, angle_x)
+    euler_y = Euler(axis_y, angle_y)
+    euler_z = Euler(axis_z, angle_z)
+
+    # Be a little more forgiving with the tolerance for these calculations
+    CONST_EPS = 1e-4
+
+    assert euler_all_close(euler_x, [np.pi / 3.0, 0.0, 0.0], CONST_EPS)
+    assert euler_all_close(euler_y, [0.0, np.pi / 4.0, 0.0], CONST_EPS)
+    assert euler_all_close(euler_z, [0.0, 0.0, np.pi / 5.0], CONST_EPS)
+
+
+@pytest.mark.parametrize(
+    "Euler, Mat3", [(m3d.Euler_f, m3d.Matrix3f), (m3d.Euler_d, m3d.Matrix3d)]
+)
+def test_from_rotmat_setter(Euler: EulerCls, Mat3: Matrix3Cls) -> None:
+    rot_x = Mat3.RotationX(np.pi / 3.0)
+    rot_y = Mat3.RotationY(np.pi / 4.0)
+    rot_z = Mat3.RotationZ(np.pi / 5.0)
+
+    euler_x, euler_y, euler_z = Euler(), Euler(), Euler()
+    euler_x.setFromRotationMatrix(rot_x)
+    euler_y.setFromRotationMatrix(rot_y)
+    euler_z.setFromRotationMatrix(rot_z)
+
+    assert euler_all_close(euler_x, [np.pi / 3.0, 0.0, 0.0], EPSILON)
+    assert euler_all_close(euler_y, [0.0, np.pi / 4.0, 0.0, EPSILON])
+    assert euler_all_close(euler_z, [0.0, 0.0, np.pi / 5.0], EPSILON)
+
+
+@pytest.mark.parametrize(
+    "Euler, Mat4", [(m3d.Euler_f, m3d.Matrix4f), (m3d.Euler_d, m3d.Matrix4d)]
+)
+def test_from_transform_setter(Euler: EulerCls, Mat4: Matrix4Cls) -> None:
+    tf_rot_x = Mat4.RotationX(np.pi / 3.0)
+    tf_rot_y = Mat4.RotationY(np.pi / 4.0)
+    tf_rot_z = Mat4.RotationZ(np.pi / 5.0)
+
+    euler_x, euler_y, euler_z = Euler(), Euler(), Euler()
+    euler_x.setFromTransform(tf_rot_x)
+    euler_y.setFromTransform(tf_rot_y)
+    euler_z.setFromTransform(tf_rot_z)
+
+    assert euler_all_close(euler_x, [np.pi / 3.0, 0.0, 0.0], EPSILON)
+    assert euler_all_close(euler_y, [0.0, np.pi / 4.0, 0.0, EPSILON])
+    assert euler_all_close(euler_z, [0.0, 0.0, np.pi / 5.0], EPSILON)

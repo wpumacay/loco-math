@@ -50,25 +50,21 @@ auto bindings_euler(py::module& m, const char* class_name) -> void {
         .def_readwrite("x", &Class::x)
         .def_readwrite("y", &Class::y)
         .def_readwrite("z", &Class::z)
-        .def(
-            "setFromRotationMatrix",
-            [](Class& self, const py::array_t<T>& mat3_np) -> void {
-                self.setFromRotationMatrix(::math::nparray_to_mat3<T>(mat3_np));
-            })
+        .def("setFromRotationMatrix",
+             [](Class& self, const Mat3& rotmat) -> void {
+                 self.setFromRotationMatrix(rotmat);
+             })
         .def("setFromTransform",
-             [](Class& self, const py::array_t<T>& mat4_np) -> void {
-                 self.setFromTransform(::math::nparray_to_mat4<T>(mat4_np));
+             [](Class& self, const Mat4& tf) -> void {
+                 self.setFromTransform(tf);
              })
         .def("setFromQuaternion",
-             [](Class& self, const py::array_t<T>& quat_np) -> void {
-                 auto quat_v4 = ::math::nparray_to_vec4<T>(quat_np);
-                 self.setFromQuaternion(
-                     Quat(quat_v4.x(), quat_v4.y(), quat_v4.z(), quat_v4.w()));
+             [](Class& self, const Quat& quat) -> void {
+                 self.setFromQuaternion(quat);
              })
         .def("setFromAxisAngle",
-             [](Class& self, const py::array_t<T>& axis_np, T angle) -> void {
-                 auto axis_v4 = ::math::nparray_to_vec3<T>(axis_np);
-                 self.setFromAxisAngle(axis_v4, angle);
+             [](Class& self, const Vec3& axis, T angle) -> void {
+                 self.setFromAxisAngle(axis, angle);
              })
         .def("__repr__", [](const Class& self) -> py::str {
             return py::str(

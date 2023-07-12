@@ -165,7 +165,7 @@ if os.path.exists("README.md"):
 
 setup(
     name="Math3d",
-    version="0.4.4",
+    version="0.4.5",
     description="A math library for small vectors and matrices",
     long_description=long_description,
     long_description_content_type="text/markdown",

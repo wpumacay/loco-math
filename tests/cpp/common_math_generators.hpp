@@ -37,16 +37,36 @@ class RandomValueBase : public Catch::Generators::IGenerator<V> {
 //-------------------//
 
 template <typename T>
-class RandomVec2Generator : public RandomValueBase<T, Vector2<T>> {
+class RandomVec2Generator
+    : public Catch::Generators::IGenerator<::math::Vector2<T>> {
  public:
-    RandomVec2Generator(T val_range_min, T val_range_max)
-        : RandomValueBase<T, Vector2<T>>(val_range_min, val_range_max) {}
+    RandomVec2Generator(T range_min, T range_max)
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(range_min, range_max) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const ::math::Vector2<T>& override;
 
     auto next() -> bool override {
-        this->m_value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen)};
+        m_Value.x() = m_Dist(m_Gen);
+        m_Value.y() = m_Dist(m_Gen);
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    ::math::Vector2<T> m_Value;
 };
+
+template <typename T>
+auto RandomVec2Generator<T>::get() const -> const ::math::Vector2<T>& {
+    return m_Value;
+}
 
 template <typename T>
 class RandomVec3Generator : public RandomValueBase<T, Vector3<T>> {

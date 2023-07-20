@@ -1,6 +1,8 @@
 #include <catch2/catch.hpp>
 #include <math/vec3_t.hpp>
 
+#include "./common_math_helpers.hpp"
+
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wimplicit-float-conversion"
@@ -14,58 +16,65 @@
 #pragma warning(disable : 4305)
 #endif
 
-constexpr double RANGE_MIN = -1000.0;
-constexpr double RANGE_MAX = 1000.0;
+constexpr double USER_RANGE_MIN = -1000.0;
+constexpr double USER_RANGE_MAX = 1000.0;
+constexpr double USER_EPSILON = 1e-5;
 
-// NOLINTNEXTLINE
-#define GenRandomValue(Type, Nsamples)                           \
-    GENERATE(take(Nsamples, random(static_cast<Type>(RANGE_MIN), \
-                                   static_cast<Type>(RANGE_MAX))))
-
-template <typename T>
-constexpr auto FuncClose(T a, T b, T eps) -> bool {
-    return ((a - b) < eps) && ((a - b) > -eps);
-}
-
-template <typename T>
-auto FuncAllClose(const math::Vector3<T>& vec, T x, T y, T z) -> bool {
-    constexpr T EPSILON = static_cast<T>(math::EPS);
-    return FuncClose<T>(vec.x(), x, EPSILON) &&
-           FuncClose<T>(vec.y(), y, EPSILON) && FuncClose(vec.z(), z, EPSILON);
-}
+constexpr auto NUM_SAMPLES = 10;
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector3 class (vec3_t) type", "[vec3_t][template]",
                    math::float32_t, math::float64_t) {
     using T = TestType;
-    using Vector3 = math::Vector3<T>;
+    using Vector3 = ::math::Vector3<T>;
+
+    constexpr T RANGE_MIN = static_cast<T>(USER_RANGE_MIN);
+    constexpr T RANGE_MAX = static_cast<T>(USER_RANGE_MAX);
+    constexpr T EPSILON = static_cast<T>(USER_EPSILON);
+
+    SECTION("Get/Set using .x(), .y()") {
+        auto val_x = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
+        auto val_y = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
+        auto val_z = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
+
+        Vector3 v;
+        v.x() = val_x;
+        v.y() = val_y;
+        v.z() = val_z;
+
+        REQUIRE(::math::func_value_close<T>(v.x(), val_x, EPSILON));
+        REQUIRE(::math::func_value_close<T>(v.y(), val_y, EPSILON));
+        REQUIRE(::math::func_value_close<T>(v.z(), val_z, EPSILON));
+    }
 
     SECTION("Default constructor") {
         Vector3 v;
-        REQUIRE(FuncAllClose<T>(v, 0.0, 0.0, 0.0));
+        REQUIRE(::math::func_all_close<T>(v, 0.0, 0.0, 0.0, EPSILON));
     }
 
     SECTION("From single scalar argument") {
-        auto val_x = GenRandomValue(T, 100);
+        auto val_x = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
 
         Vector3 v(val_x);
-        REQUIRE(FuncAllClose<T>(v, val_x, val_x, val_x));
+        // The given argument is copied to all other entries as well
+        REQUIRE(::math::func_all_close<T>(v, val_x, val_x, val_x, EPSILON));
     }
 
     SECTION("From two scalar arguments") {
-        auto val_x = GenRandomValue(T, 10);
-        auto val_y = GenRandomValue(T, 10);
+        auto val_x = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
+        auto val_y = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
 
         Vector3 v(val_x, val_y);
-        REQUIRE(FuncAllClose<T>(v, val_x, val_y, val_y));
+        // The y component gets copied for the z component
+        REQUIRE(::math::func_all_close<T>(v, val_x, val_y, val_y, EPSILON));
     }
 
     SECTION(
         "From three scalar arguments, from initializer_list, or using "
         "comma-initializer") {
-        auto val_x = GenRandomValue(T, 10);
-        auto val_y = GenRandomValue(T, 10);
-        auto val_z = GenRandomValue(T, 10);
+        auto val_x = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
+        auto val_y = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
+        auto val_z = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
 
         Vector3 v_1(val_x, val_y, val_z);
         Vector3 v_2 = {val_x, val_y, val_z};
@@ -73,34 +82,21 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) type", "[vec3_t][template]",
         // cppcheck-suppress constStatement
         v_3 << val_x, val_y, val_z;
 
-        REQUIRE(FuncAllClose<T>(v_1, val_x, val_y, val_z));
-        REQUIRE(FuncAllClose<T>(v_2, val_x, val_y, val_z));
-        REQUIRE(FuncAllClose<T>(v_3, val_x, val_y, val_z));
-    }
-
-    SECTION("Accessors .x(), .y(), .z()") {
-        auto val_x = GenRandomValue(T, 10);
-        auto val_y = GenRandomValue(T, 10);
-        auto val_z = GenRandomValue(T, 10);
-
-        Vector3 v;
-        v.x() = val_x;
-        v.y() = val_y;
-        v.z() = val_z;
-
-        REQUIRE(FuncAllClose<T>(v, val_x, val_y, val_z));
+        REQUIRE(::math::func_all_close<T>(v_1, val_x, val_y, val_z, EPSILON));
+        REQUIRE(::math::func_all_close<T>(v_2, val_x, val_y, val_z, EPSILON));
+        REQUIRE(::math::func_all_close<T>(v_3, val_x, val_y, val_z, EPSILON));
     }
 
     SECTION("Accessors [index]") {
-        auto val_x = GenRandomValue(T, 10);
-        auto val_y = GenRandomValue(T, 10);
-        auto val_z = GenRandomValue(T, 10);
+        auto val_x = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
+        auto val_y = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
+        auto val_z = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
 
         Vector3 v;
         v[0] = val_x;
         v[1] = val_y;
         v[2] = val_z;
-        REQUIRE(FuncAllClose<T>(v, val_x, val_y, val_z));
+        REQUIRE(::math::func_all_close<T>(v, val_x, val_y, val_z, EPSILON));
     }
 }
 

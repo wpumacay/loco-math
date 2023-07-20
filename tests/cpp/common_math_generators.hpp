@@ -10,6 +10,15 @@
 
 namespace math {
 
+template <typename T>
+using Vec2 = ::math::Vector2<T>;
+
+template <typename T>
+using Vec3 = ::math::Vector3<T>;
+
+template <typename T>
+using Vec4 = ::math::Vector4<T>;
+
 template <typename T, typename V>
 class RandomValueBase : public Catch::Generators::IGenerator<V> {
  public:
@@ -37,8 +46,7 @@ class RandomValueBase : public Catch::Generators::IGenerator<V> {
 //-------------------//
 
 template <typename T>
-class RandomVec2Generator
-    : public Catch::Generators::IGenerator<::math::Vector2<T>> {
+class RandomVec2Generator : public Catch::Generators::IGenerator<Vec2<T>> {
  public:
     RandomVec2Generator(T range_min, T range_max)
         // NOLINTNEXTLINE
@@ -46,7 +54,7 @@ class RandomVec2Generator
         static_cast<void>(next());
     }
 
-    auto get() const -> const ::math::Vector2<T>& override;
+    auto get() const -> const Vec2<T>& override { return m_Value; }
 
     auto next() -> bool override {
         m_Value.x() = m_Dist(m_Gen);
@@ -60,25 +68,34 @@ class RandomVec2Generator
     /// Distribution from which to generate random real values
     std::uniform_real_distribution<T> m_Dist;
     /// The random value to be exposed
-    ::math::Vector2<T> m_Value;
+    Vec2<T> m_Value;
 };
 
 template <typename T>
-auto RandomVec2Generator<T>::get() const -> const ::math::Vector2<T>& {
-    return m_Value;
-}
-
-template <typename T>
-class RandomVec3Generator : public RandomValueBase<T, Vector3<T>> {
+class RandomVec3Generator : public Catch::Generators::IGenerator<Vec3<T>> {
  public:
-    RandomVec3Generator(T val_range_min, T val_range_max)
-        : RandomValueBase<T, Vector3<T>>(val_range_min, val_range_max) {}
+    RandomVec3Generator(T range_min, T range_max)
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(range_min, range_max) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Vec3<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                         this->m_Dist(this->m_Gen)};
+        m_Value.x() = m_Dist(m_Gen);
+        m_Value.y() = m_Dist(m_Gen);
+        m_Value.z() = m_Dist(m_Gen);
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Vec3<T> m_Value;
 };
 
 template <typename T>

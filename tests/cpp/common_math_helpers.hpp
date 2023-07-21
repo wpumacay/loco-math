@@ -33,4 +33,13 @@ constexpr auto func_all_close(const ::math::Vector3<T>& vec, T x, T y, T z,
            func_value_close(vec.z(), z, eps);
 }
 
+template <typename T>
+constexpr auto func_all_close(const ::math::Vector4<T>& vec, T x, T y, T z, T w,
+                              T eps) -> bool {
+    return func_value_close(vec.x(), x, eps) &&
+           func_value_close(vec.y(), y, eps) &&
+           func_value_close(vec.z(), z, eps) &&
+           func_value_close(vec.w(), w, eps);
+}
+
 }  // namespace math

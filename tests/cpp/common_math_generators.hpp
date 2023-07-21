@@ -99,16 +99,31 @@ class RandomVec3Generator : public Catch::Generators::IGenerator<Vec3<T>> {
 };
 
 template <typename T>
-class RandomVec4Generator : public RandomValueBase<T, Vector4<T>> {
+class RandomVec4Generator : public Catch::Generators::IGenerator<Vec4<T>> {
  public:
-    RandomVec4Generator(T val_range_min, T val_range_max)
-        : RandomValueBase<T, Vector4<T>>(val_range_min, val_range_max) {}
+    RandomVec4Generator(T range_min, T range_max)
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(range_min, range_max) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Vec4<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                         this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen)};
+        m_Value.x() = m_Dist(m_Gen);
+        m_Value.y() = m_Dist(m_Gen);
+        m_Value.z() = m_Dist(m_Gen);
+        m_Value.w() = m_Dist(m_Gen);
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Vec4<T> m_Value;
 };
 
 //--------------------//

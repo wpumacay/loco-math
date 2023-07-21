@@ -2,9 +2,10 @@
 #include <math/vec2_t.hpp>
 #include <math/vec3_t.hpp>
 #include <math/vec4_t.hpp>
+#include <math/mat2_t.hpp>
 #include <math/mat3_t.hpp>
-#include <math/quat_t.hpp>
 #include <math/mat4_t.hpp>
+#include <math/quat_t.hpp>
 
 #include <random>
 
@@ -18,6 +19,9 @@ using Vec3 = ::math::Vector3<T>;
 
 template <typename T>
 using Vec4 = ::math::Vector4<T>;
+
+template <typename T>
+using Mat2 = ::math::Matrix2<T>;
 
 template <typename T, typename V>
 class RandomValueBase : public Catch::Generators::IGenerator<V> {
@@ -158,7 +162,57 @@ auto random_vec4(T val_range_min = static_cast<T>(-1.0),
 }
 
 //****************************************************************************//
-//                       Generators for Matrix3 types                         //
+//                       Generators for Matrix2 types                         //
+//****************************************************************************//
+
+//-------------------//
+// Custom Generators //
+//-------------------//
+template <typename T>
+class RandomMatrix2Generator : public Catch::Generators::IGenerator<Mat2<T>> {
+ public:
+    RandomMatrix2Generator(T range_min, T range_max)
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(range_min, range_max) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Mat2<T>& override { return m_Value; }
+
+    auto next() -> bool override {
+        // Generate first column
+        m_Value(0, 0) = m_Dist(m_Gen);
+        m_Value(1, 0) = m_Dist(m_Gen);
+        // Generate second column
+        m_Value(0, 1) = m_Dist(m_Gen);
+        m_Value(1, 1) = m_Dist(m_Gen);
+        return true;
+    }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Mat2<T> m_Value;
+};
+
+//--------------------//
+// Generator wrappers //
+//--------------------//
+
+template <typename T>
+auto random_mat2(T val_range_min = static_cast<T>(-1.0),
+                 T val_range_max = static_cast<T>(1.0))
+    -> Catch::Generators::GeneratorWrapper<Mat2<T>> {
+    return Catch::Generators::GeneratorWrapper<Mat2<T>>(
+        Catch::Generators::pf::make_unique<RandomMatrix2Generator<T>>(
+            val_range_min, val_range_max));
+}
+
+//****************************************************************************//
+//                       Generators for Matrix3 types //
 //****************************************************************************//
 
 //-------------------//

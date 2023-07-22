@@ -43,13 +43,61 @@ constexpr auto func_all_close(const ::math::Vector4<T>& vec, T x, T y, T z, T w,
            func_value_close(vec.w(), w, eps);
 }
 
+// clang-format off
 template <typename T>
-constexpr auto func_all_close(const ::math::Matrix2<T>& mat, T x00, T x01,
+constexpr auto func_all_close(const ::math::Matrix2<T>& mat,
+                              T x00, T x01,
                               T x10, T x11, T eps) -> bool {
     return func_value_close<T>(mat(0, 0), x00, eps) &&
            func_value_close<T>(mat(0, 1), x01, eps) &&
            func_value_close<T>(mat(1, 0), x10, eps) &&
            func_value_close<T>(mat(1, 1), x11, eps);
 }
+
+template <typename T>
+constexpr auto func_all_close(const ::math::Matrix3<T>& mat,
+                              T x00, T x01, T x02,
+                              T x10, T x11, T x12,
+                              T x20, T x21, T x22, T eps) -> bool {
+    return func_value_close<T>(mat(0, 0), x00, eps) &&
+           func_value_close<T>(mat(0, 1), x01, eps) &&
+           func_value_close<T>(mat(0, 2), x02, eps) &&
+
+           func_value_close<T>(mat(1, 0), x10, eps) &&
+           func_value_close<T>(mat(1, 1), x11, eps) &&
+           func_value_close<T>(mat(1, 2), x12, eps) &&
+
+           func_value_close<T>(mat(2, 0), x20, eps) &&
+           func_value_close<T>(mat(2, 1), x21, eps) &&
+           func_value_close<T>(mat(2, 2), x22, eps);
+}
+
+template <typename T>
+constexpr auto func_all_close(const ::math::Matrix4<T>& mat,
+                              T x00, T x01, T x02, T x03,
+                              T x10, T x11, T x12, T x13,
+                              T x20, T x21, T x22, T x23,
+                              T x30, T x31, T x32, T x33, T eps) -> bool {
+    return func_value_close<T>(mat(0, 0), x00, eps) &&
+           func_value_close<T>(mat(0, 1), x01, eps) &&
+           func_value_close<T>(mat(0, 2), x02, eps) &&
+           func_value_close<T>(mat(0, 3), x03, eps) &&
+
+           func_value_close<T>(mat(1, 0), x10, eps) &&
+           func_value_close<T>(mat(1, 1), x11, eps) &&
+           func_value_close<T>(mat(1, 2), x12, eps) &&
+           func_value_close<T>(mat(1, 3), x13, eps) &&
+
+           func_value_close<T>(mat(2, 0), x20, eps) &&
+           func_value_close<T>(mat(2, 1), x21, eps) &&
+           func_value_close<T>(mat(2, 2), x22, eps) &&
+           func_value_close<T>(mat(2, 3), x23, eps) &&
+
+           func_value_close<T>(mat(3, 0), x30, eps) &&
+           func_value_close<T>(mat(3, 1), x31, eps) &&
+           func_value_close<T>(mat(3, 2), x32, eps) &&
+           func_value_close<T>(mat(3, 3), x33, eps);
+}
+// clang-format on
 
 }  // namespace math

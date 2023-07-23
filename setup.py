@@ -193,7 +193,7 @@ setup(
         where="python",
     ),
     package_dir={"": "python"},
-    package_data={"math3d": ["typings/*.pyi"]},
+    ## package_data={"math3d": ["typings/*.pyi"]},
     ext_modules=[CMakeExtension("math3d_bindings", ".")],
     cmdclass={"build_ext": CMakeBuild},
     python_requires=">=3.7",

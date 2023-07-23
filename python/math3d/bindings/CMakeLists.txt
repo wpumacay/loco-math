@@ -6,10 +6,10 @@ if(NOT TARGET math::math)
   return()
 endif()
 
-pybind11_add_module(math3d ${CMAKE_CURRENT_SOURCE_DIR}/bindings_py.cpp
+pybind11_add_module(math3d_bindings ${CMAKE_CURRENT_SOURCE_DIR}/bindings_py.cpp
                     ${CMAKE_CURRENT_SOURCE_DIR}/conversions_py.cpp)
-target_include_directories(math3d PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(math3d PRIVATE math::math)
+target_include_directories(math3d_bindings PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(math3d_bindings PRIVATE math::math)
 
 add_library(math_py_helpers INTERFACE)
 target_include_directories(math_py_helpers

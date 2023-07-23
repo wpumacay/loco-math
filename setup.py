@@ -51,7 +51,11 @@ class CMakeBuild(build_ext):
             extension_dir_path += os.path.sep
 
         # Get the BUILD_TYPE configuration (might even be in os.environ)
-        debug = int(os.environ.get("DEBUG", 0)) if self.debug is None else self.debug
+        debug = (
+            int(os.environ.get("DEBUG", 0))
+            if self.debug is None
+            else self.debug
+        )
         cfg = "Debug" if debug else "Release"
 
         # CMake lets you override the generator (usually on os.environ), so we
@@ -83,7 +87,9 @@ class CMakeBuild(build_ext):
         # Adding CMake arguments set as environment variable (needed e.g. to
         # build for ARM OSx on conda-forge). Notice they are space separated
         if "CMAKE_ARGS" in os.environ:
-            cmake_args += [item for item in os.environ["CMAKE_ARGS"].split(" ") if item]
+            cmake_args += [
+                item for item in os.environ["CMAKE_ARGS"].split(" ") if item
+            ]
 
         if self.compiler.compiler_type != "msvc":
             # Using Ninja-build since it a) is available as a wheel and b)
@@ -106,7 +112,9 @@ class CMakeBuild(build_ext):
             ]
         else:
             # Single config generators are handled "normally"
-            single_config = any(x in cmake_generator for x in ["NMake", "Ninja"])
+            single_config = any(
+                x in cmake_generator for x in ["NMake", "Ninja"]
+            )
 
             # CMake allows an arch-in-generator style for backward compatibility
             contains_arch = any(x in cmake_generator for x in ["ARM", "Win64"])
@@ -135,7 +143,9 @@ class CMakeBuild(build_ext):
             # Cross-compile support for macOS - respect ARCHFLAGS if set
             archs = re.findall(r"-arch (\S+)", os.environ.get("ARCHFLAGS", ""))
             if archs:
-                cmake_args += ["-DCMAKE_OSX_ARCHITECTURE={}".format(";".join(archs))]
+                cmake_args += [
+                    "-DCMAKE_OSX_ARCHITECTURE={}".format(";".join(archs))
+                ]
 
         # Set CMAKE_BUILD_PARALLEL_LEVEL to control the parallel build level
         # across all generators (if not set as an environment variable)
@@ -179,8 +189,12 @@ setup(
         "Operating System :: POSIX :: Linux",
     ],
     zip_safe=False,
-    package_data={},
-    ext_modules=[CMakeExtension("math3d", ".")],
+    packages=find_packages(
+        where="python",
+    ),
+    package_dir={"": "python"},
+    ## package_data={"math3d": ["typings/*.pyi"]},
+    ext_modules=[CMakeExtension("math3d_bindings", ".")],
     cmdclass={"build_ext": CMakeBuild},
     python_requires=">=3.7",
 )

@@ -403,18 +403,31 @@ auto random_unit_quaternion() -> Catch::Generators::GeneratorWrapper<Quat<T>> {
 //-------------------//
 
 template <typename T>
-class RandomEuler : public RandomValueBase<T, Euler<T>> {
+class RandomEuler : public Catch::Generators::IGenerator<Euler<T>> {
  public:
     RandomEuler()
-        : RandomValueBase<T, Euler<T>>(static_cast<T>(-::math::PI),
-                                       static_cast<T>(::math::PI)) {}
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()),
+          m_Dist(static_cast<T>(-::math::PI), static_cast<T>(::math::PI)) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Euler<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value.x = this->m_Dist(this->m_Gen);
-        this->m_Value.y = this->m_Dist(this->m_Gen);
-        this->m_Value.z = this->m_Dist(this->m_Gen);
+        m_Value.x = m_Dist(m_Gen);
+        m_Value.y = m_Dist(m_Gen);
+        m_Value.z = m_Dist(m_Gen);
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Euler<T> m_Value;
 };
 
 //--------------------//

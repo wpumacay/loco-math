@@ -1,6 +1,9 @@
 #include <catch2/catch.hpp>
 #include <math/mat3_t.hpp>
 
+#include "./common_math_helpers.hpp"
+#include "./common_math_generators.hpp"
+
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wimplicit-float-conversion"
@@ -14,56 +17,22 @@
 #pragma warning(disable : 4305)
 #endif
 
-static constexpr double RANGE_MIN = -10.0;
-static constexpr double RANGE_MAX = 10.0;
+constexpr double USER_RANGE_MIN = -10.0;
+constexpr double USER_RANGE_MAX = 10.0;
+constexpr double USER_EPSILON = 1e-5;
 
-// NOLINTNEXTLINE
-#define GenRandomValue(Type, Nsamples)                           \
-    GENERATE(take(Nsamples, random(static_cast<Type>(RANGE_MIN), \
-                                   static_cast<Type>(RANGE_MAX))));
-
-template <typename T>
-constexpr auto FuncClose(T a, T b, T eps) -> bool {
-    return ((a - b) < eps) && ((a - b) > -eps);
-}
-
-// clang-format off
-template <typename T>
-auto FuncAllClose(const math::Matrix3<T>& mat,
-                  T x00, T x01, T x02,
-                  T x10, T x11, T x12,
-                  T x20, T x21, T x22) -> bool {
-    constexpr T EPSILON = static_cast<T>(math::EPS);
-
-    return FuncClose<T>(mat(0, 0), x00, EPSILON) &&
-           FuncClose<T>(mat(0, 1), x01, EPSILON) &&
-           FuncClose<T>(mat(0, 2), x02, EPSILON) &&
-           FuncClose<T>(mat(1, 0), x10, EPSILON) &&
-           FuncClose<T>(mat(1, 1), x11, EPSILON) &&
-           FuncClose<T>(mat(1, 2), x12, EPSILON) &&
-           FuncClose<T>(mat(2, 0), x20, EPSILON) &&
-           FuncClose<T>(mat(2, 1), x21, EPSILON) &&
-           FuncClose<T>(mat(2, 2), x22, EPSILON);
-}
-// clang-format on
-
-template <typename T>
-auto FuncAllClose(const math::Vector3<T>& vec, T x0, T x1, T x2) -> bool {
-    constexpr T EPSILON = static_cast<T>(math::EPS);
-
-    return FuncClose<T>(vec[0], x0, EPSILON) &&
-           FuncClose<T>(vec[1], x1, EPSILON) &&
-           FuncClose<T>(vec[2], x2, EPSILON);
-}
+constexpr auto NUM_SAMPLES = 8;
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
-                   math::float32_t, math::float64_t) {
+                   ::math::float32_t, ::math::float64_t) {
     using T = TestType;
-    using Matrix3 = math::Matrix3<T>;
-    using Vector3 = math::Vector3<T>;
+    using Matrix3 = ::math::Matrix3<T>;
+    using Vector3 = ::math::Vector3<T>;
 
-    constexpr T EPSILON = static_cast<T>(math::EPS);
+    constexpr T EPSILON = static_cast<T>(USER_EPSILON);
+    constexpr T RANGE_MIN = static_cast<T>(USER_RANGE_MIN);
+    constexpr T RANGE_MAX = static_cast<T>(USER_RANGE_MAX);
 
     SECTION("Matrix comparison ==, !=") {
         // clang-format off
@@ -80,86 +49,83 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
         REQUIRE(m_3 != m_1);
     }
 
-    // Generate first random matrix (2^6 cases possible values)
-    auto x00 = GenRandomValue(T, 2);
-    auto x01 = GenRandomValue(T, 1);
-    auto x02 = GenRandomValue(T, 2);
+    // Generate first random matrix
+    const auto MAT_A = GENERATE(
+        take(NUM_SAMPLES, ::math::random_mat3<T>(RANGE_MIN, RANGE_MAX)));
+    // Generate second random matrix
+    const auto MAT_B = GENERATE(
+        take(NUM_SAMPLES, ::math::random_mat3<T>(RANGE_MIN, RANGE_MAX)));
 
-    auto x10 = GenRandomValue(T, 2);
-    auto x11 = GenRandomValue(T, 1);
-    auto x12 = GenRandomValue(T, 2);
+    // Get a handle of the entries of these matrices
+    auto x00 = MAT_A(0, 0);
+    auto x01 = MAT_A(0, 1);
+    auto x02 = MAT_A(0, 2);
 
-    auto x20 = GenRandomValue(T, 2);
-    auto x21 = GenRandomValue(T, 1);
-    auto x22 = GenRandomValue(T, 2);
+    auto x10 = MAT_A(1, 0);
+    auto x11 = MAT_A(1, 1);
+    auto x12 = MAT_A(1, 2);
 
-    // clang-format off
-    Matrix3 m_a(x00, x01, x02,
-                x10, x11, x12,
-                x20, x21, x22);
-    // clang-format on
+    auto x20 = MAT_A(2, 0);
+    auto x21 = MAT_A(2, 1);
+    auto x22 = MAT_A(2, 2);
 
-    // Generate second random matrix (2^8 cases possible values)
-    auto y00 = GenRandomValue(T, 2);
-    auto y01 = GenRandomValue(T, 1);
-    auto y02 = GenRandomValue(T, 2);
+    auto y00 = MAT_B(0, 0);
+    auto y01 = MAT_B(0, 1);
+    auto y02 = MAT_B(0, 2);
 
-    auto y10 = GenRandomValue(T, 2);
-    auto y11 = GenRandomValue(T, 1);
-    auto y12 = GenRandomValue(T, 2);
+    auto y10 = MAT_B(1, 0);
+    auto y11 = MAT_B(1, 1);
+    auto y12 = MAT_B(1, 2);
 
-    auto y20 = GenRandomValue(T, 2);
-    auto y21 = GenRandomValue(T, 1);
-    auto y22 = GenRandomValue(T, 2);
-
-    // clang-format off
-    Matrix3 m_b(y00, y01, y02,
-                y10, y11, y12,
-                y20, y21, y22);
-    // clang-format on
+    auto y20 = MAT_B(2, 0);
+    auto y21 = MAT_B(2, 1);
+    auto y22 = MAT_B(2, 2);
 
     SECTION("Matrix addition") {
-        auto mat_sum = m_a + m_b;
+        auto mat_sum = MAT_A + MAT_B;
         // clang-format off
-        REQUIRE(FuncAllClose<T>(mat_sum,
-                x00 + y00, x01 + y01, x02 + y02,
-                x10 + y10, x11 + y11, x12 + y12,
-                x20 + y20, x21 + y21, x22 + y22));
+        REQUIRE(::math::func_all_close<T>(mat_sum,
+            x00 + y00, x01 + y01, x02 + y02,
+            x10 + y10, x11 + y11, x12 + y12,
+            x20 + y20, x21 + y21, x22 + y22, EPSILON));
         // clang-format on
     }
+
     SECTION("Matrix substraction") {
-        auto mat_sub = m_a - m_b;
+        auto mat_sub = MAT_A - MAT_B;
         // clang-format off
-        REQUIRE(FuncAllClose<T>(mat_sub,
-                x00 - y00, x01 - y01, x02 - y02,
-                x10 - y10, x11 - y11, x12 - y12,
-                x20 - y20, x21 - y21, x22 - y22));
+        REQUIRE(::math::func_all_close<T>(mat_sub,
+            x00 - y00, x01 - y01, x02 - y02,
+            x10 - y10, x11 - y11, x12 - y12,
+            x20 - y20, x21 - y21, x22 - y22, EPSILON));
         // clang-format on
     }
+
     SECTION("Matrix-Scalar product") {
-        auto scale_1 = GenRandomValue(T, 1);
-        auto scale_2 = GenRandomValue(T, 1);
+        auto scale_1 = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
+        auto scale_2 = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
 
-        auto mat_scaled_1 = static_cast<double>(scale_1) * m_a;
-        auto mat_scaled_2 = m_b * static_cast<double>(scale_2);
+        auto mat_scaled_1 = scale_1 * MAT_A;
+        auto mat_scaled_2 = MAT_B * scale_2;
 
         // clang-format off
-        REQUIRE(FuncAllClose<T>(mat_scaled_1,
-                x00 * scale_1, x01 * scale_1, x02 * scale_1,
-                x10 * scale_1, x11 * scale_1, x12 * scale_1,
-                x20 * scale_1, x21 * scale_1, x22 * scale_1));
+        REQUIRE(::math::func_all_close<T>(mat_scaled_1,
+            x00 * scale_1, x01 * scale_1, x02 * scale_1,
+            x10 * scale_1, x11 * scale_1, x12 * scale_1,
+            x20 * scale_1, x21 * scale_1, x22 * scale_1, EPSILON));
         // clang-format on
 
         // clang-format off
-        REQUIRE(FuncAllClose<T>(mat_scaled_2,
-                y00 * scale_2, y01 * scale_2, y02 * scale_2,
-                y10 * scale_2, y11 * scale_2, y12 * scale_2,
-                y20 * scale_2, y21 * scale_2, y22 * scale_2));
+        REQUIRE(::math::func_all_close<T>(mat_scaled_2,
+            y00 * scale_2, y01 * scale_2, y02 * scale_2,
+            y10 * scale_2, y11 * scale_2, y12 * scale_2,
+            y20 * scale_2, y21 * scale_2, y22 * scale_2, EPSILON));
         // clang-format on
     }
+
     SECTION("Matrix-Matrix product") {
         // clang-format off
-        // Fixed test-case
+        // Fixed test-case ---------------------------------------
         Matrix3 m_1(-10.0, -10.0, -2.0,
                      -8.0,  -8.0,  1.0,
                       5.0,  -7.0, -3.0);
@@ -169,16 +135,17 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
                     -8.0,  2.0, -9.0);
 
         auto mat_mul = m_1 * m_2;
-        REQUIRE(FuncAllClose<T>(mat_mul,
-                -34.0, -54.0, -62.0,
-                -48.0, -38.0, -73.0,
-                -23.0, -53.0,  67.0));
+        REQUIRE(::math::func_all_close<T>(mat_mul,
+            -34.0, -54.0, -62.0,
+            -48.0, -38.0, -73.0,
+            -23.0, -53.0,  67.0, EPSILON));
+        // -------------------------------------------------------
         // clang-format on
 
-        // Test-cases using the random matrices
-        auto mat_mul_ab = m_a * m_b;
+        // Test-cases using the random matrices ------------------
+        auto mat_mul_ab = MAT_A * MAT_B;
         // clang-format off
-        REQUIRE(FuncAllClose<T>(mat_mul_ab,
+        REQUIRE(::math::func_all_close<T>(mat_mul_ab,
                 // First row
                 x00 * y00 + x01 * y10 + x02 * y20,
                 x00 * y01 + x01 * y11 + x02 * y21,
@@ -190,68 +157,77 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
                 // Third row
                 x20 * y00 + x21 * y10 + x22 * y20,
                 x20 * y01 + x21 * y11 + x22 * y21,
-                x20 * y02 + x21 * y12 + x22 * y22));
+                x20 * y02 + x21 * y12 + x22 * y22, EPSILON));
         // clang-format on
+        // ------------------------------------------------------
         // @todo(wilbert): test with poorly conditioned matrices
     }
 
     SECTION("Matrix-Vector product") {
-        // Fixed test-case
         // clang-format off
-               Matrix3 mat(1.0, -4.0, 1.0,
-                          -6.0, -7.0, 9.0,
-                          -4.0,  6.0, 0.0);
-               Vector3 vec(2.0, 7.0, 6.0);
+        // Fixed test-case --------------------------------------
+        Matrix3 mat(1.0, -4.0, 1.0,
+                   -6.0, -7.0, 9.0,
+                   -4.0,  6.0, 0.0);
+        Vector3 vec(2.0, 7.0, 6.0);
         // clang-format on
+
         auto mat_vec_mul_1 = mat * vec;
-        REQUIRE(FuncAllClose<T>(mat_vec_mul_1, -20.0, -7.0, 34.0));
-        // Test-cases using the random matrices (reuse some randomnumbers)
-        auto v0 = GenRandomValue(T, 2);
-        auto v1 = GenRandomValue(T, 2);
-        auto v2 = GenRandomValue(T, 2);
-        Vector3 v_a(v0, v1, v2);
-        auto mat_vec_mul_2 = m_a * v_a;
+
+        REQUIRE(::math::func_all_close<T>(mat_vec_mul_1, -20.0, -7.0, 34.0,
+                                          EPSILON));
+        // ------------------------------------------------------
+
+        // Test-cases using the random matrices -----------------
+        auto v_a = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
+
+        auto mat_vec_mul_2 = MAT_A * v_a;
+
         // clang-format off
-        REQUIRE(FuncAllClose<T>(mat_vec_mul_2,
-                x00 * v0 + x01 * v1 + x02 * v2,
-                x10 * v0 + x11 * v1 + x12 * v2,
-                x20 * v0 + x21 * v1 + x22 * v2));
+        REQUIRE(::math::func_all_close<T>(mat_vec_mul_2,
+            x00 * v_a.x() + x01 * v_a.y() + x02 * v_a.z(),
+            x10 * v_a.x() + x11 * v_a.y() + x12 * v_a.z(),
+            x20 * v_a.x() + x21 * v_a.y() + x22 * v_a.z(), EPSILON));
         // clang-format on
+        // ------------------------------------------------------
     }
 
     SECTION("Element-wise matrix product") {
-        auto mat_elmwise = math::hadamard(m_a, m_b);
+        auto mat_elmwise = math::hadamard(MAT_A, MAT_B);
         // clang-format off
-        REQUIRE(FuncAllClose<T>(mat_elmwise,
-                x00 * y00, x01 * y01, x02 * y02,
-                x10 * y10, x11 * y11, x12 * y12,
-                x20 * y20, x21 * y21, x22 * y22));
+        REQUIRE(::math::func_all_close<T>(mat_elmwise,
+            x00 * y00, x01 * y01, x02 * y02,
+            x10 * y10, x11 * y11, x12 * y12,
+            x20 * y20, x21 * y21, x22 * y22, EPSILON));
         // clang-format on
     }
 
     SECTION("Matrix transposition") {
         // clang-format off
         // NOLINTNEXTLINE
-        FuncAllClose<T>(math::transpose(m_a),
+        ::math::func_all_close<T>(math::transpose(MAT_A),
             x00, x10, x20,
             x01, x11, x21,
-            x02, x12, x22);
+            x02, x12, x22, EPSILON);
         // NOLINTNEXTLINE
-        FuncAllClose<T>(math::transpose(m_b),
+        ::math::func_all_close<T>(math::transpose(MAT_B),
             y00, y10, y20,
             y01, y11, y21,
-            y02, y12, y22);
+            y02, y12, y22, EPSILON);
         // clang-format on
     }
 
     SECTION("Matrix trace") {
-        auto calc_trace_1 = math::trace(m_a);
-        auto calc_trace_2 = math::trace(m_b);
+        auto calc_trace_1 = math::trace(MAT_A);
+        auto calc_trace_2 = math::trace(MAT_B);
         auto expected_trace_1 = x00 + x11 + x22;
         auto expected_trace_2 = y00 + y11 + y22;
 
-        REQUIRE(FuncClose<T>(calc_trace_1, expected_trace_1, EPSILON));
-        REQUIRE(FuncClose<T>(calc_trace_2, expected_trace_2, EPSILON));
+        REQUIRE(::math::func_value_close<T>(calc_trace_1, expected_trace_1,
+                                            EPSILON));
+        REQUIRE(::math::func_value_close<T>(calc_trace_2, expected_trace_2,
+                                            EPSILON));
     }
 
     SECTION("Matrix determinant") {
@@ -262,7 +238,7 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
         // clang-format on
         auto calc_det = math::determinant(mat);
         auto expected_det = static_cast<T>(-18.0);
-        REQUIRE(FuncClose<T>(calc_det, expected_det, EPSILON));
+        REQUIRE(::math::func_value_close<T>(calc_det, expected_det, EPSILON));
     }
 
     SECTION("Matrix inverse") {
@@ -273,10 +249,10 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) core operations", "[mat3_t][ops]",
         // clang-format on
         auto inv_mat = math::inverse(mat);
         // clang-format off
-        REQUIRE(FuncAllClose<T>(inv_mat,
+        REQUIRE(::math::func_all_close<T>(inv_mat,
             -0.666667,  0.166667,       1.0,
                   0.0,       0.5,       0.0,
-             0.555556, -0.388889, -0.666667));
+             0.555556, -0.388889, -0.666667, EPSILON));
         // clang-format on
     }
 }

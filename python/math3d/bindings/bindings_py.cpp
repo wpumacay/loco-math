@@ -19,7 +19,7 @@ extern auto bindings_conversions_functions(py::module m) -> void;
 }  // namespace math
 
 // NOLINTNEXTLINE
-PYBIND11_MODULE(math3d, m) {
+PYBIND11_MODULE(math3d_bindings, m) {
     ::math::bindings_vector2<::math::float32_t>(m, "Vector2f");
     ::math::bindings_vector2<::math::float64_t>(m, "Vector2d");
     ::math::bindings_vector3<::math::float32_t>(m, "Vector3f");

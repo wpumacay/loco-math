@@ -1,6 +1,9 @@
 #include <catch2/catch.hpp>
 #include <math/vec3_t.hpp>
 
+#include "./common_math_helpers.hpp"
+#include "./common_math_generators.hpp"
+
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wimplicit-float-conversion"
@@ -14,37 +17,11 @@
 #pragma warning(disable : 4305)
 #endif
 
-constexpr double RANGE_MIN = -1000.0;
-constexpr double RANGE_MAX = 1000.0;
+constexpr double USER_RANGE_MIN = -1000.0;
+constexpr double USER_RANGE_MAX = 1000.0;
+constexpr double USER_EPSILON = 1e-5;
 
-// NOLINTNEXTLINE
-#define GenRandomValue(Type, Nsamples)                           \
-    GENERATE(take(Nsamples, random(static_cast<Type>(RANGE_MIN), \
-                                   static_cast<Type>(RANGE_MAX))))
-
-// NOLINTNEXTLINE
-#define GenRandomScaleValue(Type, Nsamples, Scale_min, Scale_max) \
-    GENERATE(take(Nsamples, random(static_cast<Type>(Scale_min),  \
-                                   static_cast<Type>(Scale_max))))
-
-template <typename T>
-constexpr auto FuncClose(T a, T b, T eps) -> bool {
-    return ((a - b) < eps) && ((a - b) > -eps);
-}
-
-template <typename T>
-constexpr auto FuncCompareEqual(T xa, T ya, T za, T xb, T yb, T zb, T eps)
-    -> bool {
-    return FuncClose<T>(xa, xb, eps) && FuncClose<T>(ya, yb, eps) &&
-           FuncClose<T>(za, zb, eps);
-}
-
-template <typename T>
-auto FuncAllClose(const math::Vector3<T>& vec, T x, T y, T z) -> bool {
-    constexpr T EPSILON = static_cast<T>(math::EPS);
-    return FuncClose<T>(vec.x(), x, EPSILON) &&
-           FuncClose<T>(vec.y(), y, EPSILON) && FuncClose(vec.z(), z, EPSILON);
-}
+constexpr auto NUM_SAMPLES = 10;
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
@@ -52,193 +29,144 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
     using T = TestType;
     using Vector3 = math::Vector3<T>;
 
-    constexpr T EPSILON = static_cast<T>(math::EPS);
+    constexpr T EPSILON = static_cast<T>(USER_EPSILON);
+    constexpr T RANGE_MIN = static_cast<T>(USER_RANGE_MIN);
+    constexpr T RANGE_MAX = static_cast<T>(USER_RANGE_MAX);
 
     SECTION("Vector comparison ==, !=") {
-        Vector3 v_1(1.0, 2.0, 3.0);  // NOLINT
-        Vector3 v_2(1.0, 2.0, 3.0);  // NOLINT
-        Vector3 v_3(static_cast<T>(1.1), static_cast<T>(2.1),
-                    static_cast<T>(3.1));
+        Vector3 v_1(1.0, 2.0, 3.0);
+        Vector3 v_2(1.0, 2.0, 3.0);
+        Vector3 v_3(1.1, 2.1, 3.1);
 
         REQUIRE(v_1 == v_2);
         REQUIRE(v_2 != v_3);
         REQUIRE(v_3 != v_1);
-
-        auto val_x_a = GenRandomValue(T, 2);
-        auto val_y_a = GenRandomValue(T, 2);
-        auto val_z_a = GenRandomValue(T, 2);
-
-        auto val_x_b = GenRandomValue(T, 2);
-        auto val_y_b = GenRandomValue(T, 2);
-        auto val_z_b = GenRandomValue(T, 2);
-
-        Vector3 v_a(val_x_a, val_y_a, val_z_a);
-        Vector3 v_b(val_x_b, val_y_b, val_z_b);
-
-        auto equal_a_b_lib = (v_a == v_b);
-        auto equal_a_b_man = FuncCompareEqual<T>(
-            val_x_a, val_y_a, val_z_a, val_x_b, val_y_b, val_z_b, EPSILON);
-
-        auto diff_a_b_lib = (v_a != v_b);
-        auto diff_a_b_man = !equal_a_b_man;
-
-        REQUIRE(equal_a_b_lib == equal_a_b_man);
-        REQUIRE(diff_a_b_lib == diff_a_b_man);
     }
 
     SECTION("Vector addition") {
-        auto val_x_a = GenRandomValue(T, 2);
-        auto val_y_a = GenRandomValue(T, 2);
-        auto val_z_a = GenRandomValue(T, 2);
+        auto v_a = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
+        auto v_b = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
 
-        auto val_x_b = GenRandomValue(T, 2);
-        auto val_y_b = GenRandomValue(T, 2);
-        auto val_z_b = GenRandomValue(T, 2);
-
-        Vector3 v_a(val_x_a, val_y_a, val_z_a);
-        Vector3 v_b(val_x_b, val_y_b, val_z_b);
         auto v_result = v_a + v_b;
-
         // clang-format off
-        REQUIRE(FuncAllClose<T>(v_result,
-                                val_x_a + val_x_b,
-                                val_y_a + val_y_b,
-                                val_z_a + val_z_b));
+        REQUIRE(::math::func_all_close<T>(v_result,
+            v_a.x() + v_b.x(),
+            v_a.y() + v_b.y(),
+            v_a.z() + v_b.z(), EPSILON));
         // clang-format on
     }
 
     SECTION("Vector substraction") {
-        auto val_x_a = GenRandomValue(T, 2);
-        auto val_y_a = GenRandomValue(T, 2);
-        auto val_z_a = GenRandomValue(T, 2);
+        auto v_a = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
+        auto v_b = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
 
-        auto val_x_b = GenRandomValue(T, 2);
-        auto val_y_b = GenRandomValue(T, 2);
-        auto val_z_b = GenRandomValue(T, 2);
-
-        Vector3 v_a(val_x_a, val_y_a, val_z_a);
-        Vector3 v_b(val_x_b, val_y_b, val_z_b);
         auto v_result = v_a - v_b;
 
         // clang-format off
-        REQUIRE(FuncAllClose<T>(v_result,
-                                val_x_a - val_x_b,
-                                val_y_a - val_y_b,
-                                val_z_a - val_z_b));
+        REQUIRE(::math::func_all_close<T>(v_result,
+            v_a.x() - v_b.x(),
+            v_a.y() - v_b.y(),
+            v_a.z() - v_b.z(), EPSILON));
         // clang-format on
     }
 
     SECTION("Vector element-wise product") {
-        auto val_x_a = GenRandomValue(T, 2);
-        auto val_y_a = GenRandomValue(T, 2);
-        auto val_z_a = GenRandomValue(T, 2);
+        auto v_a = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
+        auto v_b = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
 
-        auto val_x_b = GenRandomValue(T, 2);
-        auto val_y_b = GenRandomValue(T, 2);
-        auto val_z_b = GenRandomValue(T, 2);
-
-        Vector3 v_a(val_x_a, val_y_a, val_z_a);
-        Vector3 v_b(val_x_b, val_y_b, val_z_b);
         auto v_result = v_a * v_b;
 
         // clang-format off
-        REQUIRE(FuncAllClose<T>(v_result,
-                                val_x_a * val_x_b,
-                                val_y_a * val_y_b,
-                                val_z_a * val_z_b));
+        REQUIRE(::math::func_all_close<T>(v_result,
+            v_a.x() * v_b.x(),
+            v_a.y() * v_b.y(),
+            v_a.z() * v_b.z(), EPSILON));
         // clang-format on
     }
 
     SECTION("Vector scale (by single scalar)") {
-        auto val_x = GenRandomValue(T, 8);
-        auto val_y = GenRandomValue(T, 8);
-        auto val_z = GenRandomValue(T, 8);
-        auto scale = GenRandomScaleValue(T, 4, -10.0, 10.0);
+        auto v = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
+        auto scale = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
 
-        Vector3 v(val_x, val_y, val_z);
-        auto v_1 = static_cast<double>(scale) * v;
-        auto v_2 = v * static_cast<double>(scale);
+        auto v_1 = scale * v;
+        auto v_2 = v * scale;
 
-        // clang-format off
-        REQUIRE(FuncAllClose<T>(v_1,
-                                val_x * scale,
-                                val_y * scale,
-                                val_z * scale));
-        REQUIRE(FuncAllClose<T>(v_2,
-                                val_x * scale,
-                                val_y * scale,
-                                val_z * scale));
-        // clang-format on
+        REQUIRE(::math::func_all_close<T>(v_1, v.x() * scale, v.y() * scale,
+                                          v.z() * scale, EPSILON));
+        REQUIRE(::math::func_all_close<T>(v_2, v.x() * scale, v.y() * scale,
+                                          v.z() * scale, EPSILON));
     }
 
     SECTION("Vector length") {
-        auto val_x = GenRandomValue(T, 8);
-        auto val_y = GenRandomValue(T, 8);
-        auto val_z = GenRandomValue(T, 8);
-        Vector3 v(val_x, val_y, val_z);
+        auto v = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
 
-        auto length_square = val_x * val_x + val_y * val_y + val_z * val_z;
+        auto length_square = v.x() * v.x() + v.y() * v.y() + v.z() * v.z();
         auto length = std::sqrt(length_square);
 
-        auto v_length_square = math::squareNorm(v);
-        auto v_length = math::norm(v);
+        auto v_length_square = ::math::squareNorm(v);
+        auto v_length = ::math::norm(v);
 
-        REQUIRE(FuncClose(v_length_square, length_square, EPSILON));
-        REQUIRE(FuncClose(v_length, length, EPSILON));
+        REQUIRE(::math::func_value_close<T>(v_length_square, length_square,
+                                            EPSILON));
+        REQUIRE(::math::func_value_close<T>(v_length, length, EPSILON));
     }
 
     SECTION("Vector normalization (in place)") {
-        auto val_x = GenRandomValue(T, 8);
-        auto val_y = GenRandomValue(T, 8);
-        auto val_z = GenRandomValue(T, 8);
-        Vector3 v(val_x, val_y, val_z);
-        math::normalize_in_place(v);
+        auto v = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
+        // Compute the norm and normalize the vector manually
+        auto norm = std::sqrt(v.x() * v.x() + v.y() * v.y() + v.z() * v.z());
+        auto val_xnorm = v.x() / norm;
+        auto val_ynorm = v.y() / norm;
+        auto val_znorm = v.z() / norm;
 
-        auto norm = std::sqrt(val_x * val_x + val_y * val_y + val_z * val_z);
-        auto val_xnorm = val_x / norm;
-        auto val_ynorm = val_y / norm;
-        auto val_znorm = val_z / norm;
+        // Normalize the vector and make sure it gives the expected result
+        ::math::normalize_in_place(v);
+        REQUIRE(::math::func_all_close<T>(v, val_xnorm, val_ynorm, val_znorm,
+                                          EPSILON));
 
-        auto v_norm = math::norm(v);
-
-        REQUIRE(FuncClose<T>(v_norm, 1.0, EPSILON));
-        REQUIRE(FuncAllClose<T>(v, val_xnorm, val_ynorm, val_znorm));
+        // Make sure the norm of the normalized vector is 1.0
+        auto v_norm = ::math::norm(v);
+        REQUIRE(::math::func_value_close<T>(v_norm, 1.0, EPSILON));
     }
 
     SECTION("Vector normalization (out-of place)") {
-        auto val_x = GenRandomValue(T, 8);
-        auto val_y = GenRandomValue(T, 8);
-        auto val_z = GenRandomValue(T, 8);
-        Vector3 v(val_x, val_y, val_z);
-        auto vn = math::normalize(v);
+        auto v = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
+        // Compute the norm and normalize the vector manually
+        auto norm = std::sqrt(v.x() * v.x() + v.y() * v.y() + v.z() * v.z());
+        auto val_xnorm = v.x() / norm;
+        auto val_ynorm = v.y() / norm;
+        auto val_znorm = v.z() / norm;
 
-        auto norm = std::sqrt(val_x * val_x + val_y * val_y + val_z * val_z);
-        auto val_xnorm = val_x / norm;
-        auto val_ynorm = val_y / norm;
-        auto val_znorm = val_z / norm;
+        // Normalize the vector and make sure it gives the expected result
+        auto vn = ::math::normalize(v);
+        REQUIRE(::math::func_all_close<T>(vn, val_xnorm, val_ynorm, val_znorm,
+                                          EPSILON));
 
-        auto vn_norm = math::norm(vn);
-
-        REQUIRE(FuncClose<T>(vn_norm, static_cast<T>(1.0), EPSILON));
-        REQUIRE(FuncAllClose<T>(vn, val_xnorm, val_ynorm, val_znorm));
+        // Make sure the norm of the normalized vector is 1.0
+        auto vn_norm = ::math::norm(vn);
+        REQUIRE(::math::func_value_close<T>(vn_norm, 1.0, EPSILON));
     }
 
     SECTION("Vector dot-product") {
-        auto val_x_a = GenRandomValue(T, 2);
-        auto val_y_a = GenRandomValue(T, 2);
-        auto val_z_a = GenRandomValue(T, 2);
+        auto v_a = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
+        auto v_b = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
 
-        auto val_x_b = GenRandomValue(T, 2);
-        auto val_y_b = GenRandomValue(T, 2);
-        auto val_z_b = GenRandomValue(T, 2);
+        auto dot = v_a.x() * v_b.x() + v_a.y() * v_b.y() + v_a.z() * v_b.z();
+        auto v_dot = ::math::dot(v_a, v_b);
 
-        Vector3 v_a(val_x_a, val_y_a, val_z_a);
-        Vector3 v_b(val_x_b, val_y_b, val_z_b);
-
-        auto dot = val_x_a * val_x_b + val_y_a * val_y_b + val_z_a * val_z_b;
-        auto v_dot = math::dot(v_a, v_b);
-
-        REQUIRE(FuncClose(v_dot, dot, EPSILON));
+        REQUIRE(::math::func_value_close<T>(v_dot, dot, EPSILON));
     }
 
     SECTION("Vector cross-product") {
@@ -248,39 +176,38 @@ TEMPLATE_TEST_CASE("Vector3 class (vec3_t) core Operations", "[vec3_t][ops]",
             Vector3 v_j(0.0, 1.0, 0.0);
             Vector3 v_k(0.0, 0.0, 1.0);
 
-            auto v_ij = math::cross(v_i, v_j);
-            auto v_jk = math::cross(v_j, v_k);
-            auto v_ki = math::cross(v_k, v_i);
+            auto v_ij = ::math::cross(v_i, v_j);
+            auto v_jk = ::math::cross(v_j, v_k);
+            auto v_ki = ::math::cross(v_k, v_i);
 
             // i x j = k
-            REQUIRE(FuncAllClose<T>(v_ij, 0.0, 0.0, 1.0));
+            REQUIRE(::math::func_all_close<T>(v_ij, 0.0, 0.0, 1.0, EPSILON));
 
             // j x k = i
-            REQUIRE(FuncAllClose<T>(v_jk, 1.0, 0.0, 0.0));
+            REQUIRE(::math::func_all_close<T>(v_jk, 1.0, 0.0, 0.0, EPSILON));
 
             // k x i = j
-            REQUIRE(FuncAllClose<T>(v_ki, 0.0, 1.0, 0.0));
+            REQUIRE(::math::func_all_close<T>(v_ki, 0.0, 1.0, 0.0, EPSILON));
         }
 
         // Checking a fixed case (a.cross(b) + c)
         {
-            Vector3 v_a(1.0, 2.0, 3.0);  // NOLINT
-            Vector3 v_b(4.0, 5.0, 6.0);  // NOLINT
-            Vector3 v_c(7.0, 8.0, 9.0);  // NOLINT
+            Vector3 v_a(1.0, 2.0, 3.0);
+            Vector3 v_b(4.0, 5.0, 6.0);
+            Vector3 v_c(7.0, 8.0, 9.0);
 
-            auto result = math::cross(v_a, v_b) + v_c;
-            REQUIRE(FuncAllClose<T>(result, 4.0, 14.0, 6.0));
+            auto result = ::math::cross(v_a, v_b) + v_c;
+            REQUIRE(::math::func_all_close<T>(result, 4.0, 14.0, 6.0, EPSILON));
         }
     }
 
     SECTION("Vector additive inverse") {
-        auto val_x = GenRandomValue(T, 10);
-        auto val_y = GenRandomValue(T, 10);
-        auto val_z = GenRandomValue(T, 10);
-        Vector3 v(val_x, val_y, val_z);
+        auto v = GENERATE(
+            take(NUM_SAMPLES, ::math::random_vec3<T>(RANGE_MIN, RANGE_MAX)));
         auto inv_v = -v;
 
-        REQUIRE(FuncAllClose<T>(inv_v, -val_x, -val_y, -val_z));
+        REQUIRE(
+            ::math::func_all_close<T>(inv_v, -v.x(), -v.y(), -v.z(), EPSILON));
     }
 }
 

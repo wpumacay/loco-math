@@ -22,9 +22,9 @@ constexpr double USER_EPSILON = 1e-5;
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Vector2 class (vec2_t) type", "[vec2_t][template]",
-                   math::float32_t, math::float64_t) {
+                   ::math::float32_t, ::math::float64_t) {
     using T = TestType;
-    using Vector2 = math::Vector2<T>;
+    using Vector2 = ::math::Vector2<T>;
 
     constexpr T RANGE_MIN = static_cast<T>(USER_RANGE_MIN);
     constexpr T RANGE_MAX = static_cast<T>(USER_RANGE_MAX);

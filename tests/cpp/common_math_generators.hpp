@@ -2,13 +2,35 @@
 #include <math/vec2_t.hpp>
 #include <math/vec3_t.hpp>
 #include <math/vec4_t.hpp>
+#include <math/mat2_t.hpp>
 #include <math/mat3_t.hpp>
-#include <math/quat_t.hpp>
 #include <math/mat4_t.hpp>
+#include <math/quat_t.hpp>
 
 #include <random>
 
 namespace math {
+
+template <typename T>
+using Vec2 = ::math::Vector2<T>;
+
+template <typename T>
+using Vec3 = ::math::Vector3<T>;
+
+template <typename T>
+using Vec4 = ::math::Vector4<T>;
+
+template <typename T>
+using Mat2 = ::math::Matrix2<T>;
+
+template <typename T>
+using Mat3 = ::math::Matrix3<T>;
+
+template <typename T>
+using Mat4 = ::math::Matrix4<T>;
+
+template <typename T>
+using Quat = ::math::Quaternion<T>;
 
 template <typename T, typename V>
 class RandomValueBase : public Catch::Generators::IGenerator<V> {
@@ -37,8 +59,7 @@ class RandomValueBase : public Catch::Generators::IGenerator<V> {
 //-------------------//
 
 template <typename T>
-class RandomVec2Generator
-    : public Catch::Generators::IGenerator<::math::Vector2<T>> {
+class RandomVec2Generator : public Catch::Generators::IGenerator<Vec2<T>> {
  public:
     RandomVec2Generator(T range_min, T range_max)
         // NOLINTNEXTLINE
@@ -46,7 +67,7 @@ class RandomVec2Generator
         static_cast<void>(next());
     }
 
-    auto get() const -> const ::math::Vector2<T>& override;
+    auto get() const -> const Vec2<T>& override { return m_Value; }
 
     auto next() -> bool override {
         m_Value.x() = m_Dist(m_Gen);
@@ -60,38 +81,62 @@ class RandomVec2Generator
     /// Distribution from which to generate random real values
     std::uniform_real_distribution<T> m_Dist;
     /// The random value to be exposed
-    ::math::Vector2<T> m_Value;
+    Vec2<T> m_Value;
 };
 
 template <typename T>
-auto RandomVec2Generator<T>::get() const -> const ::math::Vector2<T>& {
-    return m_Value;
-}
-
-template <typename T>
-class RandomVec3Generator : public RandomValueBase<T, Vector3<T>> {
+class RandomVec3Generator : public Catch::Generators::IGenerator<Vec3<T>> {
  public:
-    RandomVec3Generator(T val_range_min, T val_range_max)
-        : RandomValueBase<T, Vector3<T>>(val_range_min, val_range_max) {}
+    RandomVec3Generator(T range_min, T range_max)
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(range_min, range_max) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Vec3<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                         this->m_Dist(this->m_Gen)};
+        m_Value.x() = m_Dist(m_Gen);
+        m_Value.y() = m_Dist(m_Gen);
+        m_Value.z() = m_Dist(m_Gen);
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Vec3<T> m_Value;
 };
 
 template <typename T>
-class RandomVec4Generator : public RandomValueBase<T, Vector4<T>> {
+class RandomVec4Generator : public Catch::Generators::IGenerator<Vec4<T>> {
  public:
-    RandomVec4Generator(T val_range_min, T val_range_max)
-        : RandomValueBase<T, Vector4<T>>(val_range_min, val_range_max) {}
+    RandomVec4Generator(T range_min, T range_max)
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(range_min, range_max) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Vec4<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                         this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen)};
+        m_Value.x() = m_Dist(m_Gen);
+        m_Value.y() = m_Dist(m_Gen);
+        m_Value.z() = m_Dist(m_Gen);
+        m_Value.w() = m_Dist(m_Gen);
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Vec4<T> m_Value;
 };
 
 //--------------------//
@@ -126,7 +171,7 @@ auto random_vec4(T val_range_min = static_cast<T>(-1.0),
 }
 
 //****************************************************************************//
-//                       Generators for Matrix3 types                         //
+//                        Generators for Matrix types                         //
 //****************************************************************************//
 
 //-------------------//
@@ -134,56 +179,113 @@ auto random_vec4(T val_range_min = static_cast<T>(-1.0),
 //-------------------//
 
 template <typename T>
-class RandomMatrix3 : public RandomValueBase<T, Matrix3<T>> {
+class RandomMatrix2Generator : public Catch::Generators::IGenerator<Mat2<T>> {
  public:
-    RandomMatrix3(T range_min, T range_max)
-        : RandomValueBase<T, Matrix3<T>>(range_min, range_max) {}
+    RandomMatrix2Generator(T range_min, T range_max)
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(range_min, range_max) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Mat2<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value =
-            Matrix3<T>(this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                       this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                       this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                       this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                       this->m_Dist(this->m_Gen));
+        // Generate first column
+        m_Value(0, 0) = m_Dist(m_Gen);
+        m_Value(1, 0) = m_Dist(m_Gen);
+        // Generate second column
+        m_Value(0, 1) = m_Dist(m_Gen);
+        m_Value(1, 1) = m_Dist(m_Gen);
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Mat2<T> m_Value;
 };
 
 template <typename T>
-class RandomRotationXMatrix3 : public RandomValueBase<T, Matrix3<T>> {
+class RandomMatrix3Generator : public Catch::Generators::IGenerator<Mat3<T>> {
  public:
-    RandomRotationXMatrix3(T angle_min, T angle_max)
-        : RandomValueBase<T, Matrix3<T>>(angle_min, angle_max) {}
+    RandomMatrix3Generator(T range_min, T range_max)
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(range_min, range_max) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Mat3<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value = Matrix3<T>::RotationX(this->m_Dist(this->m_Gen));
+        // Generate first column
+        m_Value(0, 0) = m_Dist(m_Gen);
+        m_Value(1, 0) = m_Dist(m_Gen);
+        m_Value(2, 0) = m_Dist(m_Gen);
+        // Generate second column
+        m_Value(0, 1) = m_Dist(m_Gen);
+        m_Value(1, 1) = m_Dist(m_Gen);
+        m_Value(2, 1) = m_Dist(m_Gen);
+        // Generate third column
+        m_Value(0, 2) = m_Dist(m_Gen);
+        m_Value(1, 2) = m_Dist(m_Gen);
+        m_Value(2, 2) = m_Dist(m_Gen);
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Mat3<T> m_Value;
 };
 
 template <typename T>
-class RandomRotationYMatrix3 : public RandomValueBase<T, Matrix3<T>> {
+class RandomMatrix4Generator : public Catch::Generators::IGenerator<Mat4<T>> {
  public:
-    RandomRotationYMatrix3(T angle_min, T angle_max)
-        : RandomValueBase<T, Matrix3<T>>(angle_min, angle_max) {}
+    RandomMatrix4Generator(T range_min, T range_max)
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(range_min, range_max) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Mat4<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value = Matrix3<T>::RotationY(this->m_Dist(this->m_Gen));
+        // Generate first column
+        m_Value(0, 0) = m_Dist(m_Gen);
+        m_Value(1, 0) = m_Dist(m_Gen);
+        m_Value(2, 0) = m_Dist(m_Gen);
+        m_Value(3, 0) = m_Dist(m_Gen);
+        // Generate second column
+        m_Value(0, 1) = m_Dist(m_Gen);
+        m_Value(1, 1) = m_Dist(m_Gen);
+        m_Value(2, 1) = m_Dist(m_Gen);
+        m_Value(3, 1) = m_Dist(m_Gen);
+        // Generate third column
+        m_Value(0, 2) = m_Dist(m_Gen);
+        m_Value(1, 2) = m_Dist(m_Gen);
+        m_Value(2, 2) = m_Dist(m_Gen);
+        m_Value(3, 2) = m_Dist(m_Gen);
+        // Generate fourth column
+        m_Value(0, 3) = m_Dist(m_Gen);
+        m_Value(1, 3) = m_Dist(m_Gen);
+        m_Value(2, 3) = m_Dist(m_Gen);
+        m_Value(3, 3) = m_Dist(m_Gen);
         return true;
     }
-};
 
-template <typename T>
-class RandomRotationZMatrix3 : public RandomValueBase<T, Matrix3<T>> {
- public:
-    RandomRotationZMatrix3(T angle_min, T angle_max)
-        : RandomValueBase<T, Matrix3<T>>(angle_min, angle_max) {}
-
-    auto next() -> bool override {
-        this->m_Value = Matrix3<T>::RotationZ(this->m_Dist(this->m_Gen));
-        return true;
-    }
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Mat4<T> m_Value;
 };
 
 //--------------------//
@@ -191,39 +293,30 @@ class RandomRotationZMatrix3 : public RandomValueBase<T, Matrix3<T>> {
 //--------------------//
 
 template <typename T>
-auto random_mat3(T val_range_min = static_cast<T>(-10.0),
-                 T val_range_max = static_cast<T>(10.0))
-    -> Catch::Generators::GeneratorWrapper<Matrix3<T>> {
-    return Catch::Generators::GeneratorWrapper<Matrix3<T>>(
-        Catch::Generators::pf::make_unique<RandomMatrix3<T>>(val_range_min,
-                                                             val_range_max));
+auto random_mat2(T val_range_min = static_cast<T>(-1.0),
+                 T val_range_max = static_cast<T>(1.0))
+    -> Catch::Generators::GeneratorWrapper<Mat2<T>> {
+    return Catch::Generators::GeneratorWrapper<Mat2<T>>(
+        Catch::Generators::pf::make_unique<RandomMatrix2Generator<T>>(
+            val_range_min, val_range_max));
 }
 
 template <typename T>
-auto random_rotx_mat3(T angle_min = static_cast<T>(-::math::PI),
-                      T angle_max = static_cast<T>(::math::PI))
-    -> Catch::Generators::GeneratorWrapper<Matrix3<T>> {
-    return Catch::Generators::GeneratorWrapper<Matrix3<T>>(
-        Catch::Generators::pf::make_unique<RandomRotationXMatrix3<T>>(
-            angle_min, angle_max));
+auto random_mat3(T val_range_min = static_cast<T>(-1.0),
+                 T val_range_max = static_cast<T>(1.0))
+    -> Catch::Generators::GeneratorWrapper<Mat3<T>> {
+    return Catch::Generators::GeneratorWrapper<Mat3<T>>(
+        Catch::Generators::pf::make_unique<RandomMatrix3Generator<T>>(
+            val_range_min, val_range_max));
 }
 
 template <typename T>
-auto random_roty_mat3(T angle_min = static_cast<T>(-::math::PI),
-                      T angle_max = static_cast<T>(::math::PI))
-    -> Catch::Generators::GeneratorWrapper<Matrix3<T>> {
-    return Catch::Generators::GeneratorWrapper<Matrix3<T>>(
-        Catch::Generators::pf::make_unique<RandomRotationYMatrix3<T>>(
-            angle_min, angle_max));
-}
-
-template <typename T>
-auto random_rotz_mat3(T angle_min = static_cast<T>(-::math::PI),
-                      T angle_max = static_cast<T>(::math::PI))
-    -> Catch::Generators::GeneratorWrapper<Matrix3<T>> {
-    return Catch::Generators::GeneratorWrapper<Matrix3<T>>(
-        Catch::Generators::pf::make_unique<RandomRotationZMatrix3<T>>(
-            angle_min, angle_max));
+auto random_mat4(T val_range_min = static_cast<T>(-1.0),
+                 T val_range_max = static_cast<T>(1.0))
+    -> Catch::Generators::GeneratorWrapper<Mat4<T>> {
+    return Catch::Generators::GeneratorWrapper<Mat4<T>>(
+        Catch::Generators::pf::make_unique<RandomMatrix4Generator<T>>(
+            val_range_min, val_range_max));
 }
 
 //****************************************************************************//
@@ -235,28 +328,54 @@ auto random_rotz_mat3(T angle_min = static_cast<T>(-::math::PI),
 //-------------------//
 
 template <typename T>
-class RandomQuaternion : public RandomValueBase<T, Quaternion<T>> {
+class RandomQuaternion : public Catch::Generators::IGenerator<Quat<T>> {
  public:
-    RandomQuaternion() : RandomValueBase<T, Quaternion<T>>(-1.0, 1.0) {}
+    RandomQuaternion()
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(-1.0, 1.0) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Quat<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                         this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen)};
+        m_Value = {m_Dist(m_Gen), m_Dist(m_Gen), m_Dist(m_Gen), m_Dist(m_Gen)};
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Quat<T> m_Value;
 };
 
 template <typename T>
-class RandomUnitQuaternion : public RandomValueBase<T, Quaternion<T>> {
+class RandomUnitQuaternion : public Catch::Generators::IGenerator<Quat<T>> {
  public:
-    RandomUnitQuaternion() : RandomValueBase<T, Quaternion<T>>(-1.0, 1.0) {}
+    RandomUnitQuaternion()
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(-1.0, 1.0) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Quat<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                         this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen)};
-        this->m_Value.normalize();
+        m_Value = {m_Dist(m_Gen), m_Dist(m_Gen), m_Dist(m_Gen), m_Dist(m_Gen)};
+        m_Value.normalize();
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Quat<T> m_Value;
 };
 
 //--------------------//
@@ -264,15 +383,14 @@ class RandomUnitQuaternion : public RandomValueBase<T, Quaternion<T>> {
 //--------------------//
 
 template <typename T>
-auto random_quaternion() -> Catch::Generators::GeneratorWrapper<Quaternion<T>> {
-    return Catch::Generators::GeneratorWrapper<Quaternion<T>>(
+auto random_quaternion() -> Catch::Generators::GeneratorWrapper<Quat<T>> {
+    return Catch::Generators::GeneratorWrapper<Quat<T>>(
         Catch::Generators::pf::make_unique<RandomQuaternion<T>>());
 }
 
 template <typename T>
-auto random_unit_quaternion()
-    -> Catch::Generators::GeneratorWrapper<Quaternion<T>> {
-    return Catch::Generators::GeneratorWrapper<Quaternion<T>>(
+auto random_unit_quaternion() -> Catch::Generators::GeneratorWrapper<Quat<T>> {
+    return Catch::Generators::GeneratorWrapper<Quat<T>>(
         Catch::Generators::pf::make_unique<RandomUnitQuaternion<T>>());
 }
 
@@ -285,18 +403,31 @@ auto random_unit_quaternion()
 //-------------------//
 
 template <typename T>
-class RandomEuler : public RandomValueBase<T, Euler<T>> {
+class RandomEuler : public Catch::Generators::IGenerator<Euler<T>> {
  public:
     RandomEuler()
-        : RandomValueBase<T, Euler<T>>(static_cast<T>(-::math::PI),
-                                       static_cast<T>(::math::PI)) {}
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()),
+          m_Dist(static_cast<T>(-::math::PI), static_cast<T>(::math::PI)) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Euler<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value.x = this->m_Dist(this->m_Gen);
-        this->m_Value.y = this->m_Dist(this->m_Gen);
-        this->m_Value.z = this->m_Dist(this->m_Gen);
+        m_Value.x = m_Dist(m_Gen);
+        m_Value.y = m_Dist(m_Gen);
+        m_Value.z = m_Dist(m_Gen);
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Euler<T> m_Value;
 };
 
 //--------------------//

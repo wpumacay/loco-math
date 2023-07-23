@@ -1,6 +1,8 @@
 #include <catch2/catch.hpp>
 #include <math/euler_t.hpp>
 
+#include "./common_math_helpers.hpp"
+
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wimplicit-float-conversion"
@@ -14,41 +16,26 @@
 #pragma warning(disable : 4305)
 #endif
 
-constexpr double RANGE_MIN = -10.0;
-constexpr double RANGE_MAX = 10.0;
-
-// NOLINTNEXTLINE
-#define GenRandomValue(Type, Nsamples)                           \
-    GENERATE(take(Nsamples, random(static_cast<Type>(RANGE_MIN), \
-                                   static_cast<Type>(RANGE_MAX))))
-
-template <typename T>
-constexpr auto FuncClose(T a, T b, T eps) -> bool {
-    return ((a - b) < eps) && ((a - b) > -eps);
-}
-
-template <typename T>
-auto FuncAllClose(const math::Euler<T>& euler, T x, T y, T z) -> bool {
-    constexpr T EPSILON = static_cast<T>(math::EPS);
-    // clang-format off
-    return FuncClose<T>(euler.x, x, EPSILON) &&
-           FuncClose<T>(euler.y, y, EPSILON) &&
-           FuncClose<T>(euler.z, z, EPSILON);
-    // clang-format on
-}
+constexpr double USER_RANGE_MIN = -10.0;
+constexpr double USER_RANGE_MAX = 10.0;
+constexpr double USER_EPSILON = 1e-5;
 
 // NOLINTNEXTLINE
 TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
-                   math::float32_t, math::float64_t) {
+                   ::math::float32_t, ::math::float64_t) {
     using T = TestType;
-    using Euler = math::Euler<T>;
-    using Mat3 = math::Matrix3<T>;
-    using Mat4 = math::Matrix4<T>;
-    using Quat = math::Quaternion<T>;
+    using Euler = ::math::Euler<T>;
+    using Mat3 = ::math::Matrix3<T>;
+    using Mat4 = ::math::Matrix4<T>;
+    using Quat = ::math::Quaternion<T>;
+
+    constexpr T EPSILON = static_cast<T>(USER_EPSILON);
+    constexpr T RANGE_MIN = static_cast<T>(USER_RANGE_MIN);
+    constexpr T RANGE_MAX = static_cast<T>(USER_RANGE_MAX);
 
     SECTION("Default constructor") {
         Euler e;
-        REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, 0.0));
+        REQUIRE(::math::func_all_close<T>(e, 0.0, 0.0, 0.0, EPSILON));
         // Default setting for order is Order::XYZ
         REQUIRE(e.order == ::math::euler::Order::XYZ);
         // Default setting for convention is Convention::INTRINSIC
@@ -57,12 +44,12 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
 
     SECTION("From single scalar argument") {
         constexpr int NUM_SAMPLES = 8;
-        auto val_x = GenRandomValue(T, NUM_SAMPLES);
-        auto val_y = GenRandomValue(T, NUM_SAMPLES);
-        auto val_z = GenRandomValue(T, NUM_SAMPLES);
+        auto val_x = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
+        auto val_y = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
+        auto val_z = gen_random_value(T, RANGE_MIN, RANGE_MAX, NUM_SAMPLES);
 
         Euler e(val_x, val_y, val_z);
-        REQUIRE(FuncAllClose<T>(e, val_x, val_y, val_z));
+        REQUIRE(::math::func_all_close<T>(e, val_x, val_y, val_z, EPSILON));
         REQUIRE(e.order == ::math::euler::Order::XYZ);
         REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
     }
@@ -73,7 +60,7 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
         {
             Quat q(1.0, 0.0, 0.0, 0.0);
             Euler e(q);
-            REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, 0.0));
+            REQUIRE(::math::func_all_close<T>(e, 0.0, 0.0, 0.0, EPSILON));
             REQUIRE(e.order == ::math::euler::Order::XYZ);
             REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
@@ -85,7 +72,7 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             auto sin_half = std::sin(angle / 2.0);
             Quat q(cos_half, sin_half, 0.0, 0.0);
             Euler e(q);
-            REQUIRE(FuncAllClose<T>(e, angle, 0.0, 0.0));
+            REQUIRE(::math::func_all_close<T>(e, angle, 0.0, 0.0, EPSILON));
             REQUIRE(e.order == ::math::euler::Order::XYZ);
             REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
@@ -97,7 +84,7 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             auto sin_half = std::sin(angle / 2.0);
             Quat q(cos_half, 0.0, sin_half, 0.0);
             Euler e(q);
-            REQUIRE(FuncAllClose<T>(e, 0.0, angle, 0.0));
+            REQUIRE(::math::func_all_close<T>(e, 0.0, angle, 0.0, EPSILON));
             REQUIRE(e.order == ::math::euler::Order::XYZ);
             REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
@@ -109,7 +96,7 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             auto sin_half = std::sin(angle / 2.0);
             Quat q(cos_half, 0.0, 0.0, sin_half);
             Euler e(q);
-            REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, angle));
+            REQUIRE(::math::func_all_close<T>(e, 0.0, 0.0, angle, EPSILON));
             REQUIRE(e.order == ::math::euler::Order::XYZ);
             REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
@@ -122,7 +109,7 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             auto angle = ::math::PI / 4.0;
             Mat3 rotmat = Mat3::RotationX(angle);
             Euler e(rotmat);
-            REQUIRE(FuncAllClose<T>(e, angle, 0.0, 0.0));
+            REQUIRE(::math::func_all_close<T>(e, angle, 0.0, 0.0, EPSILON));
             REQUIRE(e.order == ::math::euler::Order::XYZ);
             REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
@@ -133,7 +120,7 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             auto angle = ::math::PI / 4.0;
             Mat3 rotmat = Mat3::RotationY(angle);
             Euler e(rotmat);
-            REQUIRE(FuncAllClose<T>(e, 0.0, angle, 0.0));
+            REQUIRE(::math::func_all_close<T>(e, 0.0, angle, 0.0, EPSILON));
             REQUIRE(e.order == ::math::euler::Order::XYZ);
             REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
@@ -144,7 +131,7 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             auto angle = ::math::PI / 4.0;
             Mat3 rotmat = Mat3::RotationZ(angle);
             Euler e(rotmat);
-            REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, angle));
+            REQUIRE(::math::func_all_close<T>(e, 0.0, 0.0, angle, EPSILON));
             REQUIRE(e.order == ::math::euler::Order::XYZ);
             REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
@@ -157,7 +144,7 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             auto angle = ::math::PI / 4.0;
             Mat4 rotmat = Mat4::RotationX(angle);
             Euler e(rotmat);
-            REQUIRE(FuncAllClose<T>(e, angle, 0.0, 0.0));
+            REQUIRE(::math::func_all_close<T>(e, angle, 0.0, 0.0, EPSILON));
             REQUIRE(e.order == ::math::euler::Order::XYZ);
             REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
@@ -168,7 +155,7 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             auto angle = ::math::PI / 4.0;
             Mat4 rotmat = Mat4::RotationY(angle);
             Euler e(rotmat);
-            REQUIRE(FuncAllClose<T>(e, 0.0, angle, 0.0));
+            REQUIRE(::math::func_all_close<T>(e, 0.0, angle, 0.0, EPSILON));
             REQUIRE(e.order == ::math::euler::Order::XYZ);
             REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }
@@ -179,7 +166,7 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             auto angle = ::math::PI / 4.0;
             Mat4 rotmat = Mat4::RotationZ(angle);
             Euler e(rotmat);
-            REQUIRE(FuncAllClose<T>(e, 0.0, 0.0, angle));
+            REQUIRE(::math::func_all_close<T>(e, 0.0, 0.0, angle, EPSILON));
             REQUIRE(e.order == ::math::euler::Order::XYZ);
             REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
         }

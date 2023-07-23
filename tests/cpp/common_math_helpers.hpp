@@ -6,6 +6,8 @@
 #include <math/mat3_t.hpp>
 #include <math/mat4_t.hpp>
 #include <math/quat_t.hpp>
+#include <math/euler_t.hpp>
+#include "math/euler_t_decl.hpp"
 
 // NOLINTNEXTLINE
 #define gen_random_value(T, range_min, range_max, Nsamples)   \
@@ -107,6 +109,14 @@ constexpr auto func_all_close(const ::math::Quaternion<T>& quat, T w, T x, T y,
            func_value_close<T>(quat.x(), x, eps) &&
            func_value_close<T>(quat.y(), y, eps) &&
            func_value_close<T>(quat.z(), z, eps);
+}
+
+template <typename T>
+constexpr auto func_all_close(const ::math::Euler<T>& euler, T ex, T ey, T ez,
+                              T eps) -> bool {
+    return func_value_close<T>(euler.x, ex, eps) &&
+           func_value_close<T>(euler.y, ey, eps) &&
+           func_value_close<T>(euler.z, ez, eps);
 }
 
 }  // namespace math

@@ -100,4 +100,13 @@ constexpr auto func_all_close(const ::math::Matrix4<T>& mat,
 }
 // clang-format on
 
+template <typename T>
+constexpr auto func_all_close(const ::math::Quaternion<T>& quat, T w, T x, T y,
+                              T z, T eps) -> bool {
+    return func_value_close<T>(quat.w(), w, eps) &&
+           func_value_close<T>(quat.x(), x, eps) &&
+           func_value_close<T>(quat.y(), y, eps) &&
+           func_value_close<T>(quat.z(), z, eps);
+}
+
 }  // namespace math

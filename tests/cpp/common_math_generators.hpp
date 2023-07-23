@@ -328,28 +328,54 @@ auto random_mat4(T val_range_min = static_cast<T>(-1.0),
 //-------------------//
 
 template <typename T>
-class RandomQuaternion : public RandomValueBase<T, Quaternion<T>> {
+class RandomQuaternion : public Catch::Generators::IGenerator<Quat<T>> {
  public:
-    RandomQuaternion() : RandomValueBase<T, Quaternion<T>>(-1.0, 1.0) {}
+    RandomQuaternion()
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(-1.0, 1.0) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Quat<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                         this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen)};
+        m_Value = {m_Dist(m_Gen), m_Dist(m_Gen), m_Dist(m_Gen), m_Dist(m_Gen)};
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Quat<T> m_Value;
 };
 
 template <typename T>
-class RandomUnitQuaternion : public RandomValueBase<T, Quaternion<T>> {
+class RandomUnitQuaternion : public Catch::Generators::IGenerator<Quat<T>> {
  public:
-    RandomUnitQuaternion() : RandomValueBase<T, Quaternion<T>>(-1.0, 1.0) {}
+    RandomUnitQuaternion()
+        // NOLINTNEXTLINE
+        : m_Gen(std::random_device{}()), m_Dist(-1.0, 1.0) {
+        static_cast<void>(next());
+    }
+
+    auto get() const -> const Quat<T>& override { return m_Value; }
 
     auto next() -> bool override {
-        this->m_Value = {this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen),
-                         this->m_Dist(this->m_Gen), this->m_Dist(this->m_Gen)};
-        this->m_Value.normalize();
+        m_Value = {m_Dist(m_Gen), m_Dist(m_Gen), m_Dist(m_Gen), m_Dist(m_Gen)};
+        m_Value.normalize();
         return true;
     }
+
+ private:
+    /// The method used to generate random numbers
+    std::minstd_rand m_Gen;
+    /// Distribution from which to generate random real values
+    std::uniform_real_distribution<T> m_Dist;
+    /// The random value to be exposed
+    Quat<T> m_Value;
 };
 
 //--------------------//
@@ -357,15 +383,14 @@ class RandomUnitQuaternion : public RandomValueBase<T, Quaternion<T>> {
 //--------------------//
 
 template <typename T>
-auto random_quaternion() -> Catch::Generators::GeneratorWrapper<Quaternion<T>> {
-    return Catch::Generators::GeneratorWrapper<Quaternion<T>>(
+auto random_quaternion() -> Catch::Generators::GeneratorWrapper<Quat<T>> {
+    return Catch::Generators::GeneratorWrapper<Quat<T>>(
         Catch::Generators::pf::make_unique<RandomQuaternion<T>>());
 }
 
 template <typename T>
-auto random_unit_quaternion()
-    -> Catch::Generators::GeneratorWrapper<Quaternion<T>> {
-    return Catch::Generators::GeneratorWrapper<Quaternion<T>>(
+auto random_unit_quaternion() -> Catch::Generators::GeneratorWrapper<Quat<T>> {
+    return Catch::Generators::GeneratorWrapper<Quat<T>>(
         Catch::Generators::pf::make_unique<RandomUnitQuaternion<T>>());
 }
 

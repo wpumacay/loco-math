@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Setup script used to build and install this package.
 
@@ -10,7 +9,7 @@ import re
 import subprocess
 import sys
 
-from setuptools import find_packages, setup, Extension
+from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
@@ -168,33 +167,7 @@ class CMakeBuild(build_ext):
         )
 
 
-long_description = ""
-if os.path.exists("README.md"):
-    with open("README.md", "r", encoding="utf-8") as fh:
-        long_description = fh.read()
-
 setup(
-    name="Math3d",
-    version="0.4.5",
-    description="A math library for small vectors and matrices",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    author="Wilbert Santos Pumacay Huallpa",
-    license="MIT License",
-    author_email="wpumacay@gmail.com",
-    url="https://github.com/wpumacay/loco-math",
-    keywords="math",
-    classifiers=[
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: POSIX :: Linux",
-    ],
-    zip_safe=False,
-    packages=find_packages(
-        where="python",
-    ),
-    package_dir={"": "python"},
-    ## package_data={"math3d": ["typings/*.pyi"]},
     ext_modules=[CMakeExtension("math3d_bindings", ".")],
     cmdclass={"build_ext": CMakeBuild},
-    python_requires=">=3.7",
 )

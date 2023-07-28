@@ -50,3 +50,4 @@ repos:
     hooks:
     -   id: isort
         name: isort (python)
+        args: [--settings-path=pyproject.toml]

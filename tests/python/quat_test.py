@@ -1,9 +1,9 @@
-import pytest
+from typing import List, Type, Union
 
 import numpy as np
-import math3d as m3d
+import pytest
 
-from typing import Type, Union, List
+import math3d as m3d
 
 QuaternionCls = Type[Union[m3d.Quaternionf, m3d.Quaterniond]]
 Vector3Cls = Type[Union[m3d.Vector3f, m3d.Vector3d]]
@@ -11,7 +11,9 @@ Vector3Cls = Type[Union[m3d.Vector3f, m3d.Vector3d]]
 Quaternion = Union[m3d.Quaternionf, m3d.Quaterniond]
 
 
-def quat_all_close(quat: Quaternion, q_list: List[float], tol: float = 1e-5) -> bool:
+def quat_all_close(
+    quat: Quaternion, q_list: List[float], tol: float = 1e-5
+) -> bool:
     return (
         np.abs(quat.w - q_list[0]) < tol
         and np.abs(quat.x - q_list[1]) < tol
@@ -30,41 +32,41 @@ def test_quat_attrs(Quat: QuaternionCls) -> None:
     )
 
 
+@pytest.mark.parametrize("Quat", [(m3d.Quaternionf), (m3d.Quaterniond)])
+def test_default_constructor(Quat: QuaternionCls) -> None:
+    q = Quat()
+    assert q.w == 1.0 and q.x == 0.0 and q.y == 0.0 and q.z == 0.0
+
+
+@pytest.mark.parametrize("Quat", [(m3d.Quaternionf), (m3d.Quaterniond)])
+def test_single_scalar_arg_constructor(Quat: QuaternionCls) -> None:
+    q = Quat(2.0)
+    assert q.w == 2.0 and q.x == 0.0 and q.y == 0.0 and q.z == 0.0
+
+
+@pytest.mark.parametrize("Quat", [(m3d.Quaternionf), (m3d.Quaterniond)])
+def test_four_scalars_args_constructor(Quat: QuaternionCls) -> None:
+    q = Quat(2.0, 3.0, 5.0, 7.0)
+    assert q.w == 2.0 and q.x == 3.0 and q.y == 5.0 and q.z == 7.0
+
+
 @pytest.mark.parametrize(
-    "Quat,FloatType", [(m3d.Quaternionf, np.float32), (m3d.Quaterniond, np.float64)]
+    "Quat,FloatType",
+    [(m3d.Quaternionf, np.float32), (m3d.Quaterniond, np.float64)],
 )
-class TestQuatConstructors:
-    def test_default_constructor(self, Quat: QuaternionCls, FloatType: type) -> None:
-        q = Quat()
-        assert q.w == 1.0 and q.x == 0.0 and q.y == 0.0 and q.z == 0.0
+def test_numpy_array_constructor(Quat: QuaternionCls, FloatType: type) -> None:
+    arr_np = np.array([11.0, 13.0, 17.0, 19.0])
+    q = Quat(arr_np.astype(FloatType))
+    assert q.w == 11.0 and q.x == 13.0 and q.y == 17.0 and q.z == 19.0
 
-    def test_single_scalar_arg_constructor(
-        self, Quat: QuaternionCls, FloatType: type
-    ) -> None:
-        q = Quat(2.0)
-        assert q.w == 2.0 and q.x == 0.0 and q.y == 0.0 and q.z == 0.0
+    q = Quat(arr_np.reshape(1, 4).astype(FloatType))
+    assert q.w == 11.0 and q.x == 13.0 and q.y == 17.0 and q.z == 19.0
 
-    def test_four_scalars_args_constructor(
-        self, Quat: QuaternionCls, FloatType: type
-    ) -> None:
-        q = Quat(2.0, 3.0, 5.0, 7.0)
-        assert q.w == 2.0 and q.x == 3.0 and q.y == 5.0 and q.z == 7.0
+    q = Quat(arr_np.reshape(4, 1).astype(FloatType))
+    assert q.w == 11.0 and q.x == 13.0 and q.y == 17.0 and q.z == 19.0
 
-    def test_numpy_array_constructor(
-        self, Quat: QuaternionCls, FloatType: type
-    ) -> None:
-        arr_np = np.array([11.0, 13.0, 17.0, 19.0])
-        q = Quat(arr_np.astype(FloatType))
-        assert q.w == 11.0 and q.x == 13.0 and q.y == 17.0 and q.z == 19.0
-
-        q = Quat(arr_np.reshape(1, 4).astype(FloatType))
-        assert q.w == 11.0 and q.x == 13.0 and q.y == 17.0 and q.z == 19.0
-
-        q = Quat(arr_np.reshape(4, 1).astype(FloatType))
-        assert q.w == 11.0 and q.x == 13.0 and q.y == 17.0 and q.z == 19.0
-
-        q = Quat([11.0, 13.0, 17.0, 19.0])
-        assert q.w == 11.0 and q.x == 13.0 and q.y == 17.0 and q.z == 19.0
+    q = Quat([11.0, 13.0, 17.0, 19.0])
+    assert q.w == 11.0 and q.x == 13.0 and q.y == 17.0 and q.z == 19.0
 
 
 @pytest.mark.parametrize("Quat", [(m3d.Quaternionf), (m3d.Quaterniond)])
@@ -91,14 +93,22 @@ class TestQuatOperators:
         q1 = Quat(1.0, 2.0, 4.0, 8.0)
         q2 = Quat(1.0, 3.0, 9.0, 27.0)
         q_sum = q1 + q2
-        assert q_sum.w == 2.0 and q_sum.x == 5.0 and q_sum.y == 13.0 and q_sum.z == 35.0
+        assert (
+            q_sum.w == 2.0
+            and q_sum.x == 5.0
+            and q_sum.y == 13.0
+            and q_sum.z == 35.0
+        )
 
     def test_quat_substraction(self, Quat: QuaternionCls) -> None:
         q1 = Quat(1.0, 2.0, 4.0, 8.0)
         q2 = Quat(1.0, 3.0, 9.0, 27.0)
         q_sum = q1 - q2
         assert (
-            q_sum.w == 0.0 and q_sum.x == -1.0 and q_sum.y == -5.0 and q_sum.z == -19.0
+            q_sum.w == 0.0
+            and q_sum.x == -1.0
+            and q_sum.y == -5.0
+            and q_sum.z == -19.0
         )
 
     def test_quat_scalar_product(self, Quat: QuaternionCls) -> None:
@@ -128,7 +138,10 @@ class TestQuatOperators:
         q2 = Quat(1.0, 3.0, 5.0, 7.0)
         q_mul = q1 * q2
         assert (
-            q_mul.w == -48.0 and q_mul.x == 6.0 and q_mul.y == 6.0 and q_mul.z == 12.0
+            q_mul.w == -48.0
+            and q_mul.x == 6.0
+            and q_mul.y == 6.0
+            and q_mul.z == 12.0
         )
 
 
@@ -173,7 +186,12 @@ class TestQuatMethods:
         w, x, y, z = 1.0, 2.0, 3.0, 4.0
         q = Quat(w, x, y, z)
         q_conj = q.conjugate()
-        assert q_conj.w == w and q_conj.x == -x and q_conj.y == -y and q_conj.z == -z
+        assert (
+            q_conj.w == w
+            and q_conj.x == -x
+            and q_conj.y == -y
+            and q_conj.z == -z
+        )
 
     def test_inverse(self, Quat: QuaternionCls) -> None:
         EPSILON = 1e-5
@@ -194,9 +212,9 @@ def test_quat_factory_functions(Quat: QuaternionCls) -> None:
     # implementation works as expected
     theta, epsilon = np.pi / 2.0, 1e-5
     cos_half_t, sin_half_t = np.cos(theta / 2.0), np.sin(theta / 2.0)
-    q_rot_x = Quat.RotationX(theta)
-    q_rot_y = Quat.RotationY(theta)
-    q_rot_z = Quat.RotationZ(theta)
+    q_rot_x = Quat.RotationX(theta)  # type: ignore
+    q_rot_y = Quat.RotationY(theta)  # type: ignore
+    q_rot_z = Quat.RotationZ(theta)  # type: ignore
 
     assert quat_all_close(q_rot_x, [cos_half_t, sin_half_t, 0.0, 0.0], epsilon)
     assert quat_all_close(q_rot_y, [cos_half_t, 0.0, sin_half_t, 0.0], epsilon)
@@ -220,9 +238,9 @@ def test_quat_rotate_vec(
     vec_j = Vec3(np_j.astype(FloatType))
     vec_k = Vec3(np_k.astype(FloatType))
 
-    q_rot_x = Quat.RotationX(np.pi / 2.0)
-    q_rot_y = Quat.RotationY(np.pi / 2.0)
-    q_rot_z = Quat.RotationZ(np.pi / 2.0)
+    q_rot_x = Quat.RotationX(np.pi / 2.0)  # type: ignore
+    q_rot_y = Quat.RotationY(np.pi / 2.0)  # type: ignore
+    q_rot_z = Quat.RotationZ(np.pi / 2.0)  # type: ignore
 
     assert vec_j == q_rot_z.rotate(vec_i)
     assert vec_k == q_rot_x.rotate(vec_j)

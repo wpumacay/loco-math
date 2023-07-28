@@ -1,9 +1,9 @@
-import pytest
+from typing import List, Type, Union
 
 import numpy as np
-import math3d as m3d
+import pytest
 
-from typing import Type, Union, List
+import math3d as m3d
 
 EulerCls = Type[Union[m3d.Euler_f, m3d.Euler_d]]
 Vector3Cls = Type[Union[m3d.Vector3f, m3d.Vector3d]]
@@ -20,8 +20,13 @@ NUM_RANDOM_SAMPLES = 10
 # The delta used for tolerance (due to floating point precision mismatches)
 EPSILON = 1e-5
 
+# NOTE: We're ignoring a lot of typing errors from pyright related to helper
+# function used for creating rotation types. It's just an issue with the typing
 
-def euler_all_close(euler: EulerType, e_list: List[float], tol: float = 1e-5) -> None:
+
+def euler_all_close(
+    euler: EulerType, e_list: List[float], tol: float = 1e-5
+) -> None:
     return (
         np.abs(euler.x - e_list[0]) < tol
         and np.abs(euler.y - e_list[1]) < tol
@@ -59,9 +64,9 @@ def test_angles_constructor(Euler: EulerCls) -> None:
     "Euler, Mat3", [(m3d.Euler_f, m3d.Matrix3f), (m3d.Euler_d, m3d.Matrix3d)]
 )
 def test_from_rotmat_constructor(Euler: EulerCls, Mat3: Matrix3Cls) -> None:
-    rot_x = Mat3.RotationX(np.pi / 3.0)
-    rot_y = Mat3.RotationY(np.pi / 4.0)
-    rot_z = Mat3.RotationZ(np.pi / 5.0)
+    rot_x = Mat3.RotationX(np.pi / 3.0)  # type: ignore
+    rot_y = Mat3.RotationY(np.pi / 4.0)  # type: ignore
+    rot_z = Mat3.RotationZ(np.pi / 5.0)  # type: ignore
 
     euler_x = Euler(rot_x)
     euler_y = Euler(rot_y)
@@ -79,9 +84,9 @@ def test_from_rotmat_constructor(Euler: EulerCls, Mat3: Matrix3Cls) -> None:
     "Euler, Mat4", [(m3d.Euler_f, m3d.Matrix4f), (m3d.Euler_d, m3d.Matrix4d)]
 )
 def test_from_transform_constructor(Euler: EulerCls, Mat4: Matrix4Cls) -> None:
-    tf_rot_x = Mat4.RotationX(np.pi / 3.0)
-    tf_rot_y = Mat4.RotationY(np.pi / 4.0)
-    tf_rot_z = Mat4.RotationZ(np.pi / 5.0)
+    tf_rot_x = Mat4.RotationX(np.pi / 3.0)  # type: ignore
+    tf_rot_y = Mat4.RotationY(np.pi / 4.0)  # type: ignore
+    tf_rot_z = Mat4.RotationZ(np.pi / 5.0)  # type: ignore
 
     euler_x = Euler(tf_rot_x)
     euler_y = Euler(tf_rot_y)
@@ -96,12 +101,15 @@ def test_from_transform_constructor(Euler: EulerCls, Mat4: Matrix4Cls) -> None:
 
 
 @pytest.mark.parametrize(
-    "Euler, Quat", [(m3d.Euler_f, m3d.Quaternionf), (m3d.Euler_d, m3d.Quaterniond)]
+    "Euler, Quat",
+    [(m3d.Euler_f, m3d.Quaternionf), (m3d.Euler_d, m3d.Quaterniond)],
 )
-def test_from_quaternion_constructor(Euler: EulerCls, Quat: QuaternionCls) -> None:
-    quat_x = Quat.RotationX(np.pi / 3.0)
-    quat_y = Quat.RotationY(np.pi / 4.0)
-    quat_z = Quat.RotationZ(np.pi / 5.0)
+def test_from_quaternion_constructor(
+    Euler: EulerCls, Quat: QuaternionCls
+) -> None:
+    quat_x = Quat.RotationX(np.pi / 3.0)  # type: ignore
+    quat_y = Quat.RotationY(np.pi / 4.0)  # type: ignore
+    quat_z = Quat.RotationZ(np.pi / 5.0)  # type: ignore
 
     euler_x = Euler(quat_x)
     euler_y = Euler(quat_y)
@@ -139,9 +147,9 @@ def test_from_axis_angle_constructor(Euler: EulerCls, Vec3: Vector3Cls) -> None:
     "Euler, Mat3", [(m3d.Euler_f, m3d.Matrix3f), (m3d.Euler_d, m3d.Matrix3d)]
 )
 def test_from_rotmat_setter(Euler: EulerCls, Mat3: Matrix3Cls) -> None:
-    rot_x = Mat3.RotationX(np.pi / 3.0)
-    rot_y = Mat3.RotationY(np.pi / 4.0)
-    rot_z = Mat3.RotationZ(np.pi / 5.0)
+    rot_x = Mat3.RotationX(np.pi / 3.0)  # type: ignore
+    rot_y = Mat3.RotationY(np.pi / 4.0)  # type: ignore
+    rot_z = Mat3.RotationZ(np.pi / 5.0)  # type: ignore
 
     euler_x, euler_y, euler_z = Euler(), Euler(), Euler()
     euler_x.setFromRotationMatrix(rot_x)
@@ -157,9 +165,9 @@ def test_from_rotmat_setter(Euler: EulerCls, Mat3: Matrix3Cls) -> None:
     "Euler, Mat4", [(m3d.Euler_f, m3d.Matrix4f), (m3d.Euler_d, m3d.Matrix4d)]
 )
 def test_from_transform_setter(Euler: EulerCls, Mat4: Matrix4Cls) -> None:
-    tf_rot_x = Mat4.RotationX(np.pi / 3.0)
-    tf_rot_y = Mat4.RotationY(np.pi / 4.0)
-    tf_rot_z = Mat4.RotationZ(np.pi / 5.0)
+    tf_rot_x = Mat4.RotationX(np.pi / 3.0)  # type: ignore
+    tf_rot_y = Mat4.RotationY(np.pi / 4.0)  # type: ignore
+    tf_rot_z = Mat4.RotationZ(np.pi / 5.0)  # type: ignore
 
     euler_x, euler_y, euler_z = Euler(), Euler(), Euler()
     euler_x.setFromTransform(tf_rot_x)
@@ -172,12 +180,13 @@ def test_from_transform_setter(Euler: EulerCls, Mat4: Matrix4Cls) -> None:
 
 
 @pytest.mark.parametrize(
-    "Euler, Quat", [(m3d.Euler_f, m3d.Quaternionf), (m3d.Euler_d, m3d.Quaterniond)]
+    "Euler, Quat",
+    [(m3d.Euler_f, m3d.Quaternionf), (m3d.Euler_d, m3d.Quaterniond)],
 )
 def test_from_quaternion_setter(Euler: EulerCls, Quat: QuaternionCls) -> None:
-    quat_x = Quat.RotationX(np.pi / 3.0)
-    quat_y = Quat.RotationY(np.pi / 4.0)
-    quat_z = Quat.RotationZ(np.pi / 5.0)
+    quat_x = Quat.RotationX(np.pi / 3.0)  # type: ignore
+    quat_y = Quat.RotationY(np.pi / 4.0)  # type: ignore
+    quat_z = Quat.RotationZ(np.pi / 5.0)  # type: ignore
 
     euler_x, euler_y, euler_z = Euler(), Euler(), Euler()
     euler_x.setFromQuaternion(quat_x)

@@ -8,6 +8,7 @@
   conversions from this ROS package [here][3] (implements in Python the
   functions described in the previous [book][2])
 * This [video][4] is also a good refresher on Euler angles.
+* This [issue][7] explains how to expose views.
 
 ---
 
@@ -18,3 +19,4 @@
 [4]: <https://youtu.be/3Zjf95Jw2UE> (video-euler-angles-1)
 [5]: <https://github.com/davheld/tf/blob/master/src/tf/transformations.py#L1100> (reference-impl-ros-tf-quat-from-euler)
 [6]: <https://github.com/davheld/tf/blob/master/src/tf/transformations.py#L1031> (reference-impl-ros-tf-euler-from-matrix)
+[7]: <https://github.com/pybind/pybind11/issues/2271> (pybind11-array-view)

@@ -45,14 +45,15 @@ auto bindings_matrix3(py::module& m, const char* class_name) -> void {
         // clang-format on
         .def("numpy",
              [](const Class& self) -> py::array_t<T> {
-                 return ::math::mat3_to_nparray<T>(self);
+                 return py::array_t<T>(
+                     {Class::MATRIX_SIZE, Class::MATRIX_SIZE},
+                     {sizeof(T), sizeof(T) * Class::MATRIX_SIZE}, self.data(),
+                     py::cast(self));
              })
         .def("flatten",
              [](const Class& self) -> py::array_t<T> {
-                 auto array_np = py::array_t<T>(Class::BUFFER_SIZE);
-                 memcpy(array_np.request().ptr, self.data(),
-                        Class::BUFFER_SIZE * sizeof(T));
-                 return array_np;
+                 return py::array_t<T>(Class::BUFFER_SIZE, self.data(),
+                                       py::cast(self));
              })
         .def_property_readonly(
             "T",

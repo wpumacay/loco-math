@@ -17,6 +17,7 @@
 #elif defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 4305)
+#pragma warning(disable : 4244)
 #endif
 
 // NOLINTNEXTLINE

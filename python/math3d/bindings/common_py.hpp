@@ -7,6 +7,7 @@
 #include <math/common.hpp>
 
 // clang-format off
+// NOLINTNEXTLINE
 #define VECTOR_BUFFER_PROTOCOL(T)                                           \
     .def(py::init([](const py::buffer& buff) -> Class {                     \
         py::buffer_info info = buff.request();                              \
@@ -44,6 +45,7 @@
                                {Class::VECTOR_SIZE}, {sizeof(T)});          \
     })
 
+// NOLINTNEXTLINE
 #define MATRIX_BUFFER_PROTOCOL(Size, T)                                     \
     .def(py::init([](const py::buffer& buff) -> Class {                     \
         py::buffer_info info = buff.request();                              \
@@ -86,7 +88,7 @@
                                {sizeof(T), sizeof(T) * Class::MATRIX_SIZE});\
     })
 
-
+// NOLINTNEXTLINE
 #define VECTOR_PROPERTY(var) .def_property(#var,    \
     [](const Class& self) -> T                      \
         {                                           \
@@ -97,6 +99,7 @@
             self.var() = value;                     \
         })
 
+// NOLINTNEXTLINE
 #define VECTOR_GETSET_ITEM(Size, Type)                      \
     .def("__getitem__",                                     \
     [](const Class& self, int32_t index) -> Type            \
@@ -115,6 +118,7 @@
             self[static_cast<uint32_t>(index)] = value;     \
         })
 
+// NOLINTNEXTLINE
 #define MATRIX_GETSET_ITEM(Size, Type)                                      \
     .def("__getitem__",                                                     \
     [](const Class& self, int32_t index) -> Column                          \
@@ -156,6 +160,7 @@
             self(row_index, col_index) = value;                             \
         })
 
+// NOLINTNEXTLINE
 #define VECTOR_OPERATORS(Type)                                          \
     .def(py::self + py::self)                                           \
     .def(py::self - py::self)                                           \
@@ -176,6 +181,7 @@
         return -self;                                                   \
     })
 
+// NOLINTNEXTLINE
 #define MATRIX_OPERATORS(Type)                                              \
     .def(py::self + py::self)                                               \
     .def(py::self - py::self)                                               \
@@ -196,7 +202,7 @@
         return lhs != rhs;                                                  \
     })
 
-
+// NOLINTNEXTLINE
 #define VECTOR_METHODS(Type)                                            \
     .def("dot", [](const Class& self, const Class& other) -> Type {     \
         return ::math::dot<Type>(self, other);                          \
@@ -214,6 +220,7 @@
         ::math::normalize_in_place<Type>(self);                         \
     })
 
+// NOLINTNEXTLINE
 #define MATRIX_METHODS(Type)                                            \
     .def("transpose", [](const Class& self) -> Class {                  \
         return ::math::transpose<Type>(self);                           \

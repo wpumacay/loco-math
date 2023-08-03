@@ -27,6 +27,8 @@ auto ToString(const Order& p_order) -> std::string {
             return "YXZ";
         case Order::ZYX:
             return "ZYX";
+        default:
+            return "Undefined";
     }
 }
 
@@ -36,6 +38,8 @@ auto ToString(const Convention& p_convention) -> std::string {
             return "Intrinsic";
         case Convention::EXTRINSIC:
             return "Extrinsic";
+        default:
+            return "Undefined";
     }
 }
 

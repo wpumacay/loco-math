@@ -82,10 +82,10 @@ auto bindings_matrix4(py::module& m, const char* class_name) -> void {
         .def_static("Zeros", &Class::Zeros)
         .def("__repr__", [](const Class& self) -> py::str {
             // clang-format off
-            return py::str("Matrix4{}([[{},{},{},{}],\n"
-                           "           [{},{},{},{}],\n"
-                           "           [{},{},{},{}],\n"
-                           "           [{},{},{},{}]])")
+            return py::str("Matrix4{}([[{:.8f},{:.8f},{:.8f},{:.8f}],\n"
+                           "          [{:.8f},{:.8f},{:.8f},{:.8f}],\n"
+                           "          [{:.8f},{:.8f},{:.8f},{:.8f}],\n"
+                           "          [{:.8f},{:.8f},{:.8f},{:.8f}]])")
                     .format((IsFloat32<T>::value ? "f" : "d"),
                             self(0, 0), self(0, 1), self(0, 2), self(0, 3),
                             self(1, 0), self(1, 1), self(1, 2), self(1, 3),

@@ -68,7 +68,14 @@ auto bindings_euler(py::module& m, const char* class_name) -> void {
              })
         .def("__repr__", [](const Class& self) -> py::str {
             return py::str(
-                       "Euler({}, {}, {}, dtype={}, order={}, convention={})")
+                       "<Euler\n"
+                       "  x: {:.8f}\n"
+                       "  y: {:.8f}\n"
+                       "  z: {:.8f}\n"
+                       "  dtype: {}\n"
+                       "  order: {}\n"
+                       "  convention: {}\n"
+                       ">")
                 .format(self.x, self.y, self.z,
                         (IsFloat32<T>::value ? "float32" : "float64"),
                         ::math::euler::ToString(self.order),

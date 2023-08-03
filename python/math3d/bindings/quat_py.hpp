@@ -150,7 +150,8 @@ auto bindings_quaternion(py::module& m, const char* class_name) -> void {
                 return math::rotate<T>(self, nparray_to_vec3<T>(arr_vec));
             })
         .def("__repr__", [](const Class& self) -> py::str {
-            return py::str("Quaternion{}({}, {}, {}, {})")
+            return py::str(
+                       "Quaternion{}(w={:.8f}, x={:.8f}, y={:.8f}, z={:.8f})")
                 .format((IsFloat32<T>::value ? "f" : "d"), self[0], self[1],
                         self[2], self[3]);
         });

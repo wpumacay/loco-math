@@ -68,7 +68,12 @@ auto bindings_pose3d(py::module& m, const char* class_name) -> void {
                  return self * rhs;
              })
         .def("__repr__", [](const Class& self) -> py::str {
-            return py::str("Pose3d(pos={}, quat={}, dtype={})")
+            return py::str(
+                       "<Pose3d\n"
+                       "  pos: {}\n"
+                       "  quat: {}\n"
+                       "  dtype: {}\n"
+                       ">")
                 .format(self.position.toString(), self.orientation.toString(),
                         (IsFloat32<T>::value ? "float32" : "float64"));
         });

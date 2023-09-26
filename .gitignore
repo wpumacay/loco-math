@@ -11,6 +11,7 @@
 
 # Folder-exclusions
 build/
+build-*/
 dist/
 temp/
 Testing/
@@ -22,6 +23,7 @@ Testing/
 *.sublime-project
 *.sublime-workspace
 pyrightconfig.json
+.idea
 
 # Exclude temporary folders
 *.egg-info/

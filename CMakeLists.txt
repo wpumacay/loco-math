@@ -84,6 +84,8 @@ loco_create_target(MathCpp INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include/math/impl/mat4_t_scalar_impl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/math/impl/mat4_t_sse_impl.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/math/impl/mat4_t_avx_impl.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/math/utils/spherical_coordinates.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/math/utils/geometry_helpers.hpp
   INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
   WARNINGS_AS_ERRORS

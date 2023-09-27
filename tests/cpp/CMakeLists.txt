@@ -38,7 +38,8 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat2_functions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat3_functions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_functions.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/test_utils_spherical_coordinates.cpp)
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_utils_spherical_coordinates.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_geometry_helpers.cpp)
 target_link_libraries(MathCppTests PRIVATE math::math Catch2::Catch2)
 target_include_directories(MathCppTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 # Discover tets and pick an integer as the random seed

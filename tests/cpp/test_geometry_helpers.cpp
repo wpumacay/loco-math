@@ -20,8 +20,14 @@ TEMPLATE_TEST_CASE("Utilities [Geometric-Helpers]", "[geometric][funcs]",
     using T = TestType;
     using Vec3 = ::math::Vector3<T>;
     using Line = ::math::Line<T>;
+    using Plane = ::math::Plane<T>;
 
     const Vec3 ZERO = {0.0, 0.0, 0.0};
+    const Vec3 DIR_X = {1.0, 0.0, 0.0};
+    const Vec3 DIR_Y = {0.0, 1.0, 0.0};
+    const Vec3 DIR_Z = {0.0, 0.0, 1.0};
+
+    // Line related tests ------------------------------------------------------
 
     SECTION("Line default constructor") {
         Line line;
@@ -55,6 +61,96 @@ TEMPLATE_TEST_CASE("Utilities [Geometric-Helpers]", "[geometric][funcs]",
             REQUIRE(std::abs(line.distanceTo(p_a) - 0.0) < 1e-5);
             REQUIRE(std::abs(line.distanceTo(p_b) - 1.0) < 1e-5);
             REQUIRE(std::abs(line.distanceTo(p_c) - 1.0) < 1e-5);
+        }
+    }
+
+    // Plane related tests -----------------------------------------------------
+
+    SECTION("Plane default constructor") {
+        Plane plane;
+
+        REQUIRE(plane.point == ZERO);
+        REQUIRE(plane.normal == Vec3(0.0, 0.0, 1.0));
+    }
+
+    SECTION("Plane constructor from point and normal") {
+        Plane plane({1.0, 1.0, 1.0}, {1.0, 2.0, 3.0});
+
+        REQUIRE(plane.point == Vec3(1.0, 1.0, 1.0));
+        REQUIRE(plane.normal == Vec3(1.0, 2.0, 3.0));
+    }
+
+    SECTION("Plane distance methods") {
+        // Plane XY, point (0, 0, 1), distance=+1
+        {
+            Plane plane(ZERO, DIR_Z);
+            Vec3 point(0.0, 0.0, 1.0);
+            constexpr T EXPECTED_DISTANCE = static_cast<T>(1.0);
+            constexpr T EXPECTED_SIGNED_DISTANCE = EXPECTED_DISTANCE;
+            REQUIRE(std::abs(plane.signedDistanceTo(point) -
+                             EXPECTED_SIGNED_DISTANCE) < 1e-5);
+            REQUIRE(std::abs(plane.distanceTo(point) - EXPECTED_DISTANCE) <
+                    1e-5);
+        }
+
+        // Plane XY, point (0, 0, -1), distance=-1
+        {
+            Plane plane(ZERO, DIR_Z);
+            Vec3 point(0.0, 0.0, -1.0);
+            constexpr T EXPECTED_DISTANCE = static_cast<T>(1.0);
+            constexpr T EXPECTED_SIGNED_DISTANCE = -EXPECTED_DISTANCE;
+            REQUIRE(std::abs(plane.signedDistanceTo(point) -
+                             EXPECTED_SIGNED_DISTANCE) < 1e-5);
+            REQUIRE(std::abs(plane.distanceTo(point) - EXPECTED_DISTANCE) <
+                    1e-5);
+        }
+
+        // Plane YZ, point (1, 0, 0), distance=+1
+        {
+            Plane plane(ZERO, DIR_X);
+            Vec3 point(1.0, 0.0, 0.0);
+            constexpr T EXPECTED_DISTANCE = static_cast<T>(1.0);
+            constexpr T EXPECTED_SIGNED_DISTANCE = EXPECTED_DISTANCE;
+            REQUIRE(std::abs(plane.signedDistanceTo(point) -
+                             EXPECTED_SIGNED_DISTANCE) < 1e-5);
+            REQUIRE(std::abs(plane.distanceTo(point) - EXPECTED_DISTANCE) <
+                    1e-5);
+        }
+
+        // Plane YZ, point (-1, 0, 0), distance=-1
+        {
+            Plane plane(ZERO, DIR_X);
+            Vec3 point(-1.0, 0.0, 0.0);
+            constexpr T EXPECTED_DISTANCE = static_cast<T>(1.0);
+            constexpr T EXPECTED_SIGNED_DISTANCE = -EXPECTED_DISTANCE;
+            REQUIRE(std::abs(plane.signedDistanceTo(point) -
+                             EXPECTED_SIGNED_DISTANCE) < 1e-5);
+            REQUIRE(std::abs(plane.distanceTo(point) - EXPECTED_DISTANCE) <
+                    1e-5);
+        }
+
+        // Plane ZX, point (0, 1, 0), distance=+1
+        {
+            Plane plane(ZERO, DIR_Y);
+            Vec3 point(0.0, 1.0, 0.0);
+            constexpr T EXPECTED_DISTANCE = static_cast<T>(1.0);
+            constexpr T EXPECTED_SIGNED_DISTANCE = EXPECTED_DISTANCE;
+            REQUIRE(std::abs(plane.signedDistanceTo(point) -
+                             EXPECTED_SIGNED_DISTANCE) < 1e-5);
+            REQUIRE(std::abs(plane.distanceTo(point) - EXPECTED_DISTANCE) <
+                    1e-5);
+        }
+
+        // Plane ZX, point (0, -1, 0), distance=-1
+        {
+            Plane plane(ZERO, DIR_Y);
+            Vec3 point(0.0, -1.0, 0.0);
+            constexpr T EXPECTED_DISTANCE = static_cast<T>(1.0);
+            constexpr T EXPECTED_SIGNED_DISTANCE = -EXPECTED_DISTANCE;
+            REQUIRE(std::abs(plane.signedDistanceTo(point) -
+                             EXPECTED_SIGNED_DISTANCE) < 1e-5);
+            REQUIRE(std::abs(plane.distanceTo(point) - EXPECTED_DISTANCE) <
+                    1e-5);
         }
     }
 }

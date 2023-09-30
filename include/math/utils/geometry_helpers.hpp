@@ -9,13 +9,14 @@
 
 namespace math {
 
+/// \brief Line segment class represented by both start and end points
 template <typename T>
 struct Line {
     using Vec3 = ::math::Vector3<T>;
 
-    /// Represents the start point of this line
+    /// \brief Represents the start point of this line
     Vec3 start;
-    /// Represents the end point of this line
+    /// \brief Represents the end point of this line
     Vec3 end;
 
     /// \brief Creates a default line with both start and end set to the origin
@@ -63,6 +64,59 @@ struct Line {
         auto len_ab = cross_ab.length();
         auto len_c = SIDE_C.length();
         return len_ab / len_c;
+    }
+};
+
+/// \brief Plane class, represented by both normal and point vectors
+template <typename T>
+struct Plane {
+    using Vec3 = ::math::Vector3<T>;
+
+    /// \brief Represents a point on the plane
+    Vec3 point;
+    /// \brief Represents the normal vector to the plane
+    Vec3 normal;
+
+    /// \brief Creates a default plane representing the XY plane
+    Plane() : point({0.0, 0.0, 0.0}), normal({0.0, 0.0, 1.0}) {}
+
+    /// \brief Creates a plane with given normal and point vectors
+    ///
+    /// \param p_point A point on the plane
+    /// \param p_normal The normal to the plane
+    Plane(Vec3 p_point, Vec3 p_normal)
+        : point(std::move(p_point)), normal(std::move(p_normal)) {}
+
+    /// \brief Returns a string representation of this plane
+    auto toString() const -> std::string {
+        std::stringstream sstr_result;
+        sstr_result << "<Plane\n";
+        sstr_result << "  point: " << point.toString() << "n";
+        sstr_result << "  normal: " << normal.toString() << "n";
+        sstr_result << ">\n";
+        return sstr_result.str();
+    }
+
+    /// \brief Returns the signed distance from a point to this plane
+    ///
+    /// \details Unlike the distanceTo method, this includes the effect that
+    /// the point can have in the result of the required dot-products. This
+    /// takes into account where with respect to the normal direction is located
+    /// the given point, either the side which the normal is aligned to (result
+    /// is positive, or the other side (result is negative)
+    ///
+    /// \param p_point The point from which to compute the signed distance to
+    /// \return The signed distance to this plane (whether aligned to normal)
+    auto signedDistanceTo(const Vec3& p_point) const -> T {
+        return (p_point - point).dot(normal);
+    }
+
+    /// \brief Returns the distance from a point to this plane
+    ///
+    /// \param point The point from which to compute the distance to
+    /// \return The distance from the given point to the plane
+    auto distanceTo(const Vec3& p_point) const -> T {
+        return std::abs(signedDistanceTo(p_point));
     }
 };
 

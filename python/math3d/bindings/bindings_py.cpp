@@ -9,6 +9,7 @@
 #include <quat_py.hpp>
 #include <euler_py.hpp>
 #include <pose3d_py.hpp>
+#include <utils/geometry_helpers_py.hpp>
 
 namespace py = pybind11;
 
@@ -39,6 +40,9 @@ PYBIND11_MODULE(math3d_bindings, m) {
     ::math::bindings_euler<::math::float64_t>(m, "Euler_d");
     ::math::bindings_pose3d<::math::float32_t>(m, "Pose3d_f");
     ::math::bindings_pose3d<::math::float64_t>(m, "Pose3d_d");
+
+    ::math::bindings_utils_line<::math::float32_t>(m, "Line_f");
+    ::math::bindings_utils_line<::math::float64_t>(m, "Line_d");
 
     ::math::bindings_conversions_functions(m);
 }

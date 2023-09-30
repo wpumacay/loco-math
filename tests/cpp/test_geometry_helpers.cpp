@@ -153,4 +153,21 @@ TEMPLATE_TEST_CASE("Utilities [Geometric-Helpers]", "[geometric][funcs]",
                     1e-5);
         }
     }
+
+    SECTION("Plane projection method") {
+        // Plane through points (1,0,0), (0,1,0), (0,0,1), Point (0, 0, 0)
+        {
+            Vec3 p_a(1.0, 0.0, 0.0);
+            Vec3 p_b(0.0, 1.0, 0.0);
+            Vec3 p_c(0.0, 0.0, 1.0);
+
+            Vec3 p_ab = p_b - p_a;
+            Vec3 p_ac = p_c - p_a;
+            Vec3 normal = p_ab.cross(p_ac).normalized();
+
+            Plane plane(p_a, normal);
+            const Vec3 EXPECTED_PROJECTION(1. / 3., 1. / 3., 1. / 3.);
+            REQUIRE(plane.project(ZERO) == EXPECTED_PROJECTION);
+        }
+    }
 }

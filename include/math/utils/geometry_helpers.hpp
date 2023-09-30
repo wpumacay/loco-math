@@ -118,6 +118,13 @@ struct Plane {
     auto distanceTo(const Vec3& p_point) const -> T {
         return std::abs(signedDistanceTo(p_point));
     }
+
+    /// \brief Returns the projection of the given point into the plane
+    auto project(const Vec3& p_point) const -> Vec3 {
+        // TODO(wilbert): avoid using static_cast for operator*(double, Vec3)
+        return p_point -
+               static_cast<double>(signedDistanceTo(p_point)) * normal;
+    }
 };
 
 }  // namespace math

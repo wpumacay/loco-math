@@ -10,6 +10,8 @@ from math3d_bindings import (  # type: ignore; math3d -> numpy; numpy -> math3d
     Matrix3f,
     Matrix4d,
     Matrix4f,
+    Plane_d,
+    Plane_f,
     Pose3d_d,
     Pose3d_f,
     Quaterniond,
@@ -99,4 +101,6 @@ __all__ = [
     # utilities
     "Line_f",
     "Line_d",
+    "Plane_f",
+    "Plane_d",
 ]

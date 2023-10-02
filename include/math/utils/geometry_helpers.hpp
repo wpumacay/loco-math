@@ -91,8 +91,8 @@ struct Plane {
     auto toString() const -> std::string {
         std::stringstream sstr_result;
         sstr_result << "<Plane\n";
-        sstr_result << "  point: " << point.toString() << "n";
-        sstr_result << "  normal: " << normal.toString() << "n";
+        sstr_result << "  point: " << point.toString() << "\n";
+        sstr_result << "  normal: " << normal.toString() << "\n";
         sstr_result << ">\n";
         return sstr_result.str();
     }

@@ -21,6 +21,7 @@ TEMPLATE_TEST_CASE("Utilities [Geometric-Helpers]", "[geometric][funcs]",
     using Vec3 = ::math::Vector3<T>;
     using Line = ::math::Line<T>;
     using Plane = ::math::Plane<T>;
+    using AABB = ::math::AABB<T>;
 
     const Vec3 ZERO = {0.0, 0.0, 0.0};
     const Vec3 DIR_X = {1.0, 0.0, 0.0};
@@ -169,5 +170,26 @@ TEMPLATE_TEST_CASE("Utilities [Geometric-Helpers]", "[geometric][funcs]",
             const Vec3 EXPECTED_PROJECTION(1. / 3., 1. / 3., 1. / 3.);
             REQUIRE(plane.project(ZERO) == EXPECTED_PROJECTION);
         }
+    }
+
+    // AABB related tests ------------------------------------------------------
+
+    SECTION("AABB default ctor") {
+        AABB bbox;
+
+        REQUIRE(bbox.p_min.x() == -std::numeric_limits<T>::infinity());
+        REQUIRE(bbox.p_min.y() == -std::numeric_limits<T>::infinity());
+        REQUIRE(bbox.p_min.z() == -std::numeric_limits<T>::infinity());
+
+        REQUIRE(bbox.p_max.x() == std::numeric_limits<T>::infinity());
+        REQUIRE(bbox.p_max.y() == std::numeric_limits<T>::infinity());
+        REQUIRE(bbox.p_max.z() == std::numeric_limits<T>::infinity());
+    }
+
+    SECTION("AABB from args ctor (min,max)") {
+        AABB bbox({0.0, 0.0, 0.0}, {1.0, 1.0, 1.0});
+
+        REQUIRE(bbox.p_min == Vec3(0.0, 0.0, 0.0));
+        REQUIRE(bbox.p_max == Vec3(1.0, 1.0, 1.0));
     }
 }

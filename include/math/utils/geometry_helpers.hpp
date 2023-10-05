@@ -1,11 +1,14 @@
 #pragma once
 
+#include <array>
 #include <initializer_list>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <utility>
 
 #include <math/vec3_t.hpp>
+#include <math/pose3d_t.hpp>
 
 namespace math {
 
@@ -125,6 +128,44 @@ struct Plane {
         return p_point -
                static_cast<double>(signedDistanceTo(p_point)) * normal;
     }
+};
+
+/// \brief Class representtation of an AABB
+template <typename T>
+struct AABB {
+    using Vec3 = Vector3<T>;
+
+    /// \brief The lower (x, y, z) boundary of this box
+    Vec3 p_min = {-std::numeric_limits<T>::infinity(),
+                  -std::numeric_limits<T>::infinity(),
+                  -std::numeric_limits<T>::infinity()};
+    /// \brief The upper (x, y, z) boundary of this box
+    Vec3 p_max = {std::numeric_limits<T>::infinity(),
+                  std::numeric_limits<T>::infinity(),
+                  std::numeric_limits<T>::infinity()};
+
+    /// \brief Creates a default AABB, representing the max possible box
+    AABB() = default;
+
+    /// \brief Creates an AABB with given min-max boundary
+    AABB(const Vec3& min, const Vec3& max) : p_min(min), p_max(max) {}
+
+    /// \brief Returns the points on the boundary of thix box (corners)
+    auto computeCorners() const -> std::array<Vec3, 8> {
+        std::array<Vec3, 8> corners;
+        corners[0] = {p_min.x(), p_min.y(), p_min.z()};
+        corners[1] = {p_min.x(), p_min.y(), p_max.z()};
+        corners[2] = {p_min.x(), p_max.y(), p_min.z()};
+        corners[3] = {p_min.x(), p_max.y(), p_max.z()};
+        corners[4] = {p_max.x(), p_min.y(), p_min.z()};
+        corners[5] = {p_max.x(), p_min.y(), p_max.z()};
+        corners[6] = {p_max.x(), p_max.y(), p_min.z()};
+        corners[7] = {p_max.x(), p_max.y(), p_max.z()};
+        return corners;
+    }
+
+    /// \brief Returns the center of this box
+    auto computeCenter() const -> Vec3 { return 0.5 * (p_min + p_max); }
 };
 
 }  // namespace math

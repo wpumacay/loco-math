@@ -192,4 +192,32 @@ TEMPLATE_TEST_CASE("Utilities [Geometric-Helpers]", "[geometric][funcs]",
         REQUIRE(bbox.p_min == Vec3(0.0, 0.0, 0.0));
         REQUIRE(bbox.p_max == Vec3(1.0, 1.0, 1.0));
     }
+
+    SECTION("AABB method computeCenter") {
+        {
+            AABB bbox({0.0, 0.0, 0.0}, {1.0, 1.0, 1.0});
+            auto center = bbox.computeCenter();
+            REQUIRE(center == Vec3(0.5, 0.5, 0.5));
+        }
+
+        {
+            AABB bbox({-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0});
+            auto center = bbox.computeCenter();
+            REQUIRE(center == Vec3(0.0, 0.0, 0.0));
+        }
+    }
+
+    SECTION("AABB method computeCorners") {
+        AABB bbox({-1.0, -1.0, -1.0}, {1.0, 1.0, 1.0});
+        auto corners = bbox.computeCorners();
+
+        REQUIRE(corners.at(0) == Vec3(-1.0, -1.0, -1.0));
+        REQUIRE(corners.at(1) == Vec3(-1.0, -1.0, 1.0));
+        REQUIRE(corners.at(2) == Vec3(-1.0, 1.0, -1.0));
+        REQUIRE(corners.at(3) == Vec3(-1.0, 1.0, 1.0));
+        REQUIRE(corners.at(4) == Vec3(1.0, -1.0, -1.0));
+        REQUIRE(corners.at(5) == Vec3(1.0, -1.0, 1.0));
+        REQUIRE(corners.at(6) == Vec3(1.0, 1.0, -1.0));
+        REQUIRE(corners.at(7) == Vec3(1.0, 1.0, 1.0));
+    }
 }

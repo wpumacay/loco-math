@@ -150,6 +150,9 @@ struct AABB {
     /// \brief Creates an AABB with given min-max boundary
     AABB(const Vec3& min, const Vec3& max) : p_min(min), p_max(max) {}
 
+    /// \brief Returns the center of this box
+    auto computeCenter() const -> Vec3 { return 0.5 * (p_min + p_max); }
+
     /// \brief Returns the points on the boundary of thix box (corners)
     auto computeCorners() const -> std::array<Vec3, 8> {
         std::array<Vec3, 8> corners;
@@ -163,9 +166,6 @@ struct AABB {
         corners[7] = {p_max.x(), p_max.y(), p_max.z()};
         return corners;
     }
-
-    /// \brief Returns the center of this box
-    auto computeCenter() const -> Vec3 { return 0.5 * (p_min + p_max); }
 };
 
 }  // namespace math

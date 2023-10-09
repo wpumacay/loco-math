@@ -148,6 +148,9 @@ struct AABB {
     AABB() = default;
 
     /// \brief Creates an AABB with given min-max boundary
+    ///
+    /// \param min The lower boundary point of this box
+    /// \param max The upper boundary point of this box
     AABB(const Vec3& min, const Vec3& max) : p_min(min), p_max(max) {}
 
     /// \brief Returns the center of this box
@@ -165,6 +168,41 @@ struct AABB {
         corners[6] = {p_max.x(), p_max.y(), p_min.z()};
         corners[7] = {p_max.x(), p_max.y(), p_max.z()};
         return corners;
+    }
+};
+
+/// \brief Class representing a simple sphere
+template <typename T>
+struct Sphere {
+    using Vec3 = Vector3<T>;
+
+    /// \brief The center of the sphere
+    Vec3 center;
+    /// \brief The radius of the sphere
+    T radius = static_cast<T>(1.0);
+
+    /// \brief Creates a default sphere of radius 1 centered at the origin
+    Sphere() = default;
+
+    /// \brief Creates a sphere with the given center and radius
+    Sphere(const Vec3& p_center, T p_radius)
+        : center(p_center), radius(p_radius) {}
+
+    /// \brief Returns the distance from the given point to the sphere
+    auto distanceTo(const Vec3& point) -> T {
+        return (point - center).length() - radius;
+    }
+
+    /// \brief Returns whether or not the given point is inside the sphere
+    auto contains(const Vec3& point) -> bool {
+        return (point - center).lengthSquare() <= radius * radius;
+    }
+
+    /// |brief Returns whether it intersects with a given sphere
+    auto intersects(const Sphere& other) -> bool {
+        auto radius_sum = radius + other.radius;
+        return (other.center - center).lengthSquare() <=
+               radius_sum * radius_sum;
     }
 };
 

@@ -22,6 +22,7 @@ TEMPLATE_TEST_CASE("Utilities [Geometric-Helpers]", "[geometric][funcs]",
     using Line = ::math::Line<T>;
     using Plane = ::math::Plane<T>;
     using AABB = ::math::AABB<T>;
+    using Sphere = ::math::Sphere<T>;
 
     const Vec3 ZERO = {0.0, 0.0, 0.0};
     const Vec3 DIR_X = {1.0, 0.0, 0.0};
@@ -219,5 +220,51 @@ TEMPLATE_TEST_CASE("Utilities [Geometric-Helpers]", "[geometric][funcs]",
         REQUIRE(corners.at(5) == Vec3(1.0, -1.0, 1.0));
         REQUIRE(corners.at(6) == Vec3(1.0, 1.0, -1.0));
         REQUIRE(corners.at(7) == Vec3(1.0, 1.0, 1.0));
+    }
+
+    SECTION("Sphere default ctor") {
+        Sphere s;
+
+        REQUIRE(s.center == ZERO);
+        constexpr auto EXPECTED_RADIUS = static_cast<T>(1.0);
+        REQUIRE(std::abs(s.radius - EXPECTED_RADIUS) < 1e-5);
+    }
+
+    SECTION("Sphere from args ctor (center, radius)") {
+        Sphere s({1.0, 2.0, 3.0}, 2.0);
+
+        REQUIRE(s.center == Vec3(1.0, 2.0, 3.0));
+        constexpr auto EXPECTED_RADIUS = static_cast<T>(2.0);
+        REQUIRE(std::abs(s.radius - EXPECTED_RADIUS) < 1e-5);
+    }
+
+    SECTION("Sphere distanceTo method") {
+        /// sphere={(1.0, 1.0, 1.0), 2.0}, point=(2.0, 3.0, 4.0)
+        {
+            Sphere sph({1.0, 1.0, 1.0}, 2.0);
+            Vec3 pt(2.0, 3.0, 4.0);
+
+            constexpr auto EXPECTED_DISTANCE = static_cast<T>(1.7416573867);
+            const auto CALCULATED_DISTANCE = sph.distanceTo(pt);
+            REQUIRE(std::abs(EXPECTED_DISTANCE - CALCULATED_DISTANCE) < 1e-5);
+        }
+    }
+
+    SECTION("Sphere contains method") {
+        /// sphere={(0.0, 0.0, 0.0), 1.0}, point=ZERO
+        {
+            Sphere sph(ZERO, 1.0);
+            REQUIRE(sph.contains(ZERO));
+        }
+    }
+
+    SECTION("Sphere intersects method") {
+        /// sphere1={ZERO, 1.0}, sphere2={(0.0, 0.0, 1.0), 1.0}
+        {
+            Sphere sph1(ZERO, 1.0);
+            Sphere sph2({0.0, 0.0, 1.0}, 1.0);
+
+            REQUIRE(sph1.intersects(sph2));
+        }
     }
 }

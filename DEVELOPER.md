@@ -27,7 +27,7 @@ has been uploaded for the desired version. The script will use this as base
 for building the wheels.
 
 ```shell
-python bin/build_manylinux_wheels.py
+python bin/build_manylinux_wheels.py --version 0.6.0
 ```
 
 The generated wheels will be located at the `dist` directory. Just use twine

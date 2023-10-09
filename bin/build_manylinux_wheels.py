@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# Script adapted from Anthony Sottile's onigurumacffi repo:
+# https://github.com/asottile/onigurumacffi/blob/main/bin/build-manylinux-wheels
+
 import argparse
 import os
 import shutil

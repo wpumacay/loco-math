@@ -19,4 +19,18 @@ option instead:
 pip install --no-build-isolation -i https://test.pypi.org/simple/ math3d
 ```
 
+## Building manylinux wheels using docker
+
+There's a helper script at `bin/build_manylinux_wheels`, which we can use to
+build manylinux wheels for our library. Just make sure that a source `tar.gz`
+has been uploaded for the desired version. The script will use this as base
+for building the wheels.
+
+```shell
+python bin/build_manylinux_wheels.py
+```
+
+The generated wheels will be located at the `dist` directory. Just use twine
+to upload them to the registry (for now, TestPyPI).
+
 [0]: <https://test.pypi.org/project/math3d/>

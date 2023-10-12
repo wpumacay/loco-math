@@ -153,6 +153,16 @@ struct AABB {
     /// \param max The upper boundary point of this box
     AABB(const Vec3& min, const Vec3& max) : p_min(min), p_max(max) {}
 
+    /// \brief Returns a string representation of this bounding box
+    auto toString() const -> std::string {
+        std::stringstream sstr_result;
+        sstr_result << "<AABB\n";
+        sstr_result << "  min: " << p_min.toString() << "\n";
+        sstr_result << "  max: " << p_max.toString() << "\n";
+        sstr_result << ">\n";
+        return sstr_result.str();
+    }
+
     /// \brief Returns the center of this box
     auto computeCenter() const -> Vec3 { return 0.5 * (p_min + p_max); }
 

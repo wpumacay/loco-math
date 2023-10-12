@@ -45,6 +45,8 @@ PYBIND11_MODULE(math3d_bindings, m) {
     ::math::bindings_utils_line<::math::float64_t>(m, "Line_d");
     ::math::bindings_utils_plane<::math::float32_t>(m, "Plane_f");
     ::math::bindings_utils_plane<::math::float64_t>(m, "Plane_d");
+    ::math::bindings_utils_aabb<::math::float32_t>(m, "AABB_f");
+    ::math::bindings_utils_aabb<::math::float64_t>(m, "AABB_d");
 
     ::math::bindings_conversions_functions(m);
 }

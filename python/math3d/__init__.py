@@ -1,5 +1,8 @@
 # Helper functions used for numpy convertions
-from math3d_bindings import (  # type: ignore; math3d -> numpy; numpy -> math3d
+# fmt: off
+from math3d_bindings import (
+    AABB_d,
+    AABB_f,
     Euler_d,
     Euler_f,
     Line_d,
@@ -50,6 +53,8 @@ from math3d_bindings import (  # type: ignore; math3d -> numpy; numpy -> math3d
     vec4_to_nparray_f64,
 )
 
+# fmt: on
+
 __all__ = [
     # math3d types
     "Vector2f",
@@ -72,6 +77,13 @@ __all__ = [
     "eConvention",
     "Pose3d_f",
     "Pose3d_d",
+    # utilities
+    "Line_f",
+    "Line_d",
+    "Plane_f",
+    "Plane_d",
+    "AABB_f",
+    "AABB_d",
     # math3d -> numpy conversions
     "vec2_to_nparray_f32",
     "vec2_to_nparray_f64",
@@ -98,9 +110,4 @@ __all__ = [
     "nparray_to_mat3_f64",
     "nparray_to_mat4_f32",
     "nparray_to_mat4_f64",
-    # utilities
-    "Line_f",
-    "Line_d",
-    "Plane_f",
-    "Plane_d",
 ]

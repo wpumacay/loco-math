@@ -5,6 +5,7 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
 
 #include <math/utils/geometry_helpers.hpp>
 
@@ -92,6 +93,32 @@ auto bindings_utils_plane(py::module& m, const char* class_name) -> void {
                      self.project(::math::nparray_to_vec3<T>(np_point)));
              })
         .def("__repr__", [](const Plane& self) -> py::str {
+            return py::str(self.toString());
+        });
+}
+
+template <typename T>
+using SFINAE_AABB_BINDINGS = typename std::enable_if<IsScalar<T>::value>::type*;
+
+template <typename T>
+// NOLINTNEXTLINE
+auto bindings_utils_aabb(py::module& m, const char* class_name) -> void {
+    using AABB = ::math::AABB<T>;
+    using Vec3 = ::math::Vector3<T>;
+    py::class_<AABB>(m, class_name)
+        .def(py::init<>())
+        .def(py::init<Vec3, Vec3>())
+        .def(py::init([](const py::array_t<T>& np_min,
+                         const py::array_t<T>& np_max) -> AABB {
+            return AABB(::math::nparray_to_vec3<T>(np_min),
+                        ::math::nparray_to_vec3<T>(np_max));
+        }))
+        .def_readwrite("min", &AABB::p_min)
+        .def_readwrite("max", &AABB::p_max)
+        .def("computeCenter", &AABB::computeCenter)
+        .def("computeCorners", &AABB::computeCorners)
+        .def("intersects", &AABB::intersects)
+        .def("__repr__", [](const AABB& self) -> py::str {
             return py::str(self.toString());
         });
 }

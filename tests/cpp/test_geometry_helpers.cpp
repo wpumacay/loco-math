@@ -231,6 +231,8 @@ TEMPLATE_TEST_CASE("Utilities [Geometric-Helpers]", "[geometric][funcs]",
         REQUIRE(!bbox_a.intersects(bbox_c));
     }
 
+    // Sphere related tests ----------------------------------------------------
+
     SECTION("Sphere default ctor") {
         Sphere s;
 

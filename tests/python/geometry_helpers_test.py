@@ -8,6 +8,7 @@ import math3d as m3d
 
 LineCls = Type[Union[m3d.Line_f, m3d.Line_d]]
 PlaneCls = Type[Union[m3d.Plane_f, m3d.Plane_d]]
+AABBCls = Type[Union[m3d.AABB_f, m3d.AABB_d]]
 Vector3Cls = Type[Union[m3d.Vector3f, m3d.Vector3d]]
 
 Vector3 = Union[m3d.Vector3f, m3d.Vector3d]
@@ -341,3 +342,85 @@ def test_plane_project_method_np_args(
         [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0], dtype=FloatType
     )
     assert np.allclose(plane.project(ZERO), EXPECTED_PROJECTION, atol=EPSILON)
+
+
+# Tests for AABB type ----------------------------------------------------------
+
+
+@pytest.mark.parametrize("AABB", [(m3d.AABB_f), (m3d.AABB_d)])
+def test_aabb_attrs(AABB: AABBCls) -> None:
+    assert hasattr(AABB, "min") and hasattr(AABB, "max")
+
+
+@pytest.mark.parametrize(
+    "AABB, FloatType", [(m3d.AABB_f, np.float32), (m3d.AABB_d, np.float64)]
+)
+def test_aabb_default_ctor(AABB: AABBCls, FloatType: type) -> None:
+    bbox = AABB()
+
+    assert vec3_all_close(
+        bbox.min, np.array([-np.inf, -np.inf, -np.inf], dtype=FloatType)
+    )
+    assert vec3_all_close(
+        bbox.max, np.array([np.inf, np.inf, np.inf], dtype=FloatType)
+    )
+
+
+@pytest.mark.parametrize(
+    "AABB, FloatType", [(m3d.AABB_f, np.float32), (m3d.AABB_d, np.float64)]
+)
+def test_aabb_from_args_min_max(AABB: AABBCls, FloatType: type) -> None:
+    bbox = AABB([0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
+
+    assert vec3_all_close(bbox.min, np.array([0.0, 0.0, 0.0], dtype=FloatType))
+    assert vec3_all_close(bbox.max, np.array([1.0, 1.0, 1.0], dtype=FloatType))
+
+
+@pytest.mark.parametrize(
+    "AABB, FloatType", [(m3d.AABB_f, np.float32), (m3d.AABB_d, np.float64)]
+)
+def test_aabb_method_computeCenter(AABB: AABBCls, FloatType: type) -> None:
+    bbox = AABB([0.0, 0.0, 0.0], [1.0, 1.0, 1.0])
+    center = bbox.computeCenter()
+    EXPECTED_CENTER = np.array([0.5, 0.5, 0.5], dtype=FloatType)
+
+    assert vec3_all_close(center, EXPECTED_CENTER)
+
+    bbox = AABB([-1.0, -1.0, -1.0], [1.0, 1.0, 1.0])
+    center = bbox.computeCenter()
+    EXPECTED_CENTER = np.array([0.0, 0.0, 0.0], dtype=FloatType)
+
+    assert vec3_all_close(center, EXPECTED_CENTER)
+
+
+@pytest.mark.parametrize(
+    "AABB, FloatType", [(m3d.AABB_f, np.float32), (m3d.AABB_d, np.float64)]
+)
+def test_aabb_method_computeCorners(AABB: AABBCls, FloatType: type) -> None:
+    bbox = AABB([-1.0, -1.0, -1.0], [1.0, 1.0, 1.0])
+    corners = bbox.computeCorners()
+
+    assert vec3_all_close(
+        corners[0], np.array([-1.0, -1.0, -1.0], dtype=FloatType)
+    )
+    assert vec3_all_close(
+        corners[1], np.array([-1.0, -1.0, 1.0], dtype=FloatType)
+    )
+    assert vec3_all_close(
+        corners[2], np.array([-1.0, 1.0, -1.0], dtype=FloatType)
+    )
+    assert vec3_all_close(
+        corners[3], np.array([-1.0, 1.0, 1.0], dtype=FloatType)
+    )
+    assert vec3_all_close(
+        corners[4], np.array([1.0, -1.0, -1.0], dtype=FloatType)
+    )
+    assert vec3_all_close(
+        corners[5], np.array([1.0, -1.0, 1.0], dtype=FloatType)
+    )
+    assert vec3_all_close(
+        corners[6], np.array([1.0, 1.0, -1.0], dtype=FloatType)
+    )
+    assert vec3_all_close(
+        corners[7], np.array([1.0, 1.0, 1.0], dtype=FloatType)
+    )

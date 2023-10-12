@@ -169,6 +169,16 @@ struct AABB {
         corners[7] = {p_max.x(), p_max.y(), p_max.z()};
         return corners;
     }
+
+    /// \brief Returns whether or not it intersects the given box
+    auto intersects(const AABB<T>& other) -> bool {
+        return !(other.p_max.x() < this->p_min.x() ||
+                 other.p_min.x() > this->p_max.x() ||
+                 other.p_max.y() < this->p_min.y() ||
+                 other.p_min.y() > this->p_max.y() ||
+                 other.p_max.z() < this->p_min.z() ||
+                 other.p_min.z() > this->p_max.z());
+    }
 };
 
 /// \brief Class representing a simple sphere

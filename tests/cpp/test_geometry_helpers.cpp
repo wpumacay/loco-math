@@ -222,6 +222,15 @@ TEMPLATE_TEST_CASE("Utilities [Geometric-Helpers]", "[geometric][funcs]",
         REQUIRE(corners.at(7) == Vec3(1.0, 1.0, 1.0));
     }
 
+    SECTION("AABB intersects AABB") {
+        AABB bbox_a({0.0, 0.0, 0.0}, {2.0, 2.0, 2.0});
+        AABB bbox_b({0.0, 1.0, 0.0}, {2.0, 3.0, 2.0});
+        AABB bbox_c({0.0, 3.0, 0.0}, {2.0, 5.0, 2.0});
+
+        REQUIRE(bbox_a.intersects(bbox_b));
+        REQUIRE(!bbox_a.intersects(bbox_c));
+    }
+
     SECTION("Sphere default ctor") {
         Sphere s;
 

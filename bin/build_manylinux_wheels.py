@@ -13,8 +13,8 @@ FROM {base}
 """
 
 PROG = """\
-{py_bin}/pip wheel --index https://test.pypi.org/simple --no-build-isolation \
-    --wheel-dir /work math3d=={version} && \
+{py_bin}/pip wheel --index {index} --no-build-isolation \
+    --wheel-dir /work wp-math3d=={version} && \
 auditwheel repair --wheel-dir /dist /work/*.whl
 """
 
@@ -27,10 +27,16 @@ def main() -> int:
         type=str,
         default="0.6.0",
     )
+    parser.add_argument(
+        "--index",
+        help="Base URL of the Python Package Index",
+        type=str,
+        default="https://test.pypi.org/simple",
+    )
     args = parser.parse_args()
 
     img = "math3d-build"
-    base = "quay.io/pypa/manylinux2010_x86_64"
+    base = "quay.io/pypa/manylinux2014_x86_64"
     dockerfile = DOCKERFILE_FMT.format(base=base).encode()
 
     cmd = ("docker", "build", "-t", img, "-")
@@ -44,8 +50,12 @@ def main() -> int:
         "/opt/python/cp38-cp38/bin",
         "/opt/python/cp39-cp39/bin",
         "/opt/python/cp310-cp310/bin",
+        "/opt/python/cp311-cp311/bin",
+        "/opt/python/cp312-cp312/bin",
     ):
-        prog = PROG.format(py_bin=py_bin, version=args.version)
+        prog = PROG.format(
+            py_bin=py_bin, version=args.version, index=args.index
+        )
         # fmt: off
         if subprocess.call(
             (

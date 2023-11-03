@@ -7,6 +7,8 @@ import argparse
 import os
 import subprocess
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
 
 DOCKERFILE_FMT = """\
 FROM {baseImage}
@@ -25,19 +27,24 @@ RUN :\
 
 RUN git config --global http.sslVerify false
 
+RUN :\
+    && groupadd -g 1000 randuser \
+    && useradd -d /home/randuser -s /bin/bash -m randuser -u 1000 -g 1000
+
+USER randuser
+
 ENV CMAKE_GENERATOR={generator}
 ENV CMAKE_BUILD_PARALLEL_LEVEL={jobs}
 
-WORKDIR /src
+WORKDIR /home/randuser/math3d
 
-COPY . .
 """
 
 PROG = """\
 export CC={CC} && export CXX={CXX} && \
-cmake -B build && cmake --build build && \
-cd build/tests/cpp && ctest && cd /src && \
-virtualenv venv && . venv/bin/activate && \
+rm -rf {build_name} && cmake -B {build_name} && cmake --build {build_name} && \
+cd {build_name}/tests/cpp && ctest && cd /home/randuser/math3d && \
+rm -rf {venv_name} && virtualenv {venv_name} && . {venv_name}/bin/activate && \
 pip install pytest numpy && pip install -v . && pytest tests/python
 """
 
@@ -79,7 +86,9 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    img = f"math3d-build-{args.baseImage}"
+    (os_name, os_version) = args.baseImage.split(":")
+
+    img = f"math3d-build-{os_name}-{os_version}"
     dockerfile = DOCKERFILE_FMT.format(
         baseImage=args.baseImage,
         generator=args.generator,
@@ -94,12 +103,15 @@ def main() -> int:
         prog = PROG.format(
             CC=comp_opt["CC"],
             CXX=comp_opt["CXX"],
+            build_name=f"build-{os_name}-{os_version}-{comp_opt['CC']}",
+            venv_name=f"venv-{os_name}-{os_version}-{comp_opt['CC']}",
         )
 
         # fmt: off
         if subprocess.call(
             (
-                "docker", "run", "--rm", "-it", img, "bash", "-euxc", prog,
+                "docker", "run", "-v", f"{ROOT_DIR}:/home/randuser/math3d:rw",
+                "--rm", "-it", img, "bash", "-euxc", prog,
             )
         ):
             # fmt: on

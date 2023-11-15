@@ -3,6 +3,8 @@
 namespace math {
 
 auto bindings_conversions_functions(py::module m) -> void {
+    m.def("quat_to_nparray_f32", ::math::quat_to_nparray<::math::float32_t>);
+    m.def("quat_to_nparray_f64", ::math::quat_to_nparray<::math::float64_t>);
     m.def("vec2_to_nparray_f32", ::math::vec2_to_nparray<::math::float32_t>);
     m.def("vec2_to_nparray_f64", ::math::vec2_to_nparray<::math::float64_t>);
     m.def("vec3_to_nparray_f32", ::math::vec3_to_nparray<::math::float32_t>);
@@ -16,6 +18,8 @@ auto bindings_conversions_functions(py::module m) -> void {
     m.def("mat4_to_nparray_f32", ::math::mat4_to_nparray<::math::float32_t>);
     m.def("mat4_to_nparray_f64", ::math::mat4_to_nparray<::math::float64_t>);
 
+    m.def("nparray_to_quat_f32", ::math::nparray_to_quat<::math::float32_t>);
+    m.def("nparray_to_quat_f64", ::math::nparray_to_quat<::math::float64_t>);
     m.def("nparray_to_vec2_f32", ::math::nparray_to_vec2<::math::float32_t>);
     m.def("nparray_to_vec2_f64", ::math::nparray_to_vec2<::math::float64_t>);
     m.def("nparray_to_vec3_f32", ::math::nparray_to_vec3<::math::float32_t>);

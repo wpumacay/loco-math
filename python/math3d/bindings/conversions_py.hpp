@@ -13,6 +13,7 @@
 #include <math/mat2_t.hpp>
 #include <math/mat3_t.hpp>
 #include <math/mat4_t.hpp>
+#include <math/quat_t.hpp>
 
 /**
  * NOTES:
@@ -34,6 +35,24 @@ namespace py = pybind11;
 // -------------------------------------------------------------------------- //
 //                Macros for conversions between and from Vectors             //
 // -------------------------------------------------------------------------- //
+
+// NOLINTNEXTLINE
+#define QUAT_TO_NPARRAY(QuatCls, xquat)                             \
+    auto array_np = py::array_t<T>(QuatCls::QUAT_SIZE);             \
+    memcpy(array_np.request().ptr, xquat.data(), sizeof(QuatCls));  \
+    return array_np
+
+// NOLINTNEXTLINE
+#define NPARRAY_TO_QUAT(QuatCls, xquat_np)                              \
+    auto info = xquat_np.request();                                     \
+    if (info.size != QuatCls::QUAT_SIZE) {                              \
+        throw std::runtime_error("Incompatible array_size, expected " + \
+                                 std::to_string(QuatCls::QUAT_SIZE) +   \
+                                 " elements");                          \
+    }                                                                   \
+    QuatCls quat;                                                       \
+    memcpy(quat.data(), info.ptr, sizeof(QuatCls));                     \
+    return quat
 
 // NOLINTNEXTLINE
 #define VECTOR_TO_NPARRAY(VecCls, xvec)                             \
@@ -139,6 +158,11 @@ using SFINAE_CONVERSIONS_BINDINGS =
 // -------------------------------------------------------------------------- //
 
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto quat_to_nparray(const Quaternion<T>& quat) -> py::array_t<T> {
+    QUAT_TO_NPARRAY(Quaternion<T>, quat);
+}
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
 inline auto vec2_to_nparray(const Vector2<T>& vec) -> py::array_t<T> {
     VECTOR_TO_NPARRAY(Vector2<T>, vec);
 }
@@ -171,6 +195,11 @@ inline auto mat4_to_nparray(const Matrix4<T>& mat) -> py::array_t<T> {
 // -------------------------------------------------------------------------- //
 //                    Conversions from NumPy to Math3d                        //
 // -------------------------------------------------------------------------- //
+
+template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
+inline auto nparray_to_quat(const py::array_t<T>& array_np) -> Quaternion<T> {
+    NPARRAY_TO_QUAT(Quaternion<T>, array_np);
+}
 
 template <typename T, SFINAE_CONVERSIONS_BINDINGS<T> = nullptr>
 inline auto nparray_to_vec2(const py::array_t<T>& array_np) -> Vector2<T> {

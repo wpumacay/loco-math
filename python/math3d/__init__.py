@@ -1,6 +1,4 @@
-# Helper functions used for numpy convertions
-# fmt: off
-from math3d_bindings import (
+from math3d_bindings import (  # type: ignore
     AABB_d,
     AABB_f,
     Euler_d,
@@ -39,12 +37,16 @@ from math3d_bindings import (
     nparray_to_mat3_f64,
     nparray_to_mat4_f32,
     nparray_to_mat4_f64,
+    nparray_to_quat_f32,
+    nparray_to_quat_f64,
     nparray_to_vec2_f32,
     nparray_to_vec2_f64,
     nparray_to_vec3_f32,
     nparray_to_vec3_f64,
     nparray_to_vec4_f32,
     nparray_to_vec4_f64,
+    quat_to_nparray_f32,
+    quat_to_nparray_f64,
     vec2_to_nparray_f32,
     vec2_to_nparray_f64,
     vec3_to_nparray_f32,
@@ -52,8 +54,6 @@ from math3d_bindings import (
     vec4_to_nparray_f32,
     vec4_to_nparray_f64,
 )
-
-# fmt: on
 
 __all__ = [
     # math3d types
@@ -85,6 +85,8 @@ __all__ = [
     "AABB_f",
     "AABB_d",
     # math3d -> numpy conversions
+    "quat_to_nparray_f32",
+    "quat_to_nparray_f64",
     "vec2_to_nparray_f32",
     "vec2_to_nparray_f64",
     "vec3_to_nparray_f32",
@@ -98,6 +100,8 @@ __all__ = [
     "mat4_to_nparray_f32",
     "mat4_to_nparray_f64",
     # numpy -> math3d conversions
+    "nparray_to_quat_f32",
+    "nparray_to_quat_f64",
     "nparray_to_vec2_f32",
     "nparray_to_vec2_f64",
     "nparray_to_vec3_f32",

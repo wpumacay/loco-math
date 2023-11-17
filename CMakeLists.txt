@@ -32,14 +32,13 @@ option(MATH_BUILD_TESTS "Build C++ unit-tests (requires Catch2)" ON)
 option(MATH_BUILD_EXAMPLES "Build C++ examples" ON)
 
 # cmake-format: off
-set(MATH_BUILD_CXX_STANDARD 20 CACHE STRING "The C++ standard to be used")
+set(MATH_BUILD_CXX_STANDARD 17 CACHE STRING "The C++ standard to be used")
 set_property(CACHE MATH_BUILD_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
 # cmake-format: on
 
 # -------------------------------------
 # Initialize the project using our helper modules :D
-# loco_initialize_project(CXX_STANDARD ${MATH_BUILD_CXX_STANDARD})
-loco_initialize_project()
+loco_initialize_project(CXX_STANDARD ${MATH_BUILD_CXX_STANDARD})
 
 # -------------------------------------
 # Allow the usage of our helper macros and functions

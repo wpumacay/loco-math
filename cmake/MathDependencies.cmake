@@ -33,6 +33,7 @@ loco_find_or_fetch_dependency(
   GIT_REPO https://github.com/catchorg/Catch2.git
   GIT_TAG ${MATH_DEP_VERSION_catch2}
   GIT_PROGRESS FALSE
+  GIT_SHALLOW TRUE
   TARGETS Catch2::Catch2
   BUILD_ARGS
     -DCATCH_INSTALL_DOCS=OFF
@@ -58,6 +59,7 @@ loco_find_or_fetch_dependency(
   GIT_REPO https://github.com/pybind/pybind11.git
   GIT_TAG ${MATH_DEP_VERSION_pybind11}
   GIT_PROGRESS FALSE
+  GIT_SHALLOW TRUE
   TARGETS pybind11::headers
   BUILD_ARGS
     -DPYBIND11_TEST=OFF

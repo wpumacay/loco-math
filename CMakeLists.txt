@@ -38,7 +38,8 @@ set_property(CACHE MATH_BUILD_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
 
 # -------------------------------------
 # Initialize the project using our helper modules :D
-loco_initialize_project(CXX_STANDARD ${MATH_BUILD_CXX_STANDARD})
+# loco_initialize_project(CXX_STANDARD ${MATH_BUILD_CXX_STANDARD})
+loco_initialize_project()
 
 # -------------------------------------
 # Allow the usage of our helper macros and functions

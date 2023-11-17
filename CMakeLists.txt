@@ -6,7 +6,7 @@ include(FetchContent)
 FetchContent_Declare(
   loco_cmake
   GIT_REPOSITORY https://github.com/wpumacay/loco_cmake.git
-  GIT_TAG 2a1148ebe5381874c043dd2d5ff6885a1b0d7071 # Version v0.1.3
+  GIT_TAG d1ba4734dcf29bbc7318deea16213452a80b3f2a # Version v0.1.4
   GIT_PROGRESS FALSE
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(loco_cmake)
@@ -31,9 +31,14 @@ option(MATH_BUILD_DOCS "Build documentation (requires Doxygen+Breathe)" OFF)
 option(MATH_BUILD_TESTS "Build C++ unit-tests (requires Catch2)" ON)
 option(MATH_BUILD_EXAMPLES "Build C++ examples" ON)
 
+# cmake-format: off
+set(MATH_BUILD_CXX_STANDARD 20 CACHE STRING "The C++ standard to be used")
+set_property(CACHE MATH_BUILD_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
+# cmake-format: on
+
 # -------------------------------------
 # Initialize the project using our helper modules :D
-loco_initialize_project()
+loco_initialize_project(CXX_STANDARD ${MATH_BUILD_CXX_STANDARD})
 
 # -------------------------------------
 # Allow the usage of our helper macros and functions
@@ -94,6 +99,8 @@ loco_create_target(MathCpp INTERFACE
     ${MATH_BUILD_SSE}
   ENABLE_AVX
     ${MATH_BUILD_AVX}
+  CXX_STANDARD
+    ${MATH_BUILD_CXX_STANDARD}
 )
 # cmake-format: on
 

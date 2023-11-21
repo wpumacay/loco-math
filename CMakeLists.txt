@@ -32,7 +32,7 @@ option(MATH_BUILD_TESTS "Build C++ unit-tests (requires Catch2)" ON)
 option(MATH_BUILD_EXAMPLES "Build C++ examples" ON)
 
 # cmake-format: off
-set(MATH_BUILD_CXX_STANDARD 17 CACHE STRING "The C++ standard to be used")
+set(MATH_BUILD_CXX_STANDARD 20 CACHE STRING "The C++ standard to be used")
 set_property(CACHE MATH_BUILD_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
 # cmake-format: on
 

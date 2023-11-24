@@ -3,7 +3,6 @@
 # Options affecting formatting.
 # -----------------------------
 with section("format"):
-
     # If a statement is wrapped to more than one line, then dangle the closing
     # parenthesis on its own line.
     dangle_parens = False
@@ -40,7 +39,6 @@ with section("format"):
 # Options affecting comment reflow and formatting.
 # ------------------------------------------------
 with section("markup"):
-
     # What character to use for bulleted lists
     bullet_char = "*"
 
@@ -51,7 +49,6 @@ with section("markup"):
 # Options affecting the linter
 # ----------------------------
 with section("lint"):
-
     # a list of lint codes to disable
     disabled_codes = []
 
@@ -108,7 +105,6 @@ with section("lint"):
 # Options affecting file encoding
 # -------------------------------
 with section("encode"):
-
     # If true, emit the unicode byte-order mark (BOM) at the start of the file
     emit_byteorder_mark = False
 

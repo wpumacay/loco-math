@@ -26,7 +26,7 @@ jobs:
       - name: Build bdist wheel
         run: |
           cd /src
-          /opt/python/${{ matrix.py-version }}/bin/python setup.py bidst_wheel
+          /opt/python/${{ matrix.py-version }}/bin/python setup.py bdist_wheel
           auditwheel repair dist/*.whl
           ls wheelhouse
 

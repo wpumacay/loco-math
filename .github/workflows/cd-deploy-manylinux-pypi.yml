@@ -1,0 +1,37 @@
+name: Build and Publish Python 🐍 manylinux wheels 📦 to PyPI and TestPYPI
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build-manylinux-wheel:
+    strategy:
+      fail-fast: false
+      matrix:
+        py-version: [cp38-38, cp39-39, cp310-310, cp311-311, cp312-312]
+
+    name: Build manylinux wheel 📦 for python 🐍 version • ${{ matrix.py-version }}
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/pypa/manylinux_2_28_x86_64:latest
+      volumes:
+        - ${{ github.workspace }}:/src
+
+    steps:
+      - name: Checkout our repo
+        uses: actions/checkout@v4
+
+      - name: Build bdist wheel
+        run: |
+          cd /src
+          /opt/python/${{ matrix.py-version }}/bin/python setup.py bidst_wheel
+          auditwheel repair dist/*.whl
+          ls wheelhouse
+
+      - name: Store the generated wheels
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-${{ matrix.py-version }}-manylinux-wheel
+          path: src/wheelhouse/

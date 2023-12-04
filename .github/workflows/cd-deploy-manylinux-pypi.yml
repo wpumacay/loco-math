@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        py-version: [cp38-38, cp39-39, cp310-310, cp311-311, cp312-312]
+        py-version: [cp38-cp38, cp39-cp39, cp310-cp310, cp311-cp311, cp312-cp312]
 
     name: Build manylinux wheel 📦 for python 🐍 version • ${{ matrix.py-version }}
     runs-on: ubuntu-latest

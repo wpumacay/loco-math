@@ -1,4 +1,4 @@
-name: ci-windows
+name: Building and Testing on Windows 🪟
 
 on:
   push:
@@ -13,16 +13,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2022]
+        os: [windows-latest]
         build-type: [Release, Debug]
 
     name: "Build: ${{matrix.os}} • ${{matrix.build-type}} • MSVC"
     runs-on: ${{matrix.os}}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
-    - name: Update CMake
+    - name: Setup CMake
       uses: jwlawson/actions-setup-cmake@v1.14.1
       with:
         github-api-token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,4 +1,4 @@
-name: ci-macos
+name: Building and Testing on MacOS 🍎
 
 on:
   push:
@@ -20,14 +20,14 @@ jobs:
     runs-on: ${{matrix.os}}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Configure python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.x'
 
-    - name: Update CMake
+    - name: Setup CMake
       uses: jwlawson/actions-setup-cmake@v1.14.1
       with:
         github-api-token: ${{ secrets.GITHUB_TOKEN }}

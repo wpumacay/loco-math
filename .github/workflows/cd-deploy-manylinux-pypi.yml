@@ -35,3 +35,62 @@ jobs:
         with:
           name: python-${{ matrix.py-version }}-manylinux-wheel
           path: /src/wheelhouse/
+
+  publish-to-testpypi:
+    strategy:
+      fail-fast: false
+      matrix:
+        py-version: [cp38-cp38, cp39-cp39, cp310-cp310, cp311-cp311, cp312-cp312]
+
+    name: Publish Python 🐍 manylinux wheel 📦 to TestPyPI • ${{ matrix.py-version }}
+    needs:
+      - build-manylinux-wheel
+    runs-on: ubuntu-latest
+
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/wp-math3d
+
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download the manylinux wheel
+        uses: actions/download-artifact@v3
+        with:
+          name: python-${{ matrix.py-version }}-manylinux-wheel
+          path: dist/
+
+      - name: Publish manylinux wheel to TestPYPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+
+  publish-to-pypi:
+    strategy:
+      fail-fast: false
+      matrix:
+        py-version: [cp38-cp38, cp39-cp39, cp310-cp310, cp311-cp311, cp312-cp312]
+
+    name: Publish Python 🐍 manylinux wheel 📦 to PyPI • ${{ matrix.py-version }}
+    needs:
+      - build-manylinux-wheel
+    runs-on: ubuntu-latest
+
+    environment:
+      name: pypi
+      url: https://pypi.org/p/wp-math3d
+
+    permissions:
+      id-token: write
+
+    steps:
+      - name:  Download the manylinux wheel
+        uses: actions/download-artifact@v3
+        with:
+          name: python-${{ matrix.py-version }}-manylinux-wheel
+          path: dist/
+
+      - name: Publish manylinux wheel to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

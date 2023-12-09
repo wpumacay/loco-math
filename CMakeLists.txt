@@ -127,6 +127,9 @@ if(MATH_BUILD_TESTS)
   add_subdirectory(tests/cpp)
 endif()
 
+# HACK: Add the conversions headers directly, without exposing target math_py
+target_include_directories(
+  MathCpp INTERFACE ${PROJECT_SOURCE_DIR}/python/math3d/bindings/)
 # -------------------------------------
 # Add Python bindings to the build process
 if(MATH_BUILD_PYTHON_BINDINGS)

@@ -16,7 +16,7 @@ set(MATH_DEP_VERSION_catch2
     CACHE STRING "Version of Catch2 to be fetched (used for unittests)")
 
 set(MATH_DEP_VERSION_pybind11
-    5b0a6fc2017fcc176545afe3e09c9f9885283242 # Release v2.10.4
+    8a099e44b3d5f85b20f05828d919d2332a8de841 # Release v2.11.1
     CACHE STRING "Version of PyBind11 to be fetched (used for python bindings)")
 
 mark_as_advanced(MATH_DEP_VERSION_catch2)
@@ -26,6 +26,11 @@ mark_as_advanced(MATH_DEP_VERSION_pybind11)
 # ------------------------------------------------------------------------------
 # Catch2 is used for generating unittests for our C++ codebase
 # ------------------------------------------------------------------------------
+
+set(CATCH_INSTALL_DOCS OFF CACHE BOOL "" FORCE)
+set(CATCH_INSTALL_EXTRAS OFF CACHE BOOL "" FORCE)
+set(CATCH_DEVELOPMENT_BUILD OFF CACHE BOOL "" FORCE)
+
 loco_find_or_fetch_dependency(
   USE_SYSTEM_PACKAGE FALSE
   PACKAGE_NAME Catch2
@@ -35,10 +40,6 @@ loco_find_or_fetch_dependency(
   GIT_PROGRESS FALSE
   GIT_SHALLOW TRUE
   TARGETS Catch2::Catch2
-  BUILD_ARGS
-    -DCATCH_INSTALL_DOCS=OFF
-    -DCATCH_INSTALL_EXTRAS=OFF
-    -DCATCH_DEVELOPMENT_BUILD=OFF
   EXCLUDE_FROM_ALL)
 
 # Add custom scripts for test-case registration to the module path
@@ -52,6 +53,8 @@ endif()
 # allowed, as we use this functionality in some other parent projects
 # ------------------------------------------------------------------------------
 
+set(PYBIND11_TEST OFF CACHE BOOL "" FORCE)
+
 loco_find_or_fetch_dependency(
   USE_SYSTEM_PACKAGE FALSE
   PACKAGE_NAME pybind11
@@ -61,8 +64,6 @@ loco_find_or_fetch_dependency(
   GIT_PROGRESS FALSE
   GIT_SHALLOW TRUE
   TARGETS pybind11::headers
-  BUILD_ARGS
-    -DPYBIND11_TEST=OFF
   EXCLUDE_FROM_ALL)
 
 # cmake-format: on

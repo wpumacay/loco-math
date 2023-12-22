@@ -165,12 +165,12 @@ class Vector4 {
     }
 
     /// Returns a printable string-representation of the vector
-    auto toString() const -> std::string {
+    [[nodiscard]] auto toString() const -> std::string {
         std::stringstream str_result;
-        if (std::is_same<ElementType, float>()) {
+        if constexpr (std::is_same<ElementType, float>::value) {
             str_result << "Vector4f(" << x() << ", " << y() << ", " << z()
                        << ", " << w() << ")";
-        } else if (std::is_same<ElementType, double>()) {
+        } else if constexpr (std::is_same<ElementType, double>::value) {
             str_result << "Vector4d(" << x() << ", " << y() << ", " << z()
                        << ", " << w() << ")";
         } else {

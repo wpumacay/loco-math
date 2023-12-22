@@ -107,7 +107,7 @@ class Matrix2 {
     }
 
     /// Returns a printable string-representation of the matrix
-    auto toString() const -> std::string {
+    [[nodiscard]] auto toString() const -> std::string {
         const auto& data_elms = m_Elements;
         std::stringstream sstr_result;
 

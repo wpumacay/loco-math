@@ -64,7 +64,7 @@ class Pose3d {
     LM_INLINE auto operator*(const Vec3& rhs) const -> Vec3;
 
     /// Returns a printable string representation of this pose
-    auto toString() const -> std::string {
+    [[nodiscard]] auto toString() const -> std::string {
         std::stringstream str_result;
         str_result << "Pose3d(pos=" << this->position.toString() << ", ";
         str_result << "rot=" << this->orientation.toString() << ")";

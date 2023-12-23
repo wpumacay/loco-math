@@ -154,7 +154,7 @@ struct VecCommaInitializer {
 
  private:
     /// Mutable reference to the vector we're currently constructing
-    VectorType& m_VectorRef;
+    VectorType& m_VectorRef;  // NOLINT
     /// Index of the current coefficient being 'built'
     uint32_t m_CurrentBuildIndex = VECTOR_FIRST_INDEX;
 };
@@ -239,7 +239,7 @@ struct MatCommaInitializer {
 
  private:
     /// Mutable reference to the matrix we're currently constructing
-    MatrixType& m_MatrixRef;
+    MatrixType& m_MatrixRef;  // NOLINT
     /// Index of the current coefficient being built
     uint32_t m_CurrentBuildIndex = MATRIX_FIRST_INDEX;
 };

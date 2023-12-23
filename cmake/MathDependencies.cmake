@@ -54,6 +54,7 @@ endif()
 # ------------------------------------------------------------------------------
 
 set(PYBIND11_TEST OFF CACHE BOOL "" FORCE)
+set(PYBIND11_FINDPYTHON ON CACHE BOOL "" FORCE)
 
 loco_find_or_fetch_dependency(
   USE_SYSTEM_PACKAGE FALSE

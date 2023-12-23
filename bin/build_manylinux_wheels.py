@@ -8,32 +8,65 @@ import os
 import shutil
 import subprocess
 
+CURRENT_DIR = os.path.abspath(__file__)
+ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", ".."))
+
+
 DOCKERFILE_FMT = """\
 FROM {base}
+
+RUN :\
+    && groupadd -g 1000 randuser \
+    && useradd -d /home/randuser -s /bin/bash -m randuser -u 1000 -g 1000
+
+USER randuser
+
+ENV HOME /home/randuser
+
+WORKDIR $HOME/math3d
+
+USER root
+
+RUN chown -R randuser:randuser $HOME/math3d
+RUN chmod 755 $HOME/math3d
+
+USER randuser
 """
 
 PROG = """\
-{py_bin}/pip wheel --index {index} --no-build-isolation \
-    --wheel-dir /work wp-math3d=={version} && \
-auditwheel repair --wheel-dir /dist /work/*.whl
+{py_bin}/python setup.py bdist_wheel && \
+auditwheel repair --wheel-dir /dist dist/*.whl
 """
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--version",
-        help="The version to be built",
-        type=str,
-        default="0.6.0",
-    )
-    parser.add_argument(
-        "--index",
+        "--cpython",
         help="Base URL of the Python Package Index",
         type=str,
-        default="https://test.pypi.org/simple",
+        default="all",
     )
     args = parser.parse_args()
+
+    VERSIONS_MAP = {
+        "python37": "/opt/python/cp37-cp37m/bin",
+        "python38": "/opt/python/cp38-cp38/bin",
+        "python39": "/opt/python/cp39-cp39/bin",
+        "python310": "/opt/python/cp310-cp310/bin",
+        "python311": "/opt/python/cp311-cp311/bin",
+        "python312": "/opt/python/cp312-cp312/bin",
+    }
+
+    TARGETS_MAP = (
+        [
+            VERSIONS_MAP[name]
+            for name in VERSIONS_MAP.keys()
+            if args.cpython == name
+        ]
+        if args.cpython in VERSIONS_MAP
+        else {VERSIONS_MAP[name] for name in VERSIONS_MAP.keys()}
+    )
 
     img = "math3d-manylinux-build"
     base = "quay.io/pypa/manylinux_2_28_x86_64"
@@ -45,21 +78,14 @@ def main() -> int:
     shutil.rmtree("dist", ignore_errors=True)
     os.makedirs("dist", exist_ok=True)
 
-    for py_bin in (
-        "/opt/python/cp37-cp37m/bin",
-        "/opt/python/cp38-cp38/bin",
-        "/opt/python/cp39-cp39/bin",
-        "/opt/python/cp310-cp310/bin",
-        "/opt/python/cp311-cp311/bin",
-        "/opt/python/cp312-cp312/bin",
-    ):
-        prog = PROG.format(
-            py_bin=py_bin, version=args.version, index=args.index
-        )
+    for py_bin in TARGETS_MAP:
+        prog = PROG.format(py_bin=py_bin)
         # fmt: off
         if subprocess.call(
             (
-                "docker", "run", "-v", f"{os.path.abspath('dist')}:/dist:rw",
+                "docker", "run",
+                "-v", f"{os.path.abspath('dist')}:/dist:rw",
+                "-v", f"{ROOT_DIR}:/home/randuser/math3d:rw",
                 "--rm", "-it", img, "bash", "-euxc", prog,
             )
         ):

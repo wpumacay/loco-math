@@ -140,7 +140,11 @@ namespace py = pybind11;
     MatCls matrix;                                                          \
     for (uint32_t i = 0; i < SIZE_N; ++i) {                                 \
         for (uint32_t j = 0; j < SIZE_N; ++j) {                             \
-            matrix(i, j) = data[j + SIZE_N * i];                            \
+            if (xarray_np.flags() & py::array::f_style) {                   \
+                matrix(i, j) = data[i + SIZE_N * j];                        \
+            } else if (xarray_np.flags() & py::array::c_style) {            \
+                matrix(i, j) = data[j + SIZE_N * i];                        \
+            }                                                               \
         }                                                                   \
     }                                                                       \
     return matrix

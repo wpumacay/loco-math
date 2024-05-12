@@ -1,17 +1,9 @@
 #pragma once
 
-#include <iomanip>
-#include <ios>
 #include <array>
-#include <cassert>
 #include <cstdint>
-#include <initializer_list>
-#include <iostream>
 #include <sstream>
 #include <string>
-#include <utility>
-#include <algorithm>
-#include <type_traits>
 
 #include <math/vec2_t_decl.hpp>
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <iomanip>
 
 #include <math/mat2_t_decl.hpp>
 

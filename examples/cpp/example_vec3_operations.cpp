@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <math/vec3_t.hpp>
 
 template <typename T,

@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <math/mat2_t.hpp>
 
 #if defined(__clang__)

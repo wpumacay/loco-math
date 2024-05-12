@@ -1,16 +1,9 @@
 #pragma once
 
-#include <iomanip>
-#include <ios>
 #include <array>
-#include <cassert>
 #include <cstdint>
-#include <initializer_list>
-#include <iostream>
 #include <sstream>
 #include <string>
-#include <utility>
-#include <algorithm>
 
 #include <math/vec3_t_decl.hpp>
 #include <math/mat4_t_decl.hpp>

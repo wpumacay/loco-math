@@ -1,6 +1,6 @@
 # Math3d
 
-A small header-only math library for vectors and matrices
+A small header-only math library for vectors and matrices.
 
 ## Build Status
 
@@ -8,7 +8,6 @@ A small header-only math library for vectors and matrices
 | ------- | ------------------------------
 | Ubuntu  | [![ci-linux][0]][1]       |
 | Windows | [![ci-windows][2]][3]     |
-| MacOS   | [![ci-macos][4]][5]       |
 
 ## Yet another math library
 

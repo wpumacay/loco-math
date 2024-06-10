@@ -2,8 +2,8 @@ setuptools
 pytest
 pylint
 black
-cmakelang[YAML]==v0.6.13
-pre-commit==v2.14.0
+cmakelang
+pre-commit
 cpplint
 ipython
 ipykernel

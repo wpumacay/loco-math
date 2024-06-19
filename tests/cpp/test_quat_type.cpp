@@ -145,6 +145,26 @@ TEMPLATE_TEST_CASE("Quaternion class (quat_t) constructors",
             REQUIRE(::math::func_all_close<T>(q, cos_half, 0.0, 0.0, sin_half,
                                               EPSILON));
         }
+
+        // e = (30°, 45°, 60°, XYZ, INTRINSIC)
+        {
+            Euler e(::math::PI / 6, ::math::PI / 4, ::math::PI / 3,
+                    ::math::euler::Order::XYZ);
+            Quat q(e);
+
+            REQUIRE(::math::func_all_close<T>(q, 0.7233174, 0.3919038,
+                                              0.2005621, 0.5319757, EPSILON));
+        }
+
+        // e = (30°, 45°, 60°, YXZ, INTRINSIC)
+        {
+            Euler e(::math::PI / 6, ::math::PI / 4, ::math::PI / 3,
+                    ::math::euler::Order::YXZ);
+            Quat q(e);
+
+            REQUIRE(::math::func_all_close<T>(q, 0.8223632, 0.3919038,
+                                              0.2005621, 0.3604234, EPSILON));
+        }
     }
 }
 

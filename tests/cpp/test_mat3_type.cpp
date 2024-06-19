@@ -97,15 +97,94 @@ TEMPLATE_TEST_CASE("Matrix3 class (mat3_t) constructors", "[mat3_t][template]",
     }
 
     SECTION("From quaternion") {
-        Quat q(1.0, 0.0, 0.0, 0.0);
-        Mat3 mat(q);
+        // q = (1.0, 0.0, 0.0, 0.0)
+        // m = Identity
+        {
+            Quat q(1.0, 0.0, 0.0, 0.0);
+            Mat3 mat(q);
 
-        // clang-format off
-        REQUIRE(::math::func_all_close<T>(mat,
-            1.0, 0.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 0.0, 1.0, EPSILON));
-        // clang-format on
+            // clang-format off
+            REQUIRE(::math::func_all_close<T>(mat,
+                1.0, 0.0, 0.0,
+                0.0, 1.0, 0.0,
+                0.0, 0.0, 1.0, EPSILON));
+            // clang-format on
+        }
+
+        // q = (cos(t/2), sin(t/2), 0.0, 0.0) (rot. angle t around x-axis)
+        // m = Rot_x(t)
+        {
+            auto angle = math::PI / 3.0;
+            auto cos_half = std::cos(angle / 2.0);
+            auto sin_half = std::sin(angle / 2.0);
+            Quat q(cos_half, sin_half, 0.0, 0.0);
+
+            Mat3 m(q);
+
+            auto cos_t = std::cos(angle);
+            auto sin_t = std::sin(angle);
+            // clang-format off
+            REQUIRE(::math::func_all_close<T>(m,
+                1.0,  0.0 ,   0.0,
+                0.0, cos_t, -sin_t,
+                0.0, sin_t,  cos_t, EPSILON));
+            // clang-format on
+        }
+
+        // q = (cos(t/2), 0.0, sin(t/2), 0.0) (rot. angle t around y-axis)
+        // m = Rot_y(t)
+        {
+            auto angle = math::PI / 4.0;
+            auto cos_half = std::cos(angle / 2.0);
+            auto sin_half = std::sin(angle / 2.0);
+            Quat q(cos_half, 0.0, sin_half, 0.0);
+
+            Mat3 m(q);
+
+            auto cos_t = std::cos(angle);
+            auto sin_t = std::sin(angle);
+            // clang-format off
+            REQUIRE(::math::func_all_close<T>(m,
+                 cos_t, 0.0, sin_t,
+                  0.0 , 1.0,  0.0 ,
+                -sin_t, 0.0, cos_t, EPSILON));
+            // clang-format on
+        }
+
+        // q = (cos(t/2), 0.0, 0.0, sin(t/2)) (rot. angle t around z-axis)
+        // m = Rot_z(t)
+        {
+            auto angle = ::math::PI / 4;
+            auto cos_half = std::cos(angle / 2);
+            auto sin_half = std::sin(angle / 2);
+            Quat q(cos_half, 0.0, 0.0, sin_half);
+
+            Mat3 m(q);
+
+            auto cos_t = std::cos(angle);
+            auto sin_t = std::sin(angle);
+            // clang-format off
+            REQUIRE(::math::func_all_close<T>(m,
+                cos_t, -sin_t, 0.0,
+                sin_t,  cos_t, 0.0,
+                 0.0 ,   0.0 , 1.0, EPSILON));
+            // clang-format on
+        }
+
+        // q = (0.7233174, 0.3919038, 0.2005621, 0.5319757)
+        // e = (30°, 45°, 60°, XYZ, INTRINSIC)
+        // m = ...
+        {
+            Quat q(0.7233174, 0.3919038, 0.2005621, 0.5319757);
+            Mat3 m(q);
+
+            // clang-format off
+            REQUIRE(::math::func_all_close<T>(m,
+                0.3535534, -0.6123725,  0.7071068,
+                0.9267767,  0.1268265, -0.3535534,
+                0.1268265,  0.7803301,  0.6123725, EPSILON));
+            // clang-format on
+        }
     }
 
     SECTION("From Euler angles") {

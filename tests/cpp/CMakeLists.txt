@@ -40,7 +40,8 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_functions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_utils_spherical_coordinates.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_geometry_helpers.cpp)
-target_link_libraries(MathCppTests PRIVATE math::math Catch2::Catch2)
+# TODO(wilbert): Making it public to avoid weird issue wirh clangd and LSP
+target_link_libraries(MathCppTests PUBLIC math::math Catch2::Catch2)
 target_include_directories(MathCppTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 # Discover tets and pick an integer as the random seed
 catch_discover_tests(MathCppTests)

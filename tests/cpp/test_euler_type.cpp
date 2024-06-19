@@ -2,6 +2,7 @@
 #include <math/euler_t.hpp>
 
 #include "./common_math_helpers.hpp"
+#include "math/euler_t_decl.hpp"
 
 #if defined(__clang__)
 #pragma clang diagnostic push
@@ -55,6 +56,56 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
         REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
     }
 
+    SECTION("From 3x3 rotation matrix") {
+        // Rot_x(45°) (rotation of 45° around the x-axis)
+        // e = (PI / 4, 0.0, 0.0, XYZ, INTRINSIC)
+        {
+            auto angle = ::math::PI / 4.0;
+            Mat3 rotmat = Mat3::RotationX(angle);
+            Euler e(rotmat);
+            REQUIRE(::math::func_all_close<T>(e, angle, 0.0, 0.0, EPSILON));
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
+        }
+
+        // Rot_y(45°) (rotation of 45° around the y-axis)
+        // e = (0.0, PI / 4, 0.0, XYZ, INTRINSIC)
+        {
+            auto angle = ::math::PI / 4.0;
+            Mat3 rotmat = Mat3::RotationY(angle);
+            Euler e(rotmat);
+            REQUIRE(::math::func_all_close<T>(e, 0.0, angle, 0.0, EPSILON));
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
+        }
+
+        // Rot_z(45°) (rotation of 45° around the z-axis)
+        // e = (0.0, 0.0, PI / 4, XYZ, INTRINSIC)
+        {
+            auto angle = ::math::PI / 4.0;
+            Mat3 rotmat = Mat3::RotationZ(angle);
+            Euler e(rotmat);
+            REQUIRE(::math::func_all_close<T>(e, 0.0, 0.0, angle, EPSILON));
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
+        }
+
+        // Rot_x(60°) Rot_y(45°) Rot_z(30°)
+        // e = (PI / 3, PI / 4, PI / 6, XYZ, INTRINSIC)
+        {
+            // clang-format off
+            Mat3 rotmat(0.6123724, -0.3535533,  0.7071067,
+                        0.7803300,  0.1268264, -0.6123724,
+                        0.1268264,  0.9267766,  0.3535533);
+            // clang-format on
+            Euler e(rotmat);
+            REQUIRE(::math::func_all_close<T>(e, ::math::PI / 3, ::math::PI / 4,
+                                              ::math::PI / 6, 1e-3));
+            REQUIRE(e.order == ::math::euler::Order::XYZ);
+            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
+        }
+    }
+
     SECTION("From quaternion") {
         // q = (w, x, y, z) = (1.0, 0.0, 0.0, 0.0)
         // ea = (0.0, 0.0, 0.0, XYZ, INTRINSIC)
@@ -97,41 +148,6 @@ TEMPLATE_TEST_CASE("Euler class (euler_t) constructors", "[euler_t][template]",
             auto sin_half = std::sin(angle / 2.0);
             Quat q(cos_half, 0.0, 0.0, sin_half);
             Euler e(q);
-            REQUIRE(::math::func_all_close<T>(e, 0.0, 0.0, angle, EPSILON));
-            REQUIRE(e.order == ::math::euler::Order::XYZ);
-            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
-        }
-    }
-
-    SECTION("From 3x3 rotation matrix") {
-        // Rot_x(45°) (rotation of 45° around the x-axis)
-        // e = (PI / 4, 0.0, 0.0, XYZ, INTRINSIC)
-        {
-            auto angle = ::math::PI / 4.0;
-            Mat3 rotmat = Mat3::RotationX(angle);
-            Euler e(rotmat);
-            REQUIRE(::math::func_all_close<T>(e, angle, 0.0, 0.0, EPSILON));
-            REQUIRE(e.order == ::math::euler::Order::XYZ);
-            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
-        }
-
-        // Rot_y(45°) (rotation of 45° around the y-axis)
-        // e = (0.0, PI / 4, 0.0, XYZ, INTRINSIC)
-        {
-            auto angle = ::math::PI / 4.0;
-            Mat3 rotmat = Mat3::RotationY(angle);
-            Euler e(rotmat);
-            REQUIRE(::math::func_all_close<T>(e, 0.0, angle, 0.0, EPSILON));
-            REQUIRE(e.order == ::math::euler::Order::XYZ);
-            REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);
-        }
-
-        // Rot_z(45°) (rotation of 45° around the z-axis)
-        // e = (0.0, 0.0, PI / 4, XYZ, INTRINSIC)
-        {
-            auto angle = ::math::PI / 4.0;
-            Mat3 rotmat = Mat3::RotationZ(angle);
-            Euler e(rotmat);
             REQUIRE(::math::func_all_close<T>(e, 0.0, 0.0, angle, EPSILON));
             REQUIRE(e.order == ::math::euler::Order::XYZ);
             REQUIRE(e.convention == ::math::euler::Convention::INTRINSIC);

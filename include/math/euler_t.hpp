@@ -161,4 +161,18 @@ auto Euler<T>::setFromAxisAngle(const Vec3& axis, T angle) -> void {
     setFromQuaternion(Quat(axis, angle));
 }
 
+// ***************************************************************************//
+//                    Euler Angles operations and functions                   //
+// ***************************************************************************//
+
+template <typename T>
+using SFINAE_EULER_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
+
+template <typename T, SFINAE_EULER_GUARD<T> = nullptr>
+auto operator<<(std::ostream& output_stream, const Euler<T>& src)
+    -> std::ostream& {
+    output_stream << src.toString();
+    return output_stream;
+}
+
 }  // namespace math

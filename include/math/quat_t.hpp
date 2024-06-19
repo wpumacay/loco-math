@@ -261,6 +261,8 @@ auto Quaternion<T>::setFromEuler(const Euler<T>& euler) -> void {
     auto s2 = std::sin(HALF * euler.y);
     auto s3 = std::sin(HALF * euler.z);
 
+    // TODO(wilbert): Check that YXZ conversion is correct
+
     switch (euler.order) {
         case euler::Order::XYZ: {
             m_Elements[1] = s1 * c2 * c3 + c1 * s2 * s3;

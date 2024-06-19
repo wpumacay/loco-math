@@ -54,6 +54,14 @@ inline auto ToString(const Convention& p_convention) -> std::string;
 
 }  // namespace euler
 
+/// \class Euler
+///
+/// \brief Class representation of a set of Euler angles
+///
+/// \tparam T Type of scalar value used for this set of Euler angles
+///
+/// This is a class that represents a set of Euler angles, with some given
+/// axis order and convention.
 template <typename T>
 class Euler {
  public:
@@ -69,7 +77,7 @@ class Euler {
     /// \brief Angle of rotation around the Z-axis
     T z = static_cast<T>(0.0);  // NOLINT
 
-    /// \brief Returns the internal order used for the elemental rotations
+    /// \brief The internal order used for the elemental rotations
     ///
     /// The order property for this set of Euler angles is used to define in
     /// which order are the elemental rotations taken (rotations around the
@@ -174,6 +182,28 @@ class Euler {
 
     /// Updates this set of Euler angles with the given axis-angle pair
     auto setFromAxisAngle(const Vec3& axis, T angle) -> void;
+
+    /// Returns a printable string-representation of the set of Euler Angles
+    [[nodiscard]] auto toString() const -> std::string {
+        std::stringstream sstr_repr;
+        if constexpr (std::is_same<T, float>::value) {
+            sstr_repr << "Euler_f(\n";
+        } else if constexpr (std::is_same<T, double>::value) {
+            sstr_repr << "Euler_d(\n";
+        } else {
+            sstr_repr << "Euler(\n";
+        }
+
+        sstr_repr << "  x=" << this->x << ",\n";
+        sstr_repr << "  y=" << this->y << ",\n";
+        sstr_repr << "  z=" << this->z << ",\n";
+        sstr_repr << "  order=" << ::math::euler::ToString(this->order)
+                  << ",\n";
+        sstr_repr << "  convention="
+                  << ::math::euler::ToString(this->convention) << "\n)";
+
+        return sstr_repr.str();
+    }
 };
 
 }  // namespace math

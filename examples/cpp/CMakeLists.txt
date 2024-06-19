@@ -20,7 +20,8 @@ set(MATH_EXAMPLES_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/example_mat3_constructors.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_mat3_operations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_mat4_constructors.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/example_mat4_operations.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/example_mat4_operations.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/example_euler_conversions.cpp)
 
 # Create all the example targets
 foreach(example_filepath IN LISTS MATH_EXAMPLES_LIST)

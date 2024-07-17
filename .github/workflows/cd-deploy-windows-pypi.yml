@@ -25,7 +25,7 @@ jobs:
 
       - name: Build bdist wheel
         run: |
-          pip install build cmake ninja
+          pip install build cmake ninja wheel setuptools
           python -m build --verbose --no-isolation
 
       - name: Store the generated wheels

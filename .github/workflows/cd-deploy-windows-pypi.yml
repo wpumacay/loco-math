@@ -1,9 +1,9 @@
-name: Build and Publish Python 🐍 windows wheel 📦 to TestPyPI
+name: Build and Publish Python 🐍 windows wheel 📦 to PyPI and TestPyPI
 
-on: 
-  push: 
+on:
+  push:
     tags:
-      - "v[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
   build-windows-wheel:
@@ -13,7 +13,7 @@ jobs:
 
     name: Build Windows wheel 📦 for python 🐍 version • ${{ matrix.py-version }}
     runs-on: windows-latest
-    
+
     steps:
       - name: Checkout our repo
         uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
         run: |
           pip install build cmake ninja
           python -m build --verbose --no-isolation
-      
+
       - name: Store the generated wheels
         uses: actions/upload-artifact@v3
         with:
@@ -48,7 +48,7 @@ jobs:
     environment:
       name: testpypi
       url: https://test.pypi.org/p/wp-math3d
-    
+
     permissions:
       id-token: write
 
@@ -58,7 +58,37 @@ jobs:
         with:
           name: python-${{ matrix.py-version }}-windows-wheel
           path: dist/
-      
+
+      - name: Publish windows wheel to TestPYPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy
+
+  publish-to-pypi:
+    strategy:
+      matrix:
+        py-version: [3.8, 3.9, 3.10, 3.11, 3.12]
+
+    name: Publish Python 🐍 Windows wheel 📦 to PyPI • ${{ matrix.py-version }}
+    if: startsWith(github.ref, 'refs/tags/') # only publish to PyPI on tag pushes
+    needs:
+      - build-windows-wheel
+    runs-on: windows-latest
+
+    environment:
+      name: pypi
+      url: https://pypi.org/p/wp-math3d
+
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download the windows wheel
+        uses: actions/download-artifact@v3
+        with:
+          name: python-${{ matrix.py-version }}-windows-wheel
+          path: dist/
+
       - name: Publish windows wheel to TestPYPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:

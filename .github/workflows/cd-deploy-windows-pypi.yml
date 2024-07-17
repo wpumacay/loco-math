@@ -8,8 +8,9 @@ on:
 jobs:
   build-windows-wheel:
     strategy:
+      fail-fast: false
       matrix:
-        py-version: [3.8, 3.9, 3.10, 3.11, 3.12]
+        py-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     name: Build Windows wheel 📦 for python 🐍 version • ${{ matrix.py-version }}
     runs-on: windows-latest
@@ -36,8 +37,9 @@ jobs:
 
   publish-to-testpypi:
     strategy:
+      fail-fast: false
       matrix:
-        py-version: [3.8, 3.9, 3.10, 3.11, 3.12]
+        py-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     name: Publish Python 🐍 Windows wheel 📦 to TestPyPI • ${{ matrix.py-version }}
     if: startsWith(github.ref, 'refs/tags/') # only publish to TestPyPI on tag pushes
@@ -66,8 +68,9 @@ jobs:
 
   publish-to-pypi:
     strategy:
+      fail-fast: false
       matrix:
-        py-version: [3.8, 3.9, 3.10, 3.11, 3.12]
+        py-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     name: Publish Python 🐍 Windows wheel 📦 to PyPI • ${{ matrix.py-version }}
     if: startsWith(github.ref, 'refs/tags/') # only publish to PyPI on tag pushes

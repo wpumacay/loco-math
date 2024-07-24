@@ -23,22 +23,22 @@ project(
 
 # -------------------------------------
 # Define some options the user can set before|while configuring the project
-option(MATH_BUILD_SSE "Build using SSE SIMD-extensions support" ON)
-option(MATH_BUILD_AVX "Build using AVX SIMD-extensions support" ON)
-option(MATH_BUILD_FORCE_INLINE "Build with inlining when requested" OFF)
-option(MATH_BUILD_PYTHON_BINDINGS "Build bindings (requires Pybind11)" ON)
-option(MATH_BUILD_DOCS "Build documentation (requires Doxygen+Breathe)" OFF)
-option(MATH_BUILD_TESTS "Build C++ unit-tests (requires Catch2)" ON)
-option(MATH_BUILD_EXAMPLES "Build C++ examples" ON)
+option(MATH3D_BUILD_SSE "Build using SSE SIMD-extensions support" OFF)
+option(MATH3D_BUILD_AVX "Build using AVX SIMD-extensions support" OFF)
+option(MATH3D_BUILD_FORCE_INLINE "Build with inlining when requested" OFF)
+option(MATH3D_BUILD_PYTHON_BINDINGS "Build bindings (requires Pybind11)" ON)
+option(MATH3D_BUILD_DOCS "Build documentation (requires Doxygen+Breathe)" OFF)
+option(MATH3D_BUILD_TESTS "Build C++ unit-tests (requires Catch2)" ON)
+option(MATH3D_BUILD_EXAMPLES "Build C++ examples" ON)
 
 # cmake-format: off
-set(MATH_BUILD_CXX_STANDARD 17 CACHE STRING "The C++ standard to be used")
-set_property(CACHE MATH_BUILD_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
+set(MATH3D_BUILD_CXX_STANDARD 17 CACHE STRING "The C++ standard to be used")
+set_property(CACHE MATH3D_BUILD_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
 # cmake-format: on
 
 # -------------------------------------
 # Initialize the project using our helper modules :D
-loco_initialize_project(CXX_STANDARD ${MATH_BUILD_CXX_STANDARD})
+loco_initialize_project(CXX_STANDARD ${MATH3D_BUILD_CXX_STANDARD})
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -98,19 +98,34 @@ loco_create_target(MathCpp INTERFACE
   WARNINGS_AS_ERRORS
     FALSE
   ENABLE_SSE
-    ${MATH_BUILD_SSE}
+    ${MATH3D_BUILD_SSE}
   ENABLE_AVX
-    ${MATH_BUILD_AVX}
+    ${MATH3D_BUILD_AVX}
   CXX_STANDARD
-    ${MATH_BUILD_CXX_STANDARD}
+    ${MATH3D_BUILD_CXX_STANDARD}
 )
 # cmake-format: on
 
 # -------------------------------------
+# TODO(wilbert): should move this check into the create_target macro
+if(CMAKE_CXX_STANDARD EQUAL 20)
+  target_compile_definitions(MathCpp INTERFACE -DMATH3D_CXX_20)
+elseif(CMAKE_CXX_STANDARD EQUAL 17)
+  target_compile_definitions(MathCpp INTERFACE -DMATH3D_CXX_17)
+elseif(CMAKE_CXX_STANDARD EQUAL 14)
+  target_compile_definitions(MathCpp INTERFACE -DMATH3D_CXX_14)
+elseif(CMAKE_CXX_STANDARD EQUAL 11)
+  target_compile_definitions(MAthCpp INTERFACE -DMATH3D_CXX_11)
+else()
+  # Default to C++17
+  target_compile_definitions(MathCpp INTERFACE -DMATH3D_CXX_17)
+endif()
+
+# -------------------------------------
 # If force-inline is being requested, then add it to the target
-if(MATH_BUILD_FORCE_INLINE)
-  # @todo(wilbert): Move this to one of the setup helpers on the loco-cmake repo
-  target_compile_definitions(MathCpp INTERFACE -DMATH_FORCE_INLINE)
+if(MATH3D_BUILD_FORCE_INLINE)
+  # TODO(wilbert): Move this to one of the setup helpers on the loco-cmake repo
+  target_compile_definitions(MathCpp INTERFACE -DMATH3D_FORCE_INLINE)
 endif()
 
 # -------------------------------------
@@ -119,13 +134,13 @@ add_library(math::math ALIAS MathCpp)
 
 # -------------------------------------
 # Add C++ examples to the build process
-if(MATH_BUILD_EXAMPLES)
+if(MATH3D_BUILD_EXAMPLES)
   add_subdirectory(examples/cpp)
 endif()
 
 # -------------------------------------
 # Add C++ tests to the build process
-if(MATH_BUILD_TESTS)
+if(MATH3D_BUILD_TESTS)
   add_subdirectory(tests/cpp)
 endif()
 
@@ -134,13 +149,13 @@ target_include_directories(
   MathCpp INTERFACE ${PROJECT_SOURCE_DIR}/python/math3d/bindings/)
 # -------------------------------------
 # Add Python bindings to the build process
-if(MATH_BUILD_PYTHON_BINDINGS)
+if(MATH3D_BUILD_PYTHON_BINDINGS)
   add_subdirectory(python/math3d/bindings)
 endif()
 
 # -------------------------------------
 # Build the required documentation accordingly
-if(MATH_BUILD_DOCS)
+if(MATH3D_BUILD_DOCS)
   # cmake-format: off
   # -------------------------------------
   # Setup documentation for our target

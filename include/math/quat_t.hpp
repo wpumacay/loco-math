@@ -22,7 +22,7 @@ using SFINAE_QUAT_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 
 /// Returns the square of the length of the given quaternion
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto squareNorm(const Quaternion<T>& quat) -> T {
+MATH3D_INLINE auto squareNorm(const Quaternion<T>& quat) -> T {
 #if defined(MATH_AVX_ENABLED)
     return avx::kernel_length_square_quat<T>(quat.elements());
 #elif defined(MATH_SSE_ENABLED)
@@ -34,7 +34,7 @@ LM_INLINE auto squareNorm(const Quaternion<T>& quat) -> T {
 
 /// Returns the length of the given quaternion
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto norm(const Quaternion<T>& quat) -> T {
+MATH3D_INLINE auto norm(const Quaternion<T>& quat) -> T {
 #if defined(MATH_AVX_ENABLED)
     return avx::kernel_length_quat<T>(quat.elements());
 #elif defined(MATH_SSE_ENABLED)
@@ -46,7 +46,7 @@ LM_INLINE auto norm(const Quaternion<T>& quat) -> T {
 
 /// Returns a normalized version of the given quaternion
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto normalize(const Quaternion<T>& quat) -> Quaternion<T> {
+MATH3D_INLINE auto normalize(const Quaternion<T>& quat) -> Quaternion<T> {
     Quaternion<T> quat_normalized = quat;
 #if defined(MATH_AVX_ENABLED)
     avx::kernel_normalize_in_place_quat<T>(quat_normalized.elements());
@@ -60,7 +60,7 @@ LM_INLINE auto normalize(const Quaternion<T>& quat) -> Quaternion<T> {
 
 /// Normalizes in place the given quaternion
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto normalize_in_place(Quaternion<T>& quat) -> void {  // NOLINT
+MATH3D_INLINE auto normalize_in_place(Quaternion<T>& quat) -> void {  // NOLINT
 #if defined(MATH_AVX_ENABLED)
     avx::kernel_normalize_in_place_quat<T>(quat.elements());
 #elif defined(MATH_SSE_ENABLED)
@@ -71,7 +71,7 @@ LM_INLINE auto normalize_in_place(Quaternion<T>& quat) -> void {  // NOLINT
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto operator+(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
+MATH3D_INLINE auto operator+(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     -> Quaternion<T> {
     Quaternion<T> dst;
 #if defined(MATH_AVX_ENABLED)
@@ -85,7 +85,7 @@ LM_INLINE auto operator+(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto operator-(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
+MATH3D_INLINE auto operator-(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     -> Quaternion<T> {
     Quaternion<T> dst;
 #if defined(MATH_AVX_ENABLED)
@@ -99,7 +99,7 @@ LM_INLINE auto operator-(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto operator*(double scale, const Quaternion<T>& quat)
+MATH3D_INLINE auto operator*(double scale, const Quaternion<T>& quat)
     -> Quaternion<T> {
     Quaternion<T> dst;
 #if defined(MATH_AVX_ENABLED)
@@ -116,7 +116,7 @@ LM_INLINE auto operator*(double scale, const Quaternion<T>& quat)
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto operator*(const Quaternion<T>& quat, double scale)
+MATH3D_INLINE auto operator*(const Quaternion<T>& quat, double scale)
     -> Quaternion<T> {
     Quaternion<T> dst;
 #if defined(MATH_AVX_ENABLED)
@@ -133,7 +133,7 @@ LM_INLINE auto operator*(const Quaternion<T>& quat, double scale)
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto operator*(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
+MATH3D_INLINE auto operator*(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     -> Quaternion<T> {
     Quaternion<T> dst;
     scalar::kernel_quatmul_quat<T>(dst.elements(), lhs.elements(),
@@ -142,7 +142,7 @@ LM_INLINE auto operator*(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto conjugate(const Quaternion<T>& quat) -> Quaternion<T> {
+MATH3D_INLINE auto conjugate(const Quaternion<T>& quat) -> Quaternion<T> {
     Quaternion<T> dst = quat;
     dst.x() = -dst.x();
     dst.y() = -dst.y();
@@ -151,7 +151,7 @@ LM_INLINE auto conjugate(const Quaternion<T>& quat) -> Quaternion<T> {
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto inverse(const Quaternion<T>& quat) -> Quaternion<T> {
+MATH3D_INLINE auto inverse(const Quaternion<T>& quat) -> Quaternion<T> {
     auto q_conj = conjugate<T>(quat);
     auto length_sq = squareNorm<T>(quat);
     auto q_inv = q_conj * (1.0 / static_cast<double>(length_sq));
@@ -159,7 +159,7 @@ LM_INLINE auto inverse(const Quaternion<T>& quat) -> Quaternion<T> {
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto rotate(const Quaternion<T>& quat, const Vector3<T>& vec)
+MATH3D_INLINE auto rotate(const Quaternion<T>& quat, const Vector3<T>& vec)
     -> Vector3<T> {
     // We use the form f(p) = q * p * q ^-1
     Quaternion<T> quat_p(static_cast<T>(0.0), vec.x(), vec.y(), vec.z());
@@ -170,20 +170,20 @@ LM_INLINE auto rotate(const Quaternion<T>& quat, const Vector3<T>& vec)
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto operator*(const Quaternion<T>& quat, const Vector3<T>& vec)
+MATH3D_INLINE auto operator*(const Quaternion<T>& quat, const Vector3<T>& vec)
     -> Vector3<T> {
     return ::math::rotate<T>(quat, vec);
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto operator==(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
-    -> bool {
+MATH3D_INLINE auto operator==(const Quaternion<T>& lhs,
+                              const Quaternion<T>& rhs) -> bool {
     return scalar::kernel_compare_eq_quat<T>(lhs.elements(), rhs.elements());
 }
 
 template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
-LM_INLINE auto operator!=(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
-    -> bool {
+MATH3D_INLINE auto operator!=(const Quaternion<T>& lhs,
+                              const Quaternion<T>& rhs) -> bool {
     return !scalar::kernel_compare_eq_quat<T>(lhs.elements(), rhs.elements());
 }
 

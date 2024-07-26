@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
+# Make CMAKE_C_VISIBILITY_PRESET work properly.
+set(CMAKE_POLICY_DEFAULT_CMP0063 NEW)
+
 # -------------------------------------
 # Get loco_cmake to help us configure our CMake based project
 include(FetchContent)
@@ -109,17 +112,24 @@ loco_create_target(MathCpp INTERFACE
 # -------------------------------------
 # TODO(wilbert): should move this check into the create_target macro
 if(CMAKE_CXX_STANDARD EQUAL 20)
-  target_compile_definitions(MathCpp INTERFACE -DMATH3D_CXX_20)
+  target_compile_definitions(MathCpp INTERFACE -DMATH3D_FORCE_CXX20)
 elseif(CMAKE_CXX_STANDARD EQUAL 17)
-  target_compile_definitions(MathCpp INTERFACE -DMATH3D_CXX_17)
+  target_compile_definitions(MathCpp INTERFACE -DMATH3D_FORCE_CXX17)
 elseif(CMAKE_CXX_STANDARD EQUAL 14)
-  target_compile_definitions(MathCpp INTERFACE -DMATH3D_CXX_14)
+  target_compile_definitions(MathCpp INTERFACE -DMATH3D_FORCE_CXX14)
 elseif(CMAKE_CXX_STANDARD EQUAL 11)
-  target_compile_definitions(MAthCpp INTERFACE -DMATH3D_CXX_11)
+  target_compile_definitions(MathCpp INTERFACE -DMATH3D_FORCE_CXX11)
 else()
-  # Default to C++17
-  target_compile_definitions(MathCpp INTERFACE -DMATH3D_CXX_17)
+  message(
+    WARNING "Math3d >>> should setup which standard to use. Using autodetect")
 endif()
+
+# -------------------------------------
+# Handle symbol visibility
+set_target_properties(MathCpp PROPERTIES C_VISIBILITY_PRESET hidden)
+set_target_properties(MathCpp PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(MathCpp PROPERTIES VISIBILITY_INLINES_HIDDEN ON)
+target_compile_definitions(MathCpp INTERFACE -DMATH3D_DLL_EXPORTS)
 
 # -------------------------------------
 # If force-inline is being requested, then add it to the target

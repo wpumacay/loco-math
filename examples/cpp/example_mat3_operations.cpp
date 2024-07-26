@@ -7,7 +7,7 @@
 
 template <typename T,
           typename = typename std::enable_if<math::IsScalar<T>::value>::type>
-LM_NEVER_INLINE auto run_operations_mat3() -> void {
+MATH3D_NEVER_INLINE auto run_operations_mat3() -> void {
     using Mat3 = math::Matrix3<T>;
     using Vec3 = math::Vector3<T>;
 

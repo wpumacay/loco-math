@@ -4,7 +4,7 @@
 
 template <typename T,
           typename = typename std::enable_if<math::IsScalar<T>::value>::type>
-LM_NEVER_INLINE auto run_operations_vec4() -> void {
+MATH3D_NEVER_INLINE auto run_operations_vec4() -> void {
     using Vec4 = math::Vector4<T>;
 
     // Preamble (show the type we're currently working with)

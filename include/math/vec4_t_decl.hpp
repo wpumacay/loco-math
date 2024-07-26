@@ -163,12 +163,12 @@ class Vector4 {
     }
 
     /// Returns a printable string-representation of the vector
-    [[nodiscard]] auto toString() const -> std::string {
+    MATH3D_NODISCARD auto toString() const -> std::string {
         std::stringstream str_result;
-        if constexpr (std::is_same<ElementType, float>::value) {
+        if (std::is_same<ElementType, float>::value) {
             str_result << "Vector4f(" << x() << ", " << y() << ", " << z()
                        << ", " << w() << ")";
-        } else if constexpr (std::is_same<ElementType, double>::value) {
+        } else if (std::is_same<ElementType, double>::value) {
             str_result << "Vector4d(" << x() << ", " << y() << ", " << z()
                        << ", " << w() << ")";
         } else {

@@ -19,7 +19,7 @@ using SFINAE_MAT4_SCALAR_GUARD =
     typename std::enable_if<IsScalar<T>::value>::type*;
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_transpose_inplace_mat4(Mat4Buffer<T>& mat) -> void {
+MATH3D_INLINE auto kernel_transpose_inplace_mat4(Mat4Buffer<T>& mat) -> void {
     std::swap(mat[0][1], mat[1][0]);
     std::swap(mat[0][2], mat[2][0]);
     std::swap(mat[0][3], mat[3][0]);
@@ -29,12 +29,12 @@ LM_INLINE auto kernel_transpose_inplace_mat4(Mat4Buffer<T>& mat) -> void {
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_trace_mat4(const Mat4Buffer<T>& mat) -> T {
+MATH3D_INLINE auto kernel_trace_mat4(const Mat4Buffer<T>& mat) -> T {
     return mat[0][0] + mat[1][1] + mat[2][2] + mat[3][3];
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_determinant_mat4(const Mat4Buffer<T>& mat) -> T {
+MATH3D_INLINE auto kernel_determinant_mat4(const Mat4Buffer<T>& mat) -> T {
     auto m00 = mat[0][0];
     auto m10 = mat[0][1];
     auto m20 = mat[0][2];
@@ -70,8 +70,8 @@ LM_INLINE auto kernel_determinant_mat4(const Mat4Buffer<T>& mat) -> T {
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_inverse_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& src)
-    -> void {
+MATH3D_INLINE auto kernel_inverse_mat4(Mat4Buffer<T>& dst,
+                                       const Mat4Buffer<T>& src) -> void {
     auto m00 = src[0][0];
     auto m10 = src[0][1];
     auto m20 = src[0][2];
@@ -137,8 +137,8 @@ LM_INLINE auto kernel_inverse_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& src)
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
-                               const Mat4Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+                                   const Mat4Buffer<T>& rhs) -> void {
     for (uint32_t col = 0; col < Matrix4<T>::MATRIX_SIZE; ++col) {
         for (uint32_t idx = 0; idx < Matrix4<T>::MATRIX_SIZE; ++idx) {
             dst[col][idx] = lhs[col][idx] + rhs[col][idx];
@@ -147,8 +147,8 @@ LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
-                               const Mat4Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+                                   const Mat4Buffer<T>& rhs) -> void {
     for (uint32_t col = 0; col < Matrix4<T>::MATRIX_SIZE; ++col) {
         for (uint32_t idx = 0; idx < Matrix4<T>::MATRIX_SIZE; ++idx) {
             dst[col][idx] = lhs[col][idx] - rhs[col][idx];
@@ -157,8 +157,8 @@ LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
-                                 const Mat4Buffer<T>& mat) -> void {
+MATH3D_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
+                                     const Mat4Buffer<T>& mat) -> void {
     for (uint32_t col = 0; col < Matrix4<T>::MATRIX_SIZE; ++col) {
         for (uint32_t idx = 0; idx < Matrix4<T>::MATRIX_SIZE; ++idx) {
             dst[col][idx] = scale * mat[col][idx];
@@ -167,8 +167,9 @@ LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
-                                  const Mat4Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst,
+                                      const Mat4Buffer<T>& lhs,
+                                      const Mat4Buffer<T>& rhs) -> void {
     // We're assumming that dst is zero-initialized (default-constructor)
     for (uint32_t col = 0; col < Matrix4<T>::MATRIX_SIZE; ++col) {
         for (uint32_t row = 0; row < Matrix4<T>::MATRIX_SIZE; ++row) {
@@ -180,9 +181,9 @@ LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
-                                      const Mat4Buffer<T>& mat,
-                                      const Vec4Buffer<T>& vec) -> void {
+MATH3D_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
+                                          const Mat4Buffer<T>& mat,
+                                          const Vec4Buffer<T>& vec) -> void {
     dst[0] = mat[0][0] * vec[0] + mat[1][0] * vec[1] + mat[2][0] * vec[2] +
              mat[3][0] * vec[3];
     dst[1] = mat[0][1] * vec[0] + mat[1][1] * vec[1] + mat[2][1] * vec[2] +
@@ -194,9 +195,9 @@ LM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
-                                    const Mat4Buffer<T>& lhs,
-                                    const Mat4Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
+                                        const Mat4Buffer<T>& lhs,
+                                        const Mat4Buffer<T>& rhs) -> void {
     for (uint32_t col = 0; col < Matrix4<T>::MATRIX_SIZE; ++col) {
         for (uint32_t idx = 0; idx < Matrix4<T>::MATRIX_SIZE; ++idx) {
             dst[col][idx] = lhs[col][idx] * rhs[col][idx];
@@ -205,8 +206,8 @@ LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_MAT4_SCALAR_GUARD<T> = nullptr>
-LM_INLINE auto kernel_compare_eq_mat4(const Mat4Buffer<T>& lhs,
-                                      const Mat4Buffer<T>& rhs) -> bool {
+MATH3D_INLINE auto kernel_compare_eq_mat4(const Mat4Buffer<T>& lhs,
+                                          const Mat4Buffer<T>& rhs) -> bool {
     for (uint32_t col = 0; col < Matrix4<T>::MATRIX_SIZE; ++col) {
         for (uint32_t idx = 0; idx < Matrix4<T>::MATRIX_SIZE; ++idx) {
             if (std::abs(lhs[col][idx] - rhs[col][idx]) >

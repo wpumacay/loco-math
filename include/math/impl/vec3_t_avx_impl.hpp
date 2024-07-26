@@ -42,8 +42,8 @@ using SFINAE_VEC3_F64_AVX_GUARD =
     typename std::enable_if<CpuHasAVX<T>::value && IsFloat64<T>::value>::type*;
 
 template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_add_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
-                               const Vec3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_add_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
+                                   const Vec3Buffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_result = _mm_add_ps(xmm_lhs, xmm_rhs);
@@ -51,8 +51,8 @@ LM_INLINE auto kernel_add_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_add_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
-                               const Vec3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_add_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
+                                   const Vec3Buffer<T>& rhs) -> void {
     auto ymm_lhs = _mm256_loadu_pd(lhs.data());
     auto ymm_rhs = _mm256_loadu_pd(rhs.data());
     auto ymm_result = _mm256_add_pd(ymm_lhs, ymm_rhs);
@@ -60,8 +60,8 @@ LM_INLINE auto kernel_add_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_sub_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
-                               const Vec3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_sub_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
+                                   const Vec3Buffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_result = _mm_sub_ps(xmm_lhs, xmm_rhs);
@@ -69,8 +69,8 @@ LM_INLINE auto kernel_sub_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_sub_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
-                               const Vec3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_sub_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
+                                   const Vec3Buffer<T>& rhs) -> void {
     auto ymm_lhs = _mm256_loadu_pd(lhs.data());
     auto ymm_rhs = _mm256_loadu_pd(rhs.data());
     auto ymm_result = _mm256_sub_pd(ymm_lhs, ymm_rhs);
@@ -78,8 +78,8 @@ LM_INLINE auto kernel_sub_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_scale_vec3(Vec3Buffer<T>& dst, T scale,
-                                 const Vec3Buffer<T>& vec) -> void {
+MATH3D_INLINE auto kernel_scale_vec3(Vec3Buffer<T>& dst, T scale,
+                                     const Vec3Buffer<T>& vec) -> void {
     auto xmm_scale = _mm_set1_ps(scale);
     auto xmm_vector = _mm_loadu_ps(vec.data());
     auto xmm_result = _mm_mul_ps(xmm_scale, xmm_vector);
@@ -87,8 +87,8 @@ LM_INLINE auto kernel_scale_vec3(Vec3Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_scale_vec3(Vec3Buffer<T>& dst, T scale,
-                                 const Vec3Buffer<T>& vec) -> void {
+MATH3D_INLINE auto kernel_scale_vec3(Vec3Buffer<T>& dst, T scale,
+                                     const Vec3Buffer<T>& vec) -> void {
     auto ymm_scale = _mm256_set1_pd(scale);
     auto ymm_vector = _mm256_loadu_pd(vec.data());
     auto ymm_result = _mm256_mul_pd(ymm_scale, ymm_vector);
@@ -96,32 +96,32 @@ LM_INLINE auto kernel_scale_vec3(Vec3Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_hadamard_vec3(Vec3Buffer<T>& dst,
-                                    const Vec3Buffer<T>& lhs,
-                                    const Vec3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_hadamard_vec3(Vec3Buffer<T>& dst,
+                                        const Vec3Buffer<T>& lhs,
+                                        const Vec3Buffer<T>& rhs) -> void {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
     _mm_storeu_ps(dst.data(), _mm_mul_ps(xmm_lhs, xmm_rhs));
 }
 
 template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_hadamard_vec3(Vec3Buffer<T>& dst,
-                                    const Vec3Buffer<T>& lhs,
-                                    const Vec3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_hadamard_vec3(Vec3Buffer<T>& dst,
+                                        const Vec3Buffer<T>& lhs,
+                                        const Vec3Buffer<T>& rhs) -> void {
     auto ymm_lhs = _mm256_loadu_pd(lhs.data());
     auto ymm_rhs = _mm256_loadu_pd(rhs.data());
     _mm256_storeu_pd(dst.data(), _mm256_mul_pd(ymm_lhs, ymm_rhs));
 }
 
 template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_length_square_vec3(const Vec3Buffer<T>& vec) -> T {
+MATH3D_INLINE auto kernel_length_square_vec3(const Vec3Buffer<T>& vec) -> T {
     // Implementation based on this post: https://bit.ly/3FyZF0n
     auto xmm_v = _mm_loadu_ps(vec.data());
     return _mm_cvtss_f32(_mm_dp_ps(xmm_v, xmm_v, 0x71));
 }
 
 template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_length_square_vec3(const Vec3Buffer<T>& vec) -> T {
+MATH3D_INLINE auto kernel_length_square_vec3(const Vec3Buffer<T>& vec) -> T {
     // Implementation based on this post: https://bit.ly/3lt3ts4
     // Instruction-sets required (AVX, SSE2)
     // -------------------------
@@ -137,14 +137,14 @@ LM_INLINE auto kernel_length_square_vec3(const Vec3Buffer<T>& vec) -> T {
 }
 
 template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_length_vec3(const Vec3Buffer<T>& vec) -> T {
+MATH3D_INLINE auto kernel_length_vec3(const Vec3Buffer<T>& vec) -> T {
     // Implementation based on this post: https://bit.ly/3FyZF0n
     auto xmm_v = _mm_loadu_ps(vec.data());
     return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(xmm_v, xmm_v, 0x71)));
 }
 
 template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_length_vec3(const Vec3Buffer<T>& vec) -> T {
+MATH3D_INLINE auto kernel_length_vec3(const Vec3Buffer<T>& vec) -> T {
     // Implementation based on this post: https://bit.ly/3lt3ts4
     // Instruction-sets required (AVX, SSE2)
     // -------------------------
@@ -160,7 +160,7 @@ LM_INLINE auto kernel_length_vec3(const Vec3Buffer<T>& vec) -> T {
 }
 
 template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_normalize_in_place_vec3(Vec3Buffer<T>& vec) -> void {
+MATH3D_INLINE auto kernel_normalize_in_place_vec3(Vec3Buffer<T>& vec) -> void {
     // Implementation based on this post: https://bit.ly/3FyZF0n
     auto xmm_v = _mm_loadu_ps(vec.data());
     auto xmm_sums = _mm_dp_ps(xmm_v, xmm_v, 0x7f);
@@ -170,7 +170,7 @@ LM_INLINE auto kernel_normalize_in_place_vec3(Vec3Buffer<T>& vec) -> void {
 }
 
 template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_normalize_in_place_vec3(Vec3Buffer<T>& vec) -> void {
+MATH3D_INLINE auto kernel_normalize_in_place_vec3(Vec3Buffer<T>& vec) -> void {
     auto ymm_v = _mm256_loadu_pd(vec.data());
     auto ymm_prod = _mm256_mul_pd(ymm_v, ymm_v);
     // Construct the sum of squares into each double of a 256-bit register
@@ -185,8 +185,8 @@ LM_INLINE auto kernel_normalize_in_place_vec3(Vec3Buffer<T>& vec) -> void {
 }
 
 template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_dot_vec3(const Vec3Buffer<T>& lhs,
-                               const Vec3Buffer<T>& rhs) -> T {
+MATH3D_INLINE auto kernel_dot_vec3(const Vec3Buffer<T>& lhs,
+                                   const Vec3Buffer<T>& rhs) -> T {
     auto xmm_lhs = _mm_loadu_ps(lhs.data());
     auto xmm_rhs = _mm_loadu_ps(rhs.data());
     auto xmm_cond_prod = _mm_dp_ps(xmm_lhs, xmm_rhs, 0x71);
@@ -194,8 +194,8 @@ LM_INLINE auto kernel_dot_vec3(const Vec3Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_dot_vec3(const Vec3Buffer<T>& lhs,
-                               const Vec3Buffer<T>& rhs) -> T {
+MATH3D_INLINE auto kernel_dot_vec3(const Vec3Buffer<T>& lhs,
+                                   const Vec3Buffer<T>& rhs) -> T {
     auto ymm_lhs = _mm256_loadu_pd(lhs.data());
     auto ymm_rhs = _mm256_loadu_pd(rhs.data());
     auto ymm_prod = _mm256_mul_pd(ymm_lhs, ymm_rhs);
@@ -207,8 +207,9 @@ LM_INLINE auto kernel_dot_vec3(const Vec3Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC3_F32_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
-                                 const Vec3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst,
+                                     const Vec3Buffer<T>& lhs,
+                                     const Vec3Buffer<T>& rhs) -> void {
     // Implementation adapted from @ian_mallett (https://bit.ly/3lu6pVe)
     // Recall that the dot product of two 3d-vectors a and b given by:
     // a = {a[0], a[1], a[2], a[3]=0}, b = {b[0], b[1], b[2], b[3]=0}
@@ -236,8 +237,9 @@ LM_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_VEC3_F64_AVX_GUARD<T> = nullptr>
-LM_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst, const Vec3Buffer<T>& lhs,
-                                 const Vec3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst,
+                                     const Vec3Buffer<T>& lhs,
+                                     const Vec3Buffer<T>& rhs) -> void {
     // Implementation adapted from @ian_mallett (https://bit.ly/3lu6pVe)
     auto vec_a = _mm256_loadu_pd(lhs.data());
     auto vec_b = _mm256_loadu_pd(rhs.data());

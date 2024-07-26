@@ -45,7 +45,7 @@ struct Line {
 
     /// \brief Returns a string representation of this line
     /// \return The string representation of this line
-    auto toString() const -> std::string {
+    MATH3D_NODISCARD auto toString() const -> std::string {
         std::stringstream str_result;
         str_result << "<Line"
                    << "\n";
@@ -91,7 +91,7 @@ struct Plane {
         : point(std::move(p_point)), normal(std::move(p_normal)) {}
 
     /// \brief Returns a string representation of this plane
-    auto toString() const -> std::string {
+    MATH3D_NODISCARD auto toString() const -> std::string {
         std::stringstream sstr_result;
         sstr_result << "<Plane\n";
         sstr_result << "  point: " << point.toString() << "\n";
@@ -154,7 +154,7 @@ struct AABB {
     AABB(const Vec3& min, const Vec3& max) : p_min(min), p_max(max) {}
 
     /// \brief Returns a string representation of this bounding box
-    auto toString() const -> std::string {
+    MATH3D_NODISCARD auto toString() const -> std::string {
         std::stringstream sstr_result;
         sstr_result << "<AABB\n";
         sstr_result << "  min: " << p_min.toString() << "\n";

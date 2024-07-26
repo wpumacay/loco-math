@@ -64,8 +64,8 @@ using SFINAE_MAT2_F64_SSE_GUARD =
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT2_F32_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_add_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
-                               const Mat2Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_add_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
+                                   const Mat2Buffer<T>& rhs) -> void {
     // For a matrix M = [m00  m01] all f32 entries fit into a single xmm
     //                  [m10  m11]
     // register, as follows: [m00 m10 m01 m11] (in column-major order). So just
@@ -76,8 +76,8 @@ LM_INLINE auto kernel_add_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_add_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
-                               const Mat2Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_add_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
+                                   const Mat2Buffer<T>& rhs) -> void {
     // Half a matrix (col0 or col1) enter in a single xmm_register, so we'll
     // handle the split accordingly
     auto xmm_mat_lhs_col0 =
@@ -101,8 +101,8 @@ LM_INLINE auto kernel_add_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT2_F32_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_sub_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
-                               const Mat2Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_sub_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
+                                   const Mat2Buffer<T>& rhs) -> void {
     // Similar approach to matrix addition
     auto xmm_mat_lhs = _mm_loadu_ps(static_cast<const float*>(lhs[0].data()));
     auto xmm_mat_rhs = _mm_loadu_ps(static_cast<const float*>(rhs[0].data()));
@@ -111,8 +111,8 @@ LM_INLINE auto kernel_sub_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_sub_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
-                               const Mat2Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_sub_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
+                                   const Mat2Buffer<T>& rhs) -> void {
     // Similar approach to matrix addition
     auto xmm_mat_lhs_col0 =
         _mm_loadu_pd(static_cast<const double*>(lhs[0].data()));
@@ -135,8 +135,8 @@ LM_INLINE auto kernel_sub_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT2_F32_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
-                                 const Mat2Buffer<T>& src) -> void {
+MATH3D_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
+                                     const Mat2Buffer<T>& src) -> void {
     // All matrix entries fit into single xmm register, so just scale it by
     // another xmm register that has the scale
     auto xmm_src = _mm_loadu_ps(static_cast<const float*>(src[0].data()));
@@ -146,8 +146,8 @@ LM_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
-                                 const Mat2Buffer<T>& src) -> void {
+MATH3D_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
+                                     const Mat2Buffer<T>& src) -> void {
     // Same approach as previous case, but one column at a time
     auto xmm_src_col0 = _mm_loadu_pd(static_cast<const double*>(src[0].data()));
     auto xmm_src_col1 = _mm_loadu_pd(static_cast<const double*>(src[1].data()));
@@ -165,8 +165,9 @@ LM_INLINE auto kernel_scale_mat2(Mat2Buffer<T>& dst, T scale,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT2_F32_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
-                                  const Mat2Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst,
+                                      const Mat2Buffer<T>& lhs,
+                                      const Mat2Buffer<T>& rhs) -> void {
     auto xmm_mat_lhs = _mm_loadu_ps(static_cast<const float*>(lhs[0].data()));
     auto xmm_mat_rhs = _mm_loadu_ps(static_cast<const float*>(rhs[0].data()));
     // We proceed by shuffling the vectors and aligning everything such that the
@@ -196,8 +197,9 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
-                                  const Mat2Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst,
+                                      const Mat2Buffer<T>& lhs,
+                                      const Mat2Buffer<T>& rhs) -> void {
     auto xmm_mat_lhs_col0 =
         _mm_loadu_pd(static_cast<const double*>(lhs[0].data()));
     auto xmm_mat_lhs_col1 =
@@ -226,9 +228,9 @@ LM_INLINE auto kernel_matmul_mat2(Mat2Buffer<T>& dst, const Mat2Buffer<T>& lhs,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT2_F32_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
-                                      const Mat2Buffer<T>& mat,
-                                      const Vec2Buffer<T>& vec) -> void {
+MATH3D_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
+                                          const Mat2Buffer<T>& mat,
+                                          const Vec2Buffer<T>& vec) -> void {
     // SORRY, can't come up with a way to do it for the moment :(. Will use
     // scalar version instead TODO(wilbert)
     dst[0] = mat[0][0] * vec[0] + mat[1][0] * vec[1];
@@ -236,9 +238,9 @@ LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
-                                      const Mat2Buffer<T>& mat,
-                                      const Vec2Buffer<T>& vec) -> void {
+MATH3D_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
+                                          const Mat2Buffer<T>& mat,
+                                          const Vec2Buffer<T>& vec) -> void {
     auto xmm_mat_col0 = _mm_loadu_pd(static_cast<const double*>(mat[0].data()));
     auto xmm_mat_col1 = _mm_loadu_pd(static_cast<const double*>(mat[1].data()));
 
@@ -256,9 +258,9 @@ LM_INLINE auto kernel_matmul_vec_mat2(Vec2Buffer<T>& dst,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT2_F32_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
-                                    const Mat2Buffer<T>& lhs,
-                                    const Mat2Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
+                                        const Mat2Buffer<T>& lhs,
+                                        const Mat2Buffer<T>& rhs) -> void {
     auto xmm_mat_lhs = _mm_loadu_ps(static_cast<const float*>(lhs[0].data()));
     auto xmm_mat_rhs = _mm_loadu_ps(static_cast<const float*>(rhs[0].data()));
     auto xmm_result = _mm_mul_ps(xmm_mat_lhs, xmm_mat_rhs);
@@ -266,9 +268,9 @@ LM_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_MAT2_F64_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
-                                    const Mat2Buffer<T>& lhs,
-                                    const Mat2Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
+                                        const Mat2Buffer<T>& lhs,
+                                        const Mat2Buffer<T>& rhs) -> void {
     auto xmm_mat_lhs_col0 =
         _mm_loadu_pd(static_cast<const double*>(lhs[0].data()));
     auto xmm_mat_lhs_col1 =

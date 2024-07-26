@@ -151,12 +151,12 @@ class Matrix3 {
     /// Multiplies this matrix by the given matrix
     /// \param[in] rhs The matrix to multiply this matrix by
     /// \returns The resulting matrix that combines both matrix operands
-    LM_INLINE auto operator*(const Type& rhs) -> Type;
+    MATH3D_INLINE auto operator*(const Type& rhs) -> Type;
 
     /// Multiplies this matrix by the given vector
     /// \param[in] rhs The second operand of the matrix-vector multiplication
     /// \returns The resulting vector of the matrix multiplication
-    LM_INLINE auto operator*(const Vec3& rhs) -> Vec3;
+    MATH3D_INLINE auto operator*(const Vec3& rhs) -> Vec3;
 
     /// Returns a comma-initializer to construct the matrix via its coefficients
     auto operator<<(T coeff) -> MatCommaInitializer<Type> {
@@ -164,7 +164,7 @@ class Matrix3 {
     }
 
     /// Returns a printable string-representation of the matrix
-    [[nodiscard]] auto toString() const -> std::string {
+    MATH3D_NODISCARD auto toString() const -> std::string {
         const auto& data_elms = m_Elements;
         std::stringstream sstr_result;
 

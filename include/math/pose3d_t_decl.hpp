@@ -49,22 +49,22 @@ class Pose3d {
     explicit Pose3d(const Mat4& transform);
 
     /// Transforms the given vector by using this pose
-    LM_INLINE auto apply(const Vec3& rhs) const -> Vec3;
+    MATH3D_INLINE auto apply(const Vec3& rhs) const -> Vec3;
 
     /// Returns the inverse of this pose
-    LM_INLINE auto inverse() const -> Pose3d<T>;
+    MATH3D_INLINE auto inverse() const -> Pose3d<T>;
 
     /// Returns a 4x4 matrix equivalent to this pose
-    LM_INLINE auto toMatrix() const -> Mat4;
+    MATH3D_INLINE auto toMatrix() const -> Mat4;
 
     /// Composes the given pose with this pose
-    LM_INLINE auto operator*(const Pose3d<T>& rhs) const -> Pose3d<T>;
+    MATH3D_INLINE auto operator*(const Pose3d<T>& rhs) const -> Pose3d<T>;
 
     /// Applies this transform to the given vector
-    LM_INLINE auto operator*(const Vec3& rhs) const -> Vec3;
+    MATH3D_INLINE auto operator*(const Vec3& rhs) const -> Vec3;
 
     /// Returns a printable string representation of this pose
-    [[nodiscard]] auto toString() const -> std::string {
+    MATH3D_NODISCARD auto toString() const -> std::string {
         std::stringstream str_result;
         str_result << "Pose3d(pos=" << this->position.toString() << ", ";
         str_result << "rot=" << this->orientation.toString() << ")";

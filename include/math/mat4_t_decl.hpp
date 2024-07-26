@@ -184,7 +184,7 @@ class Matrix4 {
     }
 
     /// Returns a printable string-representation of the matrix
-    [[nodiscard]] auto toString() const -> std::string {
+    MATH3D_NODISCARD auto toString() const -> std::string {
         const auto& data_elms = m_Elements;
         std::stringstream sstr_result;
 

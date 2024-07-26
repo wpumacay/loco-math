@@ -154,39 +154,39 @@ using SFINAE_MAT3_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 
 /// Returns the tranpose of the given matrix
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto transpose(const Matrix3<T>& mat) -> Matrix3<T> {
+MATH3D_INLINE auto transpose(const Matrix3<T>& mat) -> Matrix3<T> {
     Matrix3<T> dst = mat;
     scalar::kernel_transpose_inplace_mat3<T>(dst.elements());
     return dst;
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto tranposeInPlace(Matrix3<T>& mat) -> void {  // NOLINT
+MATH3D_INLINE auto tranposeInPlace(Matrix3<T>& mat) -> void {  // NOLINT
     scalar::kernel_transpose_inplace_mat3<T>(mat.elements());
 }
 
 /// Returns the trace (sum of diagonal elements) of the matrix
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto trace(const Matrix3<T>& mat) -> T {
+MATH3D_INLINE auto trace(const Matrix3<T>& mat) -> T {
     return scalar::kernel_trace_mat3<T>(mat.elements());
 }
 
 /// Returns the determinant of the matrix
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto determinant(const Matrix3<T>& mat) -> T {
+MATH3D_INLINE auto determinant(const Matrix3<T>& mat) -> T {
     return scalar::kernel_determinant_mat3<T>(mat.elements());
 }
 
 /// Returns the inverse of the matrix
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto inverse(const Matrix3<T>& mat) -> Matrix3<T> {
+MATH3D_INLINE auto inverse(const Matrix3<T>& mat) -> Matrix3<T> {
     Matrix3<T> dst;
     scalar::kernel_inverse_mat3<T>(dst.elements(), mat.elements());
     return dst;
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto operator+(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
+MATH3D_INLINE auto operator+(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
     -> Matrix3<T> {
     Matrix3<T> dst;
     scalar::kernel_add_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
@@ -194,7 +194,7 @@ LM_INLINE auto operator+(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto operator-(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
+MATH3D_INLINE auto operator-(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
     -> Matrix3<T> {
     Matrix3<T> dst;
     scalar::kernel_sub_mat3<T>(dst.elements(), lhs.elements(), rhs.elements());
@@ -202,7 +202,8 @@ LM_INLINE auto operator-(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto operator*(double scale, const Matrix3<T>& mat) -> Matrix3<T> {
+MATH3D_INLINE auto operator*(double scale, const Matrix3<T>& mat)
+    -> Matrix3<T> {
     Matrix3<T> dst;
     scalar::kernel_scale_mat3<T>(dst.elements(), static_cast<T>(scale),
                                  mat.elements());
@@ -210,7 +211,8 @@ LM_INLINE auto operator*(double scale, const Matrix3<T>& mat) -> Matrix3<T> {
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto operator*(const Matrix3<T>& mat, double scale) -> Matrix3<T> {
+MATH3D_INLINE auto operator*(const Matrix3<T>& mat, double scale)
+    -> Matrix3<T> {
     Matrix3<T> dst;
     scalar::kernel_scale_mat3<T>(dst.elements(), static_cast<T>(scale),
                                  mat.elements());
@@ -218,7 +220,7 @@ LM_INLINE auto operator*(const Matrix3<T>& mat, double scale) -> Matrix3<T> {
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto operator*(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
+MATH3D_INLINE auto operator*(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
     -> Matrix3<T> {
     Matrix3<T> dst;
     scalar::kernel_matmul_mat3<T>(dst.elements(), lhs.elements(),
@@ -227,8 +229,8 @@ LM_INLINE auto operator*(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto operator*(const Matrix3<T>& lhs_mat, const Vector3<T>& rhs_vec)
-    -> Vector3<T> {
+MATH3D_INLINE auto operator*(const Matrix3<T>& lhs_mat,
+                             const Vector3<T>& rhs_vec) -> Vector3<T> {
     Vector3<T> dst;
     scalar::kernel_matmul_vec_mat3<T>(dst.elements(), lhs_mat.elements(),
                                       rhs_vec.elements());
@@ -236,7 +238,7 @@ LM_INLINE auto operator*(const Matrix3<T>& lhs_mat, const Vector3<T>& rhs_vec)
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto hadamard(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
+MATH3D_INLINE auto hadamard(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
     -> Matrix3<T> {
     Matrix3<T> dst;
     scalar::kernel_hadamard_mat3<T>(dst.elements(), lhs.elements(),
@@ -245,13 +247,13 @@ LM_INLINE auto hadamard(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto operator==(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
+MATH3D_INLINE auto operator==(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
     -> bool {
     return scalar::kernel_compare_eq_mat3<T>(lhs.elements(), rhs.elements());
 }
 
 template <typename T, SFINAE_MAT3_GUARD<T> = nullptr>
-LM_INLINE auto operator!=(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
+MATH3D_INLINE auto operator!=(const Matrix3<T>& lhs, const Matrix3<T>& rhs)
     -> bool {
     return !scalar::kernel_compare_eq_mat3<T>(lhs.elements(), rhs.elements());
 }
@@ -301,12 +303,12 @@ auto operator>>(std::istream& input_stream, Matrix3<T>& dst) -> std::istream& {
 // ***************************************************************************//
 
 template <typename T>
-LM_INLINE auto Matrix3<T>::operator*(const Vector3<T>& rhs) -> Vector3<T> {
+MATH3D_INLINE auto Matrix3<T>::operator*(const Vector3<T>& rhs) -> Vector3<T> {
     return ::math::operator*(*this, rhs);
 }
 
 template <typename T>
-LM_INLINE auto Matrix3<T>::operator*(const Matrix3<T>& rhs) -> Matrix3<T> {
+MATH3D_INLINE auto Matrix3<T>::operator*(const Matrix3<T>& rhs) -> Matrix3<T> {
     return ::math::operator*(*this, rhs);
 }
 

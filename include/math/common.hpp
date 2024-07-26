@@ -1,27 +1,110 @@
 #pragma once
 
+// -----------------------------------------------------------------------------
+// Language detection adapted from https://github.com/g-truc/glm
+
 // clang-format off
-#if defined(MATH_FORCE_INLINE)
-    #if defined(MATH_COMPILER_CLANG) || defined(MATH_COMPILER_GCC)
-        #define LM_INLINE inline __attribute__((__always_inline__))
-    #elif defined(MATH_COMPILER_MSVC)
-        #define LM_INLINE __forceinline
+
+#if defined(MATH3D_FORCE_INLINE)
+    #if defined(MATH3D_COMPILER_CLANG) || defined(MATH3D_COMPILER_GCC)
+        #define MATH3D_INLINE inline __attribute__((__always_inline__))
+    #elif defined(MATH3D_COMPILER_MSVC)
+        #define MATH3D_INLINE __forceinline
     #else
-        #define LM_INLINE inline
+        #define MATH3D_INLINE inline
     #endif
 #else
-    #define LM_INLINE
+    #define MATH3D_INLINE
 #endif
 
-#if defined(MATH_COMPILER_CLANG) || defined(MATH_COMPILER_GCC)
-    #define LM_NEVER_INLINE __attribute__((noinline))
-#elif defined(MATH_COMPILER_MSVC)
-    #define LM_NEVER_INLINE __declspec(noinline)
+#if defined(MATH3D_COMPILER_CLANG) || defined(MATH3D_COMPILER_GCC)
+    #define MATH3D_NEVER_INLINE __attribute__((noinline))
+#elif defined(MATH3D_COMPILER_MSVC)
+    #define MATH3D_NEVER_INLINE __declspec(noinline)
 #else
-    #define LM_NEVER_INLINE
+    #define MATH3D_NEVER_INLINE
+#endif
+
+#define MATH3D_LANG_CXX98_FLAG (1 << 1)
+#define MATH3D_LANG_CXX03_FLAG (1 << 2)
+#define MATH3D_LANG_CXX0X_FLAG (1 << 3)
+#define MATH3D_LANG_CXX11_FLAG (1 << 4)
+#define MATH3D_LANG_CXX14_FLAG (1 << 5)
+#define MATH3D_LANG_CXX17_FLAG (1 << 6)
+#define MATH3D_LANG_CXX20_FLAG (1 << 7)
+
+#define MATH3D_LANG_CXX98 MATH3D_LANG_CXX98_FLAG
+#define MATH3D_LANG_CXX03 (MATH3D_LANG_CXX98 | MATH3D_LANG_CXX03_FLAG)
+#define MATH3D_LANG_CXX0X (MATH3D_LANG_CXX03 | MATH3D_LANG_CXX0X_FLAG)
+#define MATH3D_LANG_CXX11 (MATH3D_LANG_CXX0X | MATH3D_LANG_CXX11_FLAG)
+#define MATH3D_LANG_CXX14 (MATH3D_LANG_CXX11 | MATH3D_LANG_CXX14_FLAG)
+#define MATH3D_LANG_CXX17 (MATH3D_LANG_CXX14 | MATH3D_LANG_CXX17_FLAG)
+#define MATH3D_LANG_CXX20 (MATH3D_LANG_CXX17 | MATH3D_LANG_CXX20_FLAG)
+
+#if defined(MATH3D_FORCE_CXX20)
+    #define MATH3D_LANG MATH3D_LANG_CXX20
+#elif defined(MATH3D_FORCE_CXX17)
+    #define MATH3D_LANG MATH3D_LANG_CXX17
+#elif defined(MATH3D_FORCE_CXX14)
+    #define MATH3D_LANG MATH3D_LANG_CXX14
+#elif defined(MATH3D_FORCE_CXX11)
+    #define MATH3D_LANG MATH3D_LANG_CXX11
+#else
+    #if __cplusplus > 201703L
+        #define MATH3D_LANG MATH3D_LANG_CXX20
+    #elif __cplusplus == 201703L
+        #define MATH3D_LANG MATH3D_LANG_CXX17
+    #elif __cplusplus == 201402L
+        #define MATH3D_LANG MATH3D_LANG_CXX14
+    #elif __cplusplus == 201103L
+        #define MATH3D_LANG MATH3D_LANG_CXX11
+    #else
+        #error "C++ standard must be one of 11, 14, 17, and 20"
+    #endif
+#endif
+
+// [[nodiscard]]
+#if MATH3D_LANG & MATH3D_LANG_CXX17_FLAG
+    #define MATH3D_NODISCARD [[nodiscard]]
+#else
+    #define MATH3D_NODISCARD
+#endif
+
+#if defined _WIN32 || defined __CYGWIN__
+    #define MATH3D_DLL_EXPORT __declspec(dllexport)
+    #define MATH3D_DLL_IMPORT __declspec(dllimport)
+    #define MATH3D_DLL_LOCAL
+#else
+    #if __GNUC__ >= 4
+        #define MATH3D_DLL_EXPORT __attribute__ ((visibility ("default")))
+        #define MATH3D_DLL_IMPORT __attribute__ ((visibility ("default")))
+        #define MATH3D_DLL_LOCAL __attribute__ ((visibility ("hidden")))
+    #else
+        #define MATH3D_DLL_EXPORT
+        #define MATH3D_DLL_IMPORT
+        #define MATH3D_DLL_LOCAL
+    #endif
+#endif
+
+
+#define MATH3D_DECL MATH3D_NODISCARD
+
+#ifdef MATH3D_STATIC
+    #define MATH3D_API
+    #define MATH3D_LOCAL
+#else
+    #ifdef MATH3D_DLL_EXPORTS
+        #define MATH3D_API MATH3D_DLL_EXPORT
+    #else
+        #define MATH3D_API MATH3D_DLL_IMPORT
+    #endif
+    #define MATH3D_LOCAL MATH3D_DLL_LOCAL
 #endif
 
 // clang-format on
+
+// -----------------------------------------------------------------------------
+
 #include <cassert>
 #include <cstdint>
 #include <algorithm>
@@ -42,13 +125,13 @@ struct ShuffleMask {
     static constexpr uint value = (((z) << 6) | ((y) << 4) | ((x) << 2) | (w));
 };
 
-#if defined(MATH_SSE_ENABLED)
+#if defined(MATH3D_SSE_ENABLED)
 using HAS_SSE = std::true_type;
 #else
 using HAS_SSE = std::false_type;
 #endif
 
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
 using HAS_AVX = std::true_type;
 #else
 using HAS_AVX = std::false_type;
@@ -148,7 +231,7 @@ struct VecCommaInitializer {
 
  private:
     /// Terminates the operations of the initializer
-    LM_INLINE auto _finished() -> void {
+    MATH3D_INLINE auto _finished() -> void {
         assert(m_CurrentBuildIndex == (VECTOR_LAST_INDEX + 1));
     }
 
@@ -233,7 +316,7 @@ struct MatCommaInitializer {
 
  private:
     /// Terminates the operations of the initializer and returns the built vec3
-    LM_INLINE auto _finished() -> void {
+    MATH3D_INLINE auto _finished() -> void {
         assert(m_CurrentBuildIndex == (MATRIX_LAST_INDEX + 1));
     }
 

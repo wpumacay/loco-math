@@ -57,8 +57,8 @@ using SFINAE_MAT3_SSE_F64_GUARD =
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT3_SSE_F32_GUARD<T> = nullptr>
-LM_INLINE auto kernel_add_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
-                               const Mat3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_add_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
+                                   const Mat3Buffer<T>& rhs) -> void {
     // vec3 (4 floats, as it uses padding) fits into an xmm register. The
     // padding float is set to zero during instantiation
     for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
@@ -73,8 +73,8 @@ LM_INLINE auto kernel_add_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT3_SSE_F64_GUARD<T> = nullptr>
-LM_INLINE auto kernel_add_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
-                               const Mat3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_add_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
+                                   const Mat3Buffer<T>& rhs) -> void {
     // [c0, c1, c2, c3] -> column-major order (in storage), each with (3+1)xf32
     // So, we can send only half of each column to an xmm register
     for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
@@ -102,8 +102,8 @@ LM_INLINE auto kernel_add_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT3_SSE_F32_GUARD<T> = nullptr>
-LM_INLINE auto kernel_sub_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
-                               const Mat3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_sub_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
+                                   const Mat3Buffer<T>& rhs) -> void {
     for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j =
             _mm_loadu_ps(static_cast<const float*>(lhs[j].data()));
@@ -116,8 +116,8 @@ LM_INLINE auto kernel_sub_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT3_SSE_F64_GUARD<T> = nullptr>
-LM_INLINE auto kernel_sub_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
-                               const Mat3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_sub_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
+                                   const Mat3Buffer<T>& rhs) -> void {
     for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j_lo =
             _mm_loadu_pd(static_cast<const double*>(lhs[j].data()));
@@ -143,8 +143,8 @@ LM_INLINE auto kernel_sub_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT3_SSE_F32_GUARD<T> = nullptr>
-LM_INLINE auto kernel_scale_mat3(Mat3Buffer<T>& dst, T scale,
-                                 const Mat3Buffer<T>& src) -> void {
+MATH3D_INLINE auto kernel_scale_mat3(Mat3Buffer<T>& dst, T scale,
+                                     const Mat3Buffer<T>& src) -> void {
     auto xmm_scale = _mm_set1_ps(scale);
     for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
         auto xmm_col_j = _mm_loadu_ps(static_cast<const float*>(src[j].data()));
@@ -154,8 +154,8 @@ LM_INLINE auto kernel_scale_mat3(Mat3Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_MAT3_SSE_F64_GUARD<T> = nullptr>
-LM_INLINE auto kernel_scale_mat3(Mat3Buffer<T>& dst, T scale,
-                                 const Mat3Buffer<T>& src) -> void {
+MATH3D_INLINE auto kernel_scale_mat3(Mat3Buffer<T>& dst, T scale,
+                                     const Mat3Buffer<T>& src) -> void {
     auto xmm_scale = _mm_set1_pd(scale);
     for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
         auto xmm_col_j_lo =
@@ -175,8 +175,9 @@ LM_INLINE auto kernel_scale_mat3(Mat3Buffer<T>& dst, T scale,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT3_SSE_F32_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
-                                  const Mat3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst,
+                                      const Mat3Buffer<T>& lhs,
+                                      const Mat3Buffer<T>& rhs) -> void {
     // Use the "linear combination view" of the matrix-vector product, and apply
     // it along all column vectors of the right-hand side
     for (uint32_t k = 0; k < Matrix3<T>::MATRIX_SIZE; ++k) {
@@ -199,8 +200,9 @@ LM_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT3_SSE_F64_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
-                                  const Mat3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst,
+                                      const Mat3Buffer<T>& lhs,
+                                      const Mat3Buffer<T>& rhs) -> void {
     // Use the same approach as the f32 version, but use lo-hi halves xmm regs.
     for (uint32_t k = 0; k < Matrix3<T>::MATRIX_SIZE; ++k) {
         auto xmm_result_col_k_lo = _mm_setzero_pd();
@@ -231,9 +233,9 @@ LM_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT3_SSE_F32_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_vec_mat3(Vec3Buffer<T>& dst,
-                                      const Mat3Buffer<T>& mat,
-                                      const Vec3Buffer<T>& vec) -> void {
+MATH3D_INLINE auto kernel_matmul_vec_mat3(Vec3Buffer<T>& dst,
+                                          const Mat3Buffer<T>& mat,
+                                          const Vec3Buffer<T>& vec) -> void {
     // Use the "linear combination view" of the matrix-vector product
     //         [ |  |  |  |  ]
     // A * v = | a0 a1 a2 a3 | * [v0,v1,v2,v3]^T
@@ -257,9 +259,9 @@ LM_INLINE auto kernel_matmul_vec_mat3(Vec3Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_MAT3_SSE_F64_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_vec_mat3(Vec3Buffer<T>& dst,
-                                      const Mat3Buffer<T>& mat,
-                                      const Vec3Buffer<T>& vec) -> void {
+MATH3D_INLINE auto kernel_matmul_vec_mat3(Vec3Buffer<T>& dst,
+                                          const Mat3Buffer<T>& mat,
+                                          const Vec3Buffer<T>& vec) -> void {
     // Use the "linear combination view" of the matrix-vector product
     //         [ |  |  |  |  ]
     // A * v = | a0 a1 a2 a3 | * [v0,v1,v2,v3]^T
@@ -296,9 +298,9 @@ LM_INLINE auto kernel_matmul_vec_mat3(Vec3Buffer<T>& dst,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT3_SSE_F32_GUARD<T> = nullptr>
-LM_INLINE auto kernel_hadamard_mat3(Mat3Buffer<T>& dst,
-                                    const Mat3Buffer<T>& lhs,
-                                    const Mat3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_hadamard_mat3(Mat3Buffer<T>& dst,
+                                        const Mat3Buffer<T>& lhs,
+                                        const Mat3Buffer<T>& rhs) -> void {
     for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j =
             _mm_loadu_ps(static_cast<const float*>(lhs[j].data()));
@@ -311,9 +313,9 @@ LM_INLINE auto kernel_hadamard_mat3(Mat3Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_MAT3_SSE_F64_GUARD<T> = nullptr>
-LM_INLINE auto kernel_hadamard_mat3(Mat3Buffer<T>& dst,
-                                    const Mat3Buffer<T>& lhs,
-                                    const Mat3Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_hadamard_mat3(Mat3Buffer<T>& dst,
+                                        const Mat3Buffer<T>& lhs,
+                                        const Mat3Buffer<T>& rhs) -> void {
     for (uint32_t j = 0; j < Matrix3<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j_lo =
             _mm_loadu_pd(static_cast<const double*>(lhs[j].data()));

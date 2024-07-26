@@ -184,11 +184,11 @@ class Euler {
     auto setFromAxisAngle(const Vec3& axis, T angle) -> void;
 
     /// Returns a printable string-representation of the set of Euler Angles
-    [[nodiscard]] auto toString() const -> std::string {
+    MATH3D_NODISCARD auto toString() const -> std::string {
         std::stringstream sstr_repr;
-        if constexpr (std::is_same<T, float>::value) {
+        if (std::is_same<T, float>::value) {
             sstr_repr << "Euler_f(\n";
-        } else if constexpr (std::is_same<T, double>::value) {
+        } else if (std::is_same<T, double>::value) {
             sstr_repr << "Euler_d(\n";
         } else {
             sstr_repr << "Euler(\n";

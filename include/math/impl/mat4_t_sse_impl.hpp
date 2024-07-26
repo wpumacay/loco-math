@@ -59,8 +59,8 @@ using SFINAE_MAT4_F64_SSE_GUARD =
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
-                               const Mat4Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+                                   const Mat4Buffer<T>& rhs) -> void {
     // [c0, c1, c2, c3] -> column-major order (in storage), each with 4 x f32
     // So, we can send each column to an xmm register. Also, don't unroll the
     // loop, as it most likely be optimized by the compiler and unroll it for us
@@ -73,8 +73,8 @@ LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
-                               const Mat4Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+                                   const Mat4Buffer<T>& rhs) -> void {
     // [c0, c1, c2, c3] -> column-major order (in storage), each with 4 x f32
     // So, we can send only half of each column to an xmm register
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
@@ -95,8 +95,8 @@ LM_INLINE auto kernel_add_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
-                               const Mat4Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+                                   const Mat4Buffer<T>& rhs) -> void {
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j = _mm_loadu_ps(lhs[j].data());
         auto xmm_rhs_col_j = _mm_loadu_ps(rhs[j].data());
@@ -105,8 +105,8 @@ LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
-                               const Mat4Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
+                                   const Mat4Buffer<T>& rhs) -> void {
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j_lo = _mm_loadu_pd(lhs[j].data());
         auto xmm_rhs_col_j_lo = _mm_loadu_pd(rhs[j].data());
@@ -125,8 +125,8 @@ LM_INLINE auto kernel_sub_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
-                                 const Mat4Buffer<T>& mat) -> void {
+MATH3D_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
+                                     const Mat4Buffer<T>& mat) -> void {
     auto xmm_scale = _mm_set1_ps(scale);
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_mat_col_j = _mm_loadu_ps(mat[j].data());
@@ -135,8 +135,8 @@ LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
-                                 const Mat4Buffer<T>& mat) -> void {
+MATH3D_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
+                                     const Mat4Buffer<T>& mat) -> void {
     auto xmm_scale_lo = _mm_set1_pd(scale);  // xmm = [scale(f64), scale(f64)]
     auto xmm_scale_hi = _mm_set1_pd(scale);  // xmm = [scale(f64), scale(f64)]
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
@@ -155,8 +155,9 @@ LM_INLINE auto kernel_scale_mat4(Mat4Buffer<T>& dst, T scale,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
-                                  const Mat4Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst,
+                                      const Mat4Buffer<T>& lhs,
+                                      const Mat4Buffer<T>& rhs) -> void {
     // Use the "linear combination view" of the matrix-vector product, and apply
     // it along all column vectors of the right-hand side
     for (uint32_t k = 0; k < Matrix4<T>::MATRIX_SIZE; ++k) {
@@ -176,8 +177,9 @@ LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
-                                  const Mat4Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst,
+                                      const Mat4Buffer<T>& lhs,
+                                      const Mat4Buffer<T>& rhs) -> void {
     // Use the same approach as the f32 version, but use lo-hi halves xmm regs.
     for (uint32_t k = 0; k < Matrix4<T>::MATRIX_SIZE; ++k) {
         auto xmm_result_col_k_lo = _mm_setzero_pd();
@@ -203,9 +205,9 @@ LM_INLINE auto kernel_matmul_mat4(Mat4Buffer<T>& dst, const Mat4Buffer<T>& lhs,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
-                                      const Mat4Buffer<T>& mat,
-                                      const Vec4Buffer<T>& vec) -> void {
+MATH3D_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
+                                          const Mat4Buffer<T>& mat,
+                                          const Vec4Buffer<T>& vec) -> void {
     // Use the "linear combination view" of the matrix-vector product
     //         [ |  |  |  |  ]
     // A * v = | a0 a1 a2 a3 | * [v0,v1,v2,v3]^T
@@ -227,9 +229,9 @@ LM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
-                                      const Mat4Buffer<T>& mat,
-                                      const Vec4Buffer<T>& vec) -> void {
+MATH3D_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
+                                          const Mat4Buffer<T>& mat,
+                                          const Vec4Buffer<T>& vec) -> void {
     // Use the "linear combination view" of the matrix-vector product
     //         [ |  |  |  |  ]
     // A * v = | a0 a1 a2 a3 | * [v0,v1,v2,v3]^T
@@ -261,9 +263,9 @@ LM_INLINE auto kernel_matmul_vec_mat4(Vec4Buffer<T>& dst,
 // ***************************************************************************//
 
 template <typename T, SFINAE_MAT4_F32_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
-                                    const Mat4Buffer<T>& lhs,
-                                    const Mat4Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
+                                        const Mat4Buffer<T>& lhs,
+                                        const Mat4Buffer<T>& rhs) -> void {
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j = _mm_loadu_ps(lhs[j].data());
         auto xmm_rhs_col_j = _mm_loadu_ps(rhs[j].data());
@@ -272,9 +274,9 @@ LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
 }
 
 template <typename T, SFINAE_MAT4_F64_SSE_GUARD<T> = nullptr>
-LM_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
-                                    const Mat4Buffer<T>& lhs,
-                                    const Mat4Buffer<T>& rhs) -> void {
+MATH3D_INLINE auto kernel_hadamard_mat4(Mat4Buffer<T>& dst,
+                                        const Mat4Buffer<T>& lhs,
+                                        const Mat4Buffer<T>& rhs) -> void {
     for (uint32_t j = 0; j < Matrix4<T>::MATRIX_SIZE; ++j) {
         auto xmm_lhs_col_j_lo = _mm_loadu_pd(lhs[j].data());
         auto xmm_rhs_col_j_lo = _mm_loadu_pd(rhs[j].data());

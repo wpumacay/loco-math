@@ -67,7 +67,7 @@ using SFINAE_MAT2_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 
 /// Returns the tranpose of the given matrix
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto transpose(const Matrix2<T>& mat) -> Matrix2<T> {
+MATH3D_INLINE auto transpose(const Matrix2<T>& mat) -> Matrix2<T> {
     Matrix2<T> dst = mat;
     scalar::kernel_transpose_inplace_mat2<T>(dst.elements());
     return dst;
@@ -75,25 +75,25 @@ LM_INLINE auto transpose(const Matrix2<T>& mat) -> Matrix2<T> {
 
 /// Transposes the given matrix in place
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto transposeInPlace(Matrix2<T>& mat) -> void {  // NOLINT
+MATH3D_INLINE auto transposeInPlace(Matrix2<T>& mat) -> void {  // NOLINT
     scalar::kernel_transpose_inplace_mat2<T>(mat.elements());
 }
 
 /// Returns the trace (sum of diagonal elements) of the matrix
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto trace(const Matrix2<T>& mat) -> T {
+MATH3D_INLINE auto trace(const Matrix2<T>& mat) -> T {
     return scalar::kernel_trace_mat2<T>(mat.elements());
 }
 
 /// Returns the determinant of the matrix
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto determinant(const Matrix2<T>& mat) -> T {
+MATH3D_INLINE auto determinant(const Matrix2<T>& mat) -> T {
     return scalar::kernel_determinant_mat2<T>(mat.elements());
 }
 
 /// Returns the inverse of the matrix
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto inverse(const Matrix2<T>& mat) -> Matrix2<T> {
+MATH3D_INLINE auto inverse(const Matrix2<T>& mat) -> Matrix2<T> {
     Matrix2<T> dst;
     scalar::kernel_inverse_mat2<T>(dst.elements(), mat.elements());
     return dst;
@@ -105,7 +105,7 @@ LM_INLINE auto inverse(const Matrix2<T>& mat) -> Matrix2<T> {
 
 /// Returns the matrix sum of the two given matrices
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto operator+(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
+MATH3D_INLINE auto operator+(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
 #if defined(MATH_AVX_ENABLED)
@@ -119,7 +119,7 @@ LM_INLINE auto operator+(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
 }
 
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto operator-(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
+MATH3D_INLINE auto operator-(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
 #if defined(MATH_AVX_ENABLED)
@@ -133,7 +133,8 @@ LM_INLINE auto operator-(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
 }
 
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto operator*(double scale, const Matrix2<T>& mat) -> Matrix2<T> {
+MATH3D_INLINE auto operator*(double scale, const Matrix2<T>& mat)
+    -> Matrix2<T> {
     Matrix2<T> dst;
 #if defined(MATH_AVX_ENABLED)
     avx::kernel_scale_mat2<T>(dst.elements(), static_cast<T>(scale),
@@ -149,7 +150,8 @@ LM_INLINE auto operator*(double scale, const Matrix2<T>& mat) -> Matrix2<T> {
 }
 
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto operator*(const Matrix2<T>& mat, double scale) -> Matrix2<T> {
+MATH3D_INLINE auto operator*(const Matrix2<T>& mat, double scale)
+    -> Matrix2<T> {
     Matrix2<T> dst;
 #if defined(MATH_AVX_ENABLED)
     avx::kernel_scale_mat2<T>(dst.elements(), static_cast<T>(scale),
@@ -165,7 +167,7 @@ LM_INLINE auto operator*(const Matrix2<T>& mat, double scale) -> Matrix2<T> {
 }
 
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto operator*(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
+MATH3D_INLINE auto operator*(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
 #if defined(MATH_AVX_ENABLED)
@@ -180,8 +182,8 @@ LM_INLINE auto operator*(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
 }
 
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto operator*(const Matrix2<T>& lhs_mat, const Vector2<T>& rhs_vec)
-    -> Vector2<T> {
+MATH3D_INLINE auto operator*(const Matrix2<T>& lhs_mat,
+                             const Vector2<T>& rhs_vec) -> Vector2<T> {
     Vector2<T> dst;
 #if defined(MATH_AVX_ENABLED)
     avx::kernel_matmul_vec_mat2<T>(dst.elements(), lhs_mat.elements(),
@@ -197,7 +199,7 @@ LM_INLINE auto operator*(const Matrix2<T>& lhs_mat, const Vector2<T>& rhs_vec)
 }
 
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto hadamard(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
+MATH3D_INLINE auto hadamard(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
 #if defined(MATH_AVX_ENABLED)
@@ -214,13 +216,13 @@ LM_INLINE auto hadamard(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
 }
 
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto operator==(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
+MATH3D_INLINE auto operator==(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> bool {
     return scalar::kernel_compare_eq_mat2<T>(lhs.elements(), rhs.elements());
 }
 
 template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
-LM_INLINE auto operator!=(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
+MATH3D_INLINE auto operator!=(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> bool {
     return !scalar::kernel_compare_eq_mat2<T>(lhs.elements(), rhs.elements());
 }

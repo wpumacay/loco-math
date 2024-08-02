@@ -9,8 +9,8 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <math/common.hpp>
-#include <math/vec4_t_decl.hpp>
+#include "./common.hpp"
+#include "./vec4_t_decl.hpp"
 
 namespace math {
 

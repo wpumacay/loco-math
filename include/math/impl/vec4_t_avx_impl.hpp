@@ -4,7 +4,7 @@
 
 #include <immintrin.h>
 
-#include <math/vec4_t_decl.hpp>
+#include "../vec4_t_decl.hpp"
 
 /**
  * AVX instruction sets required for each kernel:

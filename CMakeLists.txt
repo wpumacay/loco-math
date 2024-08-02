@@ -28,7 +28,7 @@ project(
 # Define some options the user can set before|while configuring the project
 option(MATH3D_BUILD_SSE "Build using SSE SIMD-extensions support" OFF)
 option(MATH3D_BUILD_AVX "Build using AVX SIMD-extensions support" OFF)
-option(MATH3D_BUILD_FORCE_INLINE "Build with inlining when requested" OFF)
+option(MATH3D_BUILD_FORCE_INLINE "Build with inlining when requested" ON)
 option(MATH3D_BUILD_PYTHON_BINDINGS "Build bindings (requires Pybind11)" ON)
 option(MATH3D_BUILD_DOCS "Build documentation (requires Doxygen+Breathe)" OFF)
 option(MATH3D_BUILD_TESTS "Build C++ unit-tests (requires Catch2)" ON)
@@ -110,7 +110,6 @@ loco_create_target(MathCpp INTERFACE
 # cmake-format: on
 
 # -------------------------------------
-# TODO(wilbert): should move this check into the create_target macro
 if(CMAKE_CXX_STANDARD EQUAL 20)
   target_compile_definitions(MathCpp INTERFACE -DMATH3D_FORCE_CXX20)
 elseif(CMAKE_CXX_STANDARD EQUAL 17)

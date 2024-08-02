@@ -1,9 +1,9 @@
 #pragma once
 
-#include <math/vec2_t_decl.hpp>
+#include "./vec2_t_decl.hpp"
 
-#include <math/impl/vec2_t_scalar_impl.hpp>
-#include <math/impl/vec2_t_sse_impl.hpp>
+#include "./impl/vec2_t_scalar_impl.hpp"
+#include "./impl/vec2_t_sse_impl.hpp"
 
 namespace math {
 

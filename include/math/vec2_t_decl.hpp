@@ -1,15 +1,15 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstdint>
 #include <initializer_list>
 #include <sstream>
 #include <string>
-#include <algorithm>
 #include <type_traits>
 
-#include <math/common.hpp>
+#include "./common.hpp"
 
 namespace math {
 
@@ -20,9 +20,7 @@ namespace math {
 /// \tparam T Type of scalar value used for this 2d-vector (float|double)
 ///
 /// This is a class that represents a 2d-vector with entries x, y of some
-/// scalar floating-point type. Its storage is an std::array scalar type;
-/// however, it's not aligned for SIMD load/store instructions (tradeoff
-/// between adding padding/size and usage of aligned load/store).
+/// scalar floating-point type. Its storage is an std::array scalar type.
 template <typename T>
 struct Vector2 {
     /// Number of scalars used in the storage of the vector

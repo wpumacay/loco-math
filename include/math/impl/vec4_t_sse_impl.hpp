@@ -6,7 +6,7 @@
 #include <smmintrin.h>
 #include <xmmintrin.h>
 
-#include <math/vec4_t_decl.hpp>
+#include "../vec4_t_decl.hpp"
 
 /**
  * SSE instruction sets required for each kernel:

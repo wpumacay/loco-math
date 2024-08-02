@@ -1,10 +1,10 @@
 #pragma once
 
-#include <math/vec4_t_decl.hpp>
+#include "./vec4_t_decl.hpp"
 
-#include <math/impl/vec4_t_scalar_impl.hpp>
-#include <math/impl/vec4_t_sse_impl.hpp>
-#include <math/impl/vec4_t_avx_impl.hpp>
+#include "./impl/vec4_t_scalar_impl.hpp"
+#include "./impl/vec4_t_sse_impl.hpp"
+#include "./impl/vec4_t_avx_impl.hpp"
 
 namespace math {
 

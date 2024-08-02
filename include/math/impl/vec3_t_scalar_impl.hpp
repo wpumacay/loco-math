@@ -2,8 +2,9 @@
 
 #include <cmath>
 
-#include <math/vec3_t_decl.hpp>
+#include "../vec3_t_decl.hpp"
 
+// NOLINTNEXTLINE
 namespace math {
 namespace scalar {
 

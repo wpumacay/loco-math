@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
 
 #include <immintrin.h>
 
@@ -275,4 +275,4 @@ MATH3D_INLINE auto kernel_cross_vec3(Vec3Buffer<T>& dst,
 }  // namespace avx
 }  // namespace math
 
-#endif  // MATH_AVX_ENABLED
+#endif  // MATH3D_AVX_ENABLED

@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(MATH_SSE_ENABLED)
+#if defined(MATH3D_SSE_ENABLED)
 
 #include <emmintrin.h>
 #include <smmintrin.h>
@@ -147,4 +147,4 @@ MATH3D_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> void {
 }  // namespace sse
 }  // namespace math
 
-#endif  // MATH_SSE_ENABLED
+#endif  // MATH3D_SSE_ENABLED

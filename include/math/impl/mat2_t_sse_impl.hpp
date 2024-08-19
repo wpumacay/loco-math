@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(MATH_SSE_ENABLED)
+#if defined(MATH3D_SSE_ENABLED)
 
 #include <emmintrin.h>
 #include <smmintrin.h>
@@ -294,4 +294,4 @@ MATH3D_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
 #pragma GCC diagnostic pop
 #endif
 
-#endif  // MATH_SSE_ENABLED
+#endif  // MATH3D_SSE_ENABLED

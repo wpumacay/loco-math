@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
 
 #include <immintrin.h>
 
@@ -141,4 +141,4 @@ MATH3D_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> void {
 }  // namespace avx
 }  // namespace math
 
-#endif  // MATH_AVX_ENABLED
+#endif  // MATH3D_AVX_ENABLED

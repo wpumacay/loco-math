@@ -3,7 +3,7 @@
 #include <cmath>
 #include <utility>
 
-#include <math/mat2_t_decl.hpp>
+#include "../mat2_t_decl.hpp"
 
 // TODO(wilbert): Check that loops are unrolled (otherwise unroll manually)
 

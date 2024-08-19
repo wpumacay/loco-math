@@ -73,13 +73,13 @@ class CMakeBuild(build_ext):
 
         # Add additional CMake arguments required for setting up this project
         cmake_args += [
-            "-DMATH_BUILD_SSE=ON",
-            "-DMATH_BUILD_AVX=ON",
-            "-DMATH_BUILD_FORCE_INLINE=OFF",
-            "-DMATH_BUILD_PYTHON_BINDINGS=ON",
-            "-DMATH_BUILD_DOCS=OFF",
-            "-DMATH_BUILD_TESTS=OFF",
-            "-DMATH_BUILD_EXAMPLES=OFF",
+            "-DMATH3D_BUILD_SSE=ON",
+            "-DMATH3D_BUILD_AVX=ON",
+            "-DMATH3D_BUILD_FORCE_INLINE=OFF",
+            "-DMATH3D_BUILD_PYTHON_BINDINGS=ON",
+            "-DMATH3D_BUILD_DOCS=OFF",
+            "-DMATH3D_BUILD_TESTS=OFF",
+            "-DMATH3D_BUILD_EXAMPLES=OFF",
         ]
 
         if self.compiler.compiler_type != "msvc":

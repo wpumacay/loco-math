@@ -108,9 +108,9 @@ template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
 MATH3D_INLINE auto operator+(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_add_mat2<T>(dst.elements(), lhs.elements(), rhs.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_add_mat2<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_add_mat2<T>(dst.elements(), lhs.elements(), rhs.elements());
@@ -122,9 +122,9 @@ template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
 MATH3D_INLINE auto operator-(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_sub_mat2<T>(dst.elements(), lhs.elements(), rhs.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_sub_mat2<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_sub_mat2<T>(dst.elements(), lhs.elements(), rhs.elements());
@@ -136,10 +136,10 @@ template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
 MATH3D_INLINE auto operator*(double scale, const Matrix2<T>& mat)
     -> Matrix2<T> {
     Matrix2<T> dst;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_scale_mat2<T>(dst.elements(), static_cast<T>(scale),
                               mat.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_scale_mat2<T>(dst.elements(), static_cast<T>(scale),
                               mat.elements());
 #else
@@ -153,10 +153,10 @@ template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
 MATH3D_INLINE auto operator*(const Matrix2<T>& mat, double scale)
     -> Matrix2<T> {
     Matrix2<T> dst;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_scale_mat2<T>(dst.elements(), static_cast<T>(scale),
                               mat.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_scale_mat2<T>(dst.elements(), static_cast<T>(scale),
                               mat.elements());
 #else
@@ -170,9 +170,9 @@ template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
 MATH3D_INLINE auto operator*(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_matmul_mat2<T>(dst.elements(), lhs.elements(), rhs.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_matmul_mat2<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_matmul_mat2<T>(dst.elements(), lhs.elements(),
@@ -185,10 +185,10 @@ template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
 MATH3D_INLINE auto operator*(const Matrix2<T>& lhs_mat,
                              const Vector2<T>& rhs_vec) -> Vector2<T> {
     Vector2<T> dst;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_matmul_vec_mat2<T>(dst.elements(), lhs_mat.elements(),
                                    rhs_vec.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_matmul_vec_mat2<T>(dst.elements(), lhs_mat.elements(),
                                    rhs_vec.elements());
 #else
@@ -202,10 +202,10 @@ template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
 MATH3D_INLINE auto hadamard(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_hadamard_mat2<T>(dst.elements(), lhs.elements(),
                                  rhs.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_hadamard_mat2<T>(dst.elements(), lhs.elements(),
                                  rhs.elements());
 #else

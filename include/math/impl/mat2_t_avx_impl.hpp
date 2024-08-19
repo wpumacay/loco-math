@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
 
 #include <immintrin.h>
 
@@ -262,4 +262,4 @@ MATH3D_INLINE auto kernel_hadamard_mat2(Mat2Buffer<T>& dst,
 #pragma GCC diagnostic pop
 #endif
 
-#endif  // MATH_AVX_ENABLED
+#endif  // MATH3D_AVX_ENABLED

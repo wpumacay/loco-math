@@ -17,9 +17,9 @@ using SFINAE_VEC4_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
 
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 MATH3D_INLINE auto squareNorm(const Vector4<T>& vec) -> T {
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     return avx::kernel_length_square_vec4<T>(vec.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     return sse::kernel_length_square_vec4<T>(vec.elements());
 #else
     return scalar::kernel_length_square_vec4<T>(vec.elements());
@@ -29,9 +29,9 @@ MATH3D_INLINE auto squareNorm(const Vector4<T>& vec) -> T {
 /// \brief Returns the norm-2 of the vector
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 MATH3D_INLINE auto norm(const Vector4<T>& vec) -> T {
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     return avx::kernel_length_vec4<T>(vec.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     return sse::kernel_length_vec4<T>(vec.elements());
 #else
     return std::sqrt(scalar::kernel_length_square_vec4<T>(vec.elements()));
@@ -42,9 +42,9 @@ MATH3D_INLINE auto norm(const Vector4<T>& vec) -> T {
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 MATH3D_INLINE auto normalize(const Vector4<T>& vec) -> Vector4<T> {
     Vector4<T> vec_normalized = vec;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_normalize_in_place_vec4<T>(vec_normalized.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_normalize_in_place_vec4<T>(vec_normalized.elements());
 #else
     scalar::kernel_normalize_in_place_vec4<T>(vec_normalized.elements());
@@ -55,9 +55,9 @@ MATH3D_INLINE auto normalize(const Vector4<T>& vec) -> Vector4<T> {
 /// \brief Normalizes in-place the given vector
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 MATH3D_INLINE auto normalize_in_place(Vector4<T>& vec) -> void {  // NOLINT
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_normalize_in_place_vec4<T>(vec.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_normalize_in_place_vec4<T>(vec.elements());
 #else
     scalar::kernel_normalize_in_place_vec4<T>(vec.elements());
@@ -67,9 +67,9 @@ MATH3D_INLINE auto normalize_in_place(Vector4<T>& vec) -> void {  // NOLINT
 /// \brief Returns the dot-product of the given two vectors
 template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 MATH3D_INLINE auto dot(const Vector4<T>& lhs, const Vector4<T>& rhs) -> T {
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     return avx::kernel_dot_vec4<T>(lhs.elements(), rhs.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     return sse::kernel_dot_vec4<T>(lhs.elements(), rhs.elements());
 #else
     return scalar::kernel_dot_vec4<T>(lhs.elements(), rhs.elements());
@@ -92,9 +92,9 @@ template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 MATH3D_INLINE auto operator+(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> Vector4<T> {
     Vector4<T> dst;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_add_vec4<T>(dst.elements(), rhs.elements(), lhs.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_add_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_add_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
@@ -118,9 +118,9 @@ template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 MATH3D_INLINE auto operator-(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> Vector4<T> {
     Vector4<T> dst;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_sub_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_sub_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
 #else
     scalar::kernel_sub_vec4<T>(dst.elements(), lhs.elements(), rhs.elements());
@@ -144,10 +144,10 @@ template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 MATH3D_INLINE auto operator*(double scale, const Vector4<T>& vec)
     -> Vector4<T> {
     Vector4<T> dst;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_scale_vec4<T>(dst.elements(), static_cast<T>(scale),
                               vec.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_scale_vec4<T>(dst.elements(), static_cast<T>(scale),
                               vec.elements());
 #else
@@ -173,10 +173,10 @@ template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 MATH3D_INLINE auto operator*(const Vector4<T>& vec, double scale)
     -> Vector4<T> {
     Vector4<T> dst;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_scale_vec4<T>(dst.elements(), static_cast<T>(scale),
                               vec.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_scale_vec4<T>(dst.elements(), static_cast<T>(scale),
                               vec.elements());
 #else
@@ -202,10 +202,10 @@ template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
 MATH3D_INLINE auto operator*(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> Vector4<T> {
     Vector4<T> dst;
-#if defined(MATH_AVX_ENABLED)
+#if defined(MATH3D_AVX_ENABLED)
     avx::kernel_hadamard_vec4<T>(dst.elements(), lhs.elements(),
                                  rhs.elements());
-#elif defined(MATH_SSE_ENABLED)
+#elif defined(MATH3D_SSE_ENABLED)
     sse::kernel_hadamard_vec4<T>(dst.elements(), lhs.elements(),
                                  rhs.elements());
 #else

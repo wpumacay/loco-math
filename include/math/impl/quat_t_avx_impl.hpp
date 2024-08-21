@@ -4,7 +4,7 @@
 
 #include <immintrin.h>
 
-#include <math/quat_t_decl.hpp>
+#include "../quat_t_decl.hpp"
 
 namespace math {
 namespace avx {

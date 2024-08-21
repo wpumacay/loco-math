@@ -2,14 +2,14 @@
 
 #include <cmath>
 
-#include <math/quat_t_decl.hpp>
+#include "./quat_t_decl.hpp"
 
-#include <math/impl/quat_t_scalar_impl.hpp>
-#include <math/impl/quat_t_sse_impl.hpp>
-#include <math/impl/quat_t_avx_impl.hpp>
+#include "./impl/quat_t_scalar_impl.hpp"
+#include "./impl/quat_t_sse_impl.hpp"
+#include "./impl/quat_t_avx_impl.hpp"
 
-#include <math/vec3_t.hpp>
-#include <math/euler_t.hpp>
+#include "./vec3_t.hpp"
+#include "./euler_t.hpp"
 
 namespace math {
 

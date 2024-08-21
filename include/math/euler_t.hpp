@@ -3,11 +3,11 @@
 #include <cmath>
 #include <string>
 
-#include <math/euler_t_decl.hpp>
+#include "./euler_t_decl.hpp"
 
-#include <math/quat_t.hpp>
-#include <math/mat3_t.hpp>
-#include <math/mat4_t.hpp>
+#include "./quat_t.hpp"
+#include "./mat3_t.hpp"
+#include "./mat4_t.hpp"
 
 namespace math {
 

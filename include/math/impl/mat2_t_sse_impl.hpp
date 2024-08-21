@@ -6,7 +6,7 @@
 #include <smmintrin.h>
 #include <xmmintrin.h>
 
-#include <math/mat2_t_decl.hpp>
+#include "../mat2_t_decl.hpp"
 
 #if defined(__GNUC__)
 #pragma GCC diagnostic push

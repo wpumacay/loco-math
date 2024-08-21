@@ -9,10 +9,10 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <math/vec3_t_decl.hpp>
-#include <math/mat3_t_decl.hpp>
-#include <math/mat4_t_decl.hpp>
-#include <math/euler_t_decl.hpp>
+#include "./vec3_t_decl.hpp"
+#include "./mat3_t_decl.hpp"
+#include "./mat4_t_decl.hpp"
+#include "./euler_t_decl.hpp"
 
 namespace math {
 

@@ -3,7 +3,7 @@
 #include <cmath>
 #include <utility>
 
-#include <math/mat3_t_decl.hpp>
+#include "../mat3_t_decl.hpp"
 
 namespace math {
 namespace scalar {

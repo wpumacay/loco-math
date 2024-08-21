@@ -3,15 +3,15 @@
 #include <cmath>
 #include <iomanip>
 
-#include <math/mat4_t_decl.hpp>
+#include "./mat4_t_decl.hpp"
 
-#include <math/impl/mat4_t_scalar_impl.hpp>
-#include <math/impl/mat4_t_sse_impl.hpp>
-#include <math/impl/mat4_t_avx_impl.hpp>
+#include "./impl/mat4_t_scalar_impl.hpp"
+#include "./impl/mat4_t_sse_impl.hpp"
+#include "./impl/mat4_t_avx_impl.hpp"
 
-#include <math/quat_t.hpp>
-#include <math/euler_t.hpp>
-#include <math/mat3_t.hpp>
+#include "./quat_t.hpp"
+#include "./euler_t.hpp"
+#include "./mat3_t.hpp"
 
 namespace math {
 

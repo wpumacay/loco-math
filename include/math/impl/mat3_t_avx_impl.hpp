@@ -4,7 +4,7 @@
 
 #include <immintrin.h>
 
-#include <math/mat3_t_decl.hpp>
+#include "../mat3_t_decl.hpp"
 
 /**
  * SSE instruction sets required for each kernel:

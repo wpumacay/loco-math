@@ -1,12 +1,12 @@
 #pragma once
 
-#include <math/pose3d_t_decl.hpp>
+#include "./pose3d_t_decl.hpp"
 
-#include <math/vec3_t.hpp>
-#include <math/mat3_t.hpp>
-#include <math/euler_t.hpp>
-#include <math/quat_t.hpp>
-#include <math/mat4_t.hpp>
+#include "./vec3_t.hpp"
+#include "./mat3_t.hpp"
+#include "./euler_t.hpp"
+#include "./quat_t.hpp"
+#include "./mat4_t.hpp"
 
 namespace math {
 

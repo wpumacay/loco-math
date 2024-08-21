@@ -3,11 +3,11 @@
 #include <cmath>
 #include <iomanip>
 
-#include <math/mat2_t_decl.hpp>
+#include "./mat2_t_decl.hpp"
 
-#include <math/impl/mat2_t_scalar_impl.hpp>
-#include <math/impl/mat2_t_sse_impl.hpp>
-#include <math/impl/mat2_t_avx_impl.hpp>
+#include "./impl/mat2_t_scalar_impl.hpp"
+#include "./impl/mat2_t_sse_impl.hpp"
+#include "./impl/mat2_t_avx_impl.hpp"
 
 namespace math {
 

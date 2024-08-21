@@ -5,10 +5,10 @@
 #include <sstream>
 #include <string>
 
-#include <math/vec3_t_decl.hpp>
-#include <math/mat4_t_decl.hpp>
-#include <math/quat_t_decl.hpp>
-#include <math/euler_t_decl.hpp>
+#include "./vec3_t_decl.hpp"
+#include "./mat4_t_decl.hpp"
+#include "./quat_t_decl.hpp"
+#include "./euler_t_decl.hpp"
 
 namespace math {
 

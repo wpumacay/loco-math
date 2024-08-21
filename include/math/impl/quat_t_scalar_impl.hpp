@@ -1,7 +1,8 @@
 #pragma once
 
 #include <cmath>
-#include <math/quat_t_decl.hpp>
+
+#include "../quat_t_decl.hpp"
 
 namespace math {
 namespace scalar {

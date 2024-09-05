@@ -197,6 +197,26 @@ MATH3D_INLINE auto kernel_dot_vec2(const Vec2Buffer<T>& lhs,
     return _mm_cvtsd_f64(xmm_dot);
 }
 
+template <typename T, SFINAE_VEC2_F32_SSE_GUARD<T> = nullptr>
+MATH3D_INLINE auto kernel_lerp_vec2(Vec2Buffer<T>& dst,
+                                    const Vec2Buffer<T>& vec_a,
+                                    const Vec2Buffer<T>& vec_b, T alpha)
+    -> void {
+    // TODO(wilbert): implement more performant kernel (fuse multiply adds)
+    auto xmm_a = _mm_loadu_ps(vec_a.data());
+    auto xmm_b = _mm_loadu_ps(vec_b.data());
+    // NOLINTNEXTLINE
+    const float ALPHA[4] = {alpha, alpha, 0.0F, 0.0F};
+    auto xmm_alpha = _mm_loadu_ps(static_cast<const float*>(ALPHA));
+    // NOLINTNEXTLINE
+    const float ONE_MINUS_ALPHA[4] = {1.0F - alpha, 1.0F - alpha, 0.0F, 0.0F};
+    auto xmm_one_minus_alpha =
+        _mm_loadu_ps(static_cast<const float*>(ONE_MINUS_ALPHA));
+
+    auto xmm_lerp = _mm_add_ps(_mm_mul_ps(xmm_one_minus_alpha, xmm_a),
+                               _mm_mul_ps(xmm_alpha, xmm_b));
+}
+
 }  // namespace sse
 }  // namespace math
 

@@ -23,8 +23,7 @@ set(MATH3D_EXAMPLES_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/example_mat4_operations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_euler_conversions.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/example_lerp_vec2.cpp
-    # ${CMAKE_CURRENT_SOURCE_DIR}/example_lerp_vec3.cpp
-)
+    ${CMAKE_CURRENT_SOURCE_DIR}/example_lerp_vec3.cpp)
 
 # Create all the example targets
 foreach(example_filepath IN LISTS MATH3D_EXAMPLES_LIST)

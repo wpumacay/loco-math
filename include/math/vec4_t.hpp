@@ -13,9 +13,15 @@ namespace math {
 // ***************************************************************************//
 
 template <typename T>
-using SFINAE_VEC4_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
+MATH3D_INLINE auto lerp(const Vector4<T>& vec_a, const Vector4<T>& vec_b,
+                        T alpha) -> Vector4<T> {
+    Vector4<T> dst;
+    scalar::kernel_lerp_vec4<T>(dst.elements(), vec_a.elements(),
+                                vec_b.elements(), alpha);
+    return dst;
+}
 
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto squareNorm(const Vector4<T>& vec) -> T {
 #if defined(MATH3D_AVX_ENABLED)
     return avx::kernel_length_square_vec4<T>(vec.elements());
@@ -27,7 +33,7 @@ MATH3D_INLINE auto squareNorm(const Vector4<T>& vec) -> T {
 }
 
 /// \brief Returns the norm-2 of the vector
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto norm(const Vector4<T>& vec) -> T {
 #if defined(MATH3D_AVX_ENABLED)
     return avx::kernel_length_vec4<T>(vec.elements());
@@ -39,7 +45,7 @@ MATH3D_INLINE auto norm(const Vector4<T>& vec) -> T {
 }
 
 /// \brief Returns a normalized version of this vector
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto normalize(const Vector4<T>& vec) -> Vector4<T> {
     Vector4<T> vec_normalized = vec;
 #if defined(MATH3D_AVX_ENABLED)
@@ -53,7 +59,7 @@ MATH3D_INLINE auto normalize(const Vector4<T>& vec) -> Vector4<T> {
 }
 
 /// \brief Normalizes in-place the given vector
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto normalize_in_place(Vector4<T>& vec) -> void {  // NOLINT
 #if defined(MATH3D_AVX_ENABLED)
     avx::kernel_normalize_in_place_vec4<T>(vec.elements());
@@ -65,7 +71,7 @@ MATH3D_INLINE auto normalize_in_place(Vector4<T>& vec) -> void {  // NOLINT
 }
 
 /// \brief Returns the dot-product of the given two vectors
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto dot(const Vector4<T>& lhs, const Vector4<T>& rhs) -> T {
 #if defined(MATH3D_AVX_ENABLED)
     return avx::kernel_dot_vec4<T>(lhs.elements(), rhs.elements());
@@ -88,7 +94,7 @@ MATH3D_INLINE auto dot(const Vector4<T>& lhs, const Vector4<T>& rhs) -> T {
 ///
 /// \param[in] lhs Left-hand-side operand of the vector-sum
 /// \param[in] rhs Right-hand-side operand of the vector-sum
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator+(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> Vector4<T> {
     Vector4<T> dst;
@@ -114,7 +120,7 @@ MATH3D_INLINE auto operator+(const Vector4<T>& lhs, const Vector4<T>& rhs)
 ///
 /// \param[in] lhs Left-hand-side operand of the vector-sum
 /// \param[in] rhs Right-hand-side operand of the vector-sum
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator-(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> Vector4<T> {
     Vector4<T> dst;
@@ -140,7 +146,7 @@ MATH3D_INLINE auto operator-(const Vector4<T>& lhs, const Vector4<T>& rhs)
 ///
 /// \param[in] scale Scalar value by which to scale the second operand
 /// \param[in] vec Vector in 4d-space which we want to scale
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(double scale, const Vector4<T>& vec)
     -> Vector4<T> {
     Vector4<T> dst;
@@ -169,7 +175,7 @@ MATH3D_INLINE auto operator*(double scale, const Vector4<T>& vec)
 ///
 /// \param[in] vec Vector in 4d-space which we want to scale
 /// \param[in] scale Scalar value by which to scale the first operand
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(const Vector4<T>& vec, double scale)
     -> Vector4<T> {
     Vector4<T> dst;
@@ -198,7 +204,7 @@ MATH3D_INLINE auto operator*(const Vector4<T>& vec, double scale)
 ///
 /// \param[in] lhs Left-hand-side operand of the element-wise product
 /// \param[in] rhs Right-hand-side operand of the element-wise product
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> Vector4<T> {
     Vector4<T> dst;
@@ -221,7 +227,7 @@ MATH3D_INLINE auto operator*(const Vector4<T>& lhs, const Vector4<T>& rhs)
 ///
 /// \param[in] vec The vector whose inverse we want
 /// \returns The additive inverse of the given vector
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator-(const Vector4<T>& vec) -> Vector4<T> {
     return Vector4<T>(-vec.x(), -vec.y(), -vec.z(), -vec.w());
 }
@@ -242,7 +248,7 @@ MATH3D_INLINE auto operator-(const Vector4<T>& vec) -> Vector4<T> {
 /// \param[in] lhs Left-hand-side operand of the comparison
 /// \param[in] rhs Right-hand-side operand of the comparison
 /// \returns true if the given vectors are within a pre-defined epsilon margin
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator==(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> bool {
     return scalar::kernel_compare_eq_vec4<T>(lhs.elements(), rhs.elements());
@@ -255,7 +261,7 @@ MATH3D_INLINE auto operator==(const Vector4<T>& lhs, const Vector4<T>& rhs)
 /// \param[in] lhs Left-hand-side operand of the comparison
 /// \param[in] rhs Right-hand-side operand of the comparison
 /// \returns true if the given vectors are not within a pre-defined margin
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator!=(const Vector4<T>& lhs, const Vector4<T>& rhs)
     -> bool {
     return !scalar::kernel_compare_eq_vec4<T>(lhs.elements(), rhs.elements());
@@ -268,7 +274,7 @@ MATH3D_INLINE auto operator!=(const Vector4<T>& lhs, const Vector4<T>& rhs)
 /// \param[in,out] output_stream The output stream to write the vector to
 /// \param[in] src The vector we want to print to the output stream
 /// \returns A reference to the modified output stream (to concatenate calls)
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 auto operator<<(std::ostream& output_stream, const Vector4<T>& src)
     -> std::ostream& {
     output_stream << "(" << src.x() << ", " << src.y() << ", " << src.z()
@@ -283,7 +289,7 @@ auto operator<<(std::ostream& output_stream, const Vector4<T>& src)
 /// \param[in,out] input_stream The input stream from which to read the vector
 /// \param[out] dst The vector in which to place the read values
 /// \returns A reference to the modified input stream (to concatenate calls)
-template <typename T, SFINAE_VEC4_GUARD<T> = nullptr>
+template <typename T>
 auto operator>>(std::istream& input_stream, Vector4<T>& dst) -> std::istream& {
     // Based on ignition-math implementation https://bit.ly/3iqAVgS
     T x_val{};

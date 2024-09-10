@@ -17,8 +17,8 @@ auto run_example_lerp_vec4() -> void {
         return;
     }
 
-    Vec4 vec_a = {1.0, 0.0, 0.0, 0.0};
-    Vec4 vec_b = {0.0, 1.0, 0.0, 0.0};
+    Vec4 vec_a = {0.0, 0.0, 0.0, 0.0};
+    Vec4 vec_b = {1.0, 1.0, 1.0, 1.0};
     Vec4 vec_c = ::math::lerp<T>(vec_a, vec_b, 0.5);
 
     std::cout << "vec_a: " << vec_a << std::endl;

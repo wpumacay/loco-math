@@ -42,6 +42,8 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/test_utils_spherical_coordinates.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_geometry_helpers.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_lerp_vec2.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_lerp_vec3.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_lerp_vec4.cpp
 )
 # cmake-format: on
 

@@ -16,6 +16,7 @@ endif()
 include(CTest)
 include(Catch)
 
+# cmake-format: off
 add_executable(
   MathCppTests
   ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
@@ -39,9 +40,11 @@ add_executable(
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat3_functions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_mat4_functions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/test_utils_spherical_coordinates.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/test_geometry_helpers.cpp)
-# TODO(wilbert): Making it public to avoid weird issue wirh clangd and LSP
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_geometry_helpers.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_lerp_vec2.cpp
+)
+# cmake-format: on
+
 target_link_libraries(MathCppTests PUBLIC math::math Catch2::Catch2)
 target_include_directories(MathCppTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-# Discover tets and pick an integer as the random seed
 catch_discover_tests(MathCppTests)

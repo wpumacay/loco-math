@@ -6,8 +6,16 @@ if(NOT TARGET math::math)
   return()
 endif()
 
-pybind11_add_module(math3d_bindings ${CMAKE_CURRENT_SOURCE_DIR}/bindings_py.cpp
-                    ${CMAKE_CURRENT_SOURCE_DIR}/conversions_py.cpp)
+# cmake-format: off
+pybind11_add_module(
+  math3d_bindings
+  ${CMAKE_CURRENT_SOURCE_DIR}/bindings_py.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/conversions_py.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/vec2_functions_py.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/vec3_functions_py.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/vec4_functions_py.cpp
+)
+# cmake-format: on
 target_include_directories(math3d_bindings PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(math3d_bindings PRIVATE math::math)
 

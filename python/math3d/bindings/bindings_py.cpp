@@ -16,6 +16,9 @@ namespace py = pybind11;
 namespace math {
 
 extern auto bindings_conversions_functions(py::module m) -> void;
+extern auto bindings_vec2_functions(py::module m) -> void;
+extern auto bindings_vec3_functions(py::module m) -> void;
+extern auto bindings_vec4_functions(py::module m) -> void;
 
 }  // namespace math
 
@@ -49,4 +52,7 @@ PYBIND11_MODULE(math3d_bindings, m) {
     ::math::bindings_utils_aabb<::math::float64_t>(m, "AABB_d");
 
     ::math::bindings_conversions_functions(m);
+    ::math::bindings_vec2_functions(m);
+    ::math::bindings_vec3_functions(m);
+    ::math::bindings_vec4_functions(m);
 }

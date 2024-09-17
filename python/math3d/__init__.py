@@ -23,6 +23,7 @@ from math3d_bindings import (  # type: ignore
     Vector3f,
     Vector4d,
     Vector4f,
+    cross,
     dot,
     eConvention,
     eOrder,
@@ -122,6 +123,7 @@ __all__ = [
     "nparray_to_mat4_f64",
     # vector functions
     "dot",
+    "cross",
     "squareNorm",
     "norm",
     "normalize",

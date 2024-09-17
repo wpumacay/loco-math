@@ -16,6 +16,14 @@ auto bindings_vec3_functions(py::module m) -> void {
                                            const Vector3<float64_t>&)>(
                      ::math::dot<float64_t>));
 
+    m.def("cross", static_cast<Vector3<float32_t> (*)(
+                       const Vector3<float32_t>&, const Vector3<float32_t>&)>(
+                       ::math::cross<float32_t>));
+
+    m.def("cross", static_cast<Vector3<float64_t> (*)(
+                       const Vector3<float64_t>&, const Vector3<float64_t>&)>(
+                       ::math::cross<float64_t>));
+
     m.def("squareNorm", static_cast<float32_t (*)(const Vector3<float32_t>&)>(
                             ::math::squareNorm<float32_t>));
     m.def("squareNorm", static_cast<float64_t (*)(const Vector3<float64_t>&)>(

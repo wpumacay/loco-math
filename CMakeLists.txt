@@ -21,7 +21,7 @@ project(
   math3d
   VERSION 0.6.15
   DESCRIPTION "A basic math library for spatial algebra"
-  HOMEPAGE_URL "https://github.com/wpumacay/math"
+  HOMEPAGE_URL "https://github.com/wpumacay/math3d"
   LANGUAGES C CXX)
 
 # -------------------------------------

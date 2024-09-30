@@ -15,22 +15,18 @@ template <typename T>
 using Vec3Buffer = typename Vector3<T>::BufferType;
 
 template <typename T>
-using SFINAE_MAT3_SCALAR_GUARD =
-    typename std::enable_if<IsScalar<T>::value>::type*;
-
-template <typename T, SFINAE_MAT3_SCALAR_GUARD<T> = nullptr>
 MATH3D_INLINE auto kernel_transpose_inplace_mat3(Mat3Buffer<T>& mat) -> void {
     std::swap(mat[0][1], mat[1][0]);
     std::swap(mat[0][2], mat[2][0]);
     std::swap(mat[1][2], mat[2][1]);
 }
 
-template <typename T, SFINAE_MAT3_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_trace_mat3(const Mat3Buffer<T>& mat) -> T {
     return mat[0][0] + mat[1][1] + mat[2][2];
 }
 
-template <typename T, SFINAE_MAT3_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_determinant_mat3(const Mat3Buffer<T>& mat) -> T {
     auto m00 = mat[0][0];
     auto m10 = mat[0][1];
@@ -52,7 +48,7 @@ MATH3D_INLINE auto kernel_determinant_mat3(const Mat3Buffer<T>& mat) -> T {
     return m00 * c00 + m10 * c10 + m20 * c20;
 }
 
-template <typename T, SFINAE_MAT3_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_inverse_mat3(Mat3Buffer<T>& dst,
                                        const Mat3Buffer<T>& src) -> void {
     auto m00 = src[0][0];
@@ -97,7 +93,7 @@ MATH3D_INLINE auto kernel_inverse_mat3(Mat3Buffer<T>& dst,
     dst[2][2] = c22 * inv_det;
 }
 
-template <typename T, SFINAE_MAT3_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_add_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
                                    const Mat3Buffer<T>& rhs) -> void {
     for (uint32_t col = 0; col < Matrix3<T>::MATRIX_SIZE; ++col) {
@@ -107,7 +103,7 @@ MATH3D_INLINE auto kernel_add_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
     }
 }
 
-template <typename T, SFINAE_MAT3_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_sub_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
                                    const Mat3Buffer<T>& rhs) -> void {
     for (uint32_t col = 0; col < Matrix3<T>::MATRIX_SIZE; ++col) {
@@ -117,7 +113,7 @@ MATH3D_INLINE auto kernel_sub_mat3(Mat3Buffer<T>& dst, const Mat3Buffer<T>& lhs,
     }
 }
 
-template <typename T, SFINAE_MAT3_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_scale_mat3(Mat3Buffer<T>& dst, T scale,
                                      const Mat3Buffer<T>& mat) -> void {
     for (uint32_t col = 0; col < Matrix3<T>::MATRIX_SIZE; ++col) {
@@ -127,7 +123,7 @@ MATH3D_INLINE auto kernel_scale_mat3(Mat3Buffer<T>& dst, T scale,
     }
 }
 
-template <typename T, SFINAE_MAT3_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst,
                                       const Mat3Buffer<T>& lhs,
                                       const Mat3Buffer<T>& rhs) -> void {
@@ -141,7 +137,7 @@ MATH3D_INLINE auto kernel_matmul_mat3(Mat3Buffer<T>& dst,
     }
 }
 
-template <typename T, SFINAE_MAT3_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_matmul_vec_mat3(Vec3Buffer<T>& dst,
                                           const Mat3Buffer<T>& mat,
                                           const Vec3Buffer<T>& vec) -> void {
@@ -150,7 +146,7 @@ MATH3D_INLINE auto kernel_matmul_vec_mat3(Vec3Buffer<T>& dst,
     dst[2] = mat[0][2] * vec[0] + mat[1][2] * vec[1] + mat[2][2] * vec[2];
 }
 
-template <typename T, SFINAE_MAT3_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_hadamard_mat3(Mat3Buffer<T>& dst,
                                         const Mat3Buffer<T>& lhs,
                                         const Mat3Buffer<T>& rhs) -> void {
@@ -161,7 +157,7 @@ MATH3D_INLINE auto kernel_hadamard_mat3(Mat3Buffer<T>& dst,
     }
 }
 
-template <typename T, SFINAE_MAT3_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_compare_eq_mat3(const Mat3Buffer<T>& lhs,
                                           const Mat3Buffer<T>& rhs) -> bool {
     for (uint32_t col = 0; col < Matrix3<T>::MATRIX_SIZE; ++col) {

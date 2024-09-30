@@ -17,11 +17,8 @@ namespace math {
 //                       Quaternion Methods and Operators                     //
 // ***************************************************************************//
 
-template <typename T>
-using SFINAE_QUAT_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
-
 /// Returns the square of the length of the given quaternion
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto squareNorm(const Quaternion<T>& quat) -> T {
 #if defined(MATH3D_AVX_ENABLED)
     return avx::kernel_length_square_quat<T>(quat.elements());
@@ -33,7 +30,7 @@ MATH3D_INLINE auto squareNorm(const Quaternion<T>& quat) -> T {
 }
 
 /// Returns the length of the given quaternion
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto norm(const Quaternion<T>& quat) -> T {
 #if defined(MATH3D_AVX_ENABLED)
     return avx::kernel_length_quat<T>(quat.elements());
@@ -45,7 +42,7 @@ MATH3D_INLINE auto norm(const Quaternion<T>& quat) -> T {
 }
 
 /// Returns a normalized version of the given quaternion
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto normalize(const Quaternion<T>& quat) -> Quaternion<T> {
     Quaternion<T> quat_normalized = quat;
 #if defined(MATH3D_AVX_ENABLED)
@@ -59,7 +56,7 @@ MATH3D_INLINE auto normalize(const Quaternion<T>& quat) -> Quaternion<T> {
 }
 
 /// Normalizes in place the given quaternion
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto normalize_in_place(Quaternion<T>& quat) -> void {  // NOLINT
 #if defined(MATH3D_AVX_ENABLED)
     avx::kernel_normalize_in_place_quat<T>(quat.elements());
@@ -70,7 +67,7 @@ MATH3D_INLINE auto normalize_in_place(Quaternion<T>& quat) -> void {  // NOLINT
 #endif
 }
 
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator+(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     -> Quaternion<T> {
     Quaternion<T> dst;
@@ -84,7 +81,7 @@ MATH3D_INLINE auto operator+(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     return dst;
 }
 
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator-(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     -> Quaternion<T> {
     Quaternion<T> dst;
@@ -98,7 +95,7 @@ MATH3D_INLINE auto operator-(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     return dst;
 }
 
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(double scale, const Quaternion<T>& quat)
     -> Quaternion<T> {
     Quaternion<T> dst;
@@ -115,7 +112,7 @@ MATH3D_INLINE auto operator*(double scale, const Quaternion<T>& quat)
     return dst;
 }
 
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(const Quaternion<T>& quat, double scale)
     -> Quaternion<T> {
     Quaternion<T> dst;
@@ -132,7 +129,7 @@ MATH3D_INLINE auto operator*(const Quaternion<T>& quat, double scale)
     return dst;
 }
 
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     -> Quaternion<T> {
     Quaternion<T> dst;
@@ -141,7 +138,7 @@ MATH3D_INLINE auto operator*(const Quaternion<T>& lhs, const Quaternion<T>& rhs)
     return dst;
 }
 
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto conjugate(const Quaternion<T>& quat) -> Quaternion<T> {
     Quaternion<T> dst = quat;
     dst.x() = -dst.x();
@@ -150,7 +147,7 @@ MATH3D_INLINE auto conjugate(const Quaternion<T>& quat) -> Quaternion<T> {
     return dst;
 }
 
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto inverse(const Quaternion<T>& quat) -> Quaternion<T> {
     auto q_conj = conjugate<T>(quat);
     auto length_sq = squareNorm<T>(quat);
@@ -158,7 +155,7 @@ MATH3D_INLINE auto inverse(const Quaternion<T>& quat) -> Quaternion<T> {
     return q_inv;
 }
 
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto rotate(const Quaternion<T>& quat, const Vector3<T>& vec)
     -> Vector3<T> {
     // We use the form f(p) = q * p * q ^-1
@@ -169,19 +166,19 @@ MATH3D_INLINE auto rotate(const Quaternion<T>& quat, const Vector3<T>& vec)
     return Vector3<T>(quat_qpqinv.x(), quat_qpqinv.y(), quat_qpqinv.z());
 }
 
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(const Quaternion<T>& quat, const Vector3<T>& vec)
     -> Vector3<T> {
     return ::math::rotate<T>(quat, vec);
 }
 
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator==(const Quaternion<T>& lhs,
                               const Quaternion<T>& rhs) -> bool {
     return scalar::kernel_compare_eq_quat<T>(lhs.elements(), rhs.elements());
 }
 
-template <typename T, SFINAE_QUAT_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator!=(const Quaternion<T>& lhs,
                               const Quaternion<T>& rhs) -> bool {
     return !scalar::kernel_compare_eq_quat<T>(lhs.elements(), rhs.elements());

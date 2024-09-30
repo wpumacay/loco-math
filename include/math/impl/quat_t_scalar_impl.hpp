@@ -11,10 +11,6 @@ template <typename T>
 using QuatBuffer = typename Quaternion<T>::BufferType;
 
 template <typename T>
-using SFINAE_QUAT_SCALAR_GUARD =
-    typename std::enable_if<IsScalar<T>::value>::type*;
-
-template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
 MATH3D_INLINE auto kernel_add_quat(QuatBuffer<T>& dst, const QuatBuffer<T>& lhs,
                                    const QuatBuffer<T>& rhs) -> void {
     for (uint32_t i = 0; i < Quaternion<T>::QUAT_SIZE; ++i) {
@@ -22,7 +18,7 @@ MATH3D_INLINE auto kernel_add_quat(QuatBuffer<T>& dst, const QuatBuffer<T>& lhs,
     }
 }
 
-template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_sub_quat(QuatBuffer<T>& dst, const QuatBuffer<T>& lhs,
                                    const QuatBuffer<T>& rhs) -> void {
     for (uint32_t i = 0; i < Quaternion<T>::QUAT_SIZE; ++i) {
@@ -30,7 +26,7 @@ MATH3D_INLINE auto kernel_sub_quat(QuatBuffer<T>& dst, const QuatBuffer<T>& lhs,
     }
 }
 
-template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_scale_quat(QuatBuffer<T>& dst, T scale,
                                      const QuatBuffer<T>& quat) -> void {
     for (uint32_t i = 0; i < Quaternion<T>::QUAT_SIZE; ++i) {
@@ -38,7 +34,7 @@ MATH3D_INLINE auto kernel_scale_quat(QuatBuffer<T>& dst, T scale,
     }
 }
 
-template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_quatmul_quat(QuatBuffer<T>& dst,
                                        const QuatBuffer<T>& lhs,
                                        const QuatBuffer<T>& rhs) -> void {
@@ -58,13 +54,13 @@ MATH3D_INLINE auto kernel_quatmul_quat(QuatBuffer<T>& dst,
     dst[3] = a_w * b_z + b_w * a_z + a_x * b_y - b_x * a_y;
 }
 
-template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_length_square_quat(const QuatBuffer<T>& quat) -> T {
     return quat[0] * quat[0] + quat[1] * quat[1] + quat[2] * quat[2] +
            quat[3] * quat[3];
 }
 
-template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> void {
     auto length = std::sqrt(kernel_length_square_quat<T>(quat));
     for (uint32_t i = 0; i < Quaternion<T>::QUAT_SIZE; ++i) {
@@ -72,7 +68,7 @@ MATH3D_INLINE auto kernel_normalize_in_place_quat(QuatBuffer<T>& quat) -> void {
     }
 }
 
-template <typename T, SFINAE_QUAT_SCALAR_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto kernel_compare_eq_quat(const QuatBuffer<T>& lhs,
                                           const QuatBuffer<T>& rhs) -> bool {
     constexpr T EPSILON = static_cast<T>(math::EPS);

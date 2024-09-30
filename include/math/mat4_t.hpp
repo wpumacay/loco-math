@@ -199,11 +199,8 @@ auto Matrix4<T>::Zeros() -> Matrix4<T> {
 //                       Matrix Methods implementation                        //
 // ***************************************************************************//
 
-template <typename T>
-using SFINAE_MAT4_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
-
 /// \brief Returns the transpose of the given matrix
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto transpose(const Matrix4<T>& mat) -> Matrix4<T> {
     Matrix4<T> dst = mat;
     scalar::kernel_transpose_inplace_mat4<T>(dst.elements());
@@ -211,25 +208,25 @@ MATH3D_INLINE auto transpose(const Matrix4<T>& mat) -> Matrix4<T> {
 }
 
 /// \brief Transposes the given matrix in-place
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto transposeInPlace(Matrix4<T>& mat) -> void {  // NOLINT
     scalar::kernel_transpose_inplace_mat4<T>(mat.elements());
 }
 
 /// Returns the trace (sum of diagonal elements) of the matrix
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto trace(const Matrix4<T>& mat) -> T {
     return scalar::kernel_trace_mat4<T>(mat.elements());
 }
 
 /// Returns the determinant of the matrix
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto determinant(const Matrix4<T>& mat) -> T {
     return scalar::kernel_determinant_mat4<T>(mat.elements());
 }
 
 /// Returns the inverse of the matrix
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto inverse(const Matrix4<T>& mat) -> Matrix4<T> {
     Matrix4<T> dst;
     scalar::kernel_inverse_mat4<T>(dst.elements(), mat.elements());
@@ -237,7 +234,7 @@ MATH3D_INLINE auto inverse(const Matrix4<T>& mat) -> Matrix4<T> {
 }
 
 /// \brief Returns the matrix-sum of the two given matrices
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator+(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
     -> Matrix4<T> {
     Matrix4<T> dst;
@@ -252,7 +249,7 @@ MATH3D_INLINE auto operator+(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
 }
 
 /// \brief Returns the matrix-difference of the two given matrices
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator-(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
     -> Matrix4<T> {
     Matrix4<T> dst;
@@ -267,7 +264,7 @@ MATH3D_INLINE auto operator-(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
 }
 
 /// \brief Returns the scaled version of the given matrix by the given factor
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(double scale, const Matrix4<T>& mat)
     -> Matrix4<T> {
     Matrix4<T> dst;
@@ -285,7 +282,7 @@ MATH3D_INLINE auto operator*(double scale, const Matrix4<T>& mat)
 }
 
 /// \brief Returns the scaled version of the given matrix by the given factor
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(const Matrix4<T>& mat, double scale)
     -> Matrix4<T> {
     Matrix4<T> dst;
@@ -303,7 +300,7 @@ MATH3D_INLINE auto operator*(const Matrix4<T>& mat, double scale)
 }
 
 /// \brief Returns the matrix product of the two given matrices
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
     -> Matrix4<T> {
     Matrix4<T> dst;
@@ -319,7 +316,7 @@ MATH3D_INLINE auto operator*(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
 }
 
 /// \brief Returns the matrix-vector product of the given operands
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(const Matrix4<T>& lhs_mat,
                              const Vector4<T>& rhs_vec) -> Vector4<T> {
     Vector4<T> dst;
@@ -337,7 +334,7 @@ MATH3D_INLINE auto operator*(const Matrix4<T>& lhs_mat,
 }
 
 /// \brief Returns the element-wise product of the two given matrices
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto hadamard(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
     -> Matrix4<T> {
     Matrix4<T> dst;
@@ -355,20 +352,20 @@ MATH3D_INLINE auto hadamard(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
 }
 
 /// \brief Checks if two given matrices are "equal" (within epsilon margin)
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator==(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
     -> bool {
     return scalar::kernel_compare_eq_mat4<T>(lhs.elements(), rhs.elements());
 }
 
 /// \brief Checks if two given matrices are "not equal" (within epsilon margin)
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator!=(const Matrix4<T>& lhs, const Matrix4<T>& rhs)
     -> bool {
     return !scalar::kernel_compare_eq_mat4<T>(lhs.elements(), rhs.elements());
 }
 
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 auto operator<<(std::ostream& output_stream, const Matrix4<T>& src)
     -> std::ostream& {
     constexpr int PRECISION_DIGITS = 10;
@@ -384,7 +381,7 @@ auto operator<<(std::ostream& output_stream, const Matrix4<T>& src)
     return output_stream;
 }
 
-template <typename T, SFINAE_MAT4_GUARD<T> = nullptr>
+template <typename T>
 auto operator>>(std::istream& input_stream, Matrix4<T>& dst) -> std::istream& {
     // Based on ignition-math implementation https://bit.ly/3MPgPcW
     input_stream.setf(std::ios_base::skipws);

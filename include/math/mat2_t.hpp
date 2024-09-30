@@ -39,8 +39,8 @@ template <typename T>
 auto Matrix2<T>::Scale(const Vector2<T>& scale) -> Matrix2<T> {
     // clang-format off
     return Matrix2<T>(
-        scale.x(), 0.0,
-        0.0, scale.y());
+        scale.x()  ,    0.0,
+            0.0    ,  scale.y());
     // clang-format on
 }
 
@@ -62,11 +62,8 @@ auto Matrix2<T>::Zeros() -> Matrix2<T> {
 //                       Matrix Methods implementation                        //
 // ***************************************************************************//
 
-template <typename T>
-using SFINAE_MAT2_GUARD = typename std::enable_if<IsScalar<T>::value>::type*;
-
 /// Returns the tranpose of the given matrix
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto transpose(const Matrix2<T>& mat) -> Matrix2<T> {
     Matrix2<T> dst = mat;
     scalar::kernel_transpose_inplace_mat2<T>(dst.elements());
@@ -74,25 +71,25 @@ MATH3D_INLINE auto transpose(const Matrix2<T>& mat) -> Matrix2<T> {
 }
 
 /// Transposes the given matrix in place
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto transposeInPlace(Matrix2<T>& mat) -> void {  // NOLINT
     scalar::kernel_transpose_inplace_mat2<T>(mat.elements());
 }
 
 /// Returns the trace (sum of diagonal elements) of the matrix
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto trace(const Matrix2<T>& mat) -> T {
     return scalar::kernel_trace_mat2<T>(mat.elements());
 }
 
 /// Returns the determinant of the matrix
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto determinant(const Matrix2<T>& mat) -> T {
     return scalar::kernel_determinant_mat2<T>(mat.elements());
 }
 
 /// Returns the inverse of the matrix
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto inverse(const Matrix2<T>& mat) -> Matrix2<T> {
     Matrix2<T> dst;
     scalar::kernel_inverse_mat2<T>(dst.elements(), mat.elements());
@@ -104,7 +101,7 @@ MATH3D_INLINE auto inverse(const Matrix2<T>& mat) -> Matrix2<T> {
 // ***************************************************************************//
 
 /// Returns the matrix sum of the two given matrices
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator+(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
@@ -118,7 +115,7 @@ MATH3D_INLINE auto operator+(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     return dst;
 }
 
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator-(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
@@ -132,7 +129,7 @@ MATH3D_INLINE auto operator-(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     return dst;
 }
 
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(double scale, const Matrix2<T>& mat)
     -> Matrix2<T> {
     Matrix2<T> dst;
@@ -149,7 +146,7 @@ MATH3D_INLINE auto operator*(double scale, const Matrix2<T>& mat)
     return dst;
 }
 
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(const Matrix2<T>& mat, double scale)
     -> Matrix2<T> {
     Matrix2<T> dst;
@@ -166,7 +163,7 @@ MATH3D_INLINE auto operator*(const Matrix2<T>& mat, double scale)
     return dst;
 }
 
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
@@ -181,7 +178,7 @@ MATH3D_INLINE auto operator*(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     return dst;
 }
 
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator*(const Matrix2<T>& lhs_mat,
                              const Vector2<T>& rhs_vec) -> Vector2<T> {
     Vector2<T> dst;
@@ -198,7 +195,7 @@ MATH3D_INLINE auto operator*(const Matrix2<T>& lhs_mat,
     return dst;
 }
 
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto hadamard(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> Matrix2<T> {
     Matrix2<T> dst;
@@ -215,19 +212,19 @@ MATH3D_INLINE auto hadamard(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     return dst;
 }
 
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator==(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> bool {
     return scalar::kernel_compare_eq_mat2<T>(lhs.elements(), rhs.elements());
 }
 
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 MATH3D_INLINE auto operator!=(const Matrix2<T>& lhs, const Matrix2<T>& rhs)
     -> bool {
     return !scalar::kernel_compare_eq_mat2<T>(lhs.elements(), rhs.elements());
 }
 
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 auto operator<<(std::ostream& output_stream, const Matrix2<T>& src)
     -> std::ostream& {
     constexpr int PRECISION_DIGITS = 10;
@@ -237,7 +234,7 @@ auto operator<<(std::ostream& output_stream, const Matrix2<T>& src)
     return output_stream;
 }
 
-template <typename T, SFINAE_MAT2_GUARD<T> = nullptr>
+template <typename T>
 auto operator>>(std::istream& input_stream, Matrix2<T>& dst) -> std::istream& {
     // Based on ignition-math implementation https://bit.ly/3MPgPcW
     input_stream.setf(std::ios_base::skipws);

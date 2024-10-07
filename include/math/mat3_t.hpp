@@ -158,7 +158,7 @@ MATH3D_INLINE auto transpose(const Matrix3<T>& mat) -> Matrix3<T> {
 }
 
 template <typename T>
-MATH3D_INLINE auto tranposeInPlace(Matrix3<T>& mat) -> void {  // NOLINT
+MATH3D_INLINE auto transposeInPlace(Matrix3<T>& mat) -> void {  // NOLINT
     scalar::kernel_transpose_inplace_mat3<T>(mat.elements());
 }
 

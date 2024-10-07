@@ -14,6 +14,9 @@ pybind11_add_module(
   ${CMAKE_CURRENT_SOURCE_DIR}/vec2_functions_py.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/vec3_functions_py.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/vec4_functions_py.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/mat2_functions_py.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/mat3_functions_py.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/mat4_functions_py.cpp
 )
 # cmake-format: on
 target_include_directories(math3d_bindings PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

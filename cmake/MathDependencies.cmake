@@ -16,7 +16,7 @@ set(MATH3D_DEP_VERSION_catch2
     CACHE STRING "Version of Catch2 to be fetched (used for unittests)")
 
 set(MATH3D_DEP_VERSION_pybind11
-    8a099e44b3d5f85b20f05828d919d2332a8de841 # Release v2.11.1
+    a2e59f0e7065404b44dfe92a28aca47ba1378dc4 # Release v2.13.6
     CACHE STRING "Version of PyBind11 to be fetched (used for python bindings)")
 
 mark_as_advanced(MATH3D_DEP_VERSION_catch2)

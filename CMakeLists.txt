@@ -109,6 +109,9 @@ loco_create_target(MathCpp INTERFACE
 )
 # cmake-format: on
 
+# Include FastNoiseLite (header-only library)
+target_include_directories(MathCpp INTERFACE ${fastnoise_SOURCE_DIR}/Cpp/)
+
 # -------------------------------------
 if(CMAKE_CXX_STANDARD EQUAL 20)
   target_compile_definitions(MathCpp INTERFACE -DMATH3D_FORCE_CXX20)

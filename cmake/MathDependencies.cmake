@@ -19,8 +19,13 @@ set(MATH3D_DEP_VERSION_pybind11
     a2e59f0e7065404b44dfe92a28aca47ba1378dc4 # Release v2.13.6
     CACHE STRING "Version of PyBind11 to be fetched (used for python bindings)")
 
+set(MATH3D_DEP_VERSION_fast_noise_lite
+    7ccfbc16eb1c932568f177d63a9ba51d89bbe516 # Release v1.1.1
+    CACHE STRING "Version of FastNoiseLite to be fetched")
+
 mark_as_advanced(MATH3D_DEP_VERSION_catch2)
 mark_as_advanced(MATH3D_DEP_VERSION_pybind11)
+mark_as_advanced(MATH3D_DEP_VERSION_fast_noise_lite)
 
 # cmake-format: off
 # ------------------------------------------------------------------------------
@@ -65,5 +70,24 @@ loco_find_or_fetch_dependency(
   GIT_SHALLOW TRUE
   TARGETS pybind11::headers
   EXCLUDE_FROM_ALL)
+
+# ------------------------------------------------------------------------------
+# FastNoiseLite is used as backend for the noise functions. We just wrap the
+# noise functions provided by the library
+# ------------------------------------------------------------------------------
+
+FetchContent_Declare(
+  fastnoise
+  GIT_REPOSITORY https://github.com/Auburn/FastNoiseLite.git
+  GIT_TAG ${MATH3D_DEP_VERSION_fast_noise_lite}
+  GIT_PROGRESS FALSE
+  GIT_SHALLOW FALSE
+  USES_TERMINAL_DOWNLOAD TRUE
+)
+FetchContent_GetProperties(fastnoise)
+
+if (NOT fastnoise_POPULATED)
+  FetchContent_Populate(fastnoise)
+endif()
 
 # cmake-format: on

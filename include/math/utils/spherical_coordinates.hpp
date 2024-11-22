@@ -11,8 +11,6 @@
 // X-axis and the projection of the line segment OP into the XY plane
 
 #include <cmath>
-#include <string>
-#include <initializer_list>
 
 #include <math/common.hpp>
 #include <math/vec3_t_decl.hpp>
